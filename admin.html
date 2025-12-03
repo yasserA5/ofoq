@@ -2,7 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<!-- Viewport محدث ليدعم كل الأجهزة والزووم -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>لوحة التحكم - Modern Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
@@ -39,6 +40,7 @@
     justify-content:center;
     padding:20px;
     z-index:9999;
+    overflow:auto; /* حتى لو الشاشة قصيرة يمكن التمرير */
   }
   .admin-lock-card{
     background:#fff;
@@ -385,6 +387,21 @@
       gap: clamp(12px, 3vw, 15px);
     }
     .item-card { padding: clamp(12px, 3vw, 15px); }
+    /* شاشة الأدمن على الموبايل */
+    .admin-lock-card{
+      max-width: 100%;
+      padding:20px 16px;
+    }
+  }
+
+  /* في الشاشات ذات الارتفاع الصغير (Landscape موبايل مثلاً) */
+  @media(max-height: 520px){
+    .admin-lock{
+      align-items:flex-start;
+    }
+    .admin-lock-card{
+      margin-top:20px;
+    }
   }
 
   .muted {
@@ -481,7 +498,6 @@ function checkAdminLogin(){
     sessionStorage.setItem('adminAuthed','1');
     err.style.display = 'none';
     unlockApp();
-    // ضمان عرض القسم الافتراضي
     showSection(currentSection || 'research');
   } else {
     err.style.display = 'block';
@@ -496,9 +512,7 @@ function adminLogout(){
   document.getElementById('adminPass').value = '';
 }
 
-/* ---------------------------
-   CONFIG / SECTIONS
-   --------------------------- */
+/* CONFIG / SECTIONS */
 const SECTIONS = [
   { key:'research', title:'أبحاث محكمة', allowFile:true },
   { key:'articles', title:'مقالات محكمة', allowFile:true },
@@ -683,7 +697,10 @@ function renderList(key){
       <p>${shortText}</p>
       <div class="meta">${attachLabel} · ${date}</div>
       <div style="margin-top: clamp(6px, 1.5vw, 8px);">
-        ${key!=='live' ? `<a class="link" href="view.html?id=${item.id}&type=${key}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">عرض التفاصيل</a>` : `<a class="link" href="${item.file}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">مشاهدة البث</a>`}
+        ${key!=='live' 
+          ? `<a class="link" href="view.html?id=${item.id}&type=${key}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">عرض التفاصيل</a>` 
+          : `<a class="link" href="${item.file}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">مشاهدة البث</a>`
+        }
       </div>
     `;
     listEl.appendChild(div);
