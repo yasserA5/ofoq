@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>عرض الإصدار</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+<style>
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+  }
+  
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  body {
+    font-family: "Tajawal", sans-serif;
+    background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
+    padding: clamp(10px, 4vw, 20px);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 950px;
+    width: 100%;
+    margin: 0 auto;
+    background: white;
+    padding: clamp(25px, 6vw, 35px);
+    border-radius: clamp(12px, 3vw, 18px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #0aa2ca, #078fa8, #0d6b8c);
+  }
+
+  h1 {
+    margin: 0 0 clamp(20px, 6vw, 28px) 0;
+    color: #064b63;
+    font-size: clamp(22px, 7vw, 36px);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .edition-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(12px, 4vw, 18px);
+    margin-bottom: clamp(25px, 7vw, 35px);
+    padding: clamp(15px, 5vw, 20px);
+    background: linear-gradient(135deg, #f6fbff, #e8f4f8);
+    border-radius: clamp(10px, 3vw, 14px);
+    border-right: 4px solid #0aa2ca;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(14px, 4vw, 16px);
+    color: #0a4f5f;
+  }
+
+  .meta-icon {
+    width: clamp(18px, 5vw, 22px);
+    height: clamp(18px, 5vw, 22px);
+    background: #0aa2ca;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: clamp(11px, 3vw, 13px);
+  }
+
+  .image-box {
+    margin-bottom: clamp(25px, 7vw, 35px);
+  }
+  .image-box img {
+    width: 100%;
+    height: clamp(200px, 40vw, 320px);
+    object-fit: cover;
+    border-radius: clamp(12px, 3.5vw, 16px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  }
+
+  .section {
+    margin-bottom: clamp(25px, 7vw, 35px);
+  }
+
+  .label {
+    font-weight: 800;
+    margin-bottom: clamp(10px, 3vw, 15px);
+    color: #0d6b8c;
+    font-size: clamp(16px, 4.5vw, 20px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .label-icon {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #0aa2ca, #078fa8);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .content {
+    font-size: clamp(15px, 4.2vw, 17px);
+    color: #2d3748;
+    padding: clamp(18px, 5vw, 22px);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: clamp(12px, 3.5vw, 16px);
+    border-right: 5px solid #e2e8f0;
+    min-height: clamp(70px, 15vw, 90px);
+    word-break: break-word;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .content strong {
+    color: #0d6b8c;
+    font-weight: 700;
+  }
+
+  .file-box {
+    background: linear-gradient(135deg, #eef7fa, #e2edf2);
+    border: 3px solid #d9e7ec;
+    padding: clamp(20px, 6vw, 30px);
+    border-radius: clamp(14px, 4vw, 18px);
+    margin: clamp(20px, 6vw, 30px) 0;
+  }
+
+  .file-preview {
+    text-align: center;
+    margin-bottom: clamp(20px, 6vw, 30px);
+  }
+
+  iframe {
+    width: 100%;
+    height: clamp(300px, 70vw, 700px);
+    border-radius: clamp(12px, 3.5vw, 16px);
+    border: 2px solid #d1d5db;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    display: block;
+  }
+
+  video {
+    width: 100%;
+    height: clamp(250px, 60vw, 450px);
+    border-radius: clamp(12px, 3.5vw, 16px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+
+  .btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #0aa2ca, #078fa8);
+    color: white;
+    padding: clamp(12px, 4vw, 16px) clamp(24px, 6vw, 32px);
+    border-radius: clamp(10px, 3vw, 14px);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: clamp(15px, 4.2vw, 17px);
+    margin-top: clamp(15px, 5vw, 20px);
+    box-shadow: 0 6px 20px rgba(10,162,202,0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn:hover {
+    background: linear-gradient(135deg, #078fa8, #056b7f);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(10,162,202,0.4);
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .error {
+    text-align: center;
+    color: #dc3545;
+    font-size: clamp(20px, 7vw, 28px);
+    padding: clamp(60px, 25vw, 100px) clamp(25px, 10vw, 50px);
+    background: white;
+    border-radius: clamp(14px, 4vw, 20px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+    margin: clamp(25px, 10vw, 50px) auto;
+    max-width: 90%;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:1200px){
+    .container { max-width: 95%; }
+  }
+
+  @media(max-width:768px){
+    body { padding: clamp(8px, 3vw, 12px); }
+    .container { padding: clamp(20px, 7vw, 28px); }
+    .edition-meta { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media(max-width:480px){
+    body { padding: clamp(5px, 2.5vw, 8px); }
+    .container { 
+      padding: clamp(18px, 6vw, 22px); 
+      margin: 0 clamp(5px, 2vw, 10px); 
+      border-radius: clamp(10px, 3vw, 14px); 
+    }
+    .label { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+
+  @media(max-width:360px){
+    body { padding: clamp(3px, 2vw, 5px); }
+    .container { padding: clamp(15px, 6vw, 20px); }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <h1 id="title">...</h1>
+
+  <div class="edition-meta" id="editionMeta">
+    <!-- سيتم ملؤه ديناميكيًا -->
+  </div>
+
+  <div id="imageBox" class="image-box"></div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">📄</div>
+      الملخص التنفيذي
+    </div>
+    <div id="short" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">📖</div>
+      المحتوى الكامل
+    </div>
+    <div id="full" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">ℹ️</div>
+      تفاصيل إضافية
+    </div>
+    <div id="details" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">📎</div>
+      الملفات المرفقة
+    </div>
+    <div id="fileBox" class="file-box">لا يوجد ملفات مرفقة.</div>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="javascript:history.back()" class="btn">← العودة للإصدارات</a>
+  </div>
+</div>
+
+<script>
+  // جلب الإصدار من localStorage
+  let item = JSON.parse(localStorage.getItem('editionsView') || 'null');
+
+  if (!item) {
+    document.body.innerHTML = `
+      <div class="error">
+        ❌ الإصدار غير موجود
+        <br><br>
+        <a href="editions.html" class="btn">رجوع للإصدارات</a>
+      </div>
+    `;
+  } else {
+    // عرض البيانات الأساسية
+    document.getElementById("title").textContent = item.title || "—";
+    document.getElementById("short").textContent = item.short || "—";
+    document.getElementById("full").textContent = item.full || "—";
+    document.getElementById("details").textContent = item.details || "—";
+
+    // بيانات الإصدار (تاريخ + مؤلف)
+    const date = item.id ? new Date(item.id).toLocaleDateString('ar-EG') : 'غير محدد';
+    const author = item.author || 'فريق التحرير';
+    
+    document.getElementById("editionMeta").innerHTML = `
+      <div class="meta-item">
+        <div class="meta-icon">📅</div>
+        <span>تاريخ النشر: ${date}</span>
+      </div>
+      <div class="meta-item">
+        <div class="meta-icon">✍️</div>
+        <span>المؤلف: ${author}</span>
+      </div>
+    `;
+
+    // الصورة الرئيسية
+    if (item.image) {
+      document.getElementById("imageBox").innerHTML = 
+        `<img src="${item.image}" alt="${item.title}" loading="lazy">`;
+    }
+
+    // الملفات المرفقة
+    let fileBox = document.getElementById("fileBox");
+    if (!item.file) {
+      fileBox.innerHTML = `
+        <div class="file-preview">
+          <div style="font-size: clamp(16px, 4.5vw, 20px); color: #666; margin-bottom: 15px;">
+            📚 لا توجد ملفات مرفقة لهذا الإصدار
+          </div>
+          <p style="color: #999; font-size: clamp(14px, 4vw, 16px);">
+            يمكن قراءة المحتوى أعلاه أو التواصل للحصول على نسخة مطبوعة
+          </p>
+        </div>
+      `;
+    } 
+    else if (item.file.startsWith("data:application/pdf")) {
+      fileBox.innerHTML = `
+        <div class="file-preview">
+          <iframe src="${item.file}" loading="lazy"></iframe>
+          <div style="margin-top: 20px;">
+            <a class="btn" href="${item.file}" download>📥 تحميل الإصدار PDF</a>
+          </div>
+        </div>
+      `;
+    }
+    else if (item.file.startsWith("data:video")) {
+      fileBox.innerHTML = `
+        <div class="file-preview">
+          <video controls preload="metadata">
+            <source src="${item.file}">
+            متصفحك لا يدعم تشغيل الفيديو.
+          </video>
+          <div style="margin-top: 20px;">
+            <a class="btn" href="${item.file}" download>📹 تحميل الفيديو</a>
+          </div>
+        </div>
+      `;
+    }
+    else {
+      fileBox.innerHTML = `
+        <div class="file-preview" style="text-align: center;">
+          <a class="btn" href="${item.file}" target="_blank" rel="noopener noreferrer">
+            🔗 فتح الرابط الخارجي
+          </a>
+        </div>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>

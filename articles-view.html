@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>المقالة المحكمة</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; overflow-x:hidden; }
+  body {
+    font-family:"Tajawal",sans-serif;
+    background:linear-gradient(135deg,#f5f7fb 0%,#e2e8f0 100%);
+    padding:clamp(10px,4vw,20px);
+    line-height:1.7;
+    min-height:100vh;
+  }
+  .container{
+    max-width:900px;width:100%;margin:0 auto;
+    background:#fff;
+    padding:clamp(20px,6vw,30px);
+    border-radius:clamp(10px,3vw,16px);
+    box-shadow:0 10px 35px rgba(0,0,0,0.08);
+  }
+  h1{
+    margin:0 0 clamp(20px,6vw,25px) 0;
+    color:#0aa2ca;
+    font-size:clamp(20px,6vw,32px);
+    font-weight:700;
+  }
+  .image-box{margin-bottom:clamp(18px,5vw,25px);}
+  .image-box img{
+    width:100%;
+    height:clamp(160px,35vw,280px);
+    object-fit:cover;
+    border-radius:clamp(8px,2vw,14px);
+  }
+  .section{margin-bottom:clamp(20px,6vw,30px);}
+  .label{
+    font-weight:700;
+    margin-bottom:clamp(6px,2vw,10px);
+    color:#0a4f5f;
+    font-size:clamp(14px,4vw,17px);
+    display:block;
+  }
+  .content{
+    font-size:clamp(14px,4vw,16px);
+    color:#333;
+    padding:clamp(12px,4vw,15px);
+    background:#f8fafc;
+    border-radius:clamp(8px,2vw,10px);
+    border-right:4px solid #e2e8f0;
+    min-height:clamp(50px,12vw,60px);
+    word-break:break-word;
+    line-height:1.7;
+    white-space:pre-wrap;
+  }
+  .file-box{
+    background:#eef7fa;
+    border:2px solid #d9e7ec;
+    padding:clamp(15px,5vw,25px);
+    border-radius:clamp(10px,3vw,14px);
+    margin:clamp(15px,5vw,20px) 0;
+  }
+  iframe{
+    width:100%;
+    height:clamp(250px,65vw,650px);
+    border-radius:clamp(8px,2vw,12px);
+    border:1px solid #d1d5db;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    display:block;
+  }
+  .btn{
+    display:inline-block;
+    background:linear-gradient(135deg,#0aa2ca,#078fa8);
+    color:#fff;
+    padding:clamp(10px,3vw,14px) clamp(18px,5vw,28px);
+    border-radius:clamp(8px,2.5vw,12px);
+    text-decoration:none;
+    font-weight:700;
+    font-size:clamp(14px,4vw,16px);
+    margin-top:clamp(10px,3vw,15px);
+    box-shadow:0 4px 15px rgba(10,162,202,0.3);
+    transition:all .3s ease;
+    text-align:center;
+  }
+  .btn:hover{
+    background:linear-gradient(135deg,#078fa8,#056b7f);
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(10,162,202,0.4);
+  }
+  .btn.secondary{
+    background:linear-gradient(135deg,#6b7280,#9ca3af);
+  }
+  .error{
+    text-align:center;
+    color:#dc3545;
+    font-size:clamp(18px,6vw,24px);
+    padding:clamp(50px,20vw,80px) clamp(20px,8vw,40px);
+    background:#fff;
+    border-radius:clamp(12px,4vw,16px);
+    box-shadow:0 10px 35px rgba(0,0,0,0.08);
+    margin:clamp(20px,8vw,40px) auto;
+    max-width:90%;
+  }
+  @media(max-width:1200px){.container{max-width:95%;}}
+  @media(max-width:768px){
+    body{padding:clamp(8px,3vw,12px);}
+    .container{padding:clamp(18px,6vw,22px);}
+  }
+  @media(max-width:480px){
+    body{padding:clamp(5px,2.5vw,8px);}
+    .container{
+      padding:clamp(15px,5vw,18px);
+      margin:0 clamp(5px,2vw,10px);
+      border-radius:clamp(8px,3vw,12px);
+    }
+  }
+  @media(max-width:360px){
+    body{padding:clamp(3px,2vw,5px);}
+    .container{padding:clamp(12px,5vw,15px);}
+  }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <h1 id="title">...</h1>
+
+  <div id="imageBox" class="image-box"></div>
+
+  <div class="section">
+    <div class="label">المحتوى المختصر:</div>
+    <div id="short" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">المحتوى الكامل:</div>
+    <div id="full" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">تفاصيل إضافية:</div>
+    <div id="details" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">الملف المرفق:</div>
+    <div id="fileBox" class="file-box">لا يوجد ملف.</div>
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <a href="articles.html" class="btn secondary">رجوع للمقالات</a>
+    <a href="javascript:window.print()" class="btn">طباعة</a>
+  </div>
+</div>
+
+<script>
+  let item = JSON.parse(localStorage.getItem('articleView') || 'null');
+
+  if (!item) {
+    document.body.innerHTML = `
+      <div class="error">
+        ❌ رابط غير صالح
+        <br><br>
+        <a href="articles.html" class="btn">رجوع للمقالات</a>
+      </div>
+    `;
+  } else {
+    document.getElementById("title").textContent   = item.title   || "—";
+    document.getElementById("short").textContent   = item.short   || "—";
+    document.getElementById("full").textContent    = item.full    || "—";
+    document.getElementById("details").textContent = item.details || "—";
+
+    if (item.image) {
+      document.getElementById("imageBox").innerHTML =
+        `<img src="${item.image}" alt="صورة" loading="lazy">`;
+    }
+
+    let fileBox = document.getElementById("fileBox");
+    if (!item.file) {
+      fileBox.innerHTML = "لا يوجد ملف.";
+    } 
+    else if (item.file.startsWith("data:application/pdf")) {
+      fileBox.innerHTML = `
+        <iframe src="${item.file}" loading="lazy"></iframe>
+        <br>
+        <a class="btn" href="${item.file}" download>تحميل PDF</a>
+      `;
+    }
+    else if (item.file.startsWith("data:video")) {
+      fileBox.innerHTML = `
+        <video controls style="width:100%;border-radius:clamp(8px,2vw,12px);margin-bottom:15px;" preload="metadata">
+          <source src="${item.file}">
+          متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+        <a class="btn" href="${item.file}" download>تحميل الفيديو</a>
+      `;
+    }
+    else {
+      fileBox.innerHTML = `
+        <a class="btn" href="${item.file}" target="_blank" rel="noopener noreferrer">فتح الرابط</a>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>

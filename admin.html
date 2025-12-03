@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>لوحة التحكم - Modern Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+  :root{
+    --accent: #0aa2ca;
+    --accent-dark: #078fa8;
+    --bg: #f5f7fb;
+    --card: #fff;
+    --muted: #68707d;
+  }
+  *{box-sizing:border-box}
+  html, body { 
+    width: 100%; 
+    overflow-x: hidden; 
+  }
+  body{
+    margin:0; 
+    font-family:"Tajawal",sans-serif; 
+    background:var(--bg); 
+    color:#0c2636;
+    line-height: 1.6;
+  }
+
+  /* شاشة قفل الأدمن */
+  .admin-lock{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(135deg,#0aa2ca,#078fa8);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:9999;
+  }
+  .admin-lock-card{
+    background:#fff;
+    width:100%;
+    max-width:360px;
+    padding:24px 20px;
+    border-radius:18px;
+    box-shadow:0 12px 35px rgba(0,0,0,0.18);
+    text-align:center;
+  }
+  .admin-lock-card h2{
+    margin:0 0 10px;
+    font-size:22px;
+    color:#0a4f5f;
+  }
+  .admin-lock-card p{
+    margin:0 0 16px;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .admin-input{
+    position:relative;
+    margin-bottom:12px;
+    text-align:right;
+  }
+  .admin-input i{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#9ca3af;
+    font-size:18px;
+  }
+  .admin-input input{
+    width:100%;
+    padding:10px 14px 10px 42px;
+    border-radius:24px;
+    border:1px solid #d1d5db;
+    font-size:14px;
+    font-family:"Tajawal",sans-serif;
+    outline:none;
+  }
+  .admin-input input:focus{
+    border-color:#0aa2ca;
+    box-shadow:0 0 0 2px rgba(10,162,202,0.2);
+  }
+  .admin-btn{
+    width:100%;
+    padding:11px;
+    border-radius:24px;
+    border:none;
+    background:#0aa2ca;
+    color:#fff;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  .admin-error{
+    font-size:13px;
+    color:#ef4444;
+    margin-top:6px;
+    display:none;
+  }
+
+  /* Layout */
+  .app {
+    display: grid;
+    grid-template-columns: clamp(240px, 25vw, 280px) 1fr;
+    min-height: 100vh;
+    gap: clamp(15px, 3vw, 20px);
+    padding: clamp(10px, 2vw, 20px);
+  }
+
+  /* SIDEBAR */
+  aside.sidebar{
+    background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+    color: #fff; 
+    padding: clamp(18px, 4vw, 22px); 
+    border-radius: clamp(8px, 2vw, 12px);
+    display: flex; 
+    flex-direction: column;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 2vw, 12px);
+    margin-bottom: clamp(15px, 3vw, 18px);
+  }
+  .brand .logo { 
+    width: clamp(38px, 8vw, 44px); 
+    height: clamp(38px, 8vw, 44px); 
+    border-radius: clamp(6px, 1.5vw, 8px); 
+    background: #fff3; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    font-weight: 700;
+    font-size: clamp(14px, 3vw, 16px);
+  }
+  .brand h1 {
+    font-size: clamp(16px, 3.5vw, 18px);
+    margin: 0;
+  }
+  nav.side-menu {
+    flex: 1; 
+    margin-top: clamp(6px, 1.5vw, 8px);
+  }
+  nav.side-menu button{
+    width: 100%; 
+    border: 0; 
+    background: transparent; 
+    color: inherit; 
+    text-align: right; 
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 12px); 
+    border-radius: clamp(6px, 1.5vw, 8px);
+    font-size: clamp(13px, 2.8vw, 15px); 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    gap: clamp(6px, 1.5vw, 8px);
+    line-height: 1.4;
+  }
+  nav.side-menu button:hover, nav.side-menu button.active{ background: #ffffff20; }
+  .sidebar-footer {
+    font-size: clamp(11px, 2.5vw, 13px); 
+    color: #eaf6fb; 
+    opacity: .9; 
+    margin-top: clamp(10px, 2vw, 12px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .sidebar-footer button{
+    border:0;
+    background:#ffffff22;
+    color:#fff;
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:11px;
+    cursor:pointer;
+  }
+
+  /* MAIN */
+  main.app-main {
+    padding: clamp(15px, 3vw, 20px); 
+    overflow: auto;
+  }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: clamp(15px, 3vw, 18px); 
+    gap: clamp(12px, 3vw, 16px);
+  }
+  .topbar h2 {
+    margin: 0;
+    color: var(--accent-dark);
+    font-size: clamp(20px, 4vw, 24px);
+  }
+  .controls { 
+    display: flex; 
+    gap: clamp(8px, 2vw, 10px); 
+    flex-wrap: wrap;
+  }
+  .btn {
+    border: 0;
+    padding: clamp(6px, 1.8vw, 8px) clamp(12px, 3vw, 14px);
+    border-radius: clamp(8px, 2vw, 10px);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: clamp(13px, 2.8vw, 15px);
+  }
+  .btn.primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-dark)); 
+    color: #fff;
+  }
+  .btn.ghost {
+    background: transparent;
+    border: 1px solid #e0e7eb;
+    color: var(--muted);
+  }
+
+  /* Card */
+  .card { 
+    background: var(--card); 
+    padding: clamp(15px, 4vw, 18px); 
+    border-radius: clamp(10px, 2.5vw, 12px); 
+    box-shadow: 0 6px 20px rgba(10,10,20,0.06); 
+    margin-bottom: clamp(12px, 3vw, 16px);
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr clamp(280px, 30vw, 350px);
+    gap: clamp(12px, 3vw, 14px);
+    align-items: start;
+  }
+  .form-row {
+    margin-bottom: clamp(10px, 2.5vw, 12px);
+  }
+  label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: clamp(4px, 1.2vw, 6px);
+    font-size: clamp(13px, 2.8vw, 14px);
+  }
+  input[type="text"], 
+  textarea, 
+  input[type="url"] {
+    width: 100%;
+    padding: clamp(8px, 2vw, 10px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    border: 1px solid #e3e6ea;
+    font-size: clamp(13px, 2.8vw, 14px);
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus,
+  textarea:focus,
+  input[type="url"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(10,162,202,0.1);
+  }
+  textarea {
+    min-height: clamp(80px, 15vw, 120px);
+  }
+  .file-inline {
+    display: flex;
+    gap: clamp(6px, 1.5vw, 8px);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .preview-img {
+    width: 100%;
+    height: clamp(120px, 25vw, 160px);
+    object-fit: cover;
+    border-radius: clamp(6px, 1.5vw, 8px);
+    border: 1px solid #eee;
+  }
+  .small {
+    font-size: clamp(11px, 2.5vw, 13px);
+    padding: clamp(4px, 1.2vw, 6px) clamp(8px, 2vw, 10px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+  .btn.small {
+    padding: clamp(4px, 1.2vw, 6px) clamp(8px, 2vw, 10px);
+  }
+
+  /* cards grid */
+  .list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(200px, 35vw, 240px), 1fr));
+    gap: clamp(10px, 2.5vw, 12px);
+    margin-top: clamp(12px, 3vw, 14px);
+  }
+  .item-card {
+    background: #fff;
+    padding: clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(8px, 2vw, 10px);
+    position: relative;
+    border: 1px solid #eef3f6;
+  }
+  .item-card h3 {
+    margin: 0 0 clamp(6px, 1.5vw, 8px) 0;
+    font-size: clamp(14px, 3vw, 15px);
+  }
+  .item-card p {
+    margin: 0 0 clamp(6px, 1.5vw, 8px) 0;
+    color: var(--muted); 
+    font-size: clamp(12px, 2.7vw, 13px);
+    min-height: clamp(35px, 8vw, 40px);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .item-actions {
+    display: flex;
+    gap: clamp(4px, 1vw, 6px);
+    position: absolute;
+    top: clamp(6px, 1.5vw, 10px);
+    left: clamp(6px, 1.5vw, 10px);
+  }
+  .item-actions button {
+    padding: clamp(4px, 1vw, 6px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    border: 0;
+    cursor: pointer;
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+  .meta {
+    font-size: clamp(10px, 2.3vw, 12px);
+    color: #9aa7b0;
+  }
+
+  /* responsive */
+  @media(max-width: 980px){
+    .app {
+      grid-template-columns: 1fr;
+      gap: clamp(12px, 3vw, 15px);
+    }
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: clamp(10px, 2.5vw, 12px);
+    }
+    aside.sidebar {
+      flex-direction: row;
+      gap: clamp(6px, 1.5vw, 8px);
+      align-items: center;
+      padding: clamp(10px, 2.5vw, 12px);
+      border-radius: 0 0 clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px);
+    }
+    nav.side-menu {
+      display: flex;
+      gap: clamp(6px, 1.5vw, 8px);
+      overflow: auto;
+      margin-top: 0;
+    }
+    nav.side-menu button {
+      white-space: nowrap;
+      padding: clamp(6px, 1.5vw, 8px);
+      flex-shrink: 0;
+    }
+  }
+
+  @media(max-width: 768px){
+    .app { padding: clamp(8px, 2vw, 10px); }
+    .topbar { flex-direction: column; gap: clamp(10px, 2.5vw, 12px); align-items: stretch; }
+    .controls { justify-content: center; }
+    .form-row { margin-bottom: clamp(12px, 3vw, 15px); }
+    textarea { min-height: clamp(100px, 25vw, 140px); }
+  }
+
+  @media(max-width: 480px){
+    .list-grid { 
+      grid-template-columns: 1fr; 
+      gap: clamp(12px, 3vw, 15px);
+    }
+    .item-card { padding: clamp(12px, 3vw, 15px); }
+  }
+
+  .muted {
+    color: var(--muted); 
+    font-size: clamp(11px, 2.5vw, 13px);
+  }
+  a.link {
+    color: var(--accent); 
+    text-decoration: none;
+    font-size: clamp(12px, 2.7vw, 14px);
+  }
+</style>
+</head>
+<body>
+
+<!-- شاشة قفل الأدمن -->
+<div id="adminLock" class="admin-lock">
+  <div class="admin-lock-card">
+    <h2>دخول الأدمن</h2>
+    <p>هذه اللوحة مغلقة. أدخل كود الأدمن وكلمة المرور للمتابعة.</p>
+    <div class="admin-input">
+      <i class="ri-user-3-line"></i>
+      <input id="adminCode" type="text" placeholder="كود الأدمن (admin)">
+    </div>
+    <div class="admin-input">
+      <i class="ri-lock-password-line"></i>
+      <input id="adminPass" type="password" placeholder="كلمة المرور">
+    </div>
+    <button class="admin-btn" onclick="checkAdminLogin()">دخول</button>
+    <div id="adminError" class="admin-error">بيانات الدخول غير صحيحة</div>
+  </div>
+</div>
+
+<div class="app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">AD</div>
+      <div>
+        <div style="font-size: clamp(11px, 2.5vw, 13px); opacity: .9">لوحة التحكم</div>
+        <div style="font-size: clamp(10px, 2.3vw, 12px); opacity: .8">Modern Dashboard Pro</div>
+      </div>
+    </div>
+
+    <nav class="side-menu" role="navigation" aria-label="Sections">
+      <button class="active" onclick="showSection('research', this)"><span>أبحاث محكمة</span><i class="ri-file-text-line"></i></button>
+      <button onclick="showSection('articles', this)"><span>مقالات محكمة</span><i class="ri-file-paper-line"></i></button>
+      <button onclick="showSection('files', this)"><span>ملفات بحثية</span><i class="ri-folder-3-line"></i></button>
+      <button onclick="showSection('general-articles', this)"><span>مقالات عامة</span><i class="ri-newspaper-line"></i></button>
+      <button onclick="showSection('editions', this)"><span>إصداراتنا</span><i class="ri-book-open-line"></i></button>
+      <button onclick="showSection('activities', this)"><span>أنشطتنا</span><i class="ri-calendar-2-line"></i></button>
+      <button onclick="showSection('talks', this)"><span>حوارات</span><i class="ri-voiceprint-line"></i></button>
+      <button onclick="showSection('training', this)"><span>تكوينات</span><i class="ri-train-line"></i></button>
+      <button onclick="showSection('live', this)"><span>البث المباشر</span><i class="ri-live-line"></i></button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span>مُنشأ بواسطتك</span>
+      <button onclick="adminLogout()">تسجيل خروج</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="app-main">
+    <div class="topbar">
+      <h2 id="sectionTitle">أبحاث محكمة</h2>
+      <div class="controls">
+        <button class="btn ghost" onclick="clearAllData()">مسح كل البيانات (localStorage)</button>
+        <button class="btn primary" onclick="exportData()">تصدير JSON</button>
+      </div>
+    </div>
+
+    <div id="sectionArea"><!-- dynamic content --></div>
+  </main>
+</div>
+
+<script>
+/* AUTH SIMPLE (واجهة فقط – غير آمن فعلياً) */
+const ADMIN_CODE_CONST = 'admin';
+const ADMIN_PASS_CONST = 'Ofoq123123123';
+
+function unlockApp(){
+  document.getElementById('adminLock').style.display = 'none';
+  document.querySelector('.app').style.display = 'grid';
+}
+
+function checkAdminLogin(){
+  const code = document.getElementById('adminCode').value.trim();
+  const pass = document.getElementById('adminPass').value;
+  const err  = document.getElementById('adminError');
+
+  if(code === ADMIN_CODE_CONST && pass === ADMIN_PASS_CONST){
+    sessionStorage.setItem('adminAuthed','1');
+    err.style.display = 'none';
+    unlockApp();
+    // ضمان عرض القسم الافتراضي
+    showSection(currentSection || 'research');
+  } else {
+    err.style.display = 'block';
+  }
+}
+
+function adminLogout(){
+  sessionStorage.removeItem('adminAuthed');
+  document.querySelector('.app').style.display = 'none';
+  document.getElementById('adminLock').style.display = 'flex';
+  document.getElementById('adminCode').value = '';
+  document.getElementById('adminPass').value = '';
+}
+
+/* ---------------------------
+   CONFIG / SECTIONS
+   --------------------------- */
+const SECTIONS = [
+  { key:'research', title:'أبحاث محكمة', allowFile:true },
+  { key:'articles', title:'مقالات محكمة', allowFile:true },
+  { key:'files', title:'ملفات بحثية', allowFile:true },
+  { key:'general-articles', title:'مقالات عامة', allowFile:true },
+  { key:'editions', title:'إصداراتنا', allowFile:true },
+  { key:'activities', title:'أنشطتنا', allowFile:true },
+  { key:'talks', title:'حوارات', allowFile:true },
+  { key:'training', title:'تكوينات', allowFile:true },
+  { key:'live', title:'البث المباشر', allowFile:false }
+];
+
+let db = {};
+SECTIONS.forEach(s => db[s.key] = JSON.parse(localStorage.getItem(s.key)) || []);
+
+/* UTILITIES */
+function readFileAsDataURL(file){
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.onerror = e => rej(e);
+    r.readAsDataURL(file);
+  });
+}
+function uid(){ return Date.now() + Math.floor(Math.random()*999); }
+
+/* RENDER / INTERACTION */
+let currentSection = 'research';
+
+function showSection(key, btnEl){
+  currentSection = key;
+  document.getElementById('sectionTitle').innerText = SECTIONS.find(s=>s.key===key).title;
+
+  document.querySelectorAll('.side-menu button').forEach(b=>b.classList.remove('active'));
+  if(btnEl) btnEl.classList.add('active');
+
+  const secCfg = SECTIONS.find(s=>s.key===key);
+  const area = document.getElementById('sectionArea');
+  area.innerHTML = '';
+
+  const formCard = document.createElement('div'); 
+  formCard.className='card';
+  formCard.innerHTML = `
+    <h3 style="margin: 0 0 clamp(12px, 3vw, 15px) 0; font-size: clamp(16px, 4vw, 18px);">إضافة / تعديل — ${secCfg.title}</h3>
+    <div class="form-grid">
+      <div>
+        <div class="form-row">
+          <label>العنوان</label>
+          <input type="text" id="${key}_title" placeholder="أدخل العنوان الرئيسي">
+        </div>
+        ${secCfg.key!=='live' ? `
+        <div class="form-row">
+          <label>المحتوى المختصر</label>
+          <textarea id="${key}_short" placeholder="نص مختصر للعرض في القائمة..."></textarea>
+        </div>
+        <div class="form-row">
+          <label>المحتوى الكامل</label>
+          <textarea id="${key}_full" placeholder="المحتوى الكامل للمقال/البحث..."></textarea>
+        </div>
+        <div class="form-row">
+          <label>تفاصيل إضافية</label>
+          <textarea id="${key}_details" placeholder="معلومات إضافية أو ملاحظات..."></textarea>
+        </div>` : ''}
+        ${secCfg.allowFile ? `
+        <div class="form-row">
+          <label>رابط خارجي (PDF/فيديو) — اختياري</label>
+          <input type="url" id="${key}_fileurl" placeholder="https://example.com/pdf أو فيديو">
+        </div>` : ''}
+      </div>
+
+      <div>
+        ${secCfg.key!=='live' ? `
+        <div class="form-row">
+          <label>صورة غلاف (رفع من الجهاز)</label>
+          <input type="file" id="${key}_image" accept="image/*">
+        </div>` : ''}
+        ${secCfg.allowFile && secCfg.key!=='live' ? `
+        <div class="form-row">
+          <label>ملف PDF أو فيديو (رفع)</label>
+          <input type="file" id="${key}_file" accept="application/pdf,video/*">
+        </div>` : ''}
+        ${secCfg.key==='live' ? `
+        <div class="form-row">
+          <label>رابط البث المباشر</label>
+          <input type="url" id="live_link" placeholder="رابط البث (YouTube, Vimeo, مباشر)">
+        </div>` : ''}
+        <div class="form-row">
+          <label>معاينة الملفات</label>
+          <div id="${key}_preview" class="muted">لا توجد معاينات بعد.</div>
+        </div>
+        <div style="margin-top: clamp(8px, 2vw, 10px); display: flex; gap: clamp(6px, 1.5vw, 8px); flex-wrap: wrap;">
+          <button class="btn primary" onclick="saveItem('${key}')">حفظ</button>
+          <button class="btn ghost" onclick="resetForm('${key}')">تفريغ الحقول</button>
+        </div>
+      </div>
+    </div>
+  `;
+  area.appendChild(formCard);
+
+  const listCard = document.createElement('div'); 
+  listCard.className='card';
+  listCard.innerHTML = `
+    <h3 style="margin: 0 0 clamp(12px, 3vw, 15px) 0; font-size: clamp(16px, 4vw, 18px);">العناصر في ${secCfg.title}</h3>
+    <div id="${key}_list" class="list-grid"></div>
+  `;
+  area.appendChild(listCard);
+
+  if(secCfg.key!=='live'){
+    const imgInput = document.getElementById(`${key}_image`);
+    const fileInput = document.getElementById(`${key}_file`);
+    const preview = document.getElementById(`${key}_preview`);
+
+    if(imgInput){
+      imgInput.addEventListener('change', ()=> {
+        if(imgInput.files[0]){
+          const url = URL.createObjectURL(imgInput.files[0]);
+          preview.innerHTML = `<img src="${url}" class="preview-img">`;
+        }
+      });
+    }
+    if(fileInput){
+      fileInput.addEventListener('change', ()=> {
+        if(fileInput.files[0]){
+          const f = fileInput.files[0];
+          preview.innerHTML = `<div class="muted">ملف محدد: ${f.name} — حجم: ${(f.size/1024).toFixed(1)} KB</div>`;
+        }
+      });
+    }
+  }
+
+  renderList(key);
+}
+
+/* RESET FORM */
+function resetForm(key){
+  const cfg = SECTIONS.find(s=>s.key===key);
+  document.getElementById(`${key}_title`).value = '';
+  if(cfg.key!=='live'){
+    document.getElementById(`${key}_short`).value = '';
+    document.getElementById(`${key}_full`).value = '';
+    document.getElementById(`${key}_details`).value = '';
+    const img = document.getElementById(`${key}_image`);
+    if(img) img.value = '';
+    const file = document.getElementById(`${key}_file`);
+    if(file) file.value = '';
+    const url = document.getElementById(`${key}_fileurl`);
+    if(url) url.value = '';
+    document.getElementById(`${key}_preview`).innerHTML = 'لا توجد معاينات بعد.';
+  } else {
+    document.getElementById('live_link').value = '';
+  }
+}
+
+/* RENDER LIST */
+function renderList(key){
+  const listEl = document.getElementById(`${key}_list`);
+  listEl.innerHTML = '';
+  const data = db[key] || [];
+  if(!data.length) { 
+    listEl.innerHTML = '<div class="muted" style="padding: clamp(20px, 6vw, 30px); text-align: center;">لا توجد عناصر بعد.</div>'; 
+    return; 
+  }
+
+  data.forEach(item=>{
+    const div = document.createElement('div'); 
+    div.className='item-card';
+    const date = new Date(item.id).toLocaleString('ar-EG');
+    const shortText = item.short ? (item.short.length>100 ? item.short.slice(0,100)+'...' : item.short) : '';
+    let attachLabel = '';
+    if(item.file){
+      if(item.file.startsWith('data:application/pdf')) attachLabel = 'PDF مرفق';
+      else if(item.file.startsWith('data:video/')) attachLabel = 'فيديو مرفق';
+      else attachLabel = 'رابط خارجي';
+    }
+    div.innerHTML = `
+      <div class="item-actions">
+        <button title="تعديل" class="btn small" onclick="loadForEdit('${key}', ${item.id})" style="background: var(--accent);"><i class="ri-edit-box-line"></i></button>
+        <button title="حذف" class="btn small" style="background:#e74c3c;" onclick="deleteItem('${key}', ${item.id})"><i class="ri-delete-bin-line"></i></button>
+      </div>
+      ${item.image ? `<img src="${item.image}" style="width:100%;height: clamp(100px, 20vw, 120px);object-fit:cover;border-radius: clamp(6px, 1.5vw, 8px);margin-bottom: clamp(6px, 1.5vw, 8px);">` : ''}
+      <h3>${item.title}</h3>
+      <p>${shortText}</p>
+      <div class="meta">${attachLabel} · ${date}</div>
+      <div style="margin-top: clamp(6px, 1.5vw, 8px);">
+        ${key!=='live' ? `<a class="link" href="view.html?id=${item.id}&type=${key}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">عرض التفاصيل</a>` : `<a class="link" href="${item.file}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">مشاهدة البث</a>`}
+      </div>
+    `;
+    listEl.appendChild(div);
+  });
+}
+
+/* SAVE ITEM */
+async function saveItem(key){
+  const cfg = SECTIONS.find(s=>s.key===key);
+  const title = (document.getElementById(`${key}_title`)?.value || '').trim();
+  if(!title){ return alert('الرجاء إدخال عنوان'); }
+
+  const newObj = {
+    id: uid(),
+    title,
+    short: '',
+    full: '',
+    details: '',
+    image: '',
+    file: ''
+  };
+
+  if(cfg.key==='live'){
+    newObj.file = document.getElementById('live_link').value || '';
+    if(!newObj.file) return alert('ضع رابط البث المباشر');
+    db[key].push(newObj);
+    localStorage.setItem(key, JSON.stringify(db[key]));
+    renderList(key);
+    resetForm(key);
+    alert('تم حفظ البث المباشر');
+    return;
+  }
+
+  newObj.short = (document.getElementById(`${key}_short`)?.value || '').trim();
+  newObj.full  = (document.getElementById(`${key}_full`)?.value || '').trim();
+  newObj.details = (document.getElementById(`${key}_details`)?.value || '').trim();
+
+  const imageInput = document.getElementById(`${key}_image`);
+  const fileInput  = document.getElementById(`${key}_file`);
+  const fileURL    = (document.getElementById(`${key}_fileurl`)?.value || '').trim();
+
+  try{
+    if(imageInput && imageInput.files[0]){
+      const file = imageInput.files[0];
+      if(file.size > 6 * 1024 * 1024){
+        if(!confirm('الصورة كبيرة (>6MB) — هل تريد المتابعة؟')) return;
+      }
+      newObj.image = await readFileAsDataURL(file);
+    }
+    if(fileURL){
+      newObj.file = fileURL;
+    } else if(fileInput && fileInput.files[0]){
+      const f = fileInput.files[0];
+      if(f.size > 10 * 1024 * 1024){
+        if(!confirm('الملف كبير (>10MB). استخدم رابط خارجي؟')) return;
+      }
+      newObj.file = await readFileAsDataURL(f);
+    }
+
+    db[key].push(newObj);
+    localStorage.setItem(key, JSON.stringify(db[key]));
+    renderList(key);
+    resetForm(key);
+    alert('✅ تمت الإضافة بنجاح');
+  }catch(err){
+    console.error(err);
+    alert('❌ حدث خطأ أثناء تحميل الملف');
+  }
+}
+
+/* LOAD FOR EDIT */
+function loadForEdit(key, id){
+  const data = db[key] || [];
+  const item = data.find(i=>i.id === id);
+  if(!item) return alert('العنصر غير موجود');
+
+  document.getElementById(`${key}_title`).value = item.title || '';
+  if(key!=='live'){
+    document.getElementById(`${key}_short`).value = item.short || '';
+    document.getElementById(`${key}_full`).value = item.full || '';
+    document.getElementById(`${key}_details`).value = item.details || '';
+    document.getElementById(`${key}_fileurl`).value = (item.file && !item.file.startsWith('data:')) ? item.file : '';
+    const preview = document.getElementById(`${key}_preview`);
+    if(item.image) preview.innerHTML = `<img src="${item.image}" class="preview-img">`;
+    else preview.innerHTML = `<div class="muted">${item.file ? 'مرفق: ' + (item.file.slice(0,60)) : 'لا توجد معاينات'}</div>`;
+  } else {
+    document.getElementById('live_link').value = item.file || '';
+  }
+
+  db[key] = db[key].filter(i=>i.id !== id);
+  localStorage.setItem(key, JSON.stringify(db[key]));
+  renderList(key);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* DELETE */
+function deleteItem(key, id){
+  if(!confirm('هل تريد حذف هذا العنصر نهائياً؟')) return;
+  db[key] = db[key].filter(i => i.id !== id);
+  localStorage.setItem(key, JSON.stringify(db[key]));
+  renderList(key);
+}
+
+/* EXPORT / CLEAR */
+function exportData(){
+  const exportObj = {};
+  SECTIONS.forEach(s => exportObj[s.key] = db[s.key] || []);
+  const blob = new Blob([JSON.stringify(exportObj, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); 
+  a.href = url; 
+  a.download = 'site-data.json';
+  document.body.appendChild(a); 
+  a.click(); 
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function clearAllData(){
+  if(!confirm('⚠️ سيتم حذف كل البيانات من localStorage نهائياً. متأكد؟')) return;
+  SECTIONS.forEach(s => {
+    localStorage.removeItem(s.key);
+    db[s.key] = [];
+  });
+  showSection('research');
+  alert('✅ تم مسح جميع البيانات');
+}
+
+/* تفعيل القفل عند التحميل */
+window.addEventListener('load', () => {
+  if(sessionStorage.getItem('adminAuthed') === '1'){
+    unlockApp();
+    showSection(currentSection);
+  } else {
+    document.getElementById('adminLock').style.display = 'flex';
+    document.querySelector('.app').style.display = 'none';
+  }
+});
+
+// دخول بالـ Enter في شاشة الأدمن
+document.addEventListener('keypress', e => {
+  if(e.key === 'Enter' && document.getElementById('adminLock').style.display !== 'none'){
+    checkAdminLogin();
+  }
+});
+</script>
+
+</body>
+</html>

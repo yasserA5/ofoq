@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>تفاصيل النشاط</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+<style>
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+  }
+  
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  body {
+    font-family: "Tajawal", sans-serif;
+    background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
+    padding: clamp(10px, 4vw, 20px);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 950px;
+    width: 100%;
+    margin: 0 auto;
+    background: white;
+    padding: clamp(25px, 6vw, 35px);
+    border-radius: clamp(12px, 3vw, 18px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #22c55e, #16a34a, #15803d);
+  }
+
+  .activity-header {
+    text-align: center;
+    margin-bottom: clamp(25px, 7vw, 35px);
+    padding: clamp(20px, 6vw, 30px);
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-radius: clamp(12px, 4vw, 16px);
+    border-right: 5px solid #22c55e;
+  }
+
+  h1 {
+    margin: 0 0 clamp(12px, 4vw, 18px) 0;
+    color: #166534;
+    font-size: clamp(24px, 7vw, 38px);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(15px, 5vw, 22px);
+    justify-content: center;
+    margin-bottom: clamp(20px, 6vw, 30px);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: clamp(14px, 4vw, 16px);
+    color: #065f46;
+    background: rgba(34, 197, 94, 0.1);
+    padding: clamp(8px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
+    border-radius: clamp(20px, 6vw, 28px);
+    border: 2px solid rgba(34, 197, 94, 0.2);
+  }
+
+  .meta-icon {
+    width: clamp(20px, 6vw, 26px);
+    height: clamp(20px, 6vw, 26px);
+    background: #22c55e;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: clamp(12px, 3.5vw, 14px);
+  }
+
+  .image-box {
+    margin-bottom: clamp(30px, 8vw, 40px);
+  }
+  .image-box img {
+    width: 100%;
+    height: clamp(220px, 45vw, 350px);
+    object-fit: cover;
+    border-radius: clamp(14px, 4vw, 20px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+  }
+
+  .section {
+    margin-bottom: clamp(30px, 8vw, 40px);
+  }
+
+  .label {
+    font-weight: 800;
+    margin-bottom: clamp(12px, 4vw, 18px);
+    color: #0d6b8c;
+    font-size: clamp(17px, 5vw, 22px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .label-icon {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .content {
+    font-size: clamp(15px, 4.2vw, 17px);
+    color: #1f2937;
+    padding: clamp(20px, 6vw, 25px);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: clamp(14px, 4vw, 18px);
+    border-right: 5px solid #dcfce7;
+    min-height: clamp(80px, 18vw, 100px);
+    word-break: break-word;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    box-shadow: inset 0 3px 10px rgba(0,0,0,0.04);
+  }
+
+  .content strong {
+    color: #166534;
+    font-weight: 700;
+  }
+
+  .file-box {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 3px solid #bbf7d0;
+    padding: clamp(25px, 7vw, 35px);
+    border-radius: clamp(16px, 5vw, 22px);
+    margin: clamp(25px, 7vw, 35px) 0;
+  }
+
+  .file-preview {
+    text-align: center;
+    margin-bottom: clamp(25px, 7vw, 35px);
+  }
+
+  iframe {
+    width: 100%;
+    height: clamp(320px, 75vw, 750px);
+    border-radius: clamp(14px, 4vw, 20px);
+    border: 3px solid #bbf7d0;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.18);
+    display: block;
+  }
+
+  video {
+    width: 100%;
+    height: clamp(280px, 65vw, 500px);
+    border-radius: clamp(14px, 4vw, 20px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.18);
+  }
+
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(12px, 4vw, 18px);
+    justify-content: center;
+    margin-top: clamp(20px, 6vw, 30px);
+  }
+
+  .btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    padding: clamp(13px, 4.5vw, 17px) clamp(26px, 7vw, 35px);
+    border-radius: clamp(12px, 3.5vw, 16px);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: clamp(15px, 4.2vw, 17px);
+    box-shadow: 0 6px 20px rgba(34,197,94,0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn.secondary {
+    background: linear-gradient(135deg, #0aa2ca, #078fa8);
+    box-shadow: 0 6px 20px rgba(10,162,202,0.3);
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(34,197,94,0.4);
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .error {
+    text-align: center;
+    color: #dc2626;
+    font-size: clamp(22px, 7.5vw, 30px);
+    padding: clamp(70px, 28vw, 110px) clamp(30px, 12vw, 60px);
+    background: white;
+    border-radius: clamp(16px, 5vw, 24px);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+    margin: clamp(30px, 12vw, 60px) auto;
+    max-width: 90%;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:1200px){
+    .container { max-width: 95%; }
+  }
+
+  @media(max-width:768px){
+    body { padding: clamp(8px, 3vw, 12px); }
+    .container { padding: clamp(22px, 7vw, 30px); }
+    .activity-meta { flex-direction: column; align-items: center; }
+    .btn-group { flex-direction: column; align-items: center; }
+  }
+
+  @media(max-width:480px){
+    body { padding: clamp(5px, 2.5vw, 8px); }
+    .container { 
+      padding: clamp(20px, 6.5vw, 25px); 
+      margin: 0 clamp(5px, 2vw, 10px); 
+      border-radius: clamp(10px, 3.5vw, 14px); 
+    }
+  }
+
+  @media(max-width:360px){
+    body { padding: clamp(3px, 2vw, 5px); }
+    .container { padding: clamp(16px, 6vw, 20px); }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <div class="activity-header">
+    <h1 id="title">...</h1>
+    <div class="activity-meta" id="activityMeta">
+      <!-- سيتم ملؤه ديناميكيًا -->
+    </div>
+  </div>
+
+  <div id="imageBox" class="image-box"></div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">📋</div>
+      نبذة عن النشاط
+    </div>
+    <div id="short" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">📄</div>
+      التفاصيل الكاملة
+    </div>
+    <div id="full" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">ℹ️</div>
+      معلومات إضافية
+    </div>
+    <div id="details" class="content"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">
+      <div class="label-icon">📎</div>
+      المرفقات
+    </div>
+    <div id="fileBox" class="file-box">لا توجد مرفقات.</div>
+  </div>
+
+  <div class="btn-group">
+    <a href="activities.html" class="btn secondary">← رجوع للأنشطة</a>
+    <a href="javascript:window.print()" class="btn">🖨️ طباعة هذا النشاط</a>
+  </div>
+</div>
+
+<script>
+  // جلب النشاط من localStorage
+  let item = JSON.parse(localStorage.getItem('activitiesView') || 'null');
+
+  if (!item) {
+    document.body.innerHTML = `
+      <div class="error">
+        ❌ النشاط غير موجود
+        <br><br>
+        <a href="activities.html" class="btn">رجوع للأنشطة</a>
+      </div>
+    `;
+  } else {
+    // عرض البيانات الأساسية
+    document.getElementById("title").textContent = item.title || "—";
+    document.getElementById("short").textContent = item.short || "—";
+    document.getElementById("full").textContent = item.full || "—";
+    document.getElementById("details").textContent = item.details || "—";
+
+    // بيانات النشاط (تاريخ + مكان + نوع)
+    const date = item.date || (item.id ? new Date(item.id).toLocaleDateString('ar-EG') : 'غير محدد');
+    const location = item.location || item.place || 'غير محدد';
+    const type = item.type || 'نشاط علمي';
+    
+    document.getElementById("activityMeta").innerHTML = `
+      <div class="meta-item">
+        <div class="meta-icon">📅</div>
+        <span>${date}</span>
+      </div>
+      <div class="meta-item">
+        <div class="meta-icon">📍</div>
+        <span>${location}</span>
+      </div>
+      <div class="meta-item">
+        <div class="meta-icon">🏷️</div>
+        <span>${type}</span>
+      </div>
+    `;
+
+    // الصورة الرئيسية
+    if (item.image) {
+      document.getElementById("imageBox").innerHTML = 
+        `<img src="${item.image}" alt="${item.title}" loading="lazy">`;
+    }
+
+    // المرفقات
+    let fileBox = document.getElementById("fileBox");
+    if (!item.file) {
+      fileBox.innerHTML = `
+        <div class="file-preview">
+          <div style="font-size: clamp(18px, 5vw, 22px); color: #666; margin-bottom: 20px;">
+            📁 لا توجد مرفقات لهذا النشاط
+          </div>
+          <p style="color: #999; font-size: clamp(15px, 4.2vw, 17px); line-height: 1.7;">
+            يمكنك قراءة التفاصيل أعلاه أو التواصل مع الفريق للحصول على مواد إضافية
+          </p>
+        </div>
+      `;
+    } 
+    else if (item.file.startsWith("data:application/pdf")) {
+      fileBox.innerHTML = `
+        <div class="file-preview">
+          <iframe src="${item.file}" loading="lazy"></iframe>
+          <div style="margin-top: 25px;">
+            <a class="btn" href="${item.file}" download>📥 تحميل المرفق PDF</a>
+          </div>
+        </div>
+      `;
+    }
+    else if (item.file.startsWith("data:video")) {
+      fileBox.innerHTML = `
+        <div class="file-preview">
+          <video controls preload="metadata">
+            <source src="${item.file}">
+            متصفحك لا يدعم تشغيل الفيديو.
+          </video>
+          <div style="margin-top: 25px;">
+            <a class="btn" href="${item.file}" download>📹 تحميل الفيديو</a>
+          </div>
+        </div>
+      `;
+    }
+    else {
+      fileBox.innerHTML = `
+        <div class="file-preview" style="text-align: center;">
+          <a class="btn" href="${item.file}" target="_blank" rel="noopener noreferrer">
+            🔗 فتح الرابط الخارجي
+          </a>
+        </div>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>

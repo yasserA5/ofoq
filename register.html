@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>إنشاء حساب</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body{
+    font-family:'Tajawal',sans-serif;
+    background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+}
+.container{
+    width:100%;
+    max-width:380px;
+    background:#fff;
+    padding:clamp(25px,5vw,35px);
+    border-radius:22px;
+    box-shadow:0 10px 35px rgba(0,0,0,0.12);
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+}
+.container::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:4px;
+    background:linear-gradient(90deg, #10b981, #059669);
+}
+h2{
+    font-size:clamp(22px,5vw,28px);
+    margin-bottom:20px;
+    color:#065f46;
+    font-weight:700;
+}
+.message{
+    display:none;
+    margin-bottom:15px;
+    padding:12px 16px;
+    font-size:14px;
+    border-radius:12px;
+    font-weight:500;
+}
+.message.success{
+    background:linear-gradient(135deg, #10b981, #059669);
+    color:#fff;
+    border-right:4px solid #34d399;
+}
+.message.error{
+    background:linear-gradient(135deg, #ef4444, #dc2626);
+    color:#fff;
+    border-right:4px solid #f87171;
+}
+.input-box{
+    position:relative;
+    margin-bottom:18px;
+}
+.input-box i{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:18px;
+    color:#9ca3af;
+    z-index:2;
+    transition:.2s;
+}
+.input-box input{
+    width:100%;
+    padding:14px 16px 14px 50px;
+    border:2px solid #e5e7eb;
+    border-radius:25px;
+    font-size:15px;
+    outline:none;
+    font-family:'Tajawal',sans-serif;
+    background:#fafafa;
+    transition:all .3s ease;
+}
+.input-box input:focus{
+    border-color:#10b981;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(16,185,129,0.1);
+}
+.input-box input:focus + i{
+    color:#10b981;
+}
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:25px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Tajawal',sans-serif;
+    transition:all .3s ease;
+    margin-bottom:12px;
+    position:relative;
+    overflow:hidden;
+}
+.register-btn{
+    background:linear-gradient(135deg, #10b981, #059669);
+    color:#fff;
+    box-shadow:0 4px 15px rgba(16,185,129,0.3);
+}
+.register-btn:hover:not(:disabled){
+    background:linear-gradient(135deg, #059669, #047857);
+    transform:translateY(-2px);
+    box-shadow:0 8px 25px rgba(16,185,129,0.4);
+}
+.register-btn:disabled{
+    opacity:0.6;
+    cursor:not-allowed;
+}
+.login-btn{
+    background:#f3f4f6;
+    color:#374151;
+    border:2px solid #e5e7eb;
+}
+.login-btn:hover{
+    background:#e5e7eb;
+    transform:translateY(-1px);
+}
+@media (max-width: 480px){
+    body{padding:10px;}
+    .container{padding:clamp(20px,6vw,28px);}
+    .input-box input{padding:12px 14px 12px 45px; font-size:14px;}
+    .input-box i{font-size:16px; left:14px;}
+    button{padding:12px; font-size:15px;}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h2>إنشاء حساب جديد</h2>
+
+    <div id="msg" class="message"></div>
+
+    <div class="input-box">
+        <i class="ri-user-3-line"></i>
+        <input id="username" type="text" placeholder="اسم المستخدم">
+    </div>
+
+    <div class="input-box">
+        <i class="ri-mail-line"></i>
+        <input id="email" type="email" placeholder="البريد الإلكتروني">
+    </div>
+
+    <div class="input-box">
+        <i class="ri-lock-password-line"></i>
+        <input id="password" type="password" placeholder="كلمة المرور">
+    </div>
+
+    <div class="input-box">
+        <i class="ri-lock-password-fill"></i>
+        <input id="confirm_password" type="password" placeholder="تأكيد كلمة المرور">
+    </div>
+
+    <button class="register-btn" onclick="registerUser()">إنشاء حساب</button>
+
+    <button class="login-btn" onclick="location.href='login.html'">
+        <i class="ri-arrow-left-line"></i> لديك حساب؟ تسجيل الدخول
+    </button>
+</div>
+
+<script>
+function registerUser() {
+    // أخذ البيانات
+    var username = document.getElementById('username').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    var confirm_password = document.getElementById('confirm_password').value;
+    
+    // التحقق البسيط
+    if(!username || !email || !password || !confirm_password) {
+        document.getElementById('msg').innerHTML = 'يرجى ملء جميع الحقول';
+        document.getElementById('msg').className = 'message error';
+        document.getElementById('msg').style.display = 'block';
+        return;
+    }
+    
+    if(username.length < 3) {
+        document.getElementById('msg').innerHTML = 'اسم المستخدم قصير جداً';
+        document.getElementById('msg').className = 'message error';
+        document.getElementById('msg').style.display = 'block';
+        return;
+    }
+    
+    if(password.length < 6) {
+        document.getElementById('msg').innerHTML = 'كلمة المرور قصيرة جداً';
+        document.getElementById('msg').className = 'message error';
+        document.getElementById('msg').style.display = 'block';
+        return;
+    }
+    
+    if(password != confirm_password) {
+        document.getElementById('msg').innerHTML = 'كلمة المرور غير متطابقة';
+        document.getElementById('msg').className = 'message error';
+        document.getElementById('msg').style.display = 'block';
+        return;
+    }
+    
+    // التحقق من الحسابات الموجودة
+    var users = [];
+    if(localStorage.getItem('users')) {
+        users = JSON.parse(localStorage.getItem('users'));
+    }
+    
+    // منع التكرار
+    for(var i = 0; i < users.length; i++) {
+        if(users[i].username == username) {
+            document.getElementById('msg').innerHTML = 'اسم المستخدم موجود';
+            document.getElementById('msg').className = 'message error';
+            document.getElementById('msg').style.display = 'block';
+            return;
+        }
+    }
+    
+    // إنشاء حساب جديد
+    var newUser = {
+        username: username,
+        email: email,
+        password: password
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // نجاح
+    document.getElementById('msg').innerHTML = 'تم إنشاء الحساب بنجاح!';
+    document.getElementById('msg').className = 'message success';
+    document.getElementById('msg').style.display = 'block';
+    
+    // الانتقال
+    setTimeout(function() {
+        window.location.href = 'login.html';
+    }, 1500);
+}
+</script>
+
+</body>
+</html>

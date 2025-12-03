@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>الرئيسية</title>
+
+  <!-- خط عربي -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      width:100%;
+      overflow-x:hidden;
+    }
+
+    body {
+      font-family:"Tajawal",sans-serif;
+      background:#ffffff;
+      color:#222;
+      line-height:1.7;
+    }
+
+    /* HEADER */
+    header {
+      padding:clamp(12px,3vw,18px) clamp(18px,5vw,30px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      box-shadow:0 2px 18px rgba(0,0,0,0.07);
+      position:sticky;
+      top:0;
+      z-index:999;
+    }
+
+    /* LOGO */
+    .logo img {
+      width:clamp(60px,11vw,85px);
+      height:auto;
+    }
+
+    /* NAV */
+    nav ul {
+      list-style:none;
+      display:flex;
+      gap:clamp(16px,3.5vw,30px);
+      align-items:center;
+    }
+    nav ul li { position:relative; }
+    nav ul li a {
+      text-decoration:none;
+      color:#333;
+      font-size:clamp(14px,2.7vw,18px);
+      font-weight:600;
+      padding:6px;
+      transition:.2s;
+    }
+    nav ul li a:hover { color:#0aa2ca; }
+
+    /* DROPDOWN */
+    .dropdown-content {
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:12px 0;
+      border-radius:8px;
+      min-width:200px;
+      z-index:1000;
+    }
+    .dropdown-content a {
+      display:block;
+      padding:10px 20px;
+      white-space:nowrap;
+      color:#333;
+      font-size:16px;
+    }
+    .dropdown:hover .dropdown-content { display:block; }
+
+    /* BUTTONS */
+    .actions {
+      display:flex;
+      gap:clamp(8px,2vw,12px);
+      align-items:center;
+    }
+    .btn {
+      padding:clamp(8px,2vw,10px) clamp(16px,4vw,20px);
+      border-radius:26px;
+      border:2px solid #18b3e6;
+      background:rgba(24,178,230,0.07);
+      cursor:pointer;
+      font-weight:700;
+      font-size:clamp(14px,2.8vw,16px);
+      transition:.2s;
+      color:#0c8bb0;
+      white-space:nowrap;
+    }
+    .btn.primary {
+      background:linear-gradient(90deg,#009bc4,#006f8a);
+      color:#fff;
+      border:none;
+      box-shadow:0 4px 18px rgba(0,155,196,0.25);
+    }
+
+    /* MOBILE MENU */
+    #menu-btn {
+      display:none;
+      font-size:clamp(24px,6vw,30px);
+      cursor:pointer;
+    }
+    .mobile-menu {
+      display:none;
+      position:fixed;
+      top:0;
+      right:0;
+      width:min(80%,340px);
+      height:100%;
+      background:#fff;
+      box-shadow:-3px 0 12px rgba(0,0,0,0.1);
+      padding:clamp(20px,6vw,30px);
+      z-index:2000;
+      overflow-y:auto;
+    }
+    .mobile-menu ul {
+      list-style:none;
+      margin-top:20px;
+    }
+    .mobile-menu ul li {
+      margin-bottom:18px;
+    }
+    .mobile-menu ul li a {
+      font-size:clamp(18px,4.5vw,20px);
+      text-decoration:none;
+      color:#222;
+    }
+
+    /* HERO */
+    .hero {
+      padding:clamp(80px,18vw,110px) clamp(20px,7vw,40px);
+      text-align:center;
+      background:#f6fbff;
+    }
+    .hero h1 {
+      font-size:clamp(26px,6vw,40px);
+      font-weight:800;
+      color:#064b63;
+      margin-bottom:clamp(12px,3vw,18px);
+    }
+    .hero p {
+      font-size:clamp(16px,3.2vw,20px);
+      max-width:800px;
+      margin:auto;
+      color:#555;
+      line-height:1.9;
+    }
+
+    /* SECTIONS */
+    section {
+      padding:clamp(40px,10vw,60px) clamp(20px,6vw,40px);
+    }
+    section h2 {
+      font-size:clamp(22px,4.8vw,30px);
+      margin-bottom:20px;
+      color:#0d6b8c;
+      border-right:5px solid #0d6b8c;
+      padding-right:12px;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(clamp(230px,42vw,260px),1fr));
+      gap:clamp(18px,4vw,25px);
+    }
+
+    .card {
+      padding:clamp(14px,3.5vw,18px);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 2px 15px rgba(0,0,0,0.08);
+      transition:.2s;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .card:hover {
+      transform:translateY(-5px);
+      box-shadow:0 4px 20px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+      color:#0d6b8c;
+      font-size:clamp(16px,3.2vw,18px);
+      margin-bottom:8px;
+      line-height:1.4;
+    }
+    .card p {
+      color:#666;
+      font-size:clamp(13px,2.9vw,14px);
+      line-height:1.6;
+      margin-bottom:12px;
+      flex-grow:1;
+    }
+    .card-author {
+      color:#999;
+      font-size:12px;
+      margin-bottom:10px;
+    }
+
+    .card-btn {
+      padding:clamp(8px,2.5vw,10px) clamp(14px,4vw,15px);
+      background:#0d6b8c;
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.2s;
+      text-decoration:none;
+      display:inline-block;
+      text-align:center;
+      font-size:clamp(13px,3vw,14px);
+    }
+    .card-btn:hover {
+      background:#095878;
+      transform:scale(1.02);
+    }
+
+    .empty-state {
+      text-align:center;
+      padding:clamp(30px,9vw,40px) 20px;
+      color:#999;
+    }
+    .empty-state p {
+      font-size:clamp(16px,3.5vw,18px);
+    }
+
+    footer {
+      margin-top:clamp(30px,8vw,40px);
+      padding:clamp(25px,7vw,35px);
+      background:#0d6b8c;
+      color:#fff;
+      text-align:center;
+      font-size:clamp(15px,3.7vw,18px);
+    }
+
+    /* RESPONSIVE BREAKPOINTS */
+    @media(max-width:980px){
+      nav ul { display:none; }
+      .actions { display:none; }
+      #menu-btn { display:block; }
+    }
+
+    @media(max-width:768px){
+      header { padding:12px 18px; }
+      .hero { padding:70px 20px; }
+      section { padding:40px 18px; }
+      .grid {
+        grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      }
+    }
+
+    @media(max-width:600px){
+      .hero h1 { font-size:28px; }
+      .hero p { font-size:16px; }
+      section { padding:35px 15px; }
+      section h2 { font-size:24px; }
+      .grid { grid-template-columns:1fr; }
+    }
+
+    @media(max-width:380px){
+      header { padding:10px 12px; }
+      .hero { padding:55px 12px; }
+      .card { padding:14px; }
+    }
+  </style>
+
+</head>
+
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <img src="images/logo.png" style="width:clamp(65px,15vw,80px); margin-bottom:20px;">
+  <ul>
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="research.html">أبحاث محكمة</a></li>
+    <li><a href="articles.html">مقالات محكمة</a></li>
+    <li><a href="files.html">ملفات بحثية</a></li>
+    <li><a href="general-articles.html">مقالات عامة</a></li>
+    <li><a href="editions.html">إصداراتنا</a></li>
+    <li><a href="activities.html">أنشطتنا</a></li>
+    <li><a href="talks.html">حوارات</a></li>
+    <li><a href="training.html">تكوينات</a></li>
+    <li><a href="live.html">بث مباشر</a></li>
+    <li><a href="rules.html">شروط النشر</a></li>
+    <li><a href="contact.html">اتصل بنا</a></li>
+    <li id="mobileLogin"><a href="login.html">تسجيل الدخول</a></li>
+    <li id="mobileRegister"><a href="register.html">انضم إلينا</a></li>
+  </ul>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
+  <div id="menu-btn" onclick="toggleMenu()">☰</div>
+
+  <nav>
+    <ul>
+      <li><a href="#">الرئيسية</a></li>
+      <li class="dropdown">
+        <a href="#">أبحاث ودراسات ▾</a>
+        <div class="dropdown-content">
+          <a href="research.html">أبحاث محكمة</a>
+          <a href="articles.html">مقالات محكمة</a>
+          <a href="files.html">ملفات بحثية</a>
+          <a href="general-articles.html">مقالات عامة</a>
+        </div>
+      </li>
+      <li><a href="editions.html">إصداراتنا</a></li>
+      <li><a href="activities.html">أنشطتنا</a></li>
+      <li><a href="talks.html">حوارات</a></li>
+      <li><a href="training.html">تكوينات</a></li>
+      <li><a href="live.html">بث مباشر</a></li>
+      <li><a href="rules.html">شروط النشر</a></li>
+      <li><a href="contact.html">اتصل بنا</a></li>
+    </ul>
+  </nav>
+
+  <div class="actions" id="headerActions">
+    <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'">تسجيل الدخول</button>
+    <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'">انضم إلينا</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>منصة علمية لنشر المعرفة والأبحاث</h1>
+  <p>
+    نسعى لتوفير محتوى معرفي موثوق يشمل الأبحاث المحكمة والمقالات العلمية والإصدارات الفكرية،
+    إضافة إلى أنشطة وتكوينات تعزز البحث العلمي وتدعم مختلف الباحثين.
+  </p>
+</div>
+
+<!-- SECTIONS -->
+<section>
+  <h2>أحدث الأبحاث</h2>
+  <div class="grid" id="researchGrid">
+    <div class="empty-state">
+      <p>لا توجد أبحاث حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>إصداراتنا</h2>
+  <div class="grid" id="editionsGrid">
+    <div class="empty-state">
+      <p>لا توجد إصدارات حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>أنشطتنا</h2>
+  <div class="grid" id="activitiesGrid">
+    <div class="empty-state">
+      <p>لا توجد أنشطة حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>حوارات</h2>
+  <div class="grid" id="talksGrid">
+    <div class="empty-state">
+      <p>لا توجد حوارات حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>تكوينات</h2>
+  <div class="grid" id="trainingGrid">
+    <div class="empty-state">
+      <p>لا توجد تكوينات حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>البث المباشر</h2>
+  <p style="font-size:clamp(16px,3.2vw,20px); color:#444;">
+    سيتم عرض البث المباشر هنا عند توفره.
+  </p>
+</section>
+
+<footer>
+  © جميع الحقوق محفوظة – منصتك العلمية
+</footer>
+
+<script>
+  // MOBILE MENU TOGGLE
+  function toggleMenu() {
+    const menu = document.getElementById("mobileMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+  }
+
+  // USER LOGIN CHECK
+  let user = JSON.parse(localStorage.getItem("user"));
+
+  function updateHeader() {
+    const headerActions = document.getElementById("headerActions");
+    const mobileLogin = document.getElementById("mobileLogin");
+    const mobileRegister = document.getElementById("mobileRegister");
+
+    if (user && user.username) {
+      headerActions.innerHTML = `
+        <span style="margin-right:12px;">مرحبًا، ${user.username}</span>
+        <button class="btn primary" onclick="logout()">تسجيل الخروج</button>
+      `;
+      if (mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout()">تسجيل الخروج</a>`;
+      if (mobileRegister) mobileRegister.style.display = "none";
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("user");
+    user = null;
+    location.reload();
+  }
+
+  // CONTENT MANAGEMENT
+  function renderContent(storageKey, gridId) {
+    const grid = document.getElementById(gridId);
+    const items = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+    grid.innerHTML = '';
+
+    if (!items.length) {
+      grid.innerHTML = `<div class="empty-state"><p>لا توجد عناصر حالياً</p></div>`;
+      return;
+    }
+
+    items.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const title = item.title || 'بدون عنوان';
+      const author = item.author ? 'بقلم: ' + item.author : '';
+      const desc = item.description || item.short || item.details || 'بدون وصف';
+
+      card.innerHTML = `
+        <div>
+          <h3>${title}</h3>
+          <p class="card-author">${author}</p>
+          <p>${desc}</p>
+        </div>
+        <button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض المزيد</button>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function goToPage(pageType, index) {
+    // يمكن استخدام selectedItem لاحقاً إن احتجت
+    const list = JSON.parse(localStorage.getItem(pageType)) || [];
+    const selected = list[index];
+    if (selected) {
+      localStorage.setItem('selectedItem', JSON.stringify(selected));
+    }
+
+    const pageMap = {
+      'research': 'research.html',
+      'articles': 'articles.html',
+      'files': 'files.html',
+      'general-articles': 'general-articles.html',
+      'editions': 'editions.html',
+      'activities': 'activities.html',
+      'talks': 'talks.html',
+      'training': 'training.html'
+    };
+
+    const targetPage = pageMap[pageType] || 'index.html';
+    window.location.href = targetPage;
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    renderContent('research', 'researchGrid');
+    renderContent('editions', 'editionsGrid');
+    renderContent('activities', 'activitiesGrid');
+    renderContent('talks', 'talksGrid');
+    renderContent('training', 'trainingGrid');
+    updateHeader();
+  });
+</script>
+
+</body>
+</html>
