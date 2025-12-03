@@ -21,18 +21,31 @@
     /* HEADER */
     header {
       padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 30px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      box-shadow:0 2px 18px rgba(0,0,0,0.07);
+      position:sticky;
+      top:0;
+      z-index:999;
+    }
+
+    /* 🔥 LOGO - في المنتصف على الموبايل */
+    .logo {
+      position: relative;
+      flex: 1;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #fff;
-      box-shadow: 0 2px 18px rgba(0,0,0,0.07);
-      position: sticky;
-      top: 0;
-      z-index: 999;
+      justify-content: center;
+      cursor: pointer;
     }
     .logo img { 
       width: clamp(60px, 12vw, 85px); 
       height: auto; 
+      transition: transform 0.2s ease;
+    }
+    .logo img:hover, .logo img:active {
+      transform: scale(1.05);
     }
 
     /* NAV */
@@ -100,13 +113,26 @@
       box-shadow: 0 4px 18px rgba(0,155,196,0.25);
     }
 
-    /* MOBILE MENU */
+    /* 🔥 MOBILE MENU BUTTON - MOBILE ONLY */
     #menu-btn { 
-      display: none; 
+      display: none; /* مخفي افتراضياً */
       font-size: clamp(24px, 6vw, 30px); 
-      cursor: pointer; 
+      cursor: pointer;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(13,107,140,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      border: none;
     }
 
+    /* MOBILE MENU */
     .mobile-menu {
       display: none;
       position: fixed;
@@ -261,18 +287,26 @@
     }
     .toast.removing { animation: slideOut 0.3s ease-in-out; }
 
-    /* ============================================
-       RESPONSIVE BREAKPOINTS - كل الأجهزة
-       ============================================ */
-    @media(max-width: 1024px){
-      nav ul { gap: 20px; }
-      .hero { padding: 90px 30px; }
-    }
-
+    /* 🔥 RESPONSIVE - BURGER MOBILE ONLY */
     @media(max-width: 980px){
+      /* إخفاء الـ nav والأزرار */
       nav ul { display: none; }
       .actions { display: none; }
-      #menu-btn { display: block; }
+      
+      /* إظهار الـ Burger فقط على الموبايل */
+      #menu-btn { 
+        display: flex !important; 
+      }
+      
+      /* اللوغو في المنتصف */
+      header {
+        justify-content: center;
+      }
+      .logo {
+        position: static;
+        flex: none;
+      }
+      
       .toast-container { 
         left: 50%; 
         transform: translateX(-50%); 
@@ -324,7 +358,6 @@
 </head>
 
 <body>
-
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <img src="images/logo.png" style="width: clamp(65px, 15vw, 80px); margin-bottom: 20px;">
@@ -349,9 +382,16 @@
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
+<!-- 🔥 HEADER مع اللوغو في المنتصف على الموبايل -->
 <header>
-  <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+  <!-- 🔥 Burger Menu - Mobile Only -->
   <div id="menu-btn" onclick="toggleMenu()">☰</div>
+  
+  <!-- 🔥 Logo - Center on Mobile -->
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
   <nav>
     <ul>
       <li><a href="index.html">الرئيسية</a></li>
@@ -373,6 +413,7 @@
       <li><a href="contact.html">اتصل بنا</a></li>
     </ul>
   </nav>
+  
   <div class="actions" id="headerActions">
     <button class="btn" onclick="location.href='login.html'">تسجيل الدخول</button>
     <button class="btn primary" onclick="location.href='register.html'">انضم إلينا</button>
@@ -396,6 +437,11 @@
 </footer>
 
 <script>
+  // 🔥 اللوغو ينقل للصفحة الرئيسية
+  function goToHome() {
+    window.location.href = 'index.html';
+  }
+
   function toggleMenu() {
     const menu = document.getElementById("mobileMenu");
     menu.style.display = menu.style.display === "block" ? "none" : "block";

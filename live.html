@@ -22,9 +22,9 @@
     /* HEADER */
     header {
       padding: clamp(12px,3vw,18px) clamp(20px,5vw,30px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       background: rgba(255,255,255,0.95);
       backdrop-filter: blur(20px);
       box-shadow: 0 8px 32px rgba(0,0,0,0.2);
@@ -32,9 +32,23 @@
       top: 0;
       z-index: 999;
     }
+
+    /* 🔥 الشعار في المنتصف على الموبايل وقابل للضغط */
+    .logo {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+    }
     .logo img { 
       width: clamp(60px,12vw,85px); 
       height: auto; 
+      transition: transform 0.2s ease;
+    }
+    .logo img:hover,
+    .logo img:active {
+      transform: scale(1.05);
     }
 
     /* NAV */
@@ -53,7 +67,8 @@
       padding: 6px;
       transition: .2s;
     }
-    nav ul li a:hover, nav ul li a.active { color: #ec4899; }
+    nav ul li a:hover, 
+    nav ul li a.active { color: #ec4899; }
 
     /* DROPDOWN */
     .dropdown-content {
@@ -102,14 +117,27 @@
       box-shadow: 0 4px 18px rgba(236,72,153,0.4);
     }
 
-    /* MOBILE MENU */
+    /* 🔥 زر البرغر لموبايل فقط */
     #menu-btn { 
-      display: none; 
+      display: none;           /* مخفي على الديسكتوب */
       font-size: clamp(24px,6vw,30px); 
       cursor: pointer; 
       color: #374151;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(236,72,153,0.15);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      border: none;
     }
 
+    /* MOBILE MENU */
     .mobile-menu {
       display: none;
       position: fixed;
@@ -131,6 +159,7 @@
       text-decoration: none;
       color: #111827;
     }
+    .mobile-menu ul li a.active { color:#ec4899; }
 
     /* HERO LIVE */
     .hero {
@@ -396,11 +425,20 @@
     }
     .toast.removing { animation: slideOut 0.3s ease-in-out; }
 
-    /* RESPONSIVE */
+    /* 🔥 RESPONSIVE: برغر للموبايل + الشعار في الوسط */
     @media(max-width: 980px){
       nav ul { display: none; }
       .actions { display: none; }
-      #menu-btn { display: block; }
+      #menu-btn { display: flex !important; }
+
+      header {
+        justify-content: center;
+      }
+      .logo {
+        position: static;
+        flex: none;
+      }
+
       .toast-container { 
         left: 50%; 
         transform: translateX(-50%); 
@@ -436,18 +474,18 @@
     <li><a href="index.html">الرئيسية</a></li>
     <li class="dropdown">
       <a href="#">أبحاث ودراسات ▾</a>
-      <ul style="position:static;background:none;box-shadow:none;padding:10px 0;">
-        <li><a href="research.html">أبحاث محكمة</a></li>
-        <li><a href="articles.html">مقالات محكمة</a></li>
-        <li><a href="files.html">ملفات بحثية</a></li>
-        <li><a href="general-articles.html">مقالات عامة</a></li>
-      </ul>
+      <div class="dropdown-content">
+        <a href="research.html">أبحاث محكمة</a>
+        <a href="articles.html">مقالات محكمة</a>
+        <a href="files.html">ملفات بحثية</a>
+        <a href="general-articles.html">مقالات عامة</a>
+      </div>
     </li>
     <li><a href="editions.html">إصداراتنا</a></li>
     <li><a href="activities.html">أنشطتنا</a></li>
     <li><a href="talks.html">حوارات</a></li>
     <li><a href="training.html">تكوينات</a></li>
-    <li><a href="live.html">بث مباشر</a></li>
+    <li><a href="live.html" class="active">بث مباشر</a></li>
     <li><a href="rules.html">شروط النشر</a></li>
     <li><a href="contact.html">اتصل بنا</a></li>
     <li id="mobileLogin"><a href="login.html">تسجيل الدخول</a></li>
@@ -459,8 +497,14 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <header>
-  <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+  <!-- 🔥 زر البرغر موبايل -->
   <div id="menu-btn" onclick="toggleMenu()">☰</div>
+
+  <!-- 🔥 الشعار: ينقل إلى الرئيسية -->
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
   <nav>
     <ul>
       <li><a href="index.html">الرئيسية</a></li>
@@ -511,6 +555,11 @@
 </section>
 
 <script>
+  // 🔥 الشعار → الرئيسية
+  function goToHome() {
+    window.location.href = 'index.html';
+  }
+
   function toggleMenu() {
     const menu = document.getElementById("mobileMenu");
     menu.style.display = menu.style.display === "block" ? "none" : "block";

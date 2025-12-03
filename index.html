@@ -36,10 +36,21 @@
       z-index:999;
     }
 
-    /* LOGO */
+    /* LOGO - في المنتصف على الموبايل */
+    .logo {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+    }
     .logo img {
       width:clamp(60px,11vw,85px);
       height:auto;
+      transition: transform 0.2s ease;
+    }
+    .logo img:hover, .logo img:active {
+      transform: scale(1.05);
     }
 
     /* NAV */
@@ -107,12 +118,26 @@
       box-shadow:0 4px 18px rgba(0,155,196,0.25);
     }
 
-    /* MOBILE MENU */
+    /* MOBILE MENU BUTTON - MOBILE ONLY */
     #menu-btn {
-      display:none;
+      display: none; /* مخفي افتراضياً (ديسكتوب) */
       font-size:clamp(24px,6vw,30px);
       cursor:pointer;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(13,107,140,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      border: none;
     }
+
+    /* MOBILE MENU */
     .mobile-menu {
       display:none;
       position:fixed;
@@ -139,7 +164,7 @@
       color:#222;
     }
 
-    /* HERO */
+    /* باقي الـ CSS كما هو */
     .hero {
       padding:clamp(80px,18vw,110px) clamp(20px,7vw,40px);
       text-align:center;
@@ -159,7 +184,6 @@
       line-height:1.9;
     }
 
-    /* SECTIONS */
     section {
       padding:clamp(40px,10vw,60px) clamp(20px,6vw,40px);
     }
@@ -248,11 +272,25 @@
       font-size:clamp(15px,3.7vw,18px);
     }
 
-    /* RESPONSIVE BREAKPOINTS */
+    /* 🔥 RESPONSIVE - BURGER MOBILE ONLY */
     @media(max-width:980px){
+      /* إخفاء الـ nav والأزرار على الموبايل */
       nav ul { display:none; }
       .actions { display:none; }
-      #menu-btn { display:block; }
+      
+      /* إظهار الـ Burger فقط على الموبايل */
+      #menu-btn { 
+        display: flex !important; 
+      }
+      
+      /* اللوغو في المنتصف */
+      header {
+        justify-content: center;
+      }
+      .logo {
+        position: static;
+        flex: none;
+      }
     }
 
     @media(max-width:768px){
@@ -278,11 +316,9 @@
       .card { padding:14px; }
     }
   </style>
-
 </head>
 
 <body>
-
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <img src="images/logo.png" style="width:clamp(65px,15vw,80px); margin-bottom:20px;">
@@ -306,12 +342,15 @@
 
 <!-- HEADER -->
 <header>
-  <div class="logo">
+  <!-- 🔥 Burger Menu - Mobile Only -->
+  <div id="menu-btn" onclick="toggleMenu()">☰</div>
+  
+  <!-- Logo - Center on Mobile -->
+  <div class="logo" onclick="goToHome()">
     <img src="images/logo.png" alt="Logo">
   </div>
 
-  <div id="menu-btn" onclick="toggleMenu()">☰</div>
-
+  <!-- Desktop Navigation -->
   <nav>
     <ul>
       <li><a href="#">الرئيسية</a></li>
@@ -340,7 +379,7 @@
   </div>
 </header>
 
-<!-- HERO -->
+<!-- باقي المحتوى كما هو -->
 <div class="hero">
   <h1>منصة علمية لنشر المعرفة والأبحاث</h1>
   <p>
@@ -407,6 +446,11 @@
 </footer>
 
 <script>
+  // 🔥 اللوغو ينقل للصفحة الرئيسية
+  function goToHome() {
+    window.location.href = 'index.html';
+  }
+
   // MOBILE MENU TOGGLE
   function toggleMenu() {
     const menu = document.getElementById("mobileMenu");
@@ -471,7 +515,6 @@
   }
 
   function goToPage(pageType, index) {
-    // يمكن استخدام selectedItem لاحقاً إن احتجت
     const list = JSON.parse(localStorage.getItem(pageType)) || [];
     const selected = list[index];
     if (selected) {

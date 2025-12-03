@@ -272,7 +272,7 @@
         
         // Generate reset token (simple version)
         const resetToken = 'reset_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        const resetLink = `https://yourdomain.com/reset-password.html?token=${resetToken}&email=${encodeURIComponent(email)}`;
+        const resetLink = `https://ofoq-xi.vercel.app/reset-password.html?token=${resetToken}&email=${encodeURIComponent(email)}`;
         const expiresIn = '1 ساعة';
         
         // EmailJS template parameters
@@ -282,7 +282,7 @@
             reset_link: resetLink,
             expires_in: expiresIn,
             company_name: 'نظامك',
-            support_email: 'support@yourdomain.com'
+            support_email: 'majalatofoq@gmail.com'
         };
         
         // Send email via EmailJS

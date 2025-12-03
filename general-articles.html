@@ -21,18 +21,31 @@
     /* HEADER */
     header {
       padding: clamp(12px,3vw,18px) clamp(20px,5vw,30px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      box-shadow:0 2px 18px rgba(0,0,0,0.07);
+      position:sticky;
+      top:0;
+      z-index:999;
+    }
+
+    /* 🔥 LOGO: في المنتصف على الموبايل + قابل للضغط */
+    .logo {
+      position: relative;
+      flex: 1;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #fff;
-      box-shadow: 0 2px 18px rgba(0,0,0,0.07);
-      position: sticky;
-      top: 0;
-      z-index: 999;
+      justify-content: center;
+      cursor: pointer;
     }
     .logo img { 
       width: clamp(60px,12vw,85px); 
       height: auto; 
+      transition: transform 0.2s ease;
+    }
+    .logo img:hover, .logo img:active {
+      transform: scale(1.05);
     }
 
     /* NAV */
@@ -100,13 +113,26 @@
       box-shadow: 0 4px 18px rgba(0,155,196,0.25);
     }
 
-    /* MOBILE MENU */
+    /* 🔥 BURGER لموبايل فقط */
     #menu-btn { 
-      display: none; 
+      display: none;           /* مخفي على الديسكتوب */
       font-size: clamp(24px,6vw,30px); 
       cursor: pointer; 
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(13,107,140,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      border: none;
     }
 
+    /* MOBILE MENU */
     .mobile-menu {
       display: none;
       position: fixed;
@@ -261,16 +287,20 @@
     }
     .toast.removing { animation: slideOut 0.3s ease-in-out; }
 
-    /* RESPONSIVE BREAKPOINTS */
-    @media(max-width: 1024px){
-      nav ul { gap: 20px; }
-      .hero { padding: 90px 30px; }
-    }
-
+    /* 🔥 RESPONSIVE: Burger للموبايل فقط + اللوغو بالوسط */
     @media(max-width: 980px){
       nav ul { display: none; }
       .actions { display: none; }
-      #menu-btn { display: block; }
+      #menu-btn { display: flex !important; }
+
+      header {
+        justify-content: center;
+      }
+      .logo {
+        position: static;
+        flex: none;
+      }
+
       .toast-container { 
         left: 50%; 
         transform: translateX(-50%); 
@@ -326,10 +356,15 @@
   <img src="images/logo.png" style="width: clamp(65px,15vw,80px); margin-bottom: 20px;">
   <ul>
     <li><a href="index.html">الرئيسية</a></li>
-    <li><a href="research.html">أبحاث محكمة</a></li>
-    <li><a href="articles.html">مقالات محكمة</a></li>
-    <li><a href="files.html">ملفات بحثية</a></li>
-    <li><a href="general-articles.html">مقالات عامة</a></li>
+    <li class="dropdown">
+      <a href="#">أبحاث ودراسات ▾</a>
+      <div class="dropdown-content">
+        <a href="research.html">أبحاث محكمة</a>
+        <a href="articles.html">مقالات محكمة</a>
+        <a href="files.html">ملفات بحثية</a>
+        <a href="general-articles.html" class="active">مقالات عامة</a>
+      </div>
+    </li>
     <li><a href="editions.html">إصداراتنا</a></li>
     <li><a href="activities.html">أنشطتنا</a></li>
     <li><a href="talks.html">حوارات</a></li>
@@ -346,8 +381,14 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <header>
-  <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+  <!-- 🔥 Burger موبايل فقط -->
   <div id="menu-btn" onclick="toggleMenu()">☰</div>
+
+  <!-- 🔥 Logo: يفتح index.html -->
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
   <nav>
     <ul>
       <li><a href="index.html">الرئيسية</a></li>
@@ -357,7 +398,7 @@
           <a href="research.html">أبحاث محكمة</a>
           <a href="articles.html">مقالات محكمة</a>
           <a href="files.html">ملفات بحثية</a>
-          <a href="general-articles.html">مقالات عامة</a>
+          <a href="general-articles.html" class="active">مقالات عامة</a>
         </div>
       </li>
       <li><a href="editions.html">إصداراتنا</a></li>
@@ -383,7 +424,7 @@
 <section>
   <h2>المقالات</h2>
   <div class="grid" id="generalArticlesGrid">
-    <div style="grid-column: 1/-1; text-align:center; color:#999; padding: clamp(40px,15vw,60px); font-size: clamp(16px,4vw,18px);">لا توجد مقالات حالياً</div>
+    <!-- سيتم ملؤه ديناميكيًا من admin.html -->
   </div>
 </section>
 
@@ -392,6 +433,11 @@
 </footer>
 
 <script>
+  // 🔥 اللوغو يفتح الصفحة الرئيسية
+  function goToHome() {
+    window.location.href = 'index.html';
+  }
+
   function toggleMenu() {
     const menu = document.getElementById("mobileMenu");
     menu.style.display = menu.style.display === "block" ? "none" : "block";
@@ -455,7 +501,6 @@
   if (generalArticlesData.length === 0) {
     generalArticlesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#999; padding: clamp(40px,15vw,60px); font-size: clamp(16px,4vw,18px);">لا توجد مقالات حالياً</div>';
   } else {
-    generalArticlesGrid.innerHTML = '';
     generalArticlesData.forEach((item) => {
       const card = document.createElement("div");
       card.className = "card";

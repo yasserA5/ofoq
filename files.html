@@ -2,18 +2,25 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>ملفات بحثية</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: "Tajawal", sans-serif; background:#ffffff; color:#222; }
+    html, body { width:100%; overflow-x:hidden; }
+    
+    body { 
+      font-family: "Tajawal", sans-serif; 
+      background: #ffffff; 
+      color: #222; 
+      line-height: 1.6;
+    }
 
     /* HEADER */
     header {
-      padding: 18px 30px;
+      padding: clamp(12px,3vw,18px) clamp(20px,5vw,30px);
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -23,232 +30,321 @@
       top:0;
       z-index:999;
     }
-    .logo img { width:85px; height:auto; }
+
+    /* 🔥 LOGO: في المنتصف على الموبايل + قابل للضغط */
+    .logo {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .logo img { 
+      width: clamp(60px,12vw,85px); 
+      height: auto; 
+      transition: transform 0.2s ease;
+    }
+    .logo img:hover, .logo img:active {
+      transform: scale(1.05);
+    }
 
     /* NAV */
-    nav ul { list-style:none; display:flex; gap:30px; align-items:center; }
-    nav ul li { position:relative; }
-    nav ul li a {
-      text-decoration:none;
-      color:#333;
-      font-size:18px;
-      font-weight:600;
-      padding:6px;
-      transition:.2s;
+    nav ul { 
+      list-style: none; 
+      display: flex; 
+      gap: clamp(15px,4vw,30px); 
+      align-items: center; 
     }
-    nav ul li a:hover { color:#0aa2ca; }
+    nav ul li { position: relative; }
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-size: clamp(14px,3vw,18px);
+      font-weight: 600;
+      padding: 6px;
+      transition: .2s;
+    }
+    nav ul li a:hover { color: #0aa2ca; }
 
     /* DROPDOWN */
     .dropdown-content {
-      display:none;
-      position:absolute;
-      top:35px;
-      right:0;
-      background:#fff;
-      box-shadow:0 4px 15px rgba(0,0,0,0.13);
-      padding:12px 0;
-      border-radius:8px;
-      min-width:200px;
-      z-index:1000;
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.13);
+      padding: 12px 0;
+      border-radius: 8px;
+      min-width: 200px;
+      z-index: 1000;
     }
     .dropdown-content a {
-      display:block;
-      padding:10px 20px;
-      white-space:nowrap;
-      color:#333;
-      font-size:16px;
+      display: block;
+      padding: 10px 20px;
+      white-space: nowrap;
+      color: #333;
+      font-size: 16px;
     }
-    .dropdown:hover .dropdown-content { display:block; }
+    .dropdown:hover .dropdown-content { display: block; }
 
     /* BUTTONS */
-    .actions { display:flex; gap:12px; align-items:center; }
+    .actions { 
+      display: flex; 
+      gap: clamp(8px,2vw,12px); 
+      align-items: center; 
+    }
     .btn {
-      padding:10px 20px;
-      border-radius:26px;
-      border:2px solid #18b3e6;
-      background:rgba(24,178,230,0.07);
-      cursor:pointer;
-      font-weight:700;
-      font-size:16px;
-      transition:.2s;
-      color:#0c8bb0;
-      white-space:nowrap;
+      padding: clamp(8px,2vw,10px) clamp(16px,4vw,20px);
+      border-radius: 26px;
+      border: 2px solid #18b3e6;
+      background: rgba(24,178,230,0.07);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(14px,3vw,16px);
+      transition: .2s;
+      color: #0c8bb0;
+      white-space: nowrap;
     }
     .btn.primary {
-      background:linear-gradient(90deg,#009bc4,#006f8a);
-      color:#fff;
-      border:none;
-      box-shadow:0 4px 18px rgba(0,155,196,0.25);
+      background: linear-gradient(90deg,#009bc4,#006f8a);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 18px rgba(0,155,196,0.25);
+    }
+
+    /* 🔥 BURGER لموبايل فقط */
+    #menu-btn { 
+      display: none;           /* مخفي على الديسكتوب */
+      font-size: clamp(24px,6vw,30px); 
+      cursor: pointer; 
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(13,107,140,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      border: none;
     }
 
     /* MOBILE MENU */
-    #menu-btn { display:none; font-size:30px; cursor:pointer; }
-
     .mobile-menu {
-      display:none;
-      position:fixed;
-      top:0;
-      right:0;
-      width:70%;
-      max-width:320px;
-      height:100%;
-      background:#fff;
-      box-shadow:-3px 0 12px rgba(0,0,0,0.1);
-      padding:30px;
-      z-index:2000;
-      overflow-y:auto;
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(80%,350px);
+      height: 100%;
+      background: #fff;
+      box-shadow: -3px 0 12px rgba(0,0,0,0.1);
+      padding: clamp(20px,8vw,30px);
+      z-index: 2000;
+      overflow-y: auto;
     }
-    .mobile-menu ul { list-style:none; margin-top:20px; }
-    .mobile-menu ul li { margin-bottom:18px; }
+    .mobile-menu ul { list-style: none; margin-top: 20px; }
+    .mobile-menu ul li { margin-bottom: 18px; }
     .mobile-menu ul li a {
-      font-size:20px;
-      text-decoration:none;
-      color:#222;
+      font-size: clamp(18px,5vw,20px);
+      text-decoration: none;
+      color: #222;
     }
 
     /* HERO */
     .hero {
-      padding:110px 40px;
-      text-align:center;
-      background:#f6fbff;
+      padding: clamp(80px,20vw,110px) clamp(25px,8vw,40px);
+      text-align: center;
+      background: #f6fbff;
     }
     .hero h1 {
-      font-size:36px;
-      font-weight:800;
-      color:#064b63;
-      margin-bottom:18px;
+      font-size: clamp(24px,8vw,36px);
+      font-weight: 800;
+      color: #064b63;
+      margin-bottom: clamp(12px,4vw,18px);
     }
     .hero p {
-      font-size:18px;
-      max-width:800px;
-      margin:auto;
-      color:#555;
-      line-height:1.8;
+      font-size: clamp(16px,4vw,18px);
+      max-width: 800px;
+      margin: auto;
+      color: #555;
+      line-height: 1.8;
     }
 
     /* SECTION */
-    section { padding:60px 40px; }
+    section { 
+      padding: clamp(40px,12vw,60px) clamp(25px,8vw,40px); 
+    }
     section h2 {
-      font-size:30px;
-      margin-bottom:20px;
-      color:#0d6b8c;
-      border-right:5px solid #0d6b8c;
-      padding-right:12px;
+      font-size: clamp(22px,6vw,30px);
+      margin-bottom: 20px;
+      color: #0d6b8c;
+      border-right: 5px solid #0d6b8c;
+      padding-right: 12px;
     }
 
     /* GRID */
     .grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-      gap:25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(clamp(250px,45vw,280px),1fr));
+      gap: clamp(20px,6vw,25px);
     }
 
     .card {
-      padding:18px;
-      border-radius:14px;
-      background:#fff;
-      box-shadow:0 2px 15px rgba(0,0,0,0.08);
-      transition:.2s;
-      position:relative;
-      display:flex;
-      flex-direction:column;
+      padding: clamp(15px,4vw,18px);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      transition: .2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
-    .card:hover { transform: translateY(-5px); box-shadow:0 4px 20px rgba(0,0,0,0.12); }
+    .card:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+    }
     .card h3 { 
-      font-size:20px; 
-      margin-bottom:8px; 
-      color:#0d6b8c; 
-      min-height:50px;
+      font-size: clamp(16px,4vw,20px);
+      margin-bottom: 8px; 
+      color: #0d6b8c; 
+      line-height: 1.4;
     }
     .card p { 
-      font-size:15px; 
-      color:#555; 
-      line-height:1.7; 
-      flex-grow:1;
-      margin-bottom:12px;
+      font-size: clamp(13px,3.5vw,15px);
+      color: #555; 
+      line-height: 1.7; 
+      flex-grow: 1;
+      margin-bottom: 12px;
     }
 
     .card button {
-      margin-top:auto;
-      padding:10px 16px;
-      border:none;
-      border-radius:20px;
-      background:#0aa2ca;
-      color:#fff;
-      cursor:pointer;
-      transition:.2s;
-      font-weight:600;
-      font-size:15px;
+      margin-top: auto;
+      padding: clamp(8px,2.5vw,10px) clamp(12px,4vw,16px);
+      border: none;
+      border-radius: 20px;
+      background: #0aa2ca;
+      color: #fff;
+      cursor: pointer;
+      transition: .2s;
+      font-weight: 600;
+      font-size: clamp(13px,3.5vw,15px);
     }
-    .card button:hover { background:#078fa8; transform:scale(1.02); }
+    .card button:hover { 
+      background: #078fa8; 
+      transform: scale(1.02); 
+    }
 
     /* FOOTER */
     footer {
-      margin-top:40px;
-      padding:35px;
-      background:#0d6b8c;
-      color:#fff;
-      text-align:center;
-      font-size:18px;
+      margin-top: clamp(30px,8vw,40px);
+      padding: clamp(25px,8vw,35px);
+      background: #0d6b8c;
+      color: #fff;
+      text-align: center;
+      font-size: clamp(15px,4vw,18px);
     }
 
-    /* Toast Message Styles */
-    .toast-container { position:fixed; top:20px; left:20px; z-index:5000; }
+    /* TOAST */
+    .toast-container { 
+      position: fixed; 
+      top: 20px; 
+      left: 20px; 
+      z-index: 5000; 
+    }
     .toast {
-      background:#fff;
-      padding:16px 20px;
-      border-radius:8px;
-      margin-bottom:10px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.15);
-      display:flex;
-      align-items:center;
-      gap:12px;
-      animation:slideIn 0.3s ease-in-out;
+      background: #fff;
+      padding: clamp(12px,3vw,16px) clamp(16px,4vw,20px);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease-in-out;
+      max-width: 90vw;
     }
-    .toast.error   { border-right:4px solid #ff5454; }
-    .toast.success { border-right:4px solid #22c55e; }
-    .toast.warning { border-right:4px solid #fbbf24; }
-    .toast.info    { border-right:4px solid #3b82f6; }
-
-    .toast-icon   { font-size:20px; }
-    .toast-message{ color:#333; font-weight:500; }
-
-    @keyframes slideIn {
-      from { transform:translateX(-300px); opacity:0; }
-      to   { transform:translateX(0); opacity:1; }
+    .toast.error { border-right: 4px solid #ff5454; }
+    .toast.success { border-right: 4px solid #22c55e; }
+    .toast.warning { border-right: 4px solid #fbbf24; }
+    .toast.info { border-right: 4px solid #3b82f6; }
+    .toast-icon { font-size: clamp(18px,5vw,20px); }
+    .toast-message { 
+      color: #333; 
+      font-weight: 500; 
+      font-size: clamp(14px,3.5vw,16px);
     }
-    @keyframes slideOut {
-      from { transform:translateX(0); opacity:1; }
-      to   { transform:translateX(-300px); opacity:0; }
+    @keyframes slideIn { 
+      from { transform: translateX(-100%); opacity: 0; } 
+      to { transform: translateX(0); opacity: 1; } 
     }
-    .toast.removing { animation:slideOut 0.3s ease-in-out; }
+    @keyframes slideOut { 
+      from { transform: translateX(0); opacity: 1; } 
+      to { transform: translateX(-100%); opacity: 0; } 
+    }
+    .toast.removing { animation: slideOut 0.3s ease-in-out; }
 
-    /* RESPONSIVE */
-    @media(max-width:980px){
-      nav ul { display:none; }
-      .actions { display:none; }
-      #menu-btn { display:block; }
+    /* 🔥 RESPONSIVE: Burger للموبايل فقط + اللوغو بالوسط */
+    @media(max-width: 980px){
+      nav ul { display: none; }
+      .actions { display: none; }
+      #menu-btn { display: flex !important; }
+
+      header {
+        justify-content: center;
+      }
+      .logo {
+        position: static;
+        flex: none;
+      }
+
+      .toast-container { 
+        left: 50%; 
+        transform: translateX(-50%); 
+        width: 90%; 
+      }
     }
 
-    @media(max-width:768px){
-      header { padding:15px 20px; }
-      .logo img { width:70px; }
-      .hero { padding:80px 25px; }
-      .hero h1 { font-size:28px; }
-      .hero p { font-size:16px; }
-      section { padding:40px 20px; }
-      section h2 { font-size:24px; }
-      .grid { grid-template-columns:1fr; gap:20px; }
-      .toast-container { left:10px; right:10px; }
-      .toast { margin-bottom:8px; font-size:14px; }
+    @media(max-width: 768px){
+      header { padding: 15px 20px; }
+      .hero { padding: 70px 25px; }
+      section { padding: 50px 20px; }
+      .grid { 
+        grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); 
+        gap: 20px; 
+      }
     }
 
-    @media(max-width:480px){
-      .hero h1 { font-size:24px; }
-      .hero p { font-size:15px; }
-      section h2 { font-size:22px; }
-      .card h3 { font-size:18px; min-height:auto; }
-      .card button { padding:8px 12px; font-size:14px; }
+    @media(max-width: 600px){
+      .hero h1 { font-size: 28px; }
+      .hero p { font-size: 16px; }
+      section { padding: 40px 15px; }
+      section h2 { font-size: 24px; }
+      .grid { 
+        grid-template-columns: 1fr; 
+        gap: 18px; 
+      }
+      .card { padding: 20px; }
+    }
+
+    @media(max-width: 480px){
+      header { padding: 12px 15px; }
+      .logo img { width: 65px; }
+      .hero { padding: 60px 15px; }
+      section { padding: 35px 12px; }
+      section h2 { font-size: 22px; }
+      .card h3 { font-size: 18px; }
+      .card button { font-size: 15px; }
+    }
+
+    @media(max-width: 360px){
+      .hero h1 { font-size: 24px; }
+      .hero p { font-size: 15px; }
+      section h2 { font-size: 20px; }
+      .card { padding: 18px; }
     }
   </style>
 </head>
@@ -257,13 +353,18 @@
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <img src="images/logo.png" style="width:80px; margin-bottom:20px;">
+  <img src="images/logo.png" style="width: clamp(65px,15vw,80px); margin-bottom: 20px;">
   <ul>
     <li><a href="index.html">الرئيسية</a></li>
-    <li><a href="research.html">أبحاث محكمة</a></li>
-    <li><a href="articles.html">مقالات محكمة</a></li>
-    <li><a href="files.html">ملفات بحثية</a></li>
-    <li><a href="general-articles.html">مقالات عامة</a></li>
+    <li class="dropdown">
+      <a href="#">أبحاث ودراسات ▾</a>
+      <div class="dropdown-content">
+        <a href="research.html">أبحاث محكمة</a>
+        <a href="articles.html">مقالات محكمة</a>
+        <a href="files.html" class="active">ملفات بحثية</a>
+        <a href="general-articles.html">مقالات عامة</a>
+      </div>
+    </li>
     <li><a href="editions.html">إصداراتنا</a></li>
     <li><a href="activities.html">أنشطتنا</a></li>
     <li><a href="talks.html">حوارات</a></li>
@@ -280,8 +381,14 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <header>
-  <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+  <!-- 🔥 Burger موبايل فقط -->
   <div id="menu-btn" onclick="toggleMenu()">☰</div>
+
+  <!-- 🔥 Logo: يفتح index.html -->
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
   <nav>
     <ul>
       <li><a href="index.html">الرئيسية</a></li>
@@ -290,7 +397,7 @@
         <div class="dropdown-content">
           <a href="research.html">أبحاث محكمة</a>
           <a href="articles.html">مقالات محكمة</a>
-          <a href="files.html">ملفات بحثية</a>
+          <a href="files.html" class="active">ملفات بحثية</a>
           <a href="general-articles.html">مقالات عامة</a>
         </div>
       </li>
@@ -317,7 +424,7 @@
 <section>
   <h2>الملفات البحثية</h2>
   <div class="grid" id="filesGrid">
-    <div style="text-align:center; color:#999; padding:40px;">لا توجد ملفات حالياً</div>
+    <!-- سيتم ملؤه ديناميكيًا من admin.html -->
   </div>
 </section>
 
@@ -326,6 +433,11 @@
 </footer>
 
 <script>
+  // 🔥 اللوغو يفتح الصفحة الرئيسية
+  function goToHome() {
+    window.location.href = 'index.html';
+  }
+
   function toggleMenu() {
     const menu = document.getElementById("mobileMenu");
     menu.style.display = menu.style.display === "block" ? "none" : "block";
@@ -367,10 +479,8 @@
 
   function updateHeader() {
     if (user && user.username) {
-      headerActions.innerHTML =
-        `<span style="margin-right:12px;">مرحبًا، ${user.username}</span>
-         <button class="btn primary" onclick="logout()">تسجيل الخروج</button>`;
-      if (mobileLogin)   mobileLogin.innerHTML = `<a href="#" onclick="logout()">تسجيل الخروج</a>`;
+      headerActions.innerHTML = `<span style="margin-right:12px;">مرحبًا، ${user.username}</span><button class="btn primary" onclick="logout()">تسجيل الخروج</button>`;
+      if (mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout()">تسجيل الخروج</a>`;
       if (mobileRegister) mobileRegister.style.display = "none";
     }
   }
@@ -389,15 +499,14 @@
   const filesData = JSON.parse(localStorage.getItem('files')) || [];
 
   if (filesData.length === 0) {
-    filesGrid.innerHTML = '<div style="text-align:center; color:#999; padding:40px;">لا توجد ملفات حالياً</div>';
+    filesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#999; padding: clamp(40px,15vw,60px); font-size: clamp(16px,4vw,18px);">لا توجد ملفات حالياً</div>';
   } else {
-    filesGrid.innerHTML = '';
-    filesData.forEach((item, index) => {
+    filesData.forEach((item) => {
       const card = document.createElement("div");
       card.className = "card";
 
-      const imgHTML = item.image
-        ? `<img src="${item.image}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:10px;">`
+      const imgHTML = item.image 
+        ? `<img src="${item.image}" style="width:100%; height: clamp(120px,25vw,150px); object-fit: cover; border-radius: 10px; margin-bottom: 10px;">` 
         : '';
 
       card.innerHTML = `
@@ -410,7 +519,10 @@
       btn.innerText = "عرض المحتوى";
       btn.onclick = () => {
         localStorage.setItem('filesView', JSON.stringify(item));
-        window.open('files-view.html', '_blank');
+        showToast('جاري فتح الملف...', 'info');
+        setTimeout(() => {
+          window.open('files-view.html', '_blank');
+        }, 500);
       };
 
       card.appendChild(btn);
