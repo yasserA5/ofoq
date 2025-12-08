@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title id="t-title">تخصص السياسات العمومية</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:100%;overflow-x:hidden;}
+    body{
+      font-family:"Tajawal",sans-serif;
+      background:#ffffff;
+      color:#222;
+      line-height:1.7;
+      direction:rtl;
+    }
+
+    :root{
+      --primary:#009bc4;
+      --primary-dark:#00667f;
+      --primary-soft:#e5f6f9;
+      --nav-bg:#e7f5f8;
+      --text-main:#23424b;
+      --gold:#d4af37;
+    }
+
+    header{
+      padding:10px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:var(--nav-bg);
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      position:sticky;
+      top:0;
+      z-index:999;
+      gap:14px;
+    }
+
+    .logo{
+      flex:0 0 auto;
+      display:flex;
+      cursor:pointer;
+    }
+    .logo img{
+      width:68px;
+      height:auto;
+      transition:transform .2s;
+    }
+    .logo img:hover{transform:scale(1.05);}
+
+    nav{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    nav ul{
+      list-style:none;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+    }
+    nav li{position:relative;}
+    nav a{
+      text-decoration:none;
+      color:var(--text-main);
+      font-size:13px;
+      font-weight:600;
+      padding:4px 2px;
+      transition:.2s;
+    }
+    nav a:hover{color:var(--primary);}
+    nav a.active{
+      color:var(--primary);
+    }
+    nav a.active::after,
+    nav a:hover::after{
+      content:"";
+      position:absolute;
+      bottom:-2px;
+      inset-inline-start:0;
+      width:100%;
+      height:2px;
+      background:var(--primary);
+      border-radius:999px;
+    }
+
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:8px 0;
+      border-radius:10px;
+      min-width:210px;
+      border:1px solid #e5e7eb;
+      z-index:1000;
+    }
+    .dropdown-content a{
+      display:block;
+      padding:8px 16px;
+      color:var(--text-main);
+      white-space:nowrap;
+      font-size:13px;
+    }
+    .dropdown-content a:hover{
+      background:#f1fbff;
+      color:var(--primary);
+    }
+    .dropdown:hover .dropdown-content{display:block;}
+
+    .nav-search{
+      flex:0 0 150px;
+      position:relative;
+      display:flex;
+      align-items:center;
+    }
+    .nav-search input{
+      width:100%;
+      padding:5px 26px 5px 8px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      font-size:11px;
+      outline:none;
+    }
+    .nav-search input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 2px rgba(0,155,196,0.18);
+    }
+    .nav-search span{
+      position:absolute;
+      left:8px;
+      font-size:13px;
+      color:#9ca3af;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .lang-wrapper{position:relative;}
+    .lang-toggle{
+      border:none;
+      background:#ffffff;
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:11px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      border-radius:10px;
+      min-width:120px;
+      border:1px solid #e5e7eb;
+      display:none;
+      z-index:1200;
+    }
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:7px 10px;
+      text-align:right;
+      font-size:11px;
+      cursor:pointer;
+    }
+    .lang-menu button:hover{background:#f3f4f6;}
+
+    .btn{
+      padding:6px 12px;
+      border-radius:26px;
+      border:2px solid rgba(0,155,196,0.45);
+      background:rgba(0,155,196,0.06);
+      cursor:pointer;
+      font-weight:700;
+      font-size:11px;
+      transition:.2s;
+      color:var(--primary-dark);
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(0,155,196,0.12);}
+    .btn.primary{
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      border:none;
+      box-shadow:0 3px 12px rgba(0,155,196,0.25);
+    }
+
+    .pill-circle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 18px;
+      border-radius:999px;
+      background:var(--gold);
+      color:#111;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
+    }
+    .pill-circle::before{
+      content:"●";
+      font-size:9px;
+      margin-left:6px;
+      color:#111;
+    }
+    .dropdown-academic .dropdown-content a{font-size:13px;}
+
+    #menu-btn{
+      display:none;
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      border:none;
+      background:rgba(0,155,196,0.22);
+      color:var(--primary-dark);
+      font-size:20px;
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .mobile-menu{
+      display:none;
+      position:fixed;
+      top:0;
+      right:0;
+      width:min(80%,340px);
+      height:100%;
+      background:#ffffff;
+      box-shadow:-3px 0 12px rgba(0,0,0,0.1);
+      padding:24px 20px;
+      z-index:2000;
+      overflow-y:auto;
+    }
+    .mobile-menu-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .mobile-close{
+      border:none;
+      background:rgba(0,155,196,0.1);
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      font-size:20px;
+      cursor:pointer;
+      color:var(--primary-dark);
+    }
+    .mobile-menu ul{list-style:none;margin-top:16px;}
+    .mobile-menu li{margin-bottom:16px;}
+    .mobile-menu a{
+      font-size:17px;
+      text-decoration:none;
+      color:#222;
+    }
+
+    .hero{
+      padding:clamp(60px,14vw,90px) clamp(20px,7vw,40px);
+      background:linear-gradient(135deg,#f6fbff,var(--primary-soft));
+      display:flex;
+      flex-wrap:wrap;
+      gap:30px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .hero-main{
+      flex:1 1 260px;
+      text-align:right;
+    }
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#e0f2fe;
+      color:var(--gold);
+      font-size:12px;
+      margin-bottom:10px;
+    }
+    .hero-main h1{
+      font-size:clamp(24px,5vw,34px);
+      font-weight:800;
+      color:#064b63;
+      margin-bottom:10px;
+    }
+    .hero-main p{
+      font-size:clamp(14px,3vw,17px);
+      color:#4b5c63;
+      max-width:520px;
+      margin-bottom:18px;
+    }
+
+    section{
+      padding:clamp(32px,8vw,52px) clamp(20px,6vw,40px);
+    }
+    section h2{
+      font-size:clamp(20px,4.4vw,28px);
+      margin-bottom:18px;
+      color:#0d6b8c;
+      border-right:4px solid #0d6b8c;
+      padding-right:10px;
+    }
+
+    footer{
+      margin-top:34px;
+      padding:24px;
+      background:#0d6b8c;
+      color:#fff;
+      text-align:center;
+      font-size:14px;
+    }
+
+    @media(max-width:1100px){
+      .nav-search{display:none;}
+    }
+    @media(max-width:980px){
+      nav{display:none;}
+      .actions{display:none;}
+      #menu-btn{
+        display:flex;
+        order:-1;
+      }
+      header{justify-content:center;}
+      .logo{margin-inline:auto;}
+    }
+    @media(max-width:768px){
+      header{padding:8px 14px;}
+      .hero{padding:50px 16px;}
+      section{padding:30px 16px;}
+    }
+
+    .coming-soon-wrapper{position:relative;}
+    .coming-soon-blur{
+      filter:blur(4px);
+      pointer-events:none;
+      user-select:none;
+      opacity:.5;
+    }
+    .coming-soon-overlay{
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.55);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      color:#fff;
+      text-align:center;
+      padding:20px;
+    }
+    .coming-soon-box{
+      max-width:420px;
+      background:rgba(13,107,140,0.9);
+      border-radius:14px;
+      padding:18px 20px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.35);
+    }
+    .coming-soon-box h2{
+      margin-bottom:8px;
+      font-size:clamp(20px,5vw,24px);
+    }
+    .coming-soon-box p{
+      font-size:clamp(14px,4vw,16px);
+      line-height:1.7;
+      margin-bottom:10px;
+    }
+
+    #toastBox{
+      position:fixed;
+      bottom:20px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:3000;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:center;
+    }
+    .toast-msg{
+      background:#111827;
+      color:#f9fafb;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:13px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.25);
+      opacity:0;
+      transform:translateY(10px);
+      transition:.25s;
+    }
+    .toast-msg.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+  </style>
+</head>
+<body>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-header">
+    <img src="images/logo.png" style="width:70px;" alt="Logo">
+    <button class="mobile-close" onclick="toggleMenu()">✕</button>
+  </div>
+  <ul>
+    <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+    <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+    <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+    <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+    <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+    <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+    <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+    <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+    <li><a href="#academic" data-t="nav_academic">أكاديمي</a></li>
+    <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+    <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+    <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    <li id="mobileLogin"><a href="login.html" data-t="nav_login">تسجيل الدخول</a></li>
+    <li id="mobileRegister"><a href="register.html" data-t="nav_join">انضم إلينا</a></li>
+  </ul>
+</div>
+
+<header>
+  <button id="menu-btn" onclick="toggleMenu()">☰</button>
+
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
+  <nav>
+    <ul>
+      <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
+      <li class="dropdown">
+        <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
+        <div class="dropdown-content">
+          <a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a>
+          <a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a>
+          <a href="files.html" data-t="nav_files">ملفات بحثية</a>
+          <a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a>
+        </div>
+      </li>
+
+      <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+      <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+      <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
+      <li class="dropdown dropdown-academic">
+        <a href="#academic" class="pill-circle" data-t="nav_academic">أكاديمي</a>
+        <div class="dropdown-content">
+          <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+          <a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a>
+          <a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a>
+          <a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a>
+          <a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a>
+        </div>
+      </li>
+
+      <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+      <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+      <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    </ul>
+
+    <form class="nav-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInput" placeholder="ابحث..." />
+      <span>🔍</span>
+    </form>
+  </nav>
+
+  <div class="actions" id="headerActions">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" onclick="toggleLangMenu()">
+        <span id="langCurrent">AR</span> ▾
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('fr')">Français</button>
+      </div>
+    </div>
+    <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+    <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
+  </div>
+</header>
+
+<div class="coming-soon-wrapper">
+  <div class="coming-soon-blur">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="hero-badge" data-t="hero_badge">تخصص أكاديمي</div>
+        <h1 data-t="hero_title">تخصص السياسات العمومية</h1>
+        <p data-t="hero_text">
+          يركز هذا القسم على دورة السياسة العمومية من تشخيص المشكلة، إلى تصميم البدائل،
+          ثم التنفيذ والتقييم، مع أمثلة على البرامج والسياسات الحكومية.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-t="section_title">محتوى التخصص</h2>
+      <p data-t="section_text">
+        سيتم إعداد محتوى تدريجي في تحليل السياسات العمومية، أدوات التقييم،
+        ودراسات حالة من السياق الوطني والجهوي لتعميق الفهم التطبيقي.
+      </p>
+    </section>
+  </div>
+
+  <div class="coming-soon-overlay" onclick="showSectionToast()">
+    <div class="coming-soon-box">
+      <h2 data-t="overlay_title">القسم غير متاح حالياً</h2>
+      <p data-t="overlay_text">
+        يتم حالياً تطوير برنامج متكامل في السياسات العمومية. ستتمكن قريباً من متابعة
+        مسار كامل من الدروس والتطبيقات العملية، إلى حينها نرحب بك في بقية الأقسام.
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer data-t="footer_text">
+  © جميع الحقوق محفوظة – منصتك العلمية
+</footer>
+
+<div id="toastBox"></div>
+
+<script>
+  function showToast(message){
+    const box = document.getElementById('toastBox');
+    if(!box) return;
+    const el = document.createElement('div');
+    el.className = 'toast-msg';
+    el.textContent = message;
+    box.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 250);
+    }, 3000);
+  }
+
+  function goToHome(){window.location.href='index.html';}
+
+  function toggleMenu(){
+    const menu=document.getElementById("mobileMenu");
+    const btn=document.getElementById("menu-btn");
+    const open=menu.style.display==="block";
+    menu.style.display=open?"none":"block";
+    if(btn) btn.textContent=open?"☰":"✕";
+  }
+
+  function toggleLangMenu(){
+    const menu=document.getElementById("langMenu");
+    if(!menu) return;
+    menu.style.display = menu.style.display==="block" ? "none" : "block";
+  }
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.lang-wrapper')){
+      const menu=document.getElementById('langMenu');
+      if(menu) menu.style.display='none';
+    }
+  });
+
+  function doSearch(e){
+    e.preventDefault();
+    const input=document.getElementById('navSearchInput');
+    const q=input ? input.value.trim() : "";
+    if(!q) return;
+    window.location.href='search.html?q='+encodeURIComponent(q);
+  }
+
+  let user=JSON.parse(localStorage.getItem("user")||"null");
+  let currentLang='ar';
+
+  function updateHeader(){
+    const headerActions=document.getElementById("headerActions");
+    const mobileLogin=document.getElementById("mobileLogin");
+    const mobileRegister=document.getElementById("mobileRegister");
+
+    if(user && user.username){
+      if(headerActions){
+        headerActions.innerHTML = `
+          <div class="lang-wrapper">
+            <button class="lang-toggle" onclick="toggleLangMenu()">
+              <span id="langCurrent">AR</span> ▾
+            </button>
+            <div class="lang-menu" id="langMenu">
+              <button onclick="setLang('ar')">العربية</button>
+              <button onclick="setLang('en')">English</button>
+              <button onclick="setLang('fr')">Français</button>
+            </div>
+          </div>
+          <span style="margin-right:8px;font-size:12px;">${user.username}</span>
+          <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
+        `;
+      }
+      if(mobileLogin)  mobileLogin.innerHTML=`<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
+      if(mobileRegister) mobileRegister.style.display="none";
+    }
+  }
+
+  function logout(){
+    localStorage.removeItem("user");
+    user=null;
+    showToast(translations[currentLang].logout_toast || 'تم تسجيل الخروج بنجاح');
+    setTimeout(()=>location.reload(),500);
+  }
+
+  const translations = {
+    ar: {
+      title:"تخصص السياسات العمومية",
+      nav_home:"الرئيسية",
+      nav_studies:"أبحاث ودراسات ▾",
+      nav_research_peer:"أبحاث محكمة",
+      nav_articles_peer:"مقالات محكمة",
+      nav_files:"ملفات بحثية",
+      nav_foreign:"مقالات أجنبية",
+      nav_articles:"مقالات",
+      nav_editions:"إصداراتنا",
+      nav_activities:"أنشطتنا",
+      nav_academic:"أكاديمي",
+      nav_live:"بث مباشر",
+      nav_rules:"شروط النشر",
+      nav_contact:"اتصل بنا",
+      nav_login:"تسجيل الدخول",
+      nav_join:"انضم إلينا",
+      hero_badge:"تخصص أكاديمي",
+      hero_title:"تخصص السياسات العمومية",
+      hero_text:"يركز هذا القسم على دورة السياسة العمومية من تشخيص المشكلة، إلى تصميم البدائل، ثم التنفيذ والتقييم، مع أمثلة على البرامج والسياسات الحكومية.",
+      section_title:"محتوى التخصص",
+      section_text:"سيتم إعداد محتوى تدريجي في تحليل السياسات العمومية، أدوات التقييم، ودراسات حالة من السياق الوطني والجهوي لتعميق الفهم التطبيقي.",
+      overlay_title:"القسم غير متاح حالياً",
+      overlay_text:"يتم حالياً تطوير برنامج متكامل في السياسات العمومية. ستتمكن قريباً من متابعة مسار كامل من الدروس والتطبيقات العملية، إلى حينها نرحب بك في بقية الأقسام.",
+      overlay_toast:"هذا القسم قيد التطوير وسيتم فتحه قريباً",
+      empty_items:"لا توجد عناصر حالياً",
+      footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
+      logout:"تسجيل الخروج",
+      logout_toast:"تم تسجيل الخروج بنجاح",
+      sp_politics:"تخصص علوم سياسية",
+      sp_ir:"تخصص العلاقات الدولية",
+      sp_admin_law:"تخصص القانون الإداري",
+      sp_const_law:"تخصص القانون الدستوري",
+      sp_public_policy:"تخصص السياسات العمومية"
+    },
+    en: {
+      title:"Public Policy Track",
+      nav_home:"Home",
+      nav_studies:"Research & Studies ▾",
+      nav_research_peer:"Peer‑reviewed Papers",
+      nav_articles_peer:"Scholarly Articles",
+      nav_files:"Research Files",
+      nav_foreign:"Foreign Articles",
+      nav_articles:"Articles",
+      nav_editions:"Our Publications",
+      nav_activities:"Activities",
+      nav_academic:"Academic",
+      nav_live:"Live",
+      nav_rules:"Submission Rules",
+      nav_contact:"Contact us",
+      nav_login:"Login",
+      nav_join:"Join us",
+      hero_badge:"Academic track",
+      hero_title:"Public Policy Track",
+      hero_text:"This track focuses on the public policy cycle from problem diagnosis to designing alternatives, implementation, and evaluation, with examples of government programs and policies.",
+      section_title:"Track contents",
+      section_text:"Step‑by‑step content in public policy analysis, evaluation tools, and case studies from national and regional contexts will be provided to deepen practical understanding.",
+      overlay_title:"Section not available yet",
+      overlay_text:"A comprehensive Public Policy program is being developed. You will soon be able to follow a complete path of lessons and practical applications; until then, you can benefit from the other sections.",
+      overlay_toast:"This section is under development and will open soon.",
+      empty_items:"No items yet",
+      footer_text:"© All rights reserved – Your Academic Platform",
+      logout:"Logout",
+      logout_toast:"Logged out successfully",
+      sp_politics:"Political Science",
+      sp_ir:"International Relations",
+      sp_admin_law:"Administrative Law",
+      sp_const_law:"Constitutional Law",
+      sp_public_policy:"Public Policy"
+    },
+    fr: {
+      title:"Parcours politiques publiques",
+      nav_home:"Accueil",
+      nav_studies:"Recherches et études ▾",
+      nav_research_peer:"Recherches évaluées",
+      nav_articles_peer:"Articles scientifiques",
+      nav_files:"Dossiers de recherche",
+      nav_foreign:"Articles étrangers",
+      nav_articles:"Articles",
+      nav_editions:"Nos publications",
+      nav_activities:"Activités",
+      nav_academic:"Académique",
+      nav_live:"Direct",
+      nav_rules:"Conditions de publication",
+      nav_contact:"Contactez‑nous",
+      nav_login:"Connexion",
+      nav_join:"Rejoignez‑nous",
+      hero_badge:"Parcours académique",
+      hero_title:"Parcours politiques publiques",
+      hero_text:"Ce parcours se concentre sur le cycle des politiques publiques, du diagnostic du problème à la conception des alternatives, la mise en œuvre et l'évaluation, avec des exemples de programmes et politiques gouvernementaux.",
+      section_title:"Contenu du parcours",
+      section_text:"Un contenu progressif en analyse des politiques publiques, outils d'évaluation et études de cas issues des contextes national et régional sera proposé afin d'approfondir la compréhension pratique.",
+      overlay_title:"Section non disponible pour le moment",
+      overlay_text:"Un programme complet en politiques publiques est en cours de développement. Vous pourrez bientôt suivre un parcours complet de cours et d'applications pratiques ; en attendant, profitez des autres rubriques.",
+      overlay_toast:"Cette section est en cours de préparation et sera bientôt disponible.",
+      empty_items:"Aucun élément pour le moment",
+      footer_text:"© Tous droits réservés – Votre plateforme scientifique",
+      logout:"Déconnexion",
+      logout_toast:"Déconnexion effectuée avec succès",
+      sp_politics:"Science politique",
+      sp_ir:"Relations internationales",
+      sp_admin_law:"Droit administratif",
+      sp_const_law:"Droit constitutionnel",
+      sp_public_policy:"Politiques publiques"
+    }
+  };
+
+  function setLang(lang){
+    const dict = translations[lang] || translations.ar;
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
+
+    const langCurrent = document.getElementById('langCurrent');
+    if(langCurrent) langCurrent.textContent = lang.toUpperCase();
+
+    const titleEl = document.getElementById('t-title');
+    if(titleEl && dict.title) titleEl.textContent = dict.title;
+
+    document.querySelectorAll('[data-t]').forEach(el => {
+      const key = el.getAttribute('data-t');
+      if(dict[key]) el.textContent = dict[key];
+    });
+
+    const menu = document.getElementById('langMenu');
+    if(menu) menu.style.display = 'none';
+  }
+
+  function showSectionToast(){
+    const dict = translations[currentLang] || translations.ar;
+    showToast(dict.overlay_toast || dict.overlay_text);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    updateHeader();
+    const saved = localStorage.getItem('lang') || 'ar';
+    setLang(saved);
+  });
+</script>
+</body>
+</html>

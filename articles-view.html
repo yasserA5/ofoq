@@ -1,211 +1,771 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>المقالة المحكمة</title>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title id="t-title">عرض المقال المحكم</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html, body { width:100%; overflow-x:hidden; }
-  body {
-    font-family:"Tajawal",sans-serif;
-    background:linear-gradient(135deg,#f5f7fb 0%,#e2e8f0 100%);
-    padding:clamp(10px,4vw,20px);
-    line-height:1.7;
-    min-height:100vh;
-  }
-  .container{
-    max-width:900px;width:100%;margin:0 auto;
-    background:#fff;
-    padding:clamp(20px,6vw,30px);
-    border-radius:clamp(10px,3vw,16px);
-    box-shadow:0 10px 35px rgba(0,0,0,0.08);
-  }
-  h1{
-    margin:0 0 clamp(20px,6vw,25px) 0;
-    color:#0aa2ca;
-    font-size:clamp(20px,6vw,32px);
-    font-weight:700;
-  }
-  .image-box{margin-bottom:clamp(18px,5vw,25px);}
-  .image-box img{
-    width:100%;
-    height:clamp(160px,35vw,280px);
-    object-fit:cover;
-    border-radius:clamp(8px,2vw,14px);
-  }
-  .section{margin-bottom:clamp(20px,6vw,30px);}
-  .label{
-    font-weight:700;
-    margin-bottom:clamp(6px,2vw,10px);
-    color:#0a4f5f;
-    font-size:clamp(14px,4vw,17px);
-    display:block;
-  }
-  .content{
-    font-size:clamp(14px,4vw,16px);
-    color:#333;
-    padding:clamp(12px,4vw,15px);
-    background:#f8fafc;
-    border-radius:clamp(8px,2vw,10px);
-    border-right:4px solid #e2e8f0;
-    min-height:clamp(50px,12vw,60px);
-    word-break:break-word;
-    line-height:1.7;
-    white-space:pre-wrap;
-  }
-  .file-box{
-    background:#eef7fa;
-    border:2px solid #d9e7ec;
-    padding:clamp(15px,5vw,25px);
-    border-radius:clamp(10px,3vw,14px);
-    margin:clamp(15px,5vw,20px) 0;
-  }
-  iframe{
-    width:100%;
-    height:clamp(250px,65vw,650px);
-    border-radius:clamp(8px,2vw,12px);
-    border:1px solid #d1d5db;
-    box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    display:block;
-  }
-  .btn{
-    display:inline-block;
-    background:linear-gradient(135deg,#0aa2ca,#078fa8);
-    color:#fff;
-    padding:clamp(10px,3vw,14px) clamp(18px,5vw,28px);
-    border-radius:clamp(8px,2.5vw,12px);
-    text-decoration:none;
-    font-weight:700;
-    font-size:clamp(14px,4vw,16px);
-    margin-top:clamp(10px,3vw,15px);
-    box-shadow:0 4px 15px rgba(10,162,202,0.3);
-    transition:all .3s ease;
-    text-align:center;
-  }
-  .btn:hover{
-    background:linear-gradient(135deg,#078fa8,#056b7f);
-    transform:translateY(-2px);
-    box-shadow:0 6px 20px rgba(10,162,202,0.4);
-  }
-  .btn.secondary{
-    background:linear-gradient(135deg,#6b7280,#9ca3af);
-  }
-  .error{
-    text-align:center;
-    color:#dc3545;
-    font-size:clamp(18px,6vw,24px);
-    padding:clamp(50px,20vw,80px) clamp(20px,8vw,40px);
-    background:#fff;
-    border-radius:clamp(12px,4vw,16px);
-    box-shadow:0 10px 35px rgba(0,0,0,0.08);
-    margin:clamp(20px,8vw,40px) auto;
-    max-width:90%;
-  }
-  @media(max-width:1200px){.container{max-width:95%;}}
-  @media(max-width:768px){
-    body{padding:clamp(8px,3vw,12px);}
-    .container{padding:clamp(18px,6vw,22px);}
-  }
-  @media(max-width:480px){
-    body{padding:clamp(5px,2.5vw,8px);}
-    .container{
-      padding:clamp(15px,5vw,18px);
-      margin:0 clamp(5px,2vw,10px);
-      border-radius:clamp(8px,3vw,12px);
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width: 100%; overflow-x: hidden; }
+
+    :root{
+      --primary:#009bc4;
+      --primary-dark:#00667f;
+      --primary-soft:#e5f6f9;
+      --nav-bg:#e7f5f8;
+      --text-main:#23424b;
+      --gold:#d4af37;
+      --bg-overlay:rgba(15,23,42,0.35);
     }
-  }
-  @media(max-width:360px){
-    body{padding:clamp(3px,2vw,5px);}
-    .container{padding:clamp(12px,5vw,15px);}
-  }
-</style>
 
+    body {
+      font-family: "Tajawal", sans-serif;
+      background: #ffffff;
+      color: #222;
+      line-height: 1.6;
+      direction:rtl;
+    }
+
+    /* HEADER */
+    header{
+      padding:10px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:var(--nav-bg);
+      box-shadow:0 2px 18px rgba(0,0,0,0.07);
+      position:sticky;
+      top:0;
+      z-index:1500;
+      gap:14px;
+    }
+
+    .logo{
+      flex:0 0 auto;
+      display:flex;
+      cursor:pointer;
+      justify-content:center;
+    }
+    .logo img{
+      width:clamp(60px, 12vw, 85px);
+      height:auto;
+      transition:transform .2s;
+    }
+    .logo img:hover{transform:scale(1.05);}
+
+    nav{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    nav ul{
+      list-style:none;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+    }
+    nav li{position:relative;}
+    nav a{
+      text-decoration:none;
+      color:var(--text-main);
+      font-size:13px;
+      font-weight:600;
+      padding:4px 2px;
+      transition:.2s;
+    }
+    nav a:hover{color:var(--primary);}
+    nav a.active{
+      color:var(--primary);
+    }
+    nav a.active::after,
+    nav a:hover::after{
+      content:"";
+      position:absolute;
+      bottom:-2px;
+      inset-inline-start:0;
+      width:100%;
+      height:2px;
+      background:var(--primary);
+      border-radius:999px;
+    }
+
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:8px 0;
+      border-radius:10px;
+      min-width:210px;
+      border:1px solid #e5e7eb;
+      z-index:1000;
+    }
+    .dropdown-content a{
+      display:block;
+      padding:8px 16px;
+      color:var(--text-main);
+      white-space:nowrap;
+      font-size:13px;
+    }
+    .dropdown-content a:hover{
+      background:#f1fbff;
+      color:var(--primary);
+    }
+    .dropdown:hover .dropdown-content{display:block;}
+
+    .nav-search{
+      flex:0 0 150px;
+      position:relative;
+      display:flex;
+      align-items:center;
+    }
+    .nav-search input{
+      width:100%;
+      padding:5px 26px 5px 8px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      font-size:11px;
+      outline:none;
+    }
+    .nav-search input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 2px rgba(0,155,196,0.18);
+    }
+    .nav-search span{
+      position:absolute;
+      left:8px;
+      font-size:13px;
+      color:#9ca3af;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn{
+      padding:6px 12px;
+      border-radius:26px;
+      border:2px solid rgba(0,155,196,0.45);
+      background:rgba(0,155,196,0.06);
+      cursor:pointer;
+      font-weight:700;
+      font-size:11px;
+      transition:.2s;
+      color:var(--primary-dark);
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(0,155,196,0.12);}
+    .btn.primary{
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      border:none;
+      box-shadow:0 3px 12px rgba(0,155,196,0.25);
+    }
+
+    .lang-wrapper{position:relative;}
+    .lang-toggle{
+      border:none;
+      background:#ffffff;
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:11px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      border-radius:10px;
+      min-width:120px;
+      border:1px solid #e5e7eb;
+      display:none;
+      z-index:1200;
+    }
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:7px 10px;
+      text-align:right;
+      font-size:11px;
+      cursor:pointer;
+    }
+    .lang-menu button:hover{background:#f3f4f6;}
+
+    .pill-circle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 18px;
+      border-radius:999px;
+      background:var(--gold);
+      color:#111;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
+    }
+    .pill-circle::before{
+      content:"●";
+      font-size:9px;
+      margin-left:6px;
+      color:#111;
+    }
+    .mobile-dropdown-toggle .pill-circle::before{
+      content:"";
+      display:none;
+    }
+
+    /* BURGER */
+    #menu-btn{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:999px;
+      border:none;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 4px 14px rgba(0,155,196,0.4);
+      font-family:"Tajawal", sans-serif;
+    }
+    #menu-btn span{
+      position:absolute;
+      width:22px;
+      height:2px;
+      background:#ffffff;
+      border-radius:999px;
+      transition:0.25s ease;
+      left:50%;
+      transform:translateX(-50%);
+    }
+    #menu-btn span:nth-child(1){ top:13px; }
+    #menu-btn span:nth-child(2){ top:20px; }
+    #menu-btn span:nth-child(3){ top:27px; }
+    #menu-btn.open span:nth-child(1){
+      top:20px;
+      transform:translateX(-50%) rotate(45deg);
+    }
+    #menu-btn.open span:nth-child(2){ opacity:0; }
+    #menu-btn.open span:nth-child(3){
+      top:20px;
+      transform:translateX(-50%) rotate(-45deg);
+    }
+
+    .backdrop{
+      position:fixed;
+      inset:0;
+      background:var(--bg-overlay);
+      z-index:1900;
+      opacity:0;
+      visibility:hidden;
+      transition:0.25s ease;
+    }
+    .backdrop.active{
+      opacity:1;
+      visibility:visible;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(80%, 360px);
+      height: 100%;
+      background: #fff;
+      box-shadow: -4px 0 18px rgba(0,0,0,0.15);
+      padding: clamp(20px, 8vw, 30px);
+      z-index: 2000;
+      overflow-y: auto;
+      transform:translateX(100%);
+      transition:transform 0.25s ease;
+    }
+    .mobile-menu.open{ transform:translateX(0); }
+    .mobile-menu-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .mobile-logo{
+      width:52px;
+      height:auto;
+    }
+    .mobile-close{
+      border:none;
+      background:rgba(248,250,252,0.9);
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      font-size:18px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 2px 8px rgba(15,23,42,0.15);
+    }
+    .mobile-menu ul { list-style: none; margin-top: 10px; }
+    .mobile-menu ul li { margin-bottom: 18px; }
+    .mobile-menu ul li a {
+      font-size: clamp(18px, 5vw, 20px);
+      text-decoration: none;
+      color: #222;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:8px 10px;
+      border-radius:10px;
+      transition:.2s;
+    }
+    .mobile-menu ul li a:hover{
+      background:#e0f2fe;
+      color:var(--primary-dark);
+    }
+    .mobile-menu,
+    .mobile-menu *{
+      font-family:"Tajawal", sans-serif !important;
+    }
+
+    .mobile-dropdown-toggle{
+      width:100%;
+      background:transparent;
+      border:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:16px;
+      color:#0f172a;
+      cursor:pointer;
+      padding:0;
+      font-weight:600;
+    }
+    .mobile-dropdown-arrow{
+      font-size:11px;
+      color:#6b7280;
+    }
+    .mobile-submenu{
+      list-style:none;
+      margin-top:8px;
+      margin-right:14px;
+      display:none;
+    }
+    .mobile-submenu li{ margin-bottom:10px; }
+    .mobile-submenu a{
+      font-size:15px;
+      font-weight:600;
+      padding:6px 10px;
+    }
+    .mobile-dropdown.open .mobile-submenu{ display:block; }
+
+    /* HERO */
+    .hero {
+      padding: clamp(60px, 18vw, 90px) clamp(25px, 8vw, 40px);
+      text-align: center;
+      background:linear-gradient(135deg,#f6fbff,var(--primary-soft));
+    }
+    .hero h1 {
+      font-size: clamp(24px, 8vw, 34px);
+      font-weight: 800;
+      color: #064b63;
+      margin-bottom: clamp(10px, 3vw, 14px);
+    }
+    .hero p {
+      font-size: clamp(15px, 4vw, 17px);
+      max-width: 800px;
+      margin: auto;
+      color: #4b5c63;
+      line-height: 1.8;
+    }
+
+    main{
+      padding: clamp(30px, 8vw, 40px) clamp(20px, 7vw, 40px);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .article-image{
+      width:100%;
+      max-height:360px;
+      object-fit:cover;
+      border-radius:14px;
+      margin-bottom:16px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.12);
+    }
+    .article-meta{
+      color:#6b7280;
+      font-size:14px;
+      margin-bottom:10px;
+    }
+    .article-short{
+      font-size:16px;
+      color:#374151;
+      margin-bottom:18px;
+    }
+    .article-full{
+      font-size:16px;
+      color:#111827;
+      line-height:1.9;
+      white-space:pre-wrap;
+    }
+    .article-actions{
+      margin-top:18px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:#e5f6f9;
+      color:#036377;
+    }
+
+    footer {
+      margin-top: clamp(30px, 8vw, 40px);
+      padding: clamp(25px, 8vw, 35px);
+      background: #0d6b8c;
+      color: #fff;
+      text-align: center;
+      font-size: clamp(15px, 4vw, 18px);
+    }
+
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 5000;
+    }
+    .toast {
+      background: #fff;
+      padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease-in-out;
+      max-width: 90vw;
+    }
+    .toast.error { border-right: 4px solid #ff5454; }
+    .toast.success { border-right: 4px solid #22c55e; }
+    .toast.warning { border-right: 4px solid #fbbf24; }
+    .toast.info { border-right: 4px solid #3b82f6; }
+    .toast-icon { font-size: clamp(18px, 5vw, 20px); }
+    .toast-message {
+      color: #333;
+      font-weight: 500;
+      font-size: clamp(14px, 3.5vw, 16px);
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(-100%); opacity: 0; }
+    }
+    .toast.removing { animation: slideOut 0.3s ease-in-out; }
+
+    @media(max-width:980px){
+      nav{display:none;}
+      .actions{display:none;}
+      #menu-btn{
+        display:flex;
+        order:-1;
+      }
+      header{
+        justify-content:space-between;
+      }
+      .logo{
+        margin-inline:auto;
+      }
+      .toast-container {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+      }
+    }
+  </style>
 </head>
 <body>
+<div class="backdrop" id="backdrop" onclick="toggleMenu(false)"></div>
 
-<div class="container">
-  <h1 id="title">...</h1>
-
-  <div id="imageBox" class="image-box"></div>
-
-  <div class="section">
-    <div class="label">المحتوى المختصر:</div>
-    <div id="short" class="content"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-header">
+    <img src="images/logo.png" class="mobile-logo" alt="Logo">
+    <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
   </div>
-
-  <div class="section">
-    <div class="label">المحتوى الكامل:</div>
-    <div id="full" class="content"></div>
-  </div>
-
-  <div class="section">
-    <div class="label">تفاصيل إضافية:</div>
-    <div id="details" class="content"></div>
-  </div>
-
-  <div class="section">
-    <div class="label">الملف المرفق:</div>
-    <div id="fileBox" class="file-box">لا يوجد ملف.</div>
-  </div>
-
-  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-    <a href="articles.html" class="btn secondary">رجوع للمقالات</a>
-    <a href="javascript:window.print()" class="btn">طباعة</a>
-  </div>
+  <ul>
+    <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+    <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+    <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+    <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+    <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+    <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+    <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+    <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span class="pill-circle" data-t="nav_academic">أكاديمي</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a></li>
+        <li><a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a></li>
+        <li><a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a></li>
+        <li><a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a></li>
+        <li><a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a></li>
+      </ul>
+    </li>
+    <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+    <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+    <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    <li id="mobileLogin"><a href="login.html" data-t="nav_login">تسجيل الدخول</a></li>
+    <li id="mobileRegister"><a href="register.html" data-t="nav_join">انضم إلينا</a></li>
+  </ul>
 </div>
 
-<script>
-  let item = JSON.parse(localStorage.getItem('articleView') || 'null');
+<div class="toast-container" id="toastContainer"></div>
 
-  if (!item) {
-    document.body.innerHTML = `
-      <div class="error">
-        ❌ رابط غير صالح
-        <br><br>
-        <a href="articles.html" class="btn">رجوع للمقالات</a>
+<header>
+  <button
+    id="menu-btn"
+    type="button"
+    onclick="toggleMenu()"
+    aria-label="Toggle navigation menu"
+    aria-expanded="false"
+  >
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
+  <nav>
+    <ul>
+      <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+      <li class="dropdown">
+        <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
+        <div class="dropdown-content">
+          <a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a>
+          <a href="articles.html" class="active" data-t="nav_articles_peer">مقالات محكمة</a>
+          <a href="files.html" data-t="nav_files">ملفات بحثية</a>
+          <a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a>
+        </div>
+      </li>
+      <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+      <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+      <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+      <li class="dropdown dropdown-academic">
+        <a href="#academic" class="pill-circle" data-t="nav_academic">أكاديمي</a>
+        <div class="dropdown-content">
+          <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+          <a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a>
+          <a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a>
+          <a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a>
+          <a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a>
+        </div>
+      </li>
+      <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+      <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+      <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    </ul>
+    <form class="nav-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInput" placeholder="ابحث..." />
+      <span>🔍</span>
+    </form>
+  </nav>
+
+  <div class="actions" id="headerActions">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" onclick="toggleLangMenu()">
+        <span id="langCurrent">AR</span> ▾
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('fr')">Français</button>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+    <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1 id="articleHeroTitle">مقال علمي محكم</h1>
+  <p id="articleHeroSub">عرض كامل لبيانات المقال العلمي المختار من قائمة المقالات المحكمة.</p>
+</div>
+
+<main>
+  <div id="articleContainer">
+    <!-- يتم حقنه عبر JavaScript -->
+  </div>
+</main>
+
+<footer data-t="footer_text">
+  © جميع الحقوق محفوظة – منصتك العلمية
+</footer>
+
+<script>
+  let user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  const translations = {/* يمكن نسخ نفس كائن الترجمة من articles.html إذا أردت */};
+
+  function t(key){
+    const dict = translations[localStorage.getItem('lang') || 'ar'] || {};
+    return dict[key] || '';
+  }
+
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = {error:'❌',success:'✅',warning:'⚠️',info:'ℹ️'};
+    toast.innerHTML = `
+      <span class="toast-icon">${icons[type]}</span>
+      <span class="toast-message">${message}</span>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('removing');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  function isLoggedIn() {
+    return !!(user && user.username);
+  }
+
+  function goToHome(){window.location.href='index.html';}
+
+  function doSearch(e){
+    e.preventDefault();
+    const input=document.getElementById('navSearchInput');
+    const q=input ? input.value.trim() : "";
+    if(!q) return;
+    window.location.href='search.html?q='+encodeURIComponent(q);
+  }
+
+  function toggleMenu(force){
+    const menu=document.getElementById("mobileMenu");
+    const backdrop=document.getElementById("backdrop");
+    const btn=document.getElementById("menu-btn");
+    if (!menu || !backdrop || !btn) return;
+    const shouldOpen = typeof force === "boolean"
+      ? force
+      : menu.style.display !== "block";
+    menu.style.display = shouldOpen ? "block" : "none";
+    menu.classList.toggle("open", shouldOpen);
+    backdrop.classList.toggle("active", shouldOpen);
+    btn.classList.toggle("open", shouldOpen);
+    btn.setAttribute("aria-expanded", String(shouldOpen));
+  }
+
+  function toggleLangMenu(){
+    const menu=document.getElementById("langMenu");
+    if(!menu) return;
+    menu.style.display = menu.style.display==="block" ? "none" : "block";
+  }
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.lang-wrapper')){
+      const m=document.getElementById('langMenu');
+      if(m) m.style.display='none';
+    }
+  });
+
+  function initMobileDropdowns(){
+    document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent = btn.closest('.mobile-dropdown');
+        if(parent){
+          parent.classList.toggle('open');
+        }
+      });
+    });
+  }
+
+  function loadArticle(){
+    let article = null;
+    const local = localStorage.getItem('articlePeerView');
+    if(local){
+      try{ article = JSON.parse(local); }catch(e){}
+    }
+    if(!article){
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if(id){
+        const list = JSON.parse(localStorage.getItem('articles') || '[]');
+        article = list.find(a => String(a.id) === String(id));
+      }
+    }
+
+    const container = document.getElementById('articleContainer');
+    const heroTitle = document.getElementById('articleHeroTitle');
+
+    if(!article){
+      container.innerHTML = '<p style="text-align:center;color:#9ca3af;font-size:16px;">لا يوجد مقال محدد للعرض.</p>';
+      heroTitle.textContent = 'مقال غير متاح';
+      return;
+    }
+
+    heroTitle.textContent = article.title || 'مقال علمي محكم';
+
+    const imgHTML = article.image
+      ? `<img src="${article.image}" class="article-image" alt="">`
+      : '';
+
+    const shortText = article.short || '';
+    const fullText  = article.full  || '';
+
+    const fileButton = article.file
+      ? `<button class="btn primary" onclick="window.open('${article.file}','_blank')">فتح الملف / الفيديو</button>`
+      : '';
+
+    container.innerHTML = `
+      ${imgHTML}
+      <div class="article-meta">${new Date(article.id).toLocaleString('ar-EG')}</div>
+      <div class="article-short">${shortText}</div>
+      <div class="article-full">${fullText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="article-actions">
+        ${fileButton}
+        <span class="badge">مقالات محكمة</span>
       </div>
     `;
-  } else {
-    document.getElementById("title").textContent   = item.title   || "—";
-    document.getElementById("short").textContent   = item.short   || "—";
-    document.getElementById("full").textContent    = item.full    || "—";
-    document.getElementById("details").textContent = item.details || "—";
-
-    if (item.image) {
-      document.getElementById("imageBox").innerHTML =
-        `<img src="${item.image}" alt="صورة" loading="lazy">`;
-    }
-
-    let fileBox = document.getElementById("fileBox");
-    if (!item.file) {
-      fileBox.innerHTML = "لا يوجد ملف.";
-    } 
-    else if (item.file.startsWith("data:application/pdf")) {
-      fileBox.innerHTML = `
-        <iframe src="${item.file}" loading="lazy"></iframe>
-        <br>
-        <a class="btn" href="${item.file}" download>تحميل PDF</a>
-      `;
-    }
-    else if (item.file.startsWith("data:video")) {
-      fileBox.innerHTML = `
-        <video controls style="width:100%;border-radius:clamp(8px,2vw,12px);margin-bottom:15px;" preload="metadata">
-          <source src="${item.file}">
-          متصفحك لا يدعم تشغيل الفيديو.
-        </video>
-        <a class="btn" href="${item.file}" download>تحميل الفيديو</a>
-      `;
-    }
-    else {
-      fileBox.innerHTML = `
-        <a class="btn" href="${item.file}" target="_blank" rel="noopener noreferrer">فتح الرابط</a>
-      `;
-    }
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initMobileDropdowns();
+    loadArticle();
+  });
 </script>
 
 </body>

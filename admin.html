@@ -451,6 +451,15 @@
       <button onclick="showSection('articles', this)"><span>مقالات محكمة</span><i class="ri-file-paper-line"></i></button>
       <button onclick="showSection('files', this)"><span>ملفات بحثية</span><i class="ri-folder-3-line"></i></button>
       <button onclick="showSection('general-articles', this)"><span>مقالات عامة</span><i class="ri-newspaper-line"></i></button>
+      <button onclick="showSection('foreign-articles', this)"><span>مقالات أجنبية</span><i class="ri-article-line"></i></button>
+
+      <!-- التخصصات الأكاديمية -->
+      <button onclick="showSection('special-politics', this)"><span>تخصص علوم سياسية</span><i class="ri-government-line"></i></button>
+      <button onclick="showSection('special-ir', this)"><span>تخصص العلاقات الدولية</span><i class="ri-global-line"></i></button>
+      <button onclick="showSection('special-admin-law', this)"><span>تخصص القانون الإداري</span><i class="ri-briefcase-4-line"></i></button>
+      <button onclick="showSection('special-const-law', this)"><span>تخصص القانون الدستوري</span><i class="ri-balance-line"></i></button>
+      <button onclick="showSection('special-public-policy', this)"><span>تخصص السياسات العمومية</span><i class="ri-community-line"></i></button>
+
       <button onclick="showSection('editions', this)"><span>إصداراتنا</span><i class="ri-book-open-line"></i></button>
       <button onclick="showSection('activities', this)"><span>أنشطتنا</span><i class="ri-calendar-2-line"></i></button>
       <button onclick="showSection('talks', this)"><span>حوارات</span><i class="ri-voiceprint-line"></i></button>
@@ -516,15 +525,23 @@ function adminLogout(){
    CONFIG / SECTIONS
    --------------------------- */
 const SECTIONS = [
-  { key:'research', title:'أبحاث محكمة', allowFile:true },
-  { key:'articles', title:'مقالات محكمة', allowFile:true },
-  { key:'files', title:'ملفات بحثية', allowFile:true },
-  { key:'general-articles', title:'مقالات عامة', allowFile:true },
-  { key:'editions', title:'إصداراتنا', allowFile:true },
-  { key:'activities', title:'أنشطتنا', allowFile:true },
-  { key:'talks', title:'حوارات', allowFile:true },
-  { key:'training', title:'تكوينات', allowFile:true },
-  { key:'live', title:'البث المباشر', allowFile:false }
+  { key:'research',              title:'أبحاث محكمة',              allowFile:true },
+  { key:'articles',              title:'مقالات محكمة',             allowFile:true },
+  { key:'files',                 title:'ملفات بحثية',             allowFile:true },
+  { key:'general-articles',      title:'مقالات عامة',             allowFile:true },
+  { key:'foreign-articles',      title:'مقالات أجنبية',           allowFile:true },
+
+  { key:'special-politics',      title:'تخصص علوم سياسية',         allowFile:true },
+  { key:'special-ir',            title:'تخصص العلاقات الدولية',     allowFile:true },
+  { key:'special-admin-law',     title:'تخصص القانون الإداري',     allowFile:true },
+  { key:'special-const-law',     title:'تخصص القانون الدستوري',    allowFile:true },
+  { key:'special-public-policy', title:'تخصص السياسات العمومية',   allowFile:true },
+
+  { key:'editions',              title:'إصداراتنا',               allowFile:true },
+  { key:'activities',            title:'أنشطتنا',                  allowFile:true },
+  { key:'talks',                 title:'حوارات',                   allowFile:true },
+  { key:'training',              title:'تكوينات',                  allowFile:true },
+  { key:'live',                  title:'البث المباشر',             allowFile:false }
 ];
 
 let db = {};
@@ -572,7 +589,7 @@ function showSection(key, btnEl){
         </div>
         <div class="form-row">
           <label>المحتوى الكامل</label>
-          <textarea id="${key}_full" placeholder="المحتوى الكامل للمقال/البحث..."></textarea>
+          <textarea id="${key}_full" placeholder="المحتوى الكامل للمقال/البحث/الفيديو..."></textarea>
         </div>
         <div class="form-row">
           <label>تفاصيل إضافية</label>
@@ -581,7 +598,7 @@ function showSection(key, btnEl){
         ${secCfg.allowFile ? `
         <div class="form-row">
           <label>رابط خارجي (PDF/فيديو) — اختياري</label>
-          <input type="url" id="${key}_fileurl" placeholder="https://example.com/pdf أو فيديو">
+          <input type="url" id="${key}_fileurl" placeholder="https://example.com/video أو PDF">
         </div>` : ''}
       </div>
 
@@ -699,7 +716,7 @@ function renderList(key){
       <p>${shortText}</p>
       <div class="meta">${attachLabel} · ${date}</div>
       <div style="margin-top: clamp(6px, 1.5vw, 8px);">
-        ${key!=='live' ? `<a class="link" href="view.html?id=${item.id}&type=${key}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">عرض التفاصيل</a>` : `<a class="link" href="${item.file}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">مشاهدة البث</a>`}
+        ${key!=='live' ? `<a class="link" href="view.html?id=${item.id}&type=${key}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">عرض التفاصيل / الفيديو</a>` : `<a class="link" href="${item.file}" target="_blank" style="display: inline-block; margin-top: clamp(4px, 1vw, 6px);">مشاهدة البث</a>`}
       </div>
     `;
     listEl.appendChild(div);
@@ -781,7 +798,8 @@ function loadForEdit(key, id){
     document.getElementById(`${key}_short`).value = item.short || '';
     document.getElementById(`${key}_full`).value = item.full || '';
     document.getElementById(`${key}_details`).value = item.details || '';
-    document.getElementById(`${key}_fileurl`).value = (item.file && !item.file.startsWith('data:')) ? item.file : '';
+    const urlInput = document.getElementById(`${key}_fileurl`);
+    if(urlInput) urlInput.value = (item.file && !item.file.startsWith('data:')) ? item.file : '';
     const preview = document.getElementById(`${key}_preview`);
     if(item.image) preview.innerHTML = `<img src="${item.image}" class="preview-img">`;
     else preview.innerHTML = `<div class="muted">${item.file ? 'مرفق: ' + (item.file.slice(0,60)) : 'لا توجد معاينات'}</div>`;
