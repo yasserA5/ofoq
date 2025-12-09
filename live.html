@@ -2,745 +2,1255 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>البث المباشر</title>
+  <title id="t-title">البث المباشر</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    html, body { width: 100%; overflow-x: hidden; }
-    
-    body { 
-      font-family: "Tajawal", sans-serif; 
-      background: linear-gradient(135deg, #1f2937 0%, #111827 100%); 
-      color: #f9fafb; 
-      line-height: 1.6;
+    :root{
+      --primary:#ec4899;
+      --primary-dark:#be185d;
+      --primary-soft:#fef3c7;
+      --nav-bg:#ffffff;
+      --text-main:#374151;
+      --bg-overlay:rgba(15,23,42,0.55);
     }
 
-    /* HEADER */
-    header {
-      padding: clamp(12px,3vw,18px) clamp(20px,5vw,30px);
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:100%;overflow-x:hidden;}
+
+    body{
+      font-family:"Tajawal",sans-serif;
+      background:linear-gradient(135deg,#1f2937 0%,#111827 100%);
+      color:#f9fafb;
+      line-height:1.6;
+      direction:rtl;
+    }
+
+    /* HEADER (موحّد مع الصفحات الأخرى) */
+    header{
+      padding:10px 20px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      position: sticky;
-      top: 0;
-      z-index: 999;
+      background:rgba(255,255,255,0.96);
+      backdrop-filter:blur(20px);
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+      position:sticky;
+      top:0;
+      z-index:1500;
+      gap:14px;
     }
 
-    /* 🔥 الشعار في المنتصف على الموبايل وقابل للضغط */
-    .logo {
-      position: relative;
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      cursor: pointer;
+    .logo{
+      flex:0 0 auto;
+      display:flex;
+      cursor:pointer;
+      justify-content:center;
     }
-    .logo img { 
-      width: clamp(60px,12vw,85px); 
-      height: auto; 
-      transition: transform 0.2s ease;
+    .logo img{
+      width:clamp(60px,12vw,85px);
+      height:auto;
+      transition:transform .2s;
     }
-    .logo img:hover,
-    .logo img:active {
-      transform: scale(1.05);
+    .logo img:hover{transform:scale(1.05);}
+
+    nav{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    nav ul{
+      list-style:none;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+    }
+    nav li{position:relative;}
+    nav a{
+      text-decoration:none;
+      color:var(--text-main);
+      font-size:13px;
+      font-weight:600;
+      padding:4px 2px;
+      transition:.2s;
+    }
+    nav a:hover{color:var(--primary);}
+    nav a.active{color:var(--primary);}
+    nav a.active::after,
+    nav a:hover::after{
+      content:"";
+      position:absolute;
+      bottom:-2px;
+      inset-inline-start:0;
+      width:100%;
+      height:2px;
+      background:var(--primary);
+      border-radius:999px;
     }
 
-    /* NAV */
-    nav ul { 
-      list-style: none; 
-      display: flex; 
-      gap: clamp(15px,4vw,30px); 
-      align-items: center; 
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:8px 0;
+      border-radius:10px;
+      min-width:210px;
+      border:1px solid #e5e7eb;
+      z-index:1000;
     }
-    nav ul li { position: relative; }
-    nav ul li a {
-      text-decoration: none;
-      color: #374151;
-      font-size: clamp(14px,3vw,18px);
-      font-weight: 600;
-      padding: 6px;
-      transition: .2s;
+    .dropdown-content a{
+      display:block;
+      padding:8px 16px;
+      color:var(--text-main);
+      white-space:nowrap;
+      font-size:13px;
     }
-    nav ul li a:hover, 
-    nav ul li a.active { color: #ec4899; }
+    .dropdown-content a:hover{
+      background:#fdf2ff;
+      color:var(--primary);
+    }
+    .dropdown:hover .dropdown-content{display:block;}
 
-    /* DROPDOWN */
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: #fff;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.13);
-      padding: 12px 0;
-      border-radius: 8px;
-      min-width: 200px;
-      z-index: 1000;
+    .nav-search{
+      flex:0 0 150px;
+      position:relative;
+      display:flex;
+      align-items:center;
     }
-    .dropdown-content a {
-      display: block;
-      padding: 10px 20px;
-      white-space: nowrap;
-      color: #333;
-      font-size: 16px;
+    .nav-search input{
+      width:100%;
+      padding:5px 26px 5px 8px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      font-size:11px;
+      outline:none;
     }
-    .dropdown:hover .dropdown-content { display: block; }
-
-    /* BUTTONS */
-    .actions { 
-      display: flex; 
-      gap: clamp(8px,2vw,12px); 
-      align-items: center; 
+    .nav-search input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 2px rgba(236,72,153,0.18);
     }
-    .btn {
-      padding: clamp(8px,2vw,10px) clamp(16px,4vw,20px);
-      border-radius: 26px;
-      border: 2px solid #ec4899;
-      background: rgba(236,72,153,0.1);
-      cursor: pointer;
-      font-weight: 700;
-      font-size: clamp(14px,3vw,16px);
-      transition: .2s;
-      color: #be185d;
-      white-space: nowrap;
-    }
-    .btn.primary {
-      background: linear-gradient(90deg,#ec4899,#db2777);
-      color: #fff;
-      border: none;
-      box-shadow: 0 4px 18px rgba(236,72,153,0.4);
+    .nav-search span{
+      position:absolute;
+      left:8px;
+      font-size:13px;
+      color:#9ca3af;
     }
 
-    /* 🔥 زر البرغر لموبايل فقط */
-    #menu-btn { 
-      display: none;           /* مخفي على الديسكتوب */
-      font-size: clamp(24px,6vw,30px); 
-      cursor: pointer; 
-      color: #374151;
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(236,72,153,0.15);
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1001;
-      border: none;
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn{
+      padding:6px 12px;
+      border-radius:26px;
+      border:2px solid rgba(236,72,153,0.5);
+      background:rgba(236,72,153,0.08);
+      cursor:pointer;
+      font-weight:700;
+      font-size:11px;
+      transition:.2s;
+      color:var(--primary-dark);
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(236,72,153,0.16);}
+    .btn.primary{
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      border:none;
+      box-shadow:0 3px 12px rgba(236,72,153,0.35);
     }
 
-    /* MOBILE MENU */
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: min(80%,350px);
-      height: 100%;
-      background: rgba(255,255,255,0.98);
-      backdrop-filter: blur(20px);
-      box-shadow: -3px 0 12px rgba(0,0,0,0.3);
-      padding: clamp(20px,8vw,30px);
-      z-index: 2000;
-      overflow-y: auto;
+    .lang-wrapper{position:relative;}
+    .lang-toggle{
+      border:none;
+      background:#ffffff;
+      border-radius:999px;
+      padding:6px 12px;
+      font-size:12px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-weight:600;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      transition:.2s;
     }
-    .mobile-menu ul { list-style: none; margin-top: 20px; }
-    .mobile-menu ul li { margin-bottom: 18px; }
-    .mobile-menu ul li a {
-      font-size: clamp(18px,5vw,20px);
-      text-decoration: none;
-      color: #111827;
+    .lang-toggle:hover{
+      background:#f9fafb;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
+      transform:translateY(-1px);
     }
-    .mobile-menu ul li a.active { color:#ec4899; }
+    .lang-toggle svg{
+      pointer-events:none;
+      transition:transform .2s;
+    }
+    .lang-toggle[aria-expanded="true"] svg{
+      transform:rotate(180deg);
+    }
+
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      border-radius:12px;
+      min-width:130px;
+      border:1px solid #e2e8f0;
+      display:none;
+      z-index:1200;
+      overflow:hidden;
+    }
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:10px 14px;
+      text-align:right;
+      font-size:12px;
+      cursor:pointer;
+      font-weight:500;
+      transition:.2s;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .lang-menu button:hover{
+      background:#f1f5f9;
+      color:var(--primary);
+    }
+
+    .pill-circle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 18px;
+      border-radius:999px;
+      background:#facc15;
+      color:#111;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
+    }
+    .pill-circle::before{
+      content:"●";
+      font-size:9px;
+      margin-left:6px;
+      color:#111;
+    }
+    .mobile-dropdown-toggle .pill-circle::before{
+      content:"";
+      display:none;
+    }
+
+    #menu-btn{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:999px;
+      border:none;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 4px 14px rgba(0,0,0,0.35);
+      font-family:"Tajawal",sans-serif;
+      color:#fff;
+    }
+    #menu-btn span{
+      position:absolute;
+      width:22px;
+      height:2px;
+      background:#ffffff;
+      border-radius:999px;
+      transition:0.25s ease;
+      left:50%;
+      transform:translateX(-50%);
+    }
+    #menu-btn span:nth-child(1){ top:13px; }
+    #menu-btn span:nth-child(2){ top:20px; }
+    #menu-btn span:nth-child(3){ top:27px; }
+    #menu-btn.open span:nth-child(1){
+      top:20px;
+      transform:translateX(-50%) rotate(45deg);
+    }
+    #menu-btn.open span:nth-child(2){ opacity:0; }
+    #menu-btn.open span:nth-child(3){
+      top:20px;
+      transform:translateX(-50%) rotate(-45deg);
+    }
+
+    .backdrop{
+      position:fixed;
+      inset:0;
+      background:var(--bg-overlay);
+      z-index:1400;
+      opacity:0;
+      visibility:hidden;
+      transition:0.25s ease;
+    }
+    .backdrop.active{
+      opacity:1;
+      visibility:visible;
+    }
+
+    .mobile-menu{
+      display:none;
+      position:fixed;
+      top:0;
+      right:0;
+      width:min(80%,360px);
+      height:100%;
+      background:rgba(255,255,255,0.98);
+      backdrop-filter:blur(20px);
+      box-shadow:-4px 0 18px rgba(0,0,0,0.4);
+      padding:clamp(20px,8vw,30px);
+      z-index:1501;
+      overflow-y:auto;
+      transform:translateX(100%);
+      transition:transform 0.25s ease;
+    }
+    .mobile-menu.open{transform:translateX(0);}
+    .mobile-menu-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .mobile-logo{
+      width:52px;
+      height:auto;
+    }
+    .mobile-close{
+      border:none;
+      background:rgba(248,250,252,0.9);
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      font-size:18px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 2px 8px rgba(15,23,42,0.25);
+    }
+    .mobile-menu ul{list-style:none;margin-top:10px;}
+    .mobile-menu ul li{margin-bottom:18px;}
+    .mobile-menu ul li a{
+      font-size:clamp(18px,5vw,20px);
+      text-decoration:none;
+      color:#111827;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:8px 10px;
+      border-radius:10px;
+      transition:.2s;
+    }
+    .mobile-menu ul li a:hover{
+      background:#fee2f2;
+      color:var(--primary-dark);
+    }
+    .mobile-menu ul li a.active{color:var(--primary);}
+
+    .mobile-menu,
+    .mobile-menu *{
+      font-family:"Tajawal",sans-serif !important;
+    }
+
+    .mobile-dropdown-toggle{
+      width:100%;
+      background:transparent;
+      border:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:16px;
+      color:#0f172a;
+      cursor:pointer;
+      padding:0;
+      font-weight:600;
+    }
+    .mobile-dropdown-arrow{
+      font-size:11px;
+      color:#6b7280;
+    }
+    .mobile-submenu{
+      list-style:none;
+      margin-top:8px;
+      margin-right:14px;
+      display:none;
+    }
+    .mobile-submenu li{margin-bottom:10px;}
+    .mobile-submenu a{
+      font-size:15px;
+      font-weight:600;
+      padding:6px 10px;
+    }
+    .mobile-dropdown.open .mobile-submenu{display:block;}
 
     /* HERO LIVE */
-    .hero {
-      padding: clamp(80px,20vw,120px) clamp(25px,8vw,40px);
-      text-align: center;
-      position: relative;
+    .hero{
+      padding:clamp(80px,20vw,120px) clamp(25px,8vw,40px);
+      text-align:center;
+      position:relative;
     }
-    
-    .live-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: clamp(12px,4vw,18px) clamp(24px,6vw,32px);
-      background: linear-gradient(135deg, #fef3c7, #fde68a);
-      color: #92400e;
-      border-radius: 50px;
-      font-weight: 800;
-      font-size: clamp(16px,5vw,22px);
-      margin-bottom: clamp(20px,6vw,30px);
-      box-shadow: 0 8px 25px rgba(254,243,199,0.4);
-      animation: pulse 2s infinite;
+    .live-status{
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      padding:clamp(12px,4vw,18px) clamp(24px,6vw,32px);
+      background:linear-gradient(135deg,#fef3c7,#fde68a);
+      color:#92400e;
+      border-radius:50px;
+      font-weight:800;
+      font-size:clamp(16px,5vw,22px);
+      margin-bottom:clamp(20px,6vw,30px);
+      box-shadow:0 8px 25px rgba(254,243,199,0.4);
+      animation:pulse 2s infinite;
     }
-    
-    .live-dot {
-      width: 16px;
-      height: 16px;
-      background: #ef4444;
-      border-radius: 50%;
-      animation: blink 1.5s infinite;
+    .live-dot{
+      width:16px;
+      height:16px;
+      background:#ef4444;
+      border-radius:50%;
+      animation:blink 1.5s infinite;
     }
-
-    .hero h1 {
-      font-size: clamp(28px,10vw,48px);
-      font-weight: 800;
-      background: linear-gradient(135deg, #ec4899, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: clamp(15px,5vw,25px);
+    .hero h1{
+      font-size:clamp(28px,10vw,48px);
+      font-weight:800;
+      background:linear-gradient(135deg,#ec4899,#f472b6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      margin-bottom:clamp(15px,5vw,25px);
     }
-    
-    .hero p {
-      font-size: clamp(16px,4.5vw,20px);
-      max-width: 700px;
-      margin: 0 auto 30px;
-      opacity: 0.9;
+    .hero p{
+      font-size:clamp(16px,4.5vw,20px);
+      max-width:700px;
+      margin:0 auto 30px;
+      opacity:0.9;
     }
 
-    /* LIVE VIDEO */
-    .live-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: clamp(40px,12vw,60px) clamp(20px,8vw,40px);
+    .live-container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);
     }
-    
-    .live-video {
-      position: relative;
-      background: #000;
-      border-radius: clamp(20px,6vw,32px);
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      margin-bottom: clamp(30px,8vw,40px);
-      min-height: clamp(300px,70vw,600px);
+    .live-video{
+      position:relative;
+      background:#000;
+      border-radius:clamp(20px,6vw,32px);
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,0.5);
+      margin-bottom:clamp(30px,8vw,40px);
+      min-height:clamp(300px,70vw,600px);
     }
-    
-    .live-video iframe, .live-video video {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
+    .live-video iframe,
+    .live-video video{
+      width:100%;
+      height:100%;
+      border:none;
+      display:block;
     }
-    
-    .live-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.85);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-      z-index: 10;
-      padding: clamp(20px,8vw,40px);
-      cursor: pointer;
-      transition: opacity 0.3s;
+    .live-overlay{
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.85);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      text-align:center;
+      z-index:10;
+      padding:clamp(20px,8vw,40px);
+      cursor:pointer;
+      transition:background 0.3s;
     }
-    
-    .live-overlay:hover {
-      background: rgba(0,0,0,0.95);
-    }
-    
-    .live-overlay h3 {
-      font-size: clamp(20px,6vw,32px);
-      margin-bottom: 15px;
-      animation: glow 2s infinite;
+    .live-overlay:hover{background:rgba(0,0,0,0.95);}
+    .live-overlay h3{
+      font-size:clamp(20px,6vw,32px);
+      margin-bottom:15px;
+      animation:glow 2s infinite;
     }
 
-    /* UPCOMING STREAMS */
-    section { 
-      padding: clamp(40px,12vw,60px) clamp(25px,8vw,40px); 
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
+    section{
+      padding:clamp(40px,12vw,60px) clamp(25px,8vw,40px);
+      background:rgba(255,255,255,0.03);
+      backdrop-filter:blur(10px);
     }
-    section h2 {
-      font-size: clamp(24px,7vw,36px);
-      margin-bottom: clamp(25px,8vw,35px);
-      color: #f9fafb;
-      text-align: center;
-      background: linear-gradient(135deg, #ec4899, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    section h2{
+      font-size:clamp(24px,7vw,36px);
+      margin-bottom:clamp(25px,8vw,35px);
+      text-align:center;
+      background:linear-gradient(135deg,#ec4899,#f472b6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
     }
 
-    /* GRID */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(clamp(280px,42vw,340px),1fr));
-      gap: clamp(20px,6vw,30px);
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(clamp(280px,42vw,340px),1fr));
+      gap:clamp(20px,6vw,30px);
+    }
+    .card{
+      padding:clamp(20px,6vw,28px);
+      border-radius:20px;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.18);
+      transition:all 0.3s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg,#ec4899,#f472b6);
+    }
+    .card:hover{
+      transform:translateY(-8px);
+      background:rgba(255,255,255,0.16);
+      box-shadow:0 20px 40px rgba(0,0,0,0.35);
     }
 
-    .card {
-      padding: clamp(20px,6vw,28px);
-      border-radius: 20px;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.2);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+    .card-time{
+      font-size:clamp(14px,4vw,16px);
+      color:#ec4899;
+      font-weight:700;
+      background:rgba(236,72,153,0.22);
+      padding:6px 14px;
+      border-radius:20px;
+      display:inline-block;
+      margin-bottom:15px;
     }
-    
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #ec4899, #f472b6);
+    .card h3{
+      font-size:clamp(18px,5vw,24px);
+      margin-bottom:12px;
+      color:#f9fafb;
+      font-weight:700;
+      line-height:1.3;
     }
-    
-    .card:hover { 
-      transform: translateY(-8px); 
-      background: rgba(255,255,255,0.15);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+    .card p{
+      font-size:clamp(15px,4vw,17px);
+      color:rgba(249,250,251,0.9);
+      line-height:1.7;
+      margin-bottom:20px;
     }
 
-    .card-time {
-      font-size: clamp(14px,4vw,16px);
-      color: #ec4899;
-      font-weight: 700;
-      background: rgba(236,72,153,0.2);
-      padding: 6px 14px;
-      border-radius: 20px;
-      display: inline-block;
-      margin-bottom: 15px;
+    .card-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:clamp(12px,4vw,16px) clamp(20px,6vw,28px);
+      background:linear-gradient(135deg,#ec4899,#f472b6);
+      color:#fff;
+      border:none;
+      border-radius:30px;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-weight:700;
+      font-size:clamp(14px,4vw,16px);
+      text-decoration:none;
+      box-shadow:0 6px 20px rgba(236,72,153,0.4);
+      width:100%;
+      justify-content:center;
+    }
+    .card-btn:hover{
+      background:linear-gradient(135deg,#db2777,#be185d);
+      transform:translateY(-3px);
+      box-shadow:0 10px 30px rgba(236,72,153,0.55);
     }
 
-    .card h3 { 
-      font-size: clamp(18px,5vw,24px);
-      margin-bottom: 12px; 
-      color: #f9fafb; 
-      font-weight: 700;
-      line-height: 1.3;
+    .empty-state{
+      text-align:center;
+      padding:clamp(80px,25vw,120px);
+      color:rgba(249,250,251,0.75);
+      grid-column:1/-1;
+    }
+    .empty-state h3{
+      font-size:clamp(22px,7vw,32px);
+      margin-bottom:15px;
+      color:#f9fafb;
     }
 
-    .card p { 
-      font-size: clamp(15px,4vw,17px);
-      color: rgba(249,250,251,0.9); 
-      line-height: 1.7; 
-      margin-bottom: 20px;
+    footer{
+      margin-top:clamp(30px,8vw,40px);
+      padding:clamp(25px,8vw,35px);
+      background:#000000;
+      color:#f9fafb;
+      text-align:center;
+      font-size:clamp(15px,4vw,18px);
     }
 
-    .card-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: clamp(12px,4vw,16px) clamp(20px,6vw,28px);
-      background: linear-gradient(135deg, #ec4899, #f472b6);
-      color: #fff;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 700;
-      font-size: clamp(14px,4vw,16px);
-      text-decoration: none;
-      box-shadow: 0 6px 20px rgba(236,72,153,0.4);
-      width: 100%;
-      justify-content: center;
+    .toast-container{
+      position:fixed;
+      top:20px;
+      left:20px;
+      z-index:5000;
     }
-    .card-btn:hover { 
-      background: linear-gradient(135deg, #db2777, #be185d);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(236,72,153,0.5);
+    .toast{
+      background:rgba(255,255,255,0.97);
+      padding:clamp(12px,3vw,16px) clamp(16px,4vw,20px);
+      border-radius:12px;
+      margin-bottom:10px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.35);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      animation:slideIn 0.3s ease-in-out;
+      max-width:90vw;
+      color:#111827;
     }
+    .toast.success{border-right:4px solid #22c55e;}
+    .toast.info{border-right:4px solid #ec4899;}
+    .toast-icon{font-size:clamp(18px,5vw,20px);}
+    .toast-message{
+      font-weight:500;
+      font-size:clamp(14px,3.5vw,16px);
+    }
+    @keyframes pulse{
+      0%,100%{opacity:1;}
+      50%{opacity:0.7;}
+    }
+    @keyframes blink{
+      0%,50%{opacity:1;}
+      51%,100%{opacity:0;}
+    }
+    @keyframes glow{
+      0%,100%{text-shadow:0 0 10px rgba(236,72,153,0.5);}
+      50%{text-shadow:0 0 20px rgba(236,72,153,0.8),0 0 30px rgba(236,72,153,0.4);}
+    }
+    @keyframes slideIn{
+      from{transform:translateX(-100%);opacity:0;}
+      to{transform:translateX(0);opacity:1;}
+    }
+    @keyframes slideOut{
+      from{transform:translateX(0);opacity:1;}
+      to{transform:translateX(-100%);opacity:0;}
+    }
+    .toast.removing{animation:slideOut 0.3s ease-in-out;}
 
-    .empty-state {
-      text-align: center;
-      padding: clamp(80px,25vw,120px);
-      color: rgba(249,250,251,0.7);
-      grid-column: 1/-1;
+    @media(max-width:1100px){
+      .nav-search{display:none;}
     }
-    .empty-state h3 {
-      font-size: clamp(22px,7vw,32px);
-      margin-bottom: 15px;
-      color: #f9fafb;
-    }
-
-    /* TOAST */
-    .toast-container { 
-      position: fixed; 
-      top: 20px; 
-      left: 20px; 
-      z-index: 5000; 
-    }
-    .toast {
-      background: rgba(255,255,255,0.95);
-      padding: clamp(12px,3vw,16px) clamp(16px,4vw,20px);
-      border-radius: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: slideIn 0.3s ease-in-out;
-      max-width: 90vw;
-      color: #111827;
-    }
-    .toast.success { border-right: 4px solid #22c55e; }
-    .toast.info { border-right: 4px solid #ec4899; }
-    .toast-icon { font-size: clamp(18px,5vw,20px); }
-    .toast-message { 
-      font-weight: 500; 
-      font-size: clamp(14px,3.5vw,16px);
-    }
-
-    /* ANIMATIONS */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
-    }
-    @keyframes glow {
-      0%, 100% { text-shadow: 0 0 10px rgba(236,72,153,0.5); }
-      50% { text-shadow: 0 0 20px rgba(236,72,153,0.8), 0 0 30px rgba(236,72,153,0.4); }
-    }
-    @keyframes slideIn { 
-      from { transform: translateX(-100%); opacity: 0; } 
-      to { transform: translateX(0); opacity: 1; } 
-    }
-    @keyframes slideOut { 
-      from { transform: translateX(0); opacity: 1; } 
-      to { transform: translateX(-100%); opacity: 0; } 
-    }
-    .toast.removing { animation: slideOut 0.3s ease-in-out; }
-
-    /* 🔥 RESPONSIVE: برغر للموبايل + الشعار في الوسط */
-    @media(max-width: 980px){
-      nav ul { display: none; }
-      .actions { display: none; }
-      #menu-btn { display: flex !important; }
-
-      header {
-        justify-content: center;
+    @media(max-width:980px){
+      nav{display:none;}
+      .actions{display:none;}
+      #menu-btn{
+        display:flex;
+        order:-1;
       }
-      .logo {
-        position: static;
-        flex: none;
+      header{
+        justify-content:space-between;
       }
-
-      .toast-container { 
-        left: 50%; 
-        transform: translateX(-50%); 
-        width: 90%; 
+      .logo{margin-inline:auto;}
+      .toast-container{
+        left:50%;
+        transform:translateX(-50%);
+        width:90%;
+      }
+      .mobile-menu .pill-circle{
+        padding:4px 14px;
+        font-size:12px;
       }
     }
-
-    @media(max-width: 768px){
-      header { padding: 15px 20px; }
-      .hero { padding: clamp(60px,18vw,90px) 20px; }
-      .live-container { padding: 40px 20px; }
-      section { padding: 50px 20px; }
-      .grid { 
-        grid-template-columns: 1fr; 
-        gap: 20px; 
+    @media(max-width:768px){
+      header{padding:15px 20px;}
+      .hero{padding:clamp(60px,18vw,90px) 20px;}
+      .live-container{padding:40px 20px;}
+      section{padding:50px 20px;}
+      .grid{
+        grid-template-columns:1fr;
+        gap:20px;
       }
     }
-
-    @media(max-width: 480px){
-      header { padding: 12px 15px; }
-      .hero { padding: 50px 15px; }
-      .live-container { padding: 30px 12px; }
+    @media(max-width:480px){
+      header{padding:12px 15px;}
+      .logo img{width:65px;}
+      .hero{padding:50px 15px;}
+      .live-container{padding:30px 12px;}
     }
   </style>
 </head>
 
 <body>
+<div class="backdrop" id="backdrop" onclick="toggleMenu(false)"></div>
 
-<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <img src="images/logo.png" style="width: clamp(65px,15vw,80px); margin-bottom: 20px;">
-  <ul>
-    <li><a href="index.html">الرئيسية</a></li>
-    <li class="dropdown">
-      <a href="#">أبحاث ودراسات ▾</a>
-      <div class="dropdown-content">
-        <a href="research.html">أبحاث محكمة</a>
-        <a href="articles.html">مقالات محكمة</a>
-        <a href="files.html">ملفات بحثية</a>
-        <a href="general-articles.html">مقالات عامة</a>
+  <div class="mobile-menu-header">
+    <img src="images/logo.png" class="mobile-logo" alt="Logo">
+    <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+        <span id="langCurrentMobile">AR</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M7 10l5 5 5-5z"></path>
+        </svg>
+      </button>
+      <div class="lang-menu" id="langMenuMobile">
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
       </div>
+    </div>
+  </div>
+
+  <ul>
+    <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span data-t="nav_studies">أبحاث ودراسات ▾</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+        <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+        <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+        <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+        <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+      </ul>
     </li>
-    <li><a href="editions.html">إصداراتنا</a></li>
-    <li><a href="activities.html">أنشطتنا</a></li>
-    <li><a href="talks.html">حوارات</a></li>
-    <li><a href="training.html">تكوينات</a></li>
-    <li><a href="live.html" class="active">بث مباشر</a></li>
-    <li><a href="rules.html">شروط النشر</a></li>
-    <li><a href="contact.html">اتصل بنا</a></li>
-    <li id="mobileLogin"><a href="login.html">تسجيل الدخول</a></li>
-    <li id="mobileRegister"><a href="register.html">انضم إلينا</a></li>
+
+    <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+    <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+    <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span class="pill-circle" data-t="nav_academic">أكاديمي</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a></li>
+        <li><a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a></li>
+        <li><a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a></li>
+        <li><a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a></li>
+        <li><a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a></li>
+      </ul>
+    </li>
+
+    <li><a href="live.html" class="active" data-t="nav_live">بث مباشر</a></li>
+    <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+    <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    <li id="mobileLogin"><a href="login.html" data-t="nav_login">تسجيل الدخول</a></li>
+    <li id="mobileRegister"><a href="register.html" data-t="nav_join">انضم إلينا</a></li>
   </ul>
 </div>
 
-<!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
 <header>
-  <!-- 🔥 زر البرغر موبايل -->
-  <div id="menu-btn" onclick="toggleMenu()">☰</div>
+  <button
+    id="menu-btn"
+    type="button"
+    onclick="toggleMenu()"
+    aria-label="Toggle navigation menu"
+    aria-expanded="false"
+  >
+    <span></span><span></span><span></span>
+  </button>
 
-  <!-- 🔥 الشعار: ينقل إلى الرئيسية -->
   <div class="logo" onclick="goToHome()">
     <img src="images/logo.png" alt="Logo">
   </div>
 
   <nav>
     <ul>
-      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
       <li class="dropdown">
-        <a href="#">أبحاث ودراسات ▾</a>
+        <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
         <div class="dropdown-content">
-          <a href="research.html">أبحاث محكمة</a>
-          <a href="articles.html">مقالات محكمة</a>
-          <a href="files.html">ملفات بحثية</a>
-          <a href="general-articles.html">مقالات عامة</a>
+          <a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a>
+          <a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a>
+          <a href="files.html" data-t="nav_files">ملفات بحثية</a>
+          <a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a>
+          <a href="general-articles.html" data-t="nav_articles">مقالات</a>
         </div>
       </li>
-      <li><a href="editions.html">إصداراتنا</a></li>
-      <li><a href="activities.html">أنشطتنا</a></li>
-      <li><a href="talks.html">حوارات</a></li>
-      <li><a href="training.html">تكوينات</a></li>
-      <li><a href="live.html" class="active">بث مباشر</a></li>
-      <li><a href="rules.html">شروط النشر</a></li>
-      <li><a href="contact.html">اتصل بنا</a></li>
+
+      <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+      <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+      <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
+      <li class="dropdown">
+        <a href="#academic" class="pill-circle" data-t="nav_academic">أكاديمي</a>
+        <div class="dropdown-content">
+          <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+          <a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a>
+          <a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a>
+          <a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a>
+          <a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a>
+        </div>
+      </li>
+
+      <li><a href="live.html" class="active" data-t="nav_live">بث مباشر</a></li>
+      <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+      <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
     </ul>
+
+    <form class="nav-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInput" placeholder="ابحث..." />
+      <span>🔍</span>
+    </form>
   </nav>
+
   <div class="actions" id="headerActions">
-    <button class="btn" onclick="location.href='login.html'">تسجيل الدخول</button>
-    <button class="btn primary" onclick="location.href='register.html'">انضم إلينا</button>
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+        <span id="langCurrent">AR</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M7 10l5 5 5-5z"></path>
+        </svg>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
+      </div>
+    </div>
+    <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+    <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
   </div>
 </header>
 
 <div class="hero">
   <div class="live-status">
     <div class="live-dot"></div>
-    <span>🔴 البث المباشر الآن</span>
+    <span data-t="hero_live_badge">🔴 البث المباشر الآن</span>
   </div>
-  <h1>البث الحي</h1>
-  <p>تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة</p>
+  <h1 data-t="hero_title_live">البث الحي</h1>
+  <p data-t="hero_sub_live">تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة</p>
 </div>
 
 <div class="live-container">
-  <div class="live-video" id="liveVideo">
-    <!-- سيتم ملؤه ديناميكيًا -->
-  </div>
+  <div class="live-video" id="liveVideo"></div>
 </div>
 
 <section>
-  <h2>البث القادم</h2>
-  <div class="grid" id="upcomingStreams">
-    <!-- سيتم ملؤه ديناميكيًا -->
-  </div>
+  <h2 data-t="sec_live_next">البث القادم</h2>
+  <div class="grid" id="upcomingStreams"></div>
 </section>
 
+<footer data-t="footer_text">
+  © جميع الحقوق محفوظة – منصتك العلمية
+</footer>
+
 <script>
-  // 🔥 الشعار → الرئيسية
-  function goToHome() {
-    window.location.href = 'index.html';
+  function goToHome(){window.location.href='index.html';}
+
+  function toggleMenu(force){
+    const menu=document.getElementById("mobileMenu");
+    const backdrop=document.getElementById("backdrop");
+    const btn=document.getElementById("menu-btn");
+    if(!menu || !backdrop || !btn) return;
+
+    const shouldOpen = typeof force === "boolean"
+      ? force
+      : menu.style.display !== "block";
+
+    menu.style.display = shouldOpen ? "block" : "none";
+    menu.classList.toggle("open", shouldOpen);
+    backdrop.classList.toggle("active", shouldOpen);
+
+    btn.classList.toggle("open", shouldOpen);
+    btn.setAttribute("aria-expanded", String(shouldOpen));
   }
 
-  function toggleMenu() {
-    const menu = document.getElementById("mobileMenu");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  function doSearch(e){
+    e.preventDefault();
+    const input=document.getElementById('navSearchInput');
+    const q=input ? input.value.trim() : "";
+    if(!q) return;
+    window.location.href='search.html?q='+encodeURIComponent(q);
   }
 
-  // Toast Message Function
-  function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    const icons = {
-      success: '✅',
-      info: 'ℹ️'
-    };
-    
-    toast.innerHTML = `
+  function toggleLangMenu(){
+    const desktopMenu=document.getElementById("langMenu");
+    const mobileMenu=document.getElementById("langMenuMobile");
+    const toggles=document.querySelectorAll('.lang-toggle');
+
+    const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
+    const menu = mobileVisible ? mobileMenu : desktopMenu;
+
+    if(!menu) return;
+    const isOpen = menu.style.display==="block";
+    menu.style.display = isOpen ? "none" : "block";
+
+    toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
+  }
+
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.lang-wrapper')){
+      const m1=document.getElementById('langMenu');
+      const m2=document.getElementById('langMenuMobile');
+      if(m1) m1.style.display='none';
+      if(m2) m2.style.display='none';
+      document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+    }
+  });
+
+  function showToast(message,type='info'){
+    const container=document.getElementById('toastContainer');
+    if(!container)return;
+    const toast=document.createElement('div');
+    toast.className=`toast ${type}`;
+    const icons={success:'✅',info:'ℹ️'};
+    toast.innerHTML=`
       <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
       <span class="toast-message">${message}</span>
     `;
-    
     container.appendChild(toast);
-    
-    setTimeout(() => {
+    setTimeout(()=>{
       toast.classList.add('removing');
-      setTimeout(() => {
-        toast.remove();
-      }, 300);
-    }, 4000);
+      setTimeout(()=>toast.remove(),300);
+    },4000);
   }
 
-  // LOGIN / LOGOUT FUNCTIONALITY
-  let user = JSON.parse(localStorage.getItem("user"));
-  const headerActions = document.getElementById("headerActions");
-  const mobileLogin = document.getElementById("mobileLogin");
-  const mobileRegister = document.getElementById("mobileRegister");
+  let user=JSON.parse(localStorage.getItem("user")||"null");
+  const headerActions=document.getElementById("headerActions");
+  const mobileLogin=document.getElementById("mobileLogin");
+  const mobileRegister=document.getElementById("mobileRegister");
 
-  function updateHeader() {
-    if (user && user.username) {
-      headerActions.innerHTML = `<span style="margin-right:12px;color:#374151;">مرحبًا، ${user.username}</span><button class="btn primary" onclick="logout()">تسجيل الخروج</button>`;
-      if(mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout()">تسجيل الخروج</a>`;
-      if(mobileRegister) mobileRegister.style.display = "none";
+  function updateHeader(){
+    if(!headerActions)return;
+    if(user&&user.username){
+      headerActions.innerHTML=`
+        <div class="lang-wrapper">
+          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+            <span id="langCurrent">AR</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z"></path>
+            </svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
+          </div>
+        </div>
+        <span style="margin-right:12px;font-size:13px;">${user.username}</span>
+        <button class="btn primary" onclick="logout()" data-t="logout">${t('logout')}</button>
+      `;
+      if(mobileLogin)mobileLogin.innerHTML=`<a href="#" onclick="logout();return false;" data-t="logout">${t('logout')}</a>`;
+      if(mobileRegister)mobileRegister.style.display="none";
     }
   }
 
-  function logout() {
+  function logout(){
     localStorage.removeItem("user");
-    user = null;
-    showToast('تم تسجيل الخروج بنجاح', 'success');
-    setTimeout(() => location.reload(), 500);
+    user=null;
+    showToast(t('toast_logout_success') || 'تم تسجيل الخروج بنجاح','success');
+    setTimeout(()=>location.reload(),500);
   }
 
-  updateHeader();
+  const liveVideo=document.getElementById("liveVideo");
+  const upcomingStreams=document.getElementById("upcomingStreams");
 
-  // 🔥 دالة السحر: تحويل أي رابط إلى iframe جاهز (خالية من خطأ 153)
-  function universalEmbed(url) {
-    // YouTube - استخدام youtube-nocookie.com لحل خطأ 153
-    if (url.includes('youtube.com/watch?v=') || url.includes('youtu.be/') || url.includes('youtube.com/live/')) {
-      const videoId = url.match(/(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([^&\n?#]+)/)?.[1];
-      if (videoId) {
+  const translations={
+    ar:{
+      title:"البث المباشر",
+      nav_home:"الرئيسية",
+      nav_studies:"أبحاث ودراسات ▾",
+      nav_research_peer:"أبحاث محكمة",
+      nav_articles_peer:"مقالات محكمة",
+      nav_files:"ملفات بحثية",
+      nav_foreign:"مقالات أجنبية",
+      nav_articles:"مقالات",
+      nav_editions:"إصداراتنا",
+      nav_activities:"أنشطتنا",
+      nav_academic:"أكاديمي",
+      nav_live:"بث مباشر",
+      nav_rules:"شروط النشر",
+      nav_contact:"اتصل بنا",
+      nav_login:"تسجيل الدخول",
+      nav_join:"انضم إلينا",
+      hero_live_badge:"🔴 البث المباشر الآن",
+      hero_title_live:"البث الحي",
+      hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة",
+      sec_live_next:"البث القادم",
+      footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
+      logout:"تسجيل الخروج",
+      toast_logout_success:"تم تسجيل الخروج بنجاح",
+      toast_open_live:"جاري فتح البث...",
+      no_live:"لا توجد بثوث مباشرة حالياً",
+      no_live_sub:"ستظهر هنا البثوث القادمة بمجرد إضافتها من لوحة التحكم",
+      remind_saved:"تم حفظ تذكير البث",
+      sp_politics:"تخصص علوم سياسية",
+      sp_ir:"تخصص العلاقات الدولية",
+      sp_admin_law:"تخصص القانون الإداري",
+      sp_const_law:"تخصص القانون الدستوري",
+      sp_public_policy:"تخصص السياسات العمومية"
+    },
+    en:{
+      title:"Live Stream",
+      nav_home:"Home",
+      nav_studies:"Research & Studies ▾",
+      nav_research_peer:"Peer-reviewed research",
+      nav_articles_peer:"Peer-reviewed articles",
+      nav_files:"Research files",
+      nav_foreign:"Foreign Articles",
+      nav_articles:"Articles",
+      nav_editions:"Our Publications",
+      nav_activities:"Activities",
+      nav_academic:"Academic",
+      nav_live:"Live",
+      nav_rules:"Submission Rules",
+      nav_contact:"Contact us",
+      nav_login:"Login",
+      nav_join:"Join us",
+      hero_live_badge:"🔴 Live now",
+      hero_title_live:"Live Stream",
+      hero_sub_live:"Follow our live events, seminars and scientific talks.",
+      sec_live_next:"Upcoming Live",
+      footer_text:"© All rights reserved – Your Academic Platform",
+      logout:"Logout",
+      toast_logout_success:"Logged out successfully",
+      toast_open_live:"Opening live stream...",
+      no_live:"No live streams currently",
+      no_live_sub:"Upcoming streams will appear here once added from the dashboard.",
+      remind_saved:"Stream reminder saved",
+      sp_politics:"Political Science",
+      sp_ir:"International Relations",
+      sp_admin_law:"Administrative Law",
+      sp_const_law:"Constitutional Law",
+      sp_public_policy:"Public Policy"
+    },
+    fr:{
+      title:"Diffusion en direct",
+      nav_home:"Accueil",
+      nav_studies:"Recherches et études ▾",
+      nav_research_peer:"Recherches évaluées",
+      nav_articles_peer:"Articles évalués",
+      nav_files:"Dossiers de recherche",
+      nav_foreign:"Articles étrangers",
+      nav_articles:"Articles",
+      nav_editions:"Nos publications",
+      nav_activities:"Activités",
+      nav_academic:"Académique",
+      nav_live:"Direct",
+      nav_rules:"Conditions de publication",
+      nav_contact:"Contactez-nous",
+      nav_login:"Connexion",
+      nav_join:"Rejoignez-nous",
+      hero_live_badge:"🔴 Direct en cours",
+      hero_title_live:"Diffusion en direct",
+      hero_sub_live:"Suivez en direct nos événements, séminaires et conférences scientifiques.",
+      sec_live_next:"Prochains directs",
+      footer_text:"© Tous droits réservés – Votre plateforme scientifique",
+      logout:"Déconnexion",
+      toast_logout_success:"Déconnexion réussie",
+      toast_open_live:"Ouverture du direct...",
+      no_live:"Aucun direct pour le moment",
+      no_live_sub:"Les prochains directs apparaîtront ici une fois ajoutés depuis le tableau de bord.",
+      remind_saved:"Rappel du direct enregistré",
+      sp_politics:"Science politique",
+      sp_ir:"Relations internationales",
+      sp_admin_law:"Droit administratif",
+      sp_const_law:"Droit constitutionnel",
+      sp_public_policy:"Politiques publiques"
+    }
+  };
+
+  let currentLang=localStorage.getItem('lang') || 'ar';
+
+  function t(key){
+    const dict=translations[currentLang] || translations.ar;
+    return dict[key] || '';
+  }
+
+  function setLang(lang){
+    currentLang=lang;
+    localStorage.setItem('lang',lang);
+    const dict=translations[lang] || translations.ar;
+
+    document.documentElement.lang=lang;
+    document.documentElement.dir=(lang==='en'||lang==='fr')?'ltr':'rtl';
+
+    const titleEl=document.getElementById('t-title');
+    if(titleEl && dict.title) titleEl.textContent=dict.title;
+
+    const langCurrent=document.getElementById('langCurrent');
+    const langCurrentMobile=document.getElementById('langCurrentMobile');
+    if(langCurrent) langCurrent.textContent=lang.toUpperCase();
+    if(langCurrentMobile) langCurrentMobile.textContent=lang.toUpperCase();
+
+    document.querySelectorAll('[data-t]').forEach(el=>{
+      const key=el.getAttribute('data-t');
+      if(dict[key]) el.textContent=dict[key];
+    });
+
+    const m1=document.getElementById('langMenu');
+    const m2=document.getElementById('langMenuMobile');
+    if(m1) m1.style.display='none';
+    if(m2) m2.style.display='none';
+    document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+
+    renderLive();
+  }
+
+  function universalEmbed(url){
+    if(!url) return null;
+    if(url.includes('youtube.com/watch?v=') || url.includes('youtu.be/') || url.includes('youtube.com/live/')){
+      const videoId=url.match(/(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([^&\n?#]+)/)?.[1];
+      if(videoId){
         return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&rel=0&modestbranding=1&playsinline=1`;
       }
     }
-    
-    // Vimeo
-    if (url.includes('vimeo.com/')) {
-      const videoId = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)?.[1];
-      if (videoId) return `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&title=0&byline=0&portrait=0`;
+    if(url.includes('vimeo.com/')){
+      const videoId=url.match(/vimeo\.com\/(?:video\/)?(\d+)/)?.[1];
+      if(videoId) return `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&title=0&byline=0&portrait=0`;
     }
-    
-    // Twitch
-    if (url.includes('twitch.tv/')) {
-      const channel = url.match(/twitch\.tv\/([^\/\?]+)/)?.[1];
-      if (channel) return `https://player.twitch.tv/?channel=${channel}&parent=${window.location.hostname}&autoplay=true&muted=false`;
+    if(url.includes('twitch.tv/')){
+      const channel=url.match(/twitch\.tv\/([^\/\?]+)/)?.[1];
+      if(channel) return `https://player.twitch.tv/?channel=${channel}&parent=${window.location.hostname}&autoplay=true&muted=false`;
     }
-    
-    // Facebook
-    if (url.includes('facebook.com/') && (url.includes('/videos/') || url.includes('/watch/'))) {
+    if(url.includes('facebook.com/') && (url.includes('/videos/') || url.includes('/watch/'))){
       return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&width=556&height=315&appId=&autoplay=1`;
     }
-    
-    // روابط iframe مباشرة
-    if (url.includes('embed') || url.includes('/player/') || url.match(/\/(live|stream|player)\/[^\/]+$/)) {
+    if(url.includes('embed') || url.includes('/player/') || url.match(/\/(live|stream|player)\/[^\/]+$/)){
       return url;
     }
-    
-    // روابط HTML5 video
-    if (url.match(/\.(mp4|webm|ogg|m3u8)$/i)) {
+    if(url.match(/\.(mp4|webm|ogg|m3u8)$/i)){
       return null;
     }
-    
     return null;
   }
 
-  // LIVE STREAMS DATA
-  const liveData = JSON.parse(localStorage.getItem('live')) || [];
-  const liveVideo = document.getElementById("liveVideo");
-  const upcomingStreams = document.getElementById("upcomingStreams");
+  const liveData=JSON.parse(localStorage.getItem('live') || '[]');
 
-  // Current Live Stream - خالي من خطأ 153
-  if (liveData.length > 0) {
-    const currentLive = liveData.find(item => item.isLive) || liveData[0];
-    const embedUrl = universalEmbed(currentLive.file);
-    
-    if (embedUrl) {
-      // iframe محسّن بدون sandbox ومع youtube-nocookie
-      liveVideo.innerHTML = `
-        <iframe 
-          src="${embedUrl}" 
-          title="${currentLive.title || 'بث مباشر'}" 
-          width="100%"
-          height="100%"
-          frameborder="0"
-          allowfullscreen
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          loading="lazy">
-        </iframe>
+  function renderLive(){
+    if(!liveVideo || !upcomingStreams) return;
+
+    liveVideo.innerHTML='';
+    upcomingStreams.innerHTML='';
+
+    if(liveData.length>0){
+      const currentLive=liveData.find(item=>item.isLive) || liveData[0];
+      const embedUrl=universalEmbed(currentLive.file);
+
+      if(embedUrl){
+        liveVideo.innerHTML=`
+          <iframe
+            src="${embedUrl}"
+            title="${currentLive.title || t('hero_title_live')}"
+            width="100%"
+            height="100%"
+            frameborder="0"
+            allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            loading="lazy">
+          </iframe>
+        `;
+        showToast(`${t('toast_open_live') || ''} ${currentLive.title || ''}`.trim(),'info');
+      }else if(currentLive.file && currentLive.file.match(/\.(mp4|webm|ogg|m3u8)$/i)){
+        liveVideo.innerHTML=`
+          <video controls autoplay loop playsinline style="width:100%;height:100%;object-fit:cover;">
+            <source src="${currentLive.file}" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو.
+          </video>
+        `;
+      }else{
+        liveVideo.innerHTML=`
+          <div class="live-overlay" onclick="window.open('${currentLive.file}','_blank')">
+            <h3>🔗 ${t('toast_open_live') || 'اضغط لفتح البث'}</h3>
+            <p style="font-size:clamp(16px,4vw,20px);">${currentLive.title || ''}</p>
+            <small style="opacity:0.8;">سيفتح في نافذة جديدة</small>
+          </div>
+        `;
+      }
+
+      if(liveData.length===1){
+        upcomingStreams.innerHTML=`
+          <div class="empty-state">
+            <h3>${t('no_live')}</h3>
+            <p>${t('no_live_sub')}</p>
+          </div>
+        `;
+      }else{
+        liveData.slice(1).forEach(item=>{
+          const card=document.createElement('div');
+          card.className='card';
+          const time=item.date || new Date(Date.now()+ (Math.random()*7*24*60*60*1000)).toLocaleString(currentLang==='en'?'en-US':'ar-EG');
+          card.innerHTML=`
+            <div class="card-time">📺 ${time}</div>
+            <h3>${item.title || 'بث مباشر قادم'}</h3>
+            <p>${item.short || 'سيتم تحديث التفاصيل قريباً'}</p>
+            <button class="card-btn" type="button" onclick="remindStream('${item.id}')">
+              <span data-t="btn_remind">تذكير لاحقاً</span>
+              <span>🔔</span>
+            </button>
+          `;
+          upcomingStreams.appendChild(card);
+        });
+      }
+    }else{
+      liveVideo.innerHTML=`
+        <div class="live-overlay">
+          <h3>🎥 ${t('no_live')}</h3>
+          <p style="font-size:clamp(16px,4vw,20px);">${t('no_live_sub')}</p>
+        </div>
       `;
-      showToast(`🔴 بث مباشر: ${currentLive.title}`, 'info');
-    } else if (currentLive.file.match(/\.(mp4|webm|ogg|m3u8)$/i)) {
-      // HTML5 video
-      liveVideo.innerHTML = `
-        <video controls autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;">
-          <source src="${currentLive.file}" type="video/mp4">
-          متصفحك لا يدعم تشغيل الفيديو.
-        </video>
-      `;
-    } else {
-      // رابط خارجي مع overlay قابل للنقر
-      liveVideo.innerHTML = `
-        <div class="live-overlay" onclick="window.open('${currentLive.file}', '_blank')">
-          <h3>🔗 اضغط لفتح البث الخارجي</h3>
-          <p style="font-size: clamp(16px,4vw,20px);">${currentLive.title}</p>
-          <small style="opacity:0.8;">سيفتح في نافذة جديدة</small>
+      upcomingStreams.innerHTML=`
+        <div class="empty-state">
+          <h3>${t('no_live')}</h3>
+          <p>${t('no_live_sub')}</p>
         </div>
       `;
     }
-  } else {
-    liveVideo.innerHTML = `
-      <div class="live-overlay">
-        <h3>🎥 البث القادم قريباً</h3>
-        <p style="font-size: clamp(16px,4vw,20px);">تابعونا لمعرفة موعد البث القادم</p>
-      </div>
-    `;
   }
 
-  // Upcoming Streams
-  if (liveData.length === 0) {
-    upcomingStreams.innerHTML = `
-      <div class="empty-state">
-        <h3>لا توجد بثوث مباشرة حالياً</h3>
-        <p>ستظهر هنا البثوث القادمة بمجرد إضافتها من لوحة التحكم</p>
-      </div>
-    `;
-  } else {
-    liveData.slice(1).forEach((item) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      
-      const time = item.date || new Date(Date.now() + (Math.random() * 7 * 24 * 60 * 60 * 1000)).toLocaleString('ar-EG');
-      
-      card.innerHTML = `
-        <div class="card-time">📺 ${time}</div>
-        <h3>${item.title || 'بث مباشر قادم'}</h3>
-        <p>${item.short || 'سيتم تحديث التفاصيل قريباً'}</p>
-        <button class="card-btn" onclick="remindStream('${item.id}')">
-          تذكير لاحقاً
-          <span>🔔</span>
-        </button>
-      `;
-      upcomingStreams.appendChild(card);
+  function remindStream(id){
+    const stream=liveData.find(item=>item.id==id);
+    if(stream){
+      showToast(`🔔 ${t('remind_saved')} "${stream.title || ''}"`,'success');
+    }
+  }
+
+  function initMobileDropdowns(){
+    document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const parent=btn.closest('.mobile-dropdown');
+        if(parent) parent.classList.toggle('open');
+      });
     });
   }
 
-  function remindStream(id) {
-    const stream = liveData.find(item => item.id == id);
-    if (stream) {
-      showToast(`🔔 تم حفظ تذكير البث "${stream.title}"!`, 'success');
-    }
-  }
+  window.addEventListener('DOMContentLoaded',()=>{
+    updateHeader();
+    setLang(currentLang);
+    renderLive();
+    initMobileDropdowns();
+  });
 </script>
 
 </body>

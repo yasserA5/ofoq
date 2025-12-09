@@ -1,244 +1,373 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>البحث المحكم</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>عرض البحث</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
-<style>
-  * { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-  }
-  
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-  }
-  
-  body {
-    font-family: "Tajawal", sans-serif;
-    background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
-    padding: clamp(10px, 4vw, 20px);
-    line-height: 1.7;
-    min-height: 100vh;
-  }
-
-  .container {
-    max-width: 900px;
-    width: 100%;
-    margin: 0 auto;
-    background: white;
-    padding: clamp(20px, 6vw, 30px);
-    border-radius: clamp(10px, 3vw, 16px);
-    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
-  }
-
-  h1 {
-    margin: 0 0 clamp(20px, 6vw, 25px) 0;
-    color: #0aa2ca;
-    font-size: clamp(20px, 6vw, 32px);
-    font-weight: 700;
-  }
-
-  .image-box {
-    margin-bottom: clamp(18px, 5vw, 25px);
-  }
-  .image-box img {
-    width: 100%;
-    height: clamp(160px, 35vw, 280px);
-    object-fit: cover;
-    border-radius: clamp(8px, 2vw, 14px);
-  }
-
-  .section {
-    margin-bottom: clamp(20px, 6vw, 30px);
-  }
-
-  .label {
-    font-weight: 700;
-    margin-bottom: clamp(6px, 2vw, 10px);
-    color: #0a4f5f;
-    font-size: clamp(14px, 4vw, 17px);
-    display: block;
-  }
-
-  .content {
-    font-size: clamp(14px, 4vw, 16px);
-    color: #333;
-    padding: clamp(12px, 4vw, 15px);
-    background: #f8fafc;
-    border-radius: clamp(8px, 2vw, 10px);
-    border-right: 4px solid #e2e8f0;
-    min-height: clamp(50px, 12vw, 60px);
-    word-break: break-word;
-    line-height: 1.7;
-    white-space: pre-wrap; /* ✅ النصوص الطويلة مش هتخرج في سطر واحد */
-  }
-
-  .file-box {
-    background: #eef7fa;
-    border: 2px solid #d9e7ec;
-    padding: clamp(15px, 5vw, 25px);
-    border-radius: clamp(10px, 3vw, 14px);
-    margin: clamp(15px, 5vw, 20px) 0;
-  }
-
-  iframe {
-    width: 100%;
-    height: clamp(250px, 65vw, 650px);
-    border-radius: clamp(8px, 2vw, 12px);
-    border: 1px solid #d1d5db;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    display: block;
-  }
-
-  .btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #0aa2ca, #078fa8);
-    color: white;
-    padding: clamp(10px, 3vw, 14px) clamp(18px, 5vw, 28px);
-    border-radius: clamp(8px, 2.5vw, 12px);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: clamp(14px, 4vw, 16px);
-    margin-top: clamp(10px, 3vw, 15px);
-    box-shadow: 0 4px 15px rgba(10,162,202,0.3);
-    transition: all 0.3s ease;
-    text-align: center;
-  }
-
-  .btn:hover {
-    background: linear-gradient(135deg, #078fa8, #056b7f);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(10,162,202,0.4);
-  }
-
-  .error {
-    text-align: center;
-    color: #dc3545;
-    font-size: clamp(18px, 6vw, 24px);
-    padding: clamp(50px, 20vw, 80px) clamp(20px, 8vw, 40px);
-    background: white;
-    border-radius: clamp(12px, 4vw, 16px);
-    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
-    margin: clamp(20px, 8vw, 40px) auto;
-    max-width: 90%;
-  }
-
-  /* RESPONSIVE - 100% DevTools Compatible */
-  @media(max-width:1200px){
-    .container { max-width: 95%; }
-  }
-
-  @media(max-width:768px){
-    body { padding: clamp(8px, 3vw, 12px); }
-    .container { padding: clamp(18px, 6vw, 22px); }
-  }
-
-  @media(max-width:480px){
-    body { padding: clamp(5px, 2.5vw, 8px); }
-    .container { 
-      padding: clamp(15px, 5vw, 18px); 
-      margin: 0 clamp(5px, 2vw, 10px); 
-      border-radius: clamp(8px, 3vw, 12px); 
+  <style>
+    :root{
+      --accent:#0aa2ca;
+      --accent-dark:#078fa8;
+      --bg:#0f172a;
+      --bg-soft:#0b1726;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --border:#e5e7eb;
     }
-  }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{width:100%;overflow-x:hidden;}
+    body{
+      font-family:"Tajawal",sans-serif;
+      background:radial-gradient(circle at top,#0b2537,#020617);
+      color:#0f172a;
+      line-height:1.7;
+    }
 
-  @media(max-width:360px){
-    body { padding: clamp(3px, 2vw, 5px); }
-    .container { padding: clamp(12px, 5vw, 15px); }
-  }
-</style>
+    /* إطار الصفحة */
+    .page-shell{
+      min-height:100vh;
+      padding:18px 10px 32px;
+      background:linear-gradient(135deg,#020617 0%,#020617 35%,#0a1726 100%);
+    }
 
+    .article-layout{
+      max-width:1180px;
+      margin:0 auto;
+    }
+
+    /* شريط علوي بسيط */
+    .top-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+      color:#e5f3ff;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .top-bar-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .top-bar-logo{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:800;
+      font-size:14px;
+    }
+    .top-bar h1{
+      font-size:16px;
+      font-weight:600;
+    }
+    .top-bar a{
+      color:#9ca3af;
+      font-size:13px;
+      text-decoration:none;
+    }
+    .top-bar a:hover{color:#e5f3ff;}
+
+    /* المحتوى الرئيسي كبطاقة */
+    .article-card{
+      background:var(--card);
+      border-radius:18px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.30);
+      overflow:hidden;
+      border:1px solid rgba(148,163,184,0.25);
+    }
+
+    .article-media{
+      margin:0;
+      background:#020617;
+      padding:10px 10px 4px;
+      border-bottom:1px solid rgba(148,163,184,0.2);
+    }
+    .media-frame{
+      width:100%;
+      max-width:1160px;
+      height:78vh;
+      border-radius:14px;
+      overflow:hidden;
+      background:#000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .article-media video,
+    .article-media img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      background:#000;
+    }
+    .article-media iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      border-radius:14px;
+    }
+
+    .article-body{
+      padding:20px 20px 24px;
+    }
+
+    .breadcrumb{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .breadcrumb a{
+      color:var(--accent);
+      text-decoration:none;
+    }
+    .breadcrumb a:hover{text-decoration:underline;}
+
+    .article-type-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:3px 9px;
+      border-radius:999px;
+      background:rgba(8,145,178,0.06);
+      color:var(--accent-dark);
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    .article-header-main h2{
+      font-size:22px;
+      margin-bottom:6px;
+      color:#0f172a;
+    }
+    .article-meta{
+      font-size:13px;
+      color:#6b7280;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .meta-dot::before{
+      content:"•";
+      margin:0 4px;
+      color:#9ca3af;
+    }
+
+    .divider{
+      height:1px;
+      background:linear-gradient(to right,transparent,#e5e7eb,transparent);
+      margin:16px 0 14px;
+    }
+
+    .section-block{
+      margin-bottom:14px;
+    }
+    .section-block h3{
+      font-size:15px;
+      margin-bottom:4px;
+      color:#111827;
+    }
+    .section-block p,
+    .section-block div{
+      font-size:14px;
+      color:#374151;
+      line-height:1.9;
+      white-space:pre-wrap;
+    }
+
+    .info-box{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:10px;
+      background:#eff6ff;
+      border:1px solid #dbeafe;
+      font-size:13px;
+      color:#1e3a8a;
+    }
+
+    @media(max-width:900px){
+      .page-shell{padding:12px 8px 20px;}
+      .media-frame{height:65vh;}
+      .article-body{padding:16px 14px 18px;}
+    }
+    @media(max-width:600px){
+      .top-bar{flex-direction:column;align-items:flex-start;}
+      .media-frame{height:60vh;}
+      .article-body{padding:14px 12px 16px;}
+      .article-header-main h2{font-size:19px;}
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <h1 id="title">...</h1>
+<div class="page-shell">
+  <div class="article-layout">
 
-  <div id="imageBox" class="image-box"></div>
+    <header class="top-bar">
+      <div class="top-bar-title">
+        <div class="top-bar-logo">OF</div>
+        <div>
+          <h1>Ofouq Academy — عرض المحتوى</h1>
+          <a href="index.html">الرجوع للواجهة الرئيسية</a>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#9ca3af;">
+        تم إنشاؤه عبر لوحة التحكم الداخلية
+      </div>
+    </header>
 
-  <div class="section">
-    <div class="label">المحتوى المختصر:</div>
-    <div id="short" class="content"></div>
+    <article class="article-card">
+
+      <section class="article-media" id="articleMedia"></section>
+
+      <section class="article-body">
+        <nav class="breadcrumb">
+          <a href="index.html">الرئيسية</a> /
+          <span id="bcType">محتوى</span>
+        </nav>
+
+        <div class="article-type-pill" id="articleTypeLabel">محتوى</div>
+
+        <header class="article-header-main">
+          <h2 id="articleTitle">عنوان البحث</h2>
+          <div class="article-meta">
+            <span id="articleAuthor">الكاتب: غير محدد</span>
+            <span class="meta-dot" id="articleAffiliation">المؤسسة: غير محددة</span>
+            <span class="meta-dot" id="articleDate">التاريخ: غير محدد</span>
+          </div>
+        </header>
+
+        <div class="divider"></div>
+
+        <section class="section-block">
+          <h3>الملخص</h3>
+          <p id="articleShort"></p>
+        </section>
+
+        <section class="section-block">
+          <h3>المحتوى الكامل</h3>
+          <div id="articleFull"></div>
+        </section>
+
+        <section class="section-block">
+          <h3>تفاصيل إضافية</h3>
+          <p id="articleDetails"></p>
+        </section>
+
+        <div class="info-box" id="extraInfo" style="display:none;"></div>
+      </section>
+    </article>
+
   </div>
-
-  <div class="section">
-    <div class="label">المحتوى الكامل:</div>
-    <div id="full" class="content"></div>
-  </div>
-
-  <div class="section">
-    <div class="label">تفاصيل إضافية:</div>
-    <div id="details" class="content"></div>
-  </div>
-
-  <div class="section">
-    <div class="label">الملف المرفق:</div>
-    <div id="fileBox" class="file-box">لا يوجد ملف.</div>
-  </div>
-
-  <a href="javascript:history.back()" class="btn">رجوع</a>
 </div>
 
 <script>
-  // 🔥 غيّر هذا السطر حسب نوع الصفحة:
-  let item = JSON.parse(localStorage.getItem('researchView') || 'null');
-  
-  // 👇 استخدم واحد من دول حسب الصفحة:
-  // research-view.html → 'researchView'
-  // articles-view.html → 'articlesView' 
-  // files-view.html → 'filesView'
-  // general-article-view.html → 'generalArticleView'
+function getQueryParam(name){
+  const params=new URLSearchParams(window.location.search);
+  return params.get(name);
+}
 
-  if (!item) {
-    document.body.innerHTML = `
-      <div class="error">
-        ❌ رابط غير صالح
-        <br><br>
-        <a href="javascript:history.back()" class="btn">رجوع</a>
-      </div>
-    `;
-  } else {
-    document.getElementById("title").textContent   = item.title || "—";
-    document.getElementById("short").textContent   = item.short || "—";
-    document.getElementById("full").textContent    = item.full || "—";
-    document.getElementById("details").textContent = item.details || "—";
+const type = getQueryParam('type') || 'research';
+const id   = Number(getQueryParam('id'));
 
-    if (item.image) {
-      document.getElementById("imageBox").innerHTML = `<img src="${item.image}" alt="صورة" loading="lazy">`;
-    }
+const typeLabels = {
+  'research':'بحث محكم',
+  'articles':'مقال محكم',
+  'files':'ملف بحثي',
+  'general-articles':'مقال عام',
+  'foreign-articles':'مقال أجنبي',
+  'special-politics':'تخصص علوم سياسية',
+  'special-ir':'تخصص العلاقات الدولية',
+  'special-admin-law':'تخصص القانون الإداري',
+  'special-const-law':'تخصص القانون الدستوري',
+  'special-public-policy':'تخصص السياسات العمومية',
+  'editions':'إصدار علمي',
+  'activities':'نشاط',
+  'talks':'حوار',
+  'training':'تكوين',
+  'live':'بث مباشر'
+};
 
-    let fileBox = document.getElementById("fileBox");
-    if (!item.file) {
-      fileBox.innerHTML = "لا يوجد ملف.";
-    } 
-    else if (item.file.startsWith("data:application/pdf")) {
-      fileBox.innerHTML = `
-        <iframe src="${item.file}" loading="lazy"></iframe>
-        <br>
-        <a class="btn" href="${item.file}" download>تحميل PDF</a>
+document.getElementById('bcType').textContent       = typeLabels[type] || 'محتوى';
+document.getElementById('articleTypeLabel').textContent = typeLabels[type] || 'محتوى';
+
+const allData = JSON.parse(localStorage.getItem(type) || '[]');
+const item    = allData.find(i => i.id === id);
+
+if(!item){
+  document.body.innerHTML =
+    '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#e5e7eb;">العنصر غير موجود أو تم حذفه.</p>';
+} else {
+  document.getElementById('articleTitle').textContent        = item.title || 'بدون عنوان';
+  document.getElementById('articleAuthor').textContent       = 'الكاتب: ' + (item.author || 'غير محدد');
+  document.getElementById('articleAffiliation').textContent  = 'المؤسسة: ' + (item.affiliation || 'غير محددة');
+  document.getElementById('articleDate').textContent         = 'التاريخ: ' + (item.date || 'غير محدد');
+  document.getElementById('articleShort').textContent        = item.short || '';
+  document.getElementById('articleFull').textContent         = item.full  || '';
+  document.getElementById('articleDetails').textContent      = item.details || '';
+
+  const mediaContainer = document.getElementById('articleMedia');
+  const extraInfo      = document.getElementById('extraInfo');
+  let mediaHtml = '';
+
+  console.log('ITEM FILE =', item.file);
+
+  if(item.file){
+    const f = item.file;
+    const lower = f.toLowerCase();
+
+    if(lower.endsWith('.mp4') || lower.includes('.mp4?')){
+      const videoUrl = f.startsWith('/videos')
+        ? 'http://localhost:3000' + f
+        : f;
+
+      console.log('VIDEO URL =', videoUrl);
+
+      mediaHtml = `
+        <div class="media-frame">
+          <video controls>
+            <source src="${videoUrl}" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو أو الرابط غير صالح.
+          </video>
+        </div>
       `;
-    }
-    else if (item.file.startsWith("data:video")) {
-      fileBox.innerHTML = `
-        <video controls style="width:100%;border-radius: clamp(8px, 2vw, 12px); margin-bottom: 15px;" preload="metadata">
-          <source src="${item.file}">
-          متصفحك لا يدعم تشغيل الفيديو.
-        </video>
-        <a class="btn" href="${item.file}" download>تحميل الفيديو</a>
-      `;
-    }
-    else {
-      fileBox.innerHTML = `
-        <a class="btn" href="${item.file}" target="_blank" rel="noopener noreferrer">فتح الرابط</a>
+    } else if(f.startsWith('http')){
+      mediaHtml = `
+        <div class="media-frame">
+          <iframe src="${f}"></iframe>
+        </div>
       `;
     }
   }
+
+  if(!mediaHtml && item.image){
+    mediaHtml = `
+      <div class="media-frame">
+        <img src="${item.image}" alt="${item.title || ''}">
+      </div>
+    `;
+  }
+
+  if(mediaHtml){
+    mediaContainer.innerHTML = mediaHtml;
+  } else {
+    mediaContainer.style.display='none';
+    if(item.file){
+      extraInfo.style.display='block';
+      extraInfo.textContent =
+        'هناك مرفق لهذا البحث، لكن لا يمكن عرضه مباشرة في هذه الصفحة.';
+    }
+  }
+}
 </script>
 
 </body>

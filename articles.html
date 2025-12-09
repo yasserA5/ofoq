@@ -174,36 +174,61 @@
       border:none;
       background:#ffffff;
       border-radius:999px;
-      padding:5px 10px;
-      font-size:11px;
+      padding:6px 12px;
+      font-size:12px;
       cursor:pointer;
       color:var(--primary-dark);
       display:flex;
       align-items:center;
-      gap:4px;
+      gap:6px;
+      font-weight:600;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      transition:.2s;
     }
+    .lang-toggle:hover{
+      background:#f8fafc;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
+      transform:translateY(-1px);
+    }
+    .lang-toggle svg{
+      pointer-events:none;
+      transition:transform .2s;
+    }
+    .lang-toggle[aria-expanded="true"] svg{
+      transform:rotate(180deg);
+    }
+
     .lang-menu{
       position:absolute;
       top:115%;
       right:0;
       background:#fff;
-      box-shadow:0 4px 15px rgba(0,0,0,0.13);
-      border-radius:10px;
-      min-width:120px;
-      border:1px solid #e5e7eb;
+      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      border-radius:12px;
+      min-width:130px;
+      border:1px solid #e2e8f0;
       display:none;
       z-index:1200;
+      overflow:hidden;
     }
     .lang-menu button{
       width:100%;
       border:none;
       background:transparent;
-      padding:7px 10px;
+      padding:10px 14px;
       text-align:right;
-      font-size:11px;
+      font-size:12px;
       cursor:pointer;
+      font-weight:500;
+      transition:.2s;
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
-    .lang-menu button:hover{background:#f3f4f6;}
+    .lang-menu button:hover{
+      background:#f1f5f9;
+      color:var(--primary);
+    }
 
     .pill-circle{
       display:inline-flex;
@@ -403,69 +428,75 @@
       padding-right: 12px;
     }
 
-    /* بطاقات أصغر ومتعددة الأعمدة */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 20px;
     }
 
-    .card {
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 3px 14px rgba(0,0,0,0.08);
-      transition: .2s;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-
-      width: 100%;
-      max-width: 360px;
-      margin-inline: auto;
+    .card{
+      border-radius:16px;
+      background:#fff;
+      box-shadow:0 3px 14px rgba(0,0,0,0.08);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      border:1px solid #e5e7eb;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      max-width:360px;
+      margin-inline:auto;
+      cursor:pointer;
     }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.15);
+    .card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 14px 30px rgba(15,23,42,0.14);
+      border-color:#cbd5e1;
     }
-
-    .card img {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      border-radius: 14px;
-      margin-bottom: 10px;
+    .card-img-wrapper{
+      width:100%;
+      aspect-ratio:16 / 9;
+      overflow:hidden;
     }
-
-    .card h3 {
-      font-size: 16px;
-      margin-bottom: 6px;
-      color: #0d6b8c;
-      line-height: 1.5;
+    .card-img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
     }
-    .card p {
-      font-size: 14px;
-      color: #555;
-      line-height: 1.7;
-      flex-grow: 1;
-      margin-bottom: 10px;
+    .card-body{
+      padding:12px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      flex:1;
     }
-
-    .card button {
-      margin-top: auto;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 20px;
-      background: #0aa2ca;
-      color: #fff;
-      cursor: pointer;
-      transition: .2s;
-      font-weight: 600;
-      font-size: 14px;
+    .card-body h3{
+      font-size:16px;
+      color:#0d6b8c;
+      line-height:1.5;
     }
-    .card button:hover {
-      background: #078fa8;
-      transform: scale(1.02);
+    .meta{
+      font-size:11px;
+      color:#9ca3af;
+    }
+    .source{
+      font-size:11px;
+      color:#6b7280;
+    }
+    .card-body p{
+      font-size:14px;
+      color:#4b5563;
+      flex:1;
+      line-height:1.7;
+    }
+    .card-footer{
+      padding:0 14px 12px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      color:#6b7280;
     }
 
     footer {
@@ -558,12 +589,39 @@
     <img src="images/logo.png" class="mobile-logo" alt="Logo">
     <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
   </div>
+
+  <div style="margin-bottom:20px;">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+        <span id="langCurrentMobile">AR</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M7 10l5 5 5-5z"></path>
+        </svg>
+      </button>
+      <div class="lang-menu" id="langMenuMobile">
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
+      </div>
+    </div>
+  </div>
+
   <ul>
     <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
-    <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
-    <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
-    <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
-    <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span data-t="nav_studies">أبحاث ودراسات ▾</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+        <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+        <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+        <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+      </ul>
+    </li>
+
     <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
     <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
     <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
@@ -649,13 +707,16 @@
 
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
-      <button class="lang-toggle" onclick="toggleLangMenu()">
-        <span id="langCurrent">AR</span> ▾
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+        <span id="langCurrent">AR</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M7 10l5 5 5-5z"></path>
+        </svg>
       </button>
       <div class="lang-menu" id="langMenu">
-        <button onclick="setLang('ar')">العربية</button>
-        <button onclick="setLang('en')">English</button>
-        <button onclick="setLang('fr')">Français</button>
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
       </div>
     </div>
     <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
@@ -665,7 +726,7 @@
 
 <div class="hero">
   <h1 data-t="hero_title_articles_peer">مقالات محكمة</h1>
-  <p data-t="hero_sub_articles_peer">اضغط على "عرض المحتوى" لفتح المقال العلمي. يجب تسجيل الدخول أولاً.</p>
+  <p data-t="hero_sub_articles_peer">اضغط على المقال لعرض المحتوى الكامل. يجب تسجيل الدخول أولاً.</p>
 </div>
 
 <section>
@@ -699,7 +760,7 @@
       nav_login:"تسجيل الدخول",
       nav_join:"انضم إلينا",
       hero_title_articles_peer:"مقالات محكمة",
-      hero_sub_articles_peer:"اضغط على \"عرض المحتوى\" لفتح المقال العلمي. يجب تسجيل الدخول أولاً.",
+      hero_sub_articles_peer:"اضغط على المقال لعرض المحتوى الكامل. يجب تسجيل الدخول أولاً.",
       sec_articles_peer_list:"المقالات المحكمة",
       footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
       logout:"تسجيل الخروج",
@@ -707,7 +768,6 @@
       toast_open_article:"جاري فتح المقال...",
       toast_login_required:"يجب تسجيل الدخول لعرض المحتوى",
       no_articles_peer:"لا توجد مقالات محكمة حالياً",
-      btn_view_content:"عرض المحتوى",
       sp_politics:"تخصص علوم سياسية",
       sp_ir:"تخصص العلاقات الدولية",
       sp_admin_law:"تخصص القانون الإداري",
@@ -732,7 +792,7 @@
       nav_login:"Login",
       nav_join:"Join us",
       hero_title_articles_peer:"Peer-reviewed articles",
-      hero_sub_articles_peer:"Click \"View content\" to open the scholarly article. You must log in first.",
+      hero_sub_articles_peer:"Tap on an article card to view full content. You must log in first.",
       sec_articles_peer_list:"Scholarly articles",
       footer_text:"© All rights reserved – Your Academic Platform",
       logout:"Logout",
@@ -740,7 +800,6 @@
       toast_open_article:"Opening article...",
       toast_login_required:"You must log in to view the content",
       no_articles_peer:"No peer-reviewed articles yet",
-      btn_view_content:"View content",
       sp_politics:"Political Science",
       sp_ir:"International Relations",
       sp_admin_law:"Administrative Law",
@@ -765,7 +824,7 @@
       nav_login:"Connexion",
       nav_join:"Rejoignez-nous",
       hero_title_articles_peer:"Articles scientifiques évalués",
-      hero_sub_articles_peer:"Cliquez sur \"Voir le contenu\" pour ouvrir l'article scientifique. Vous devez d'abord vous connecter.",
+      hero_sub_articles_peer:"Cliquez sur une carte d'article pour voir le contenu complet. Vous devez d'abord vous connecter.",
       sec_articles_peer_list:"Articles scientifiques",
       footer_text:"© Tous droits réservés – Votre plateforme scientifique",
       logout:"Déconnexion",
@@ -773,7 +832,6 @@
       toast_open_article:"Ouverture de l'article...",
       toast_login_required:"Vous devez vous connecter pour voir le contenu",
       no_articles_peer:"Aucun article évalué pour le moment",
-      btn_view_content:"Voir le contenu",
       sp_politics:"Science politique",
       sp_ir:"Relations internationales",
       sp_admin_law:"Droit administratif",
@@ -801,15 +859,21 @@
     if(titleEl && dict.title) titleEl.textContent = dict.title;
 
     const langCurrent = document.getElementById('langCurrent');
+    const langCurrentMobile = document.getElementById('langCurrentMobile');
     if(langCurrent) langCurrent.textContent = lang.toUpperCase();
+    if(langCurrentMobile) langCurrentMobile.textContent = lang.toUpperCase();
 
     document.querySelectorAll("[data-t]").forEach(el=>{
       const key=el.getAttribute("data-t");
       if(dict[key]) el.textContent = dict[key];
     });
 
-    const menu=document.getElementById("langMenu");
-    if(menu) menu.style.display="none";
+    const m1=document.getElementById("langMenu");
+    const m2=document.getElementById("langMenuMobile");
+    if(m1) m1.style.display="none";
+    if(m2) m2.style.display="none";
+
+    document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
 
     renderArticlesPeer();
   }
@@ -852,13 +916,16 @@
     if (user && user.username) {
       headerActions.innerHTML = `
         <div class="lang-wrapper">
-          <button class="lang-toggle" onclick="toggleLangMenu()">
-            <span id="langCurrent">${currentLang.toUpperCase()}</span> ▾
+          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+            <span id="langCurrent">${currentLang.toUpperCase()}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z"></path>
+            </svg>
           </button>
           <div class="lang-menu" id="langMenu">
-            <button onclick="setLang('ar')">العربية</button>
-            <button onclick="setLang('en')">English</button>
-            <button onclick="setLang('fr')">Français</button>
+            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
           </div>
         </div>
         <span style="margin-right:12px;font-size:13px;">${user.username}</span>
@@ -910,14 +977,27 @@
   }
 
   function toggleLangMenu(){
-    const menu=document.getElementById("langMenu");
+    const desktopMenu=document.getElementById("langMenu");
+    const mobileMenu=document.getElementById("langMenuMobile");
+    const toggles=document.querySelectorAll('.lang-toggle');
+
+    const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
+    const menu = mobileVisible ? mobileMenu : desktopMenu;
+
     if(!menu) return;
-    menu.style.display = menu.style.display==="block" ? "none" : "block";
+    const isOpen = menu.style.display==="block";
+    menu.style.display = isOpen ? "none" : "block";
+
+    toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
   }
+
   document.addEventListener('click',e=>{
     if(!e.target.closest('.lang-wrapper')){
-      const m=document.getElementById('langMenu');
-      if(m) m.style.display='none';
+      const m1=document.getElementById('langMenu');
+      const m2=document.getElementById('langMenuMobile');
+      if(m1) m1.style.display='none';
+      if(m2) m2.style.display='none';
+      document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
     }
   });
 
@@ -938,44 +1018,60 @@
     }
 
     articlesData.forEach((item) => {
-      const card = document.createElement("div");
+      const card = document.createElement("article");
       card.className = "card";
+      if (item.id != null) card.dataset.id = item.id;
 
-      const imgHTML = item.image
-        ? `<img src="${item.image}" alt="">`
-        : '';
-
-      const rawShort = item.shortContent || item.short || '';
-      const shortText = rawShort.length > 220 ? rawShort.slice(0,220) + '…' : rawShort;
+      const title = item.title || 'بدون عنوان';
+      const author = item.author ? ('بقلم: '+item.author) : '';
+      const img = item.image || '';
+      const date = item.date || 'غير محدد';
+      const source = item.journal || item.source || '';
+      const descRaw = item.shortContent || item.short || item.description || '';
+      const desc = descRaw.length > 220 ? descRaw.slice(0,220) + '…' : descRaw;
 
       card.innerHTML = `
-        ${imgHTML}
-        <h3>${item.title || 'بدون عنوان'}</h3>
-        <p>${shortText}</p>
-      `;
-
-      const btn = document.createElement("button");
-      btn.innerText = t('btn_view_content');
-      btn.onclick = () => {
-        if (!isLoggedIn()) {
-          showToast(t('toast_login_required'), 'error');
-          setTimeout(() => {
-            window.location.href = 'login.html';
-          }, 800);
-          return;
-        }
-
-        localStorage.setItem('articlePeerView', JSON.stringify(item));
-        showToast(t('toast_open_article'), 'info');
-        setTimeout(() => window.open('articles-view.html', '_blank'), 500);
-      };
-
-      card.appendChild(btn);
+        ${img?`<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}"></div>`:''}
+        <div class="card-body">
+          <h3>${title}</h3>
+          <div class="meta">${author} · ${date}</div>
+          ${source?`<div class="source">المصدر: ${source}</div>`:''}
+          <p>${desc}</p>
+        </div>
+        <div class="card-footer">
+          <span>مقال محكم</span>
+        </div>`;
       articlesPeerGrid.appendChild(card);
     });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function handleProtectedArticle(id) {
+    if (!user || !user.username) {
+      showToast(t('toast_login_required'), 'error');
+      if (id) {
+        localStorage.setItem('pendingArticleId', String(id));
+      }
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 800);
+      return;
+    }
+    if (id) {
+      showToast(t('toast_open_article'), 'info');
+      setTimeout(() => {
+        window.location.href = 'articles-view.html?id=' + encodeURIComponent(id);
+      }, 500);
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('.card');
+    if (!card || !card.dataset.id) return;
+    const id = card.dataset.id;
+    handleProtectedArticle(id);
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
     setLang(currentLang);
     updateHeader();
     initMobileDropdowns();

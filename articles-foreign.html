@@ -482,6 +482,7 @@
       transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
       max-width:360px;
       margin-inline:auto;
+      cursor:pointer;
     }
     .card:hover{
       transform:translateY(-4px);
@@ -536,19 +537,6 @@
       align-items:center;
       font-size:11px;
       color:#6b7280;
-    }
-    .btn-sm{
-      padding:6px 10px;
-      border-radius:8px;
-      border:none;
-      background:#0d6b8c;
-      color:#fff;
-      font-size:12px;
-      cursor:pointer;
-      transition:.18s;
-    }
-    .btn-sm:hover{
-      background:#036085;
     }
 
     .empty-state{
@@ -671,23 +659,35 @@
         </svg>
       </button>
       <div class="lang-menu" id="langMenuMobile">
-        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">🇸🇦 العربية</button>
-        <button type="button" data-lang="en" onclick="setLang('en')" title="English">🇺🇸 English</button>
-        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷 Français</button>
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
       </div>
     </div>
   </div>
 
   <ul>
     <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
-    <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
-    <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
-    <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
-    <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+
+    <!-- أبحاث ودراسات ▾ في الموبايل -->
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span data-t="nav_studies">أبحاث ودراسات ▾</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+        <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+        <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+        <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+      </ul>
+    </li>
+
     <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
     <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
     <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
 
+    <!-- أكاديمي في الموبايل -->
     <li class="mobile-dropdown">
       <button type="button" class="mobile-dropdown-toggle">
         <span class="pill-circle" data-t="nav_academic">أكاديمي</span>
@@ -776,9 +776,9 @@
         </svg>
       </button>
       <div class="lang-menu" id="langMenu">
-        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">🇸🇦 العربية</button>
-        <button type="button" data-lang="en" onclick="setLang('en')" title="English">🇺🇸 English</button>
-        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷 Français</button>
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
       </div>
     </div>
     <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
@@ -803,8 +803,6 @@
 <section>
   <main>
     <h2 data-t="sec_foreign_list">مقالات أجنبية</h2>
-
-    <!-- تم حذف أزرار الفلاتر هنا حسب طلبك -->
 
     <div class="articles-grid" id="foreignGrid">
       <div class="empty-state" data-t="no_foreign">لا توجد مقالات أجنبية حالياً</div>
@@ -840,7 +838,7 @@
     e.preventDefault();
     const input=document.getElementById('navSearchInput');
     const q=input ? input.value.trim() : "";
-    if(!q) return;
+       if(!q) return;
     window.location.href='search.html?q='+encodeURIComponent(q);
   }
 
@@ -902,9 +900,9 @@
             </svg>
           </button>
           <div class="lang-menu" id="langMenu">
-            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">🇸🇦 العربية</button>
-            <button type="button" data-lang="en" onclick="setLang('en')" title="English">🇺🇸 English</button>
-            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">🇫🇷 Français</button>
+            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
           </div>
         </div>
         <span style="margin-right:12px;font-size:13px;">${user.username}</span>
@@ -924,7 +922,6 @@
 
   const foreignGrid = document.getElementById("foreignGrid");
 
-  // نقرأ من نفس المفتاح الذي يستخدمه admin.html: foreign-articles
   function loadForeignData() {
     return JSON.parse(localStorage.getItem('foreign-articles') || '[]');
   }
@@ -958,7 +955,6 @@
       toast_logout_success:"تم تسجيل الخروج بنجاح",
       no_foreign:"لا توجد مقالات أجنبية حالياً",
       foreign_article:"مقال أجنبي",
-      open_source:"عرض المحتوى",
       no_title:"بدون عنوان",
       no_summary:"بدون ملخص",
       sp_politics:"تخصص علوم سياسية",
@@ -994,7 +990,6 @@
       toast_logout_success:"Logged out successfully",
       no_foreign:"No foreign articles yet",
       foreign_article:"Foreign article",
-      open_source:"View content",
       no_title:"No title",
       no_summary:"No summary",
       sp_politics:"Political Science",
@@ -1030,7 +1025,6 @@
       toast_logout_success:"Déconnexion réussie",
       no_foreign:"Aucun article étranger pour le moment",
       foreign_article:"Article étranger",
-      open_source:"Afficher le contenu",
       no_title:"Sans titre",
       no_summary:"Pas de résumé",
       sp_politics:"Science politique",
@@ -1094,6 +1088,7 @@
     list.forEach((item) => {
       const card = document.createElement("article");
       card.className = "card";
+      card.dataset.id = item.id;
 
       const title = item.title || t('no_title');
       const author = item.author ? ('بقلم: '+item.author) : '';
@@ -1102,9 +1097,6 @@
       const date = item.date || 'غير محدد';
       const source = item.journal || item.source || '';
       const lang = item.lang || '';
-
-      // نستخدم file أو url كرابط
-      const link = item.url || item.file || '';
 
       card.innerHTML = `
         ${img?`<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}"></div>`:''}
@@ -1116,31 +1108,33 @@
         </div>
         <div class="card-footer">
           <span>${t('foreign_article')}</span>
-          ${link?`<button type="button" class="btn-sm show-content-btn" data-url="${link}">${t('open_source')}</button>`:''}
         </div>`;
       foreignGrid.appendChild(card);
     });
   }
 
-  function handleProtectedContent(url) {
+  function handleProtectedContent(id) {
     if (!user || !user.username) {
       showToast(t('login_required'), 'warning');
+      if (id) {
+        localStorage.setItem('pendingForeignArticleId', String(id));
+      }
       setTimeout(() => {
         window.location.href = 'login.html';
-      }, 1000);
+      }, 800);
       return;
     }
-    if (url) {
-      // فتح الرابط داخل نفس الصفحة/التبويب
-      window.location.href = url; // يستخدم location.href لفتح الرابط في نفس التبويب [web:168][web:173]
+    if (id) {
+      window.location.href = 'articles-foreign-view.html?id=' + encodeURIComponent(id);
     }
   }
 
+  // النقر على الكرت نفسه
   document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.show-content-btn');
-    if (!btn) return;
-    const url = btn.dataset.url || btn.getAttribute('data-url');
-    handleProtectedContent(url);
+    const card = e.target.closest('.card');
+    if (!card || !card.dataset.id) return;
+    const id = card.dataset.id;
+    handleProtectedContent(id);
   });
 
   function initMobileDropdowns(){

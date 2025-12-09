@@ -2,7 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title id="t-title">مقالات</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -15,6 +16,7 @@
       --nav-bg:#e7f5f8;
       --text-main:#23424b;
       --gold:#d4af37;
+      --bg-overlay:rgba(15,23,42,0.35);
     }
 
     *{
@@ -36,7 +38,6 @@
       direction:rtl;
     }
 
-    /* HEADER */
     header{
       padding:10px 20px;
       display:flex;
@@ -46,7 +47,7 @@
       box-shadow:0 2px 18px rgba(0,0,0,0.07);
       position:sticky;
       top:0;
-      z-index:999;
+      z-index:1500;
       gap:14px;
     }
 
@@ -214,13 +215,31 @@
       border:none;
       background:#ffffff;
       border-radius:999px;
-      padding:5px 10px;
-      font-size:11px;
+      padding:6px 12px;
+      font-size:12px;
       cursor:pointer;
       color:var(--primary-dark);
       display:flex;
       align-items:center;
-      gap:4px;
+      gap:6px;
+      font-weight:600;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      transition:.2s;
+    }
+
+    .lang-toggle:hover{
+      background:#f8fafc;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
+      transform:translateY(-1px);
+    }
+
+    .lang-toggle svg{
+      pointer-events:none;
+      transition:transform .2s;
+    }
+
+    .lang-toggle[aria-expanded="true"] svg{
+      transform:rotate(180deg);
     }
 
     .lang-menu{
@@ -228,26 +247,33 @@
       top:115%;
       right:0;
       background:#fff;
-      box-shadow:0 4px 15px rgba(0,0,0,0.13);
-      border-radius:10px;
-      min-width:120px;
-      border:1px solid #e5e7eb;
+      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      border-radius:12px;
+      min-width:130px;
+      border:1px solid #e2e8f0;
       display:none;
       z-index:1200;
+      overflow:hidden;
     }
 
     .lang-menu button{
       width:100%;
       border:none;
       background:transparent;
-      padding:7px 10px;
+      padding:10px 14px;
       text-align:right;
-      font-size:11px;
+      font-size:12px;
       cursor:pointer;
+      font-weight:500;
+      transition:.2s;
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
 
     .lang-menu button:hover{
-      background:#f3f4f6;
+      background:#f1f5f9;
+      color:var(--primary);
     }
 
     .pill-circle{
@@ -270,22 +296,65 @@
       color:#111;
     }
 
+    .mobile-dropdown-toggle .pill-circle::before{
+      content:"";
+      display:none;
+    }
+
     .dropdown-academic .dropdown-content a{
       font-size:13px;
     }
 
     #menu-btn{
       display:none;
-      width:40px;
-      height:40px;
-      border-radius:50%;
+      width:42px;
+      height:42px;
+      border-radius:999px;
       border:none;
-      background:rgba(0,155,196,0.22);
-      color:var(--primary-dark);
-      font-size:20px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
       cursor:pointer;
       align-items:center;
       justify-content:center;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 4px 14px rgba(0,155,196,0.4);
+      font-family:"Tajawal", sans-serif;
+    }
+    #menu-btn span{
+      position:absolute;
+      width:22px;
+      height:2px;
+      background:#ffffff;
+      border-radius:999px;
+      transition:0.25s ease;
+      left:50%;
+      transform:translateX(-50%);
+    }
+    #menu-btn span:nth-child(1){ top:13px; }
+    #menu-btn span:nth-child(2){ top:20px; }
+    #menu-btn span:nth-child(3){ top:27px; }
+    #menu-btn.open span:nth-child(1){
+      top:20px;
+      transform:translateX(-50%) rotate(45deg);
+    }
+    #menu-btn.open span:nth-child(2){ opacity:0; }
+    #menu-btn.open span:nth-child(3){
+      top:20px;
+      transform:translateX(-50%) rotate(-45deg);
+    }
+
+    .backdrop{
+      position:fixed;
+      inset:0;
+      background:var(--bg-overlay);
+      z-index:1900;
+      opacity:0;
+      visibility:hidden;
+      transition:0.25s ease;
+    }
+    .backdrop.active{
+      opacity:1;
+      visibility:visible;
     }
 
     .mobile-menu{
@@ -293,19 +362,44 @@
       position:fixed;
       top:0;
       right:0;
-      width:min(80%,350px);
+      width:min(80%,360px);
       height:100%;
       background:#fff;
-      box-shadow:-3px 0 12px rgba(0,0,0,0.1);
+      box-shadow:-4px 0 18px rgba(0,0,0,0.15);
       padding:clamp(20px,8vw,30px);
       z-index:2000;
       overflow-y:auto;
+      transform:translateX(100%);
+      transition:transform 0.25s ease;
     }
 
-    .mobile-menu img{
-      display:block;
-      margin-bottom:20px;
-      width:clamp(65px,15vw,80px);
+    .mobile-menu.open{transform:translateX(0);}
+
+    .mobile-menu-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+
+    .mobile-logo{
+      width:52px;
+      height:auto;
+    }
+
+    .mobile-close{
+      border:none;
+      background:rgba(248,250,252,0.9);
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      font-size:18px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 2px 8px rgba(15,23,42,0.15);
     }
 
     .mobile-menu ul{
@@ -321,6 +415,63 @@
       font-size:clamp(18px,5vw,20px);
       text-decoration:none;
       color:#222;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:8px 10px;
+      border-radius:10px;
+      transition:.2s;
+    }
+
+    .mobile-menu ul li a:hover{
+      background:#e0f2fe;
+      color:var(--primary-dark);
+    }
+
+    .mobile-menu,
+    .mobile-menu *{
+      font-family:"Tajawal",sans-serif !important;
+    }
+
+    .mobile-dropdown-toggle{
+      width:100%;
+      background:transparent;
+      border:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:16px;
+      color:#0f172a;
+      cursor:pointer;
+      padding:0;
+      font-weight:600;
+    }
+
+    .mobile-dropdown-arrow{
+      font-size:11px;
+      color:#6b7280;
+    }
+
+    .mobile-submenu{
+      list-style:none;
+      margin-top:8px;
+      margin-right:14px;
+      display:none;
+    }
+
+    .mobile-submenu li{
+      margin-bottom:10px;
+    }
+
+    .mobile-submenu a{
+      font-size:15px;
+      font-weight:600;
+      padding:6px 10px;
+    }
+
+    .mobile-dropdown.open .mobile-submenu{
+      display:block;
     }
 
     .toast-container{
@@ -372,7 +523,6 @@
       animation:slideOut .3s ease-in-out;
     }
 
-    /* PAGE CONTENT */
     .hero{
       padding:clamp(80px,20vw,110px) clamp(25px,8vw,40px);
       text-align:center;
@@ -408,57 +558,90 @@
 
     .grid{
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(clamp(250px,45vw,280px),1fr));
-      gap:clamp(20px,6vw,25px);
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:20px;
     }
 
     .card{
-      padding:clamp(15px,4vw,18px);
-      border-radius:14px;
+      border-radius:16px;
       background:#fff;
-      box-shadow:0 2px 15px rgba(0,0,0,0.08);
-      transition:.2s;
-      position:relative;
+      box-shadow:0 3px 14px rgba(0,0,0,0.08);
+      overflow:hidden;
       display:flex;
       flex-direction:column;
+      border:1px solid #e5e7eb;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      max-width:360px;
+      margin-inline:auto;
+      cursor:pointer;
     }
 
     .card:hover{
-      transform:translateY(-5px);
-      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      transform:translateY(-4px);
+      box-shadow:0 14px 30px rgba(15,23,42,0.14);
+      border-color:#cbd5e1;
     }
 
-    .card h3{
-      font-size:clamp(16px,4vw,20px);
-      margin-bottom:8px;
+    .card-img-wrapper{
+      width:100%;
+      aspect-ratio:16 / 9;
+      overflow:hidden;
+    }
+
+    .card-img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+
+    .card-body{
+      padding:12px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      flex:1;
+    }
+
+    .card-body h3{
+      font-size:16px;
       color:#0d6b8c;
-      line-height:1.4;
+      line-height:1.5;
     }
 
-    .card p{
-      font-size:clamp(13px,3.5vw,15px);
-      color:#555;
+    .meta{
+      font-size:11px;
+      color:#9ca3af;
+    }
+
+    .source{
+      font-size:11px;
+      color:#6b7280;
+    }
+
+    .card-body p{
+      font-size:14px;
+      color:#4b5563;
+      flex:1;
       line-height:1.7;
-      flex-grow:1;
-      margin-bottom:12px;
     }
 
-    .card button{
-      margin-top:auto;
-      padding:clamp(8px,2.5vw,10px) clamp(12px,4vw,16px);
-      border:none;
-      border-radius:20px;
-      background:#0aa2ca;
-      color:#fff;
-      cursor:pointer;
-      transition:.2s;
-      font-weight:600;
-      font-size:clamp(13px,3.5vw,15px);
+    .card-footer{
+      padding:0 14px 12px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      color:#6b7280;
     }
 
-    .card button:hover{
-      background:#078fa8;
-      transform:scale(1.02);
+    .empty-state{
+      text-align:center;
+      padding:clamp(40px,15vw,60px);
+      color:#999;
+      font-size:clamp(16px,4vw,18px);
+      grid-column:1/-1;
     }
 
     footer{
@@ -468,14 +651,6 @@
       color:#fff;
       text-align:center;
       font-size:clamp(15px,4vw,18px);
-    }
-
-    .empty-state{
-      text-align:center;
-      padding:clamp(40px,15vw,60px);
-      color:#999;
-      font-size:clamp(16px,4vw,18px);
-      grid-column:1/-1;
     }
 
     @media(max-width:1100px){
@@ -490,7 +665,7 @@
         order:-1;
       }
       header{
-        justify-content:center;
+        justify-content:space-between;
       }
       .logo{
         margin-inline:auto;
@@ -500,15 +675,9 @@
         transform:translateX(-50%);
         width:90%;
       }
-    }
-
-    @media(max-width:768px){
-      header{padding:12px 16px;}
-      .hero{padding:70px 25px;}
-      section{padding:50px 20px;}
-      .grid{
-        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-        gap:20px;
+      .mobile-menu .pill-circle{
+        padding:4px 14px;
+        font-size:12px;
       }
     }
 
@@ -521,42 +690,70 @@
         grid-template-columns:1fr;
         gap:18px;
       }
-      .card{padding:20px;}
-    }
-
-    @media(max-width:480px){
-      header{padding:10px 14px;}
-      .logo img{width:65px;}
-      .hero{padding:60px 15px;}
-      section{padding:35px 12px;}
-      section h2{font-size:22px;}
-      .card h3{font-size:18px;}
-      .card button{font-size:15px;}
-    }
-
-    @media(max-width:360px){
-      .hero h1{font-size:24px;}
-      .hero p{font-size:15px;}
-      section h2{font-size:20px;}
-      .card{padding:18px;}
+      .card{max-width:100%;}
     }
   </style>
 </head>
 
 <body>
-<!-- MOBILE MENU -->
+<div class="backdrop" id="backdrop" onclick="toggleMenu(false)"></div>
+
 <div class="mobile-menu" id="mobileMenu">
-  <img src="images/logo.png" alt="Logo">
+  <div class="mobile-menu-header">
+    <img src="images/logo.png" class="mobile-logo" alt="Logo">
+    <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+        <span id="langCurrentMobile">AR</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M7 10l5 5 5-5z"></path>
+        </svg>
+      </button>
+      <div class="lang-menu" id="langMenuMobile">
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
+      </div>
+    </div>
+  </div>
+
   <ul>
     <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
-    <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
-    <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
-    <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
-    <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
-    <li><a href="general-articles.html" data-t="nav_articles" class="active">مقالات</a></li>
+
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span data-t="nav_studies">أبحاث ودراسات ▾</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+        <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+        <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+        <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+      </ul>
+    </li>
+
+    <li><a href="general-articles.html" class="active" data-t="nav_articles">مقالات</a></li>
     <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
     <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
-    <li><a href="#academic" data-t="nav_academic">أكاديمي</a></li>
+
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span class="pill-circle" data-t="nav_academic">أكاديمي</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a></li>
+        <li><a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a></li>
+        <li><a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a></li>
+        <li><a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a></li>
+        <li><a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a></li>
+      </ul>
+    </li>
+
     <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
     <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
     <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
@@ -568,10 +765,20 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <header>
-  <button id="menu-btn" onclick="toggleMenu()">☰</button>
+  <button
+    id="menu-btn"
+    type="button"
+    onclick="toggleMenu()"
+    aria-label="Toggle navigation menu"
+    aria-expanded="false"
+  >
+    <span></span><span></span><span></span>
+  </button>
+
   <div class="logo" onclick="goToHome()">
     <img src="images/logo.png" alt="Logo">
   </div>
+
   <nav>
     <ul>
       <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
@@ -584,7 +791,7 @@
           <a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a>
         </div>
       </li>
-      <li><a href="general-articles.html" data-t="nav_articles" class="active">مقالات</a></li>
+      <li><a href="general-articles.html" class="active" data-t="nav_articles">مقالات</a></li>
       <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
       <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
       <li class="dropdown dropdown-academic">
@@ -601,20 +808,25 @@
       <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
       <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
     </ul>
+
     <form class="nav-search" onsubmit="doSearch(event)">
       <input type="search" id="navSearchInput" placeholder="ابحث..." />
       <span>🔍</span>
     </form>
   </nav>
+
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
-      <button class="lang-toggle" onclick="toggleLangMenu()">
-        <span id="langCurrent">AR</span> ▾
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+        <span id="langCurrent">AR</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M7 10l5 5 5-5z"></path>
+        </svg>
       </button>
       <div class="lang-menu" id="langMenu">
-        <button onclick="setLang('ar')">العربية</button>
-        <button onclick="setLang('en')">English</button>
-        <button onclick="setLang('fr')">Français</button>
+        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
       </div>
     </div>
     <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
@@ -624,14 +836,12 @@
 
 <div class="hero">
   <h1 data-t="hero_title_general">مقالات</h1>
-  <p data-t="hero_sub_general">اضغط على "عرض المحتوى" لقراءة المقال الكامل.</p>
+  <p data-t="hero_sub_general">اضغط على المقال لقراءة المحتوى الكامل.</p>
 </div>
 
 <section>
   <h2 data-t="sec_general_list">المقالات</h2>
-  <div class="grid" id="generalArticlesGrid">
-    <!-- سيتم ملؤه ديناميكيًا من admin.html -->
-  </div>
+  <div class="grid" id="generalArticlesGrid"></div>
 </section>
 
 <footer data-t="footer_text">
@@ -643,9 +853,23 @@
     window.location.href='index.html';
   }
 
-  function toggleMenu(){
+  function toggleMenu(force){
     const menu=document.getElementById("mobileMenu");
-    menu.style.display=menu.style.display==="block"?"none":"block";
+    const backdrop=document.getElementById("backdrop");
+    const btn=document.getElementById("menu-btn");
+
+    if (!menu || !backdrop || !btn) return;
+
+    const shouldOpen = typeof force === "boolean"
+      ? force
+      : menu.style.display !== "block";
+
+    menu.style.display = shouldOpen ? "block" : "none";
+    menu.classList.toggle("open", shouldOpen);
+    backdrop.classList.toggle("active", shouldOpen);
+
+    btn.classList.toggle("open", shouldOpen);
+    btn.setAttribute("aria-expanded", String(shouldOpen));
   }
 
   function doSearch(e){
@@ -657,20 +881,33 @@
   }
 
   function toggleLangMenu(){
-    const menu=document.getElementById("langMenu");
+    const desktopMenu=document.getElementById("langMenu");
+    const mobileMenu=document.getElementById("langMenuMobile");
+    const toggles=document.querySelectorAll('.lang-toggle');
+
+    const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
+    const menu = mobileVisible ? mobileMenu : desktopMenu;
+
     if(!menu)return;
-    menu.style.display=menu.style.display==="block"?"none":"block";
+    const isOpen = menu.style.display==="block";
+    menu.style.display = isOpen ? "none" : "block";
+
+    toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
   }
 
   document.addEventListener('click',e=>{
     if(!e.target.closest('.lang-wrapper')){
-      const m=document.getElementById('langMenu');
-      if(m)m.style.display='none';
+      const m1=document.getElementById('langMenu');
+      const m2=document.getElementById('langMenuMobile');
+      if(m1)m1.style.display='none';
+      if(m2)m2.style.display='none';
+      document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
     }
   });
 
   function showToast(message,type='info'){
     const container=document.getElementById('toastContainer');
+    if(!container)return;
     const toast=document.createElement('div');
     toast.className=`toast ${type}`;
     const icons={error:'❌',success:'✅',warning:'⚠️',info:'ℹ️'};
@@ -691,24 +928,26 @@
   const mobileRegister=document.getElementById("mobileRegister");
 
   function updateHeader(){
+    if(!headerActions)return;
     if(user&&user.username){
       headerActions.innerHTML=`
         <div class="lang-wrapper">
-          <button class="lang-toggle" onclick="toggleLangMenu()">
-            <span id="langCurrent">AR</span> ▾
+          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+            <span id="langCurrent">AR</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z"></path>
+            </svg>
           </button>
           <div class="lang-menu" id="langMenu">
-            <button onclick="setLang('ar')">العربية</button>
-            <button onclick="setLang('en')">English</button>
-            <button onclick="setLang('fr')">Français</button>
+            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
           </div>
         </div>
         <span style="margin-right:12px;font-size:13px;">${user.username}</span>
-        <button class="btn primary" onclick="logout()" data-t="logout">تسجيل الخروج</button>
+        <button class="btn primary" onclick="logout()" data-t="logout">${t('logout')}</button>
       `;
-      if(mobileLogin)mobileLogin.innerHTML=`
-        <a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>
-      `;
+      if(mobileLogin)mobileLogin.innerHTML=`<a href="#" onclick="logout();return false;" data-t="logout">${t('logout')}</a>`;
       if(mobileRegister)mobileRegister.style.display="none";
     }
   }
@@ -739,14 +978,13 @@
       nav_login:"تسجيل الدخول",
       nav_join:"انضم إلينا",
       hero_title_general:"مقالات",
-      hero_sub_general:"اضغط على \"عرض المحتوى\" لقراءة المقال الكامل.",
+      hero_sub_general:"اضغط على المقال لقراءة المحتوى الكامل.",
       sec_general_list:"المقالات",
       footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
       logout:"تسجيل الخروج",
       toast_logout_success:"تم تسجيل الخروج بنجاح",
       toast_open_article:"جاري فتح المقال...",
       no_general:"لا توجد مقالات حالياً",
-      btn_view_content:"عرض المحتوى",
       no_title:"بدون عنوان",
       sp_politics:"تخصص علوم سياسية",
       sp_ir:"تخصص العلاقات الدولية",
@@ -772,14 +1010,13 @@
       nav_login:"Login",
       nav_join:"Join us",
       hero_title_general:"Articles",
-      hero_sub_general:"Click \"View content\" to read the full article.",
+      hero_sub_general:"Tap on an article card to read the full content.",
       sec_general_list:"Articles",
       footer_text:"© All rights reserved – Your Academic Platform",
       logout:"Logout",
       toast_logout_success:"Logged out successfully",
       toast_open_article:"Opening article...",
       no_general:"No articles yet",
-      btn_view_content:"View content",
       no_title:"No title",
       sp_politics:"Political Science",
       sp_ir:"International Relations",
@@ -805,14 +1042,13 @@
       nav_login:"Connexion",
       nav_join:"Rejoignez-nous",
       hero_title_general:"Articles",
-      hero_sub_general:"Cliquez sur « Voir le contenu » pour lire l'article complet.",
+      hero_sub_general:"Cliquez sur une carte d'article pour lire le contenu complet.",
       sec_general_list:"Articles",
       footer_text:"© Tous droits réservés – Votre plateforme scientifique",
       logout:"Déconnexion",
       toast_logout_success:"Déconnexion réussie",
       toast_open_article:"Ouverture de l'article...",
       no_general:"Aucun article pour le moment",
-      btn_view_content:"Voir le contenu",
       no_title:"Sans titre",
       sp_politics:"Science politique",
       sp_ir:"Relations internationales",
@@ -841,23 +1077,31 @@
     if(titleEl&&dict.title)titleEl.textContent=dict.title;
 
     const langCurrent=document.getElementById('langCurrent');
+    const langCurrentMobile=document.getElementById('langCurrentMobile');
     if(langCurrent)langCurrent.textContent=lang.toUpperCase();
+    if(langCurrentMobile)langCurrentMobile.textContent=lang.toUpperCase();
 
     document.querySelectorAll("[data-t]").forEach(el=>{
       const key=el.getAttribute("data-t");
       if(dict[key])el.textContent=dict[key];
     });
 
-    const menu=document.getElementById("langMenu");
-    if(menu)menu.style.display="none";
+    const m1=document.getElementById("langMenu");
+    const m2=document.getElementById("langMenuMobile");
+    if(m1)m1.style.display="none";
+    if(m2)m2.style.display="none";
+
+    document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
 
     renderGeneralArticles();
   }
 
   const generalArticlesGrid=document.getElementById("generalArticlesGrid");
-  const generalArticlesData=JSON.parse(localStorage.getItem('general-articles')||'[]');
 
   function renderGeneralArticles(){
+    if(!generalArticlesGrid)return;
+    const generalArticlesData=JSON.parse(localStorage.getItem('general-articles')||'[]');
+
     generalArticlesGrid.innerHTML='';
     if(generalArticlesData.length===0){
       generalArticlesGrid.innerHTML=`
@@ -867,246 +1111,67 @@
     }
 
     generalArticlesData.forEach((item)=>{
-      const card=document.createElement("div");
+      const card=document.createElement("article");
       card.className="card";
+      if(item.id!=null) card.dataset.id=item.id;
 
-      const imgHTML=item.image
-        ? `<img src="${item.image}" style="width:100%; height: clamp(120px,25vw,150px); object-fit: cover; border-radius: 10px; margin-bottom: 10px;" alt="">`
-        : '';
+      const title=item.title||t('no_title');
+      const author=item.author ? ('بقلم: '+item.author) : '';
+      const img=item.image||'';
+      const date=item.date||'غير محدد';
+      const source=item.source||'';
+      const descRaw=item.shortContent||item.short||item.description||'';
+      const desc=descRaw.length>220?descRaw.slice(0,220)+'…':descRaw;
 
       card.innerHTML=`
-        ${imgHTML}
-        <h3>${item.title||t('no_title')}</h3>
-        <p>${item.short||''}</p>
+        ${img?`<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}"></div>`:''}
+        <div class="card-body">
+          <h3>${title}</h3>
+          <div class="meta">${author} · ${date}</div>
+          ${source?`<div class="source">المصدر: ${source}</div>`:''}
+          <p>${desc}</p>
+        </div>
+        <div class="card-footer">
+          <span>مقال</span>
+        </div>
       `;
-
-      const btn=document.createElement("button");
-      btn.innerText=t('btn_view_content');
-      btn.onclick=()=>{
-        localStorage.setItem('generalArticleView',JSON.stringify(item));
-        showToast(t('toast_open_article'),'info');
-        setTimeout(()=>window.open('general-article-view.html','_blank'),500);
-      };
-
-      card.appendChild(btn);
       generalArticlesGrid.appendChild(card);
+    });
+  }
+
+  function handleOpenGeneralArticle(id){
+    if(!id) return;
+    showToast(t('toast_open_article'),'info');
+    setTimeout(()=>{
+      window.location.href='general-article-view.html?id='+encodeURIComponent(id);
+    },500);
+  }
+
+  document.addEventListener('click', (e)=>{
+    const card=e.target.closest('.card');
+    if(!card||!card.dataset.id) return;
+    const id=card.dataset.id;
+    handleOpenGeneralArticle(id);
+  });
+
+  function initMobileDropdowns(){
+    document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent=btn.closest('.mobile-dropdown');
+        if(parent){
+          parent.classList.toggle('open');
+        }
+      });
     });
   }
 
   window.addEventListener('DOMContentLoaded',()=>{
     updateHeader();
     setLang(currentLang);
+    initMobileDropdowns();
     renderGeneralArticles();
   });
 </script>
-
-<!--
-  ==========================================================
-  PADDING COMMENT BLOCK TO PUSH FILE WELL ABOVE 600 LINES
-  Browsers ignore these comments and extra whitespace. [web:476][web:480]
-  ==========================================================
--->
-
-<!-- padding line 001 -->
-<!-- padding line 002 -->
-<!-- padding line 003 -->
-<!-- padding line 004 -->
-<!-- padding line 005 -->
-<!-- padding line 006 -->
-<!-- padding line 007 -->
-<!-- padding line 008 -->
-<!-- padding line 009 -->
-<!-- padding line 010 -->
-<!-- padding line 011 -->
-<!-- padding line 012 -->
-<!-- padding line 013 -->
-<!-- padding line 014 -->
-<!-- padding line 015 -->
-<!-- padding line 016 -->
-<!-- padding line 017 -->
-<!-- padding line 018 -->
-<!-- padding line 019 -->
-<!-- padding line 020 -->
-<!-- padding line 021 -->
-<!-- padding line 022 -->
-<!-- padding line 023 -->
-<!-- padding line 024 -->
-<!-- padding line 025 -->
-<!-- padding line 026 -->
-<!-- padding line 027 -->
-<!-- padding line 028 -->
-<!-- padding line 029 -->
-<!-- padding line 030 -->
-<!-- padding line 031 -->
-<!-- padding line 032 -->
-<!-- padding line 033 -->
-<!-- padding line 034 -->
-<!-- padding line 035 -->
-<!-- padding line 036 -->
-<!-- padding line 037 -->
-<!-- padding line 038 -->
-<!-- padding line 039 -->
-<!-- padding line 040 -->
-<!-- padding line 041 -->
-<!-- padding line 042 -->
-<!-- padding line 043 -->
-<!-- padding line 044 -->
-<!-- padding line 045 -->
-<!-- padding line 046 -->
-<!-- padding line 047 -->
-<!-- padding line 048 -->
-<!-- padding line 049 -->
-<!-- padding line 050 -->
-<!-- padding line 051 -->
-<!-- padding line 052 -->
-<!-- padding line 053 -->
-<!-- padding line 054 -->
-<!-- padding line 055 -->
-<!-- padding line 056 -->
-<!-- padding line 057 -->
-<!-- padding line 058 -->
-<!-- padding line 059 -->
-<!-- padding line 060 -->
-<!-- padding line 061 -->
-<!-- padding line 062 -->
-<!-- padding line 063 -->
-<!-- padding line 064 -->
-<!-- padding line 065 -->
-<!-- padding line 066 -->
-<!-- padding line 067 -->
-<!-- padding line 068 -->
-<!-- padding line 069 -->
-<!-- padding line 070 -->
-<!-- padding line 071 -->
-<!-- padding line 072 -->
-<!-- padding line 073 -->
-<!-- padding line 074 -->
-<!-- padding line 075 -->
-<!-- padding line 076 -->
-<!-- padding line 077 -->
-<!-- padding line 078 -->
-<!-- padding line 079 -->
-<!-- padding line 080 -->
-<!-- padding line 081 -->
-<!-- padding line 082 -->
-<!-- padding line 083 -->
-<!-- padding line 084 -->
-<!-- padding line 085 -->
-<!-- padding line 086 -->
-<!-- padding line 087 -->
-<!-- padding line 088 -->
-<!-- padding line 089 -->
-<!-- padding line 090 -->
-<!-- padding line 091 -->
-<!-- padding line 092 -->
-<!-- padding line 093 -->
-<!-- padding line 094 -->
-<!-- padding line 095 -->
-<!-- padding line 096 -->
-<!-- padding line 097 -->
-<!-- padding line 098 -->
-<!-- padding line 099 -->
-<!-- padding line 100 -->
-<!-- padding line 101 -->
-<!-- padding line 102 -->
-<!-- padding line 103 -->
-<!-- padding line 104 -->
-<!-- padding line 105 -->
-<!-- padding line 106 -->
-<!-- padding line 107 -->
-<!-- padding line 108 -->
-<!-- padding line 109 -->
-<!-- padding line 110 -->
-<!-- padding line 111 -->
-<!-- padding line 112 -->
-<!-- padding line 113 -->
-<!-- padding line 114 -->
-<!-- padding line 115 -->
-<!-- padding line 116 -->
-<!-- padding line 117 -->
-<!-- padding line 118 -->
-<!-- padding line 119 -->
-<!-- padding line 120 -->
-<!-- padding line 121 -->
-<!-- padding line 122 -->
-<!-- padding line 123 -->
-<!-- padding line 124 -->
-<!-- padding line 125 -->
-<!-- padding line 126 -->
-<!-- padding line 127 -->
-<!-- padding line 128 -->
-<!-- padding line 129 -->
-<!-- padding line 130 -->
-<!-- padding line 131 -->
-<!-- padding line 132 -->
-<!-- padding line 133 -->
-<!-- padding line 134 -->
-<!-- padding line 135 -->
-<!-- padding line 136 -->
-<!-- padding line 137 -->
-<!-- padding line 138 -->
-<!-- padding line 139 -->
-<!-- padding line 140 -->
-<!-- padding line 141 -->
-<!-- padding line 142 -->
-<!-- padding line 143 -->
-<!-- padding line 144 -->
-<!-- padding line 145 -->
-<!-- padding line 146 -->
-<!-- padding line 147 -->
-<!-- padding line 148 -->
-<!-- padding line 149 -->
-<!-- padding line 150 -->
-<!-- padding line 151 -->
-<!-- padding line 152 -->
-<!-- padding line 153 -->
-<!-- padding line 154 -->
-<!-- padding line 155 -->
-<!-- padding line 156 -->
-<!-- padding line 157 -->
-<!-- padding line 158 -->
-<!-- padding line 159 -->
-<!-- padding line 160 -->
-<!-- padding line 161 -->
-<!-- padding line 162 -->
-<!-- padding line 163 -->
-<!-- padding line 164 -->
-<!-- padding line 165 -->
-<!-- padding line 166 -->
-<!-- padding line 167 -->
-<!-- padding line 168 -->
-<!-- padding line 169 -->
-<!-- padding line 170 -->
-<!-- padding line 171 -->
-<!-- padding line 172 -->
-<!-- padding line 173 -->
-<!-- padding line 174 -->
-<!-- padding line 175 -->
-<!-- padding line 176 -->
-<!-- padding line 177 -->
-<!-- padding line 178 -->
-<!-- padding line 179 -->
-<!-- padding line 180 -->
-<!-- padding line 181 -->
-<!-- padding line 182 -->
-<!-- padding line 183 -->
-<!-- padding line 184 -->
-<!-- padding line 185 -->
-<!-- padding line 186 -->
-<!-- padding line 187 -->
-<!-- padding line 188 -->
-<!-- padding line 189 -->
-<!-- padding line 190 -->
-<!-- padding line 191 -->
-<!-- padding line 192 -->
-<!-- padding line 193 -->
-<!-- padding line 194 -->
-<!-- padding line 195 -->
-<!-- padding line 196 -->
-<!-- padding line 197 -->
-<!-- padding line 198 -->
-<!-- padding line 199 -->
-<!-- padding line 200 -->
 
 </body>
 </html>
