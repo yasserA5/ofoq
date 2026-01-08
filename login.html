@@ -4,315 +4,108 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>تسجيل الدخول</title>
+
   <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg" />
-
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
-
-  <!-- Remix icons -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
   <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script> <!-- GIS [page:1] -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script> <!-- library [web:12] -->
 
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-
     body{
       font-family:'Tajawal',sans-serif;
       background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      padding:20px;
-      overflow:hidden;
+      display:flex; justify-content:center; align-items:center;
+      min-height:100vh; padding:20px; overflow:hidden;
     }
 
-    /* Animated background blobs */
-    .blob{
-      position:fixed;
-      width:380px;
-      height:380px;
-      filter: blur(35px);
-      opacity:.35;
-      border-radius: 50%;
-      z-index:-1;
-      animation: floaty 8s ease-in-out infinite;
-    }
-    .blob.one{ background:#0aa2ca; top:-120px; right:-140px; animation-delay:0s; }
+    .blob{ position:fixed; width:380px; height:380px; filter: blur(35px); opacity:.35; border-radius:50%; z-index:-1; animation: floaty 8s ease-in-out infinite; }
+    .blob.one{ background:#0aa2ca; top:-120px; right:-140px; }
     .blob.two{ background:#22c55e; bottom:-140px; left:-160px; animation-delay:1.2s; }
-    @keyframes floaty{
-      0%,100%{ transform: translate(0,0) scale(1); }
-      50%{ transform: translate(12px, -18px) scale(1.04); }
-    }
+    @keyframes floaty{ 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(12px, -18px) scale(1.04); } }
 
     .container{
-      width:100%;
-      max-width:380px;
-      background:#fff;
-      padding:clamp(24px,5vw,34px);
-      border-radius:22px;
-      box-shadow:0 10px 35px rgba(0,0,0,0.12);
-      text-align:center;
-      position:relative;
-      overflow:hidden;
-      transform: translateY(10px);
-      opacity:0;
-      animation: popIn .45s ease forwards;
+      width:100%; max-width:380px;
+      background:#fff; padding:clamp(24px,5vw,34px);
+      border-radius:22px; box-shadow:0 10px 35px rgba(0,0,0,0.12);
+      text-align:center; position:relative; overflow:hidden;
+      transform: translateY(10px); opacity:0; animation: popIn .45s ease forwards;
     }
-    @keyframes popIn{
-      from { opacity:0; transform: translateY(14px) scale(.98); }
-      to   { opacity:1; transform: translateY(0) scale(1); }
-    }
+    @keyframes popIn{ from{ opacity:0; transform: translateY(14px) scale(.98);} to{opacity:1; transform: translateY(0) scale(1);} }
+    .container::before{ content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, #0aa2ca, #078fa8); }
 
-    .container::before{
-      content:'';
-      position:absolute;
-      top:0;
-      left:0;
-      right:0;
-      height:4px;
-      background:linear-gradient(90deg, #0aa2ca, #078fa8);
-    }
-
-    h2{
-      font-size:clamp(22px,5vw,28px);
-      margin-bottom:10px;
-      color:#0a4f5f;
-      font-weight:700;
-    }
-    .subtitle{
-      margin-bottom:16px;
-      font-size:13px;
-      color:#6b7280;
-      line-height:1.7;
-    }
+    h2{ font-size:clamp(22px,5vw,28px); margin-bottom:10px; color:#0a4f5f; font-weight:700; }
+    .subtitle{ margin-bottom:16px; font-size:13px; color:#6b7280; line-height:1.7; }
 
     .message{
-      display:none;
-      margin-bottom:14px;
-      padding:12px 16px;
-      font-size:14px;
-      border-radius:12px;
-      font-weight:500;
-      transition:all .3s ease;
-      text-align:right;
+      display:none; margin-bottom:14px; padding:12px 16px;
+      font-size:14px; border-radius:12px; font-weight:500; text-align:right;
     }
-    .message.success{
-      background:linear-gradient(135deg, #10b981, #059669);
-      color:#fff;
-      border-right:4px solid #34d399;
-    }
-    .message.error{
-      background:linear-gradient(135deg, #ef4444, #dc2626);
-      color:#fff;
-      border-right:4px solid #f87171;
-    }
+    .message.success{ background:linear-gradient(135deg, #10b981, #059669); color:#fff; border-right:4px solid #34d399; }
+    .message.error{ background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; border-right:4px solid #f87171; }
 
-    .input-box{
-      position:relative;
-      margin-bottom:14px;
-    }
-
-    .base-icon{
-      position:absolute;
-      left:16px;
-      top:50%;
-      transform:translateY(-50%);
-      font-size:18px;
-      color:#9ca3af;
-      z-index:2;
-      transition:.2s;
-      pointer-events:none;
-    }
+    .input-box{ position:relative; margin-bottom:14px; }
+    .base-icon{ position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:18px; color:#9ca3af; z-index:2; transition:.2s; pointer-events:none; }
 
     .input-box input{
       width:100%;
-      padding:14px 92px 14px 50px; /* right for actions, left for base icon */
-      border:2px solid #e5e7eb;
-      border-radius:25px;
-      font-size:15px;
-      outline:none;
-      font-family:'Tajawal',sans-serif;
-      background:#fafafa;
-      transition:all .25s ease;
+      padding:14px 92px 14px 50px;
+      border:2px solid #e5e7eb; border-radius:25px;
+      font-size:15px; outline:none; font-family:'Tajawal',sans-serif;
+      background:#fafafa; transition:all .25s ease;
     }
-
-    .input-box input:focus{
-      border-color:#0aa2ca;
-      background:#fff;
-      box-shadow:0 0 0 3px rgba(10,162,202,0.10);
-    }
+    .input-box input:focus{ border-color:#0aa2ca; background:#fff; box-shadow:0 0 0 3px rgba(10,162,202,0.10); }
     .input-box input:focus ~ .base-icon{ color:#0aa2ca; }
 
-    /* Right-side actions container */
-    .actions{
-      position:absolute;
-      right:10px;
-      top:50%;
-      transform:translateY(-50%);
-      display:flex;
-      gap:8px;
-      align-items:center;
-      z-index:3;
-    }
+    .actions{ position:absolute; right:10px; top:50%; transform:translateY(-50%); display:flex; gap:8px; align-items:center; z-index:3; }
 
     .icon-btn{
-      width:32px;
-      height:32px;
-      border-radius:999px;
-      border:1px solid #e5e7eb;
-      background:#fff;
-      color:#6b7280;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      transition:.2s ease;
+      width:32px; height:32px; border-radius:999px;
+      border:1px solid #e5e7eb; background:#fff; color:#6b7280;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:.2s ease;
     }
     .icon-btn:hover{ transform: translateY(-1px); border-color:#cbd5e1; }
     .icon-btn:active{ transform: translateY(0px) scale(.98); }
 
     .state-icon{
-      width:32px;
-      height:32px;
-      border-radius:999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      opacity:0;
-      transform: scale(.88);
-      transition: .18s ease;
-      border: 1px solid transparent;
+      width:32px; height:32px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transform: scale(.88);
+      transition: .18s ease; border:1px solid transparent;
     }
-    .input-box.valid .state-icon{
-      opacity:1;
-      background: rgba(16,185,129,.12);
-      color:#10b981;
-      border-color: rgba(16,185,129,.18);
-      transform: scale(1);
-    }
-    .input-box.invalid .state-icon{
-      opacity:1;
-      background: rgba(239,68,68,.12);
-      color:#ef4444;
-      border-color: rgba(239,68,68,.18);
-      transform: scale(1);
-    }
+    .input-box.valid .state-icon{ opacity:1; background: rgba(16,185,129,.12); color:#10b981; border-color: rgba(16,185,129,.18); transform: scale(1); }
+    .input-box.invalid .state-icon{ opacity:1; background: rgba(239,68,68,.12); color:#ef4444; border-color: rgba(239,68,68,.18); transform: scale(1); }
 
-    /* Error shake */
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20% { transform: translateX(6px); }
-      40% { transform: translateX(-6px); }
-      60% { transform: translateX(4px); }
-      80% { transform: translateX(-4px); }
-    }
-    .input-error{
-      border-color:#ef4444 !important;
-      animation: shake .28s ease;
-      background:#fff;
-    }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(6px);} 40%{transform:translateX(-6px);} 60%{transform:translateX(4px);} 80%{transform:translateX(-4px);} }
+    .input-error{ border-color:#ef4444 !important; animation: shake .28s ease; background:#fff; }
 
-    .options{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin:10px 0 16px;
-      font-size:14px;
-      color:#6b7280;
-      gap:10px;
-    }
-    .options label{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .options a{
-      color:#0aa2ca;
-      text-decoration:none;
-      font-weight:500;
-      transition:.2s;
-      white-space:nowrap;
-    }
+    .options{ display:flex; justify-content:space-between; align-items:center; margin:10px 0 16px; font-size:14px; color:#6b7280; gap:10px; }
+    .options label{ display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+    .options a{ color:#0aa2ca; text-decoration:none; font-weight:500; transition:.2s; white-space:nowrap; }
     .options a:hover{ color:#078fa8; }
 
     button{
-      width:100%;
-      padding:14px;
-      border:none;
-      border-radius:25px;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
-      font-family:'Tajawal',sans-serif;
-      transition:all .25s ease;
-      margin-bottom:12px;
-      position:relative;
-      overflow:hidden;
-      transform: translateZ(0);
+      width:100%; padding:14px; border:none; border-radius:25px;
+      font-size:16px; font-weight:600; cursor:pointer; font-family:'Tajawal',sans-serif;
+      transition:all .25s ease; margin-bottom:12px; position:relative; overflow:hidden;
     }
 
-    /* Ripple */
-    .ripple{
-      position:absolute;
-      border-radius:50%;
-      transform:scale(0);
-      animation:ripple .55s linear;
-      background: rgba(255,255,255,0.55);
-      pointer-events:none;
-    }
-    @keyframes ripple{
-      to { transform: scale(3.2); opacity:0; }
-    }
+    .ripple{ position:absolute; border-radius:50%; transform:scale(0); animation:ripple .55s linear; background: rgba(255,255,255,0.55); pointer-events:none; }
+    @keyframes ripple{ to { transform: scale(3.2); opacity:0; } }
 
-    .login-btn{
-      background:linear-gradient(135deg, #0aa2ca, #078fa8);
-      color:#fff;
-      box-shadow:0 4px 15px rgba(10,162,202,0.3);
-    }
-    .login-btn:hover:not(:disabled){
-      background:linear-gradient(135deg, #078fa8, #056b7f);
-      transform:translateY(-2px);
-      box-shadow:0 8px 25px rgba(10,162,202,0.35);
-    }
+    .login-btn{ background:linear-gradient(135deg, #0aa2ca, #078fa8); color:#fff; box-shadow:0 4px 15px rgba(10,162,202,0.3); }
+    .login-btn:hover:not(:disabled){ background:linear-gradient(135deg, #078fa8, #056b7f); transform:translateY(-2px); box-shadow:0 8px 25px rgba(10,162,202,0.35); }
     .login-btn:disabled{ opacity:0.65; cursor:not-allowed; transform:none; }
 
-    .signup-btn{
-      background:#f3f4f6;
-      color:#374151;
-      border:2px solid #e5e7eb;
-    }
+    .signup-btn{ background:#f3f4f6; color:#374151; border:2px solid #e5e7eb; }
     .signup-btn:hover{ background:#e5e7eb; transform:translateY(-1px); }
 
-    .divider{
-      position:relative;
-      margin:16px 0 12px;
-      color:#9ca3af;
-      font-size:14px;
-    }
-    .divider::before{
-      content:'';
-      position:absolute;
-      top:50%;
-      right:calc(50% + 16px);
-      left:calc(50% - 16px);
-      height:1px;
-      background:#e5e7eb;
-    }
-
+    .divider{ position:relative; margin:16px 0 12px; color:#9ca3af; font-size:14px; }
+    .divider::before{ content:''; position:absolute; top:50%; right:calc(50% + 16px); left:calc(50% - 16px); height:1px; background:#e5e7eb; }
     .google-wrap{ margin-bottom:10px; display:flex; justify-content:center; }
-
-    .tiny{
-      font-size:12px;
-      color:#6b7280;
-      line-height:1.6;
-      margin-top:6px;
-      text-align:right;
-    }
 
     @media (max-width: 480px){
       body{padding:10px;}
@@ -339,7 +132,7 @@
       <i class="ri-user-3-line base-icon"></i>
       <input id="username" type="text" placeholder="اسم المستخدم" autocomplete="username" required>
       <div class="actions">
-        <span class="state-icon" id="userState"></span>
+        <span class="state-icon"></span>
       </div>
     </div>
 
@@ -350,15 +143,12 @@
         <button class="icon-btn" id="togglePass" type="button" aria-label="إظهار كلمة المرور">
           <i class="ri-eye-line"></i>
         </button>
-        <span class="state-icon" id="passState"></span>
+        <span class="state-icon"></span>
       </div>
     </div>
 
     <div class="options">
-      <label>
-        <input id="remember" type="checkbox">
-        تذكرني
-      </label>
+      <label><input id="remember" type="checkbox"> تذكرني</label>
       <a href="#" id="forgotLink">نسيت كلمة المرور؟</a>
     </div>
 
@@ -369,11 +159,12 @@
 
     <div class="divider">أو</div>
 
-    <!-- Google Sign-In HTML API: g_id_onload + g_id_signin [page:2] -->
+    <!-- Google button -->
     <div id="g_id_onload"
          data-client_id="169941841275-n5h6h3bqa3ck0lll8dgd194uqb68b5jv.apps.googleusercontent.com"
          data-callback="handleGoogleCredential"
-         data-auto_prompt="false">
+         data-auto_prompt="false"
+         data-ux_mode="popup">
     </div>
 
     <div class="google-wrap">
@@ -390,10 +181,6 @@
     <button class="signup-btn" onclick="location.href='register.html'">
       <i class="ri-user-add-line"></i> إنشاء حساب جديد
     </button>
-
-    <div class="tiny">
-      إذا ظهر خطأ 401: أضف origin الحالي (مثل http://localhost:5500) داخل Authorized JavaScript origins في Google Cloud OAuth. [page:2]
-    </div>
   </div>
 
 <script>
@@ -403,8 +190,7 @@
     msg.className = `message ${type}`;
     msg.style.display = "block";
     msg.textContent = text;
-
-    if(type === 'success') setTimeout(() => { msg.style.display = "none"; }, 2200);
+    if(type === 'success') setTimeout(() => { msg.style.display = "none"; }, 2000);
     setLoading(false);
   }
 
@@ -423,7 +209,7 @@
     setTimeout(() => el.classList.remove("input-error"), 350);
   }
 
-  // ripple for buttons
+  // Ripple
   document.addEventListener('click', function(e){
     const btn = e.target.closest('button');
     if(!btn) return;
@@ -438,7 +224,6 @@
     setTimeout(() => circle.remove(), 600);
   });
 
-  // forgot placeholder
   document.getElementById('forgotLink').addEventListener('click', function(ev){
     ev.preventDefault();
     showMsg("سيتم إضافة صفحة استرجاع كلمة المرور قريباً", "success");
@@ -448,7 +233,6 @@
   function setFieldState(boxId, state) {
     const box = document.getElementById(boxId);
     const stateEl = box.querySelector('.state-icon');
-
     box.classList.remove('valid','invalid');
 
     if(state === 'valid'){
@@ -477,17 +261,16 @@
     setFieldState('passBox', v.length >= 6 ? 'valid' : 'invalid');
   });
 
-  // Toggle password (dynamic icon)
+  // Toggle password
   const toggleBtn = document.getElementById('togglePass');
   toggleBtn.addEventListener('click', () => {
     const isPass = passwordEl.type === 'password';
     passwordEl.type = isPass ? 'text' : 'password';
     toggleBtn.innerHTML = isPass ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
-    toggleBtn.setAttribute('aria-label', isPass ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
     passwordEl.focus();
   });
 
-  // ---------- Local login (demo/localStorage) ----------
+  // ---------- Local login (demo) ----------
   function login(ev) {
     if(ev) ev.preventDefault();
 
@@ -519,23 +302,17 @@
       if(user) {
         const userData = {
           provider: "local",
-          username: user.username,
-          email: user.email || '',
-          id: user.id || Date.now(),
           loggedIn: true,
-          remember: remember,
+          id: user.id || Date.now(),
+          username: user.username,
+          email: user.email || "",
           lastLogin: Date.now()
         };
-
         localStorage.setItem("user", JSON.stringify(userData));
 
         if(remember) {
-          const expiry = new Date();
-          expiry.setDate(expiry.getDate() + 30);
-          localStorage.setItem("rememberMe", JSON.stringify({
-            username: user.username,
-            expires: expiry.getTime()
-          }));
+          const expiry = Date.now() + 30*24*60*60*1000;
+          localStorage.setItem("rememberMe", JSON.stringify({ username: user.username, expires: expiry }));
         } else {
           localStorage.removeItem("rememberMe");
         }
@@ -544,38 +321,50 @@
         setTimeout(() => {
           const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
           window.location.href = fromPage;
-        }, 1200);
+        }, 800);
       } else {
         setFieldState('userBox','invalid');
         setFieldState('passBox','invalid');
         showMsg("❌ اسم المستخدم أو كلمة المرور غير صحيحة", "error");
       }
-    }, 650);
+    }, 450);
   }
 
-  // ---------- Google Sign-In callback ----------
-  // HTML API calls this global function and returns a JWT in response.credential [page:2][page:1]
-  async function handleGoogleCredential(response) {
+  // ---------- Google Sign-In ----------
+  // Google returns an ID token JWT in response.credential in the callback. [web:12]
+  function decodeJwtPayload(idToken){
+    const base64Url = idToken.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    ).join(''));
+    return JSON.parse(jsonPayload);
+  }
+
+  function handleGoogleCredential(response) {
     try {
       setLoading(true);
 
-      const idToken = response && response.credential;
+      const idToken = response && response.credential; // JWT [web:12]
       if(!idToken) return showMsg("تعذر استلام بيانات Google. حاول مرة أخرى.", "error");
 
-      // Production note:
-      // Verify this ID token on your backend before creating a session. [page:1]
+      const payload = decodeJwtPayload(idToken);
+
+      // Save consistent object for index.html
       localStorage.setItem("user", JSON.stringify({
         provider: "google",
         loggedIn: true,
-        idToken,
+        id: payload.sub || Date.now(),
+        name: payload.name || "",
+        email: payload.email || "",
+        picture: payload.picture || "",
+        idToken: idToken,
         lastLogin: Date.now()
       }));
 
-      showMsg("✅ تم تسجيل الدخول عبر Google!", "success");
-      setTimeout(() => {
-        const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
-        window.location.href = fromPage;
-      }, 1100);
+      // Go back
+      const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
+      window.location.href = fromPage;
 
     } catch (e) {
       showMsg("حدث خطأ أثناء تسجيل الدخول عبر Google", "error");
