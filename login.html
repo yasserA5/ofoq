@@ -5,144 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>تسجيل الدخول</title>
 
-  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script> <!-- library [web:12] -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script> <!-- GIS [page:2] -->
 
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body{
-      font-family:'Tajawal',sans-serif;
-      background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
-      display:flex; justify-content:center; align-items:center;
-      min-height:100vh; padding:20px; overflow:hidden;
-    }
-
-    .blob{ position:fixed; width:380px; height:380px; filter: blur(35px); opacity:.35; border-radius:50%; z-index:-1; animation: floaty 8s ease-in-out infinite; }
-    .blob.one{ background:#0aa2ca; top:-120px; right:-140px; }
-    .blob.two{ background:#22c55e; bottom:-140px; left:-160px; animation-delay:1.2s; }
-    @keyframes floaty{ 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(12px, -18px) scale(1.04); } }
-
-    .container{
-      width:100%; max-width:380px;
-      background:#fff; padding:clamp(24px,5vw,34px);
-      border-radius:22px; box-shadow:0 10px 35px rgba(0,0,0,0.12);
-      text-align:center; position:relative; overflow:hidden;
-      transform: translateY(10px); opacity:0; animation: popIn .45s ease forwards;
-    }
-    @keyframes popIn{ from{ opacity:0; transform: translateY(14px) scale(.98);} to{opacity:1; transform: translateY(0) scale(1);} }
-    .container::before{ content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, #0aa2ca, #078fa8); }
-
-    h2{ font-size:clamp(22px,5vw,28px); margin-bottom:10px; color:#0a4f5f; font-weight:700; }
-    .subtitle{ margin-bottom:16px; font-size:13px; color:#6b7280; line-height:1.7; }
-
-    .message{
-      display:none; margin-bottom:14px; padding:12px 16px;
-      font-size:14px; border-radius:12px; font-weight:500; text-align:right;
-    }
-    .message.success{ background:linear-gradient(135deg, #10b981, #059669); color:#fff; border-right:4px solid #34d399; }
-    .message.error{ background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; border-right:4px solid #f87171; }
-
-    .input-box{ position:relative; margin-bottom:14px; }
-    .base-icon{ position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:18px; color:#9ca3af; z-index:2; transition:.2s; pointer-events:none; }
-
-    .input-box input{
-      width:100%;
-      padding:14px 92px 14px 50px;
-      border:2px solid #e5e7eb; border-radius:25px;
-      font-size:15px; outline:none; font-family:'Tajawal',sans-serif;
-      background:#fafafa; transition:all .25s ease;
-    }
-    .input-box input:focus{ border-color:#0aa2ca; background:#fff; box-shadow:0 0 0 3px rgba(10,162,202,0.10); }
-    .input-box input:focus ~ .base-icon{ color:#0aa2ca; }
-
-    .actions{ position:absolute; right:10px; top:50%; transform:translateY(-50%); display:flex; gap:8px; align-items:center; z-index:3; }
-
-    .icon-btn{
-      width:32px; height:32px; border-radius:999px;
-      border:1px solid #e5e7eb; background:#fff; color:#6b7280;
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer; transition:.2s ease;
-    }
-    .icon-btn:hover{ transform: translateY(-1px); border-color:#cbd5e1; }
-    .icon-btn:active{ transform: translateY(0px) scale(.98); }
-
-    .state-icon{
-      width:32px; height:32px; border-radius:999px;
-      display:flex; align-items:center; justify-content:center;
-      opacity:0; transform: scale(.88);
-      transition: .18s ease; border:1px solid transparent;
-    }
-    .input-box.valid .state-icon{ opacity:1; background: rgba(16,185,129,.12); color:#10b981; border-color: rgba(16,185,129,.18); transform: scale(1); }
-    .input-box.invalid .state-icon{ opacity:1; background: rgba(239,68,68,.12); color:#ef4444; border-color: rgba(239,68,68,.18); transform: scale(1); }
-
-    @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(6px);} 40%{transform:translateX(-6px);} 60%{transform:translateX(4px);} 80%{transform:translateX(-4px);} }
-    .input-error{ border-color:#ef4444 !important; animation: shake .28s ease; background:#fff; }
-
-    .options{ display:flex; justify-content:space-between; align-items:center; margin:10px 0 16px; font-size:14px; color:#6b7280; gap:10px; }
-    .options label{ display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
-    .options a{ color:#0aa2ca; text-decoration:none; font-weight:500; transition:.2s; white-space:nowrap; }
-    .options a:hover{ color:#078fa8; }
-
-    button{
-      width:100%; padding:14px; border:none; border-radius:25px;
-      font-size:16px; font-weight:600; cursor:pointer; font-family:'Tajawal',sans-serif;
-      transition:all .25s ease; margin-bottom:12px; position:relative; overflow:hidden;
-    }
-
-    .ripple{ position:absolute; border-radius:50%; transform:scale(0); animation:ripple .55s linear; background: rgba(255,255,255,0.55); pointer-events:none; }
-    @keyframes ripple{ to { transform: scale(3.2); opacity:0; } }
-
-    .login-btn{ background:linear-gradient(135deg, #0aa2ca, #078fa8); color:#fff; box-shadow:0 4px 15px rgba(10,162,202,0.3); }
-    .login-btn:hover:not(:disabled){ background:linear-gradient(135deg, #078fa8, #056b7f); transform:translateY(-2px); box-shadow:0 8px 25px rgba(10,162,202,0.35); }
-    .login-btn:disabled{ opacity:0.65; cursor:not-allowed; transform:none; }
-
-    .signup-btn{ background:#f3f4f6; color:#374151; border:2px solid #e5e7eb; }
-    .signup-btn:hover{ background:#e5e7eb; transform:translateY(-1px); }
-
-    .divider{ position:relative; margin:16px 0 12px; color:#9ca3af; font-size:14px; }
-    .divider::before{ content:''; position:absolute; top:50%; right:calc(50% + 16px); left:calc(50% - 16px); height:1px; background:#e5e7eb; }
-    .google-wrap{ margin-bottom:10px; display:flex; justify-content:center; }
-
-    @media (max-width: 480px){
-      body{padding:10px;}
-      .container{padding:clamp(20px,6vw,28px);}
-      .input-box input{padding:12px 86px 12px 45px; font-size:14px;}
-      .base-icon{font-size:16px; left:14px;}
-      button{padding:12px; font-size:15px;}
-      .options{flex-direction:column; gap:10px; text-align:center;}
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Tajawal',sans-serif;background:linear-gradient(135deg,#f5f7fb 0%,#e2e8f0 100%);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+    .container{width:100%;max-width:380px;background:#fff;padding:28px;border-radius:22px;box-shadow:0 10px 35px rgba(0,0,0,.12);text-align:center;position:relative;overflow:hidden}
+    .container::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0aa2ca,#078fa8)}
+    h2{margin:8px 0 16px;color:#0a4f5f}
+    .message{display:none;margin-bottom:14px;padding:12px 16px;font-size:14px;border-radius:12px;font-weight:500;text-align:right}
+    .message.success{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-right:4px solid #34d399}
+    .message.error{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border-right:4px solid #f87171}
+    .input-box{position:relative;margin-bottom:14px}
+    .base-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#9ca3af}
+    .actions{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:8px;align-items:center}
+    .icon-btn{width:32px;height:32px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;cursor:pointer}
+    .state-icon{width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.88);transition:.18s;border:1px solid transparent}
+    .input-box input{width:100%;padding:14px 92px 14px 50px;border:2px solid #e5e7eb;border-radius:25px;background:#fafafa;outline:none;font-family:'Tajawal',sans-serif}
+    .input-box.valid .state-icon{opacity:1;background:rgba(16,185,129,.12);color:#10b981;border-color:rgba(16,185,129,.18);transform:scale(1)}
+    .input-box.invalid .state-icon{opacity:1;background:rgba(239,68,68,.12);color:#ef4444;border-color:rgba(239,68,68,.18);transform:scale(1)}
+    .options{display:flex;justify-content:space-between;align-items:center;margin:10px 0 16px;font-size:14px;color:#6b7280;gap:10px}
+    .options a{color:#0aa2ca;text-decoration:none}
+    button.main{width:100%;padding:14px;border:none;border-radius:25px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Tajawal',sans-serif;background:linear-gradient(135deg,#0aa2ca,#078fa8);color:#fff}
+    button.main:disabled{opacity:.65;cursor:not-allowed}
+    .divider{margin:16px 0 12px;color:#9ca3af}
+    .google-wrap{display:flex;justify-content:center}
   </style>
 </head>
 
 <body>
-  <div class="blob one"></div>
-  <div class="blob two"></div>
-
   <div class="container">
     <h2>تسجيل الدخول</h2>
-    <div class="subtitle">سجّل الدخول بحسابك أو استخدم Google للوصول السريع.</div>
 
     <div id="msg" class="message"></div>
 
     <div class="input-box" id="userBox">
       <i class="ri-user-3-line base-icon"></i>
       <input id="username" type="text" placeholder="اسم المستخدم" autocomplete="username" required>
-      <div class="actions">
-        <span class="state-icon"></span>
-      </div>
+      <div class="actions"><span class="state-icon"></span></div>
     </div>
 
     <div class="input-box" id="passBox">
       <i class="ri-lock-password-line base-icon"></i>
       <input id="password" type="password" placeholder="كلمة المرور" autocomplete="current-password" required>
       <div class="actions">
-        <button class="icon-btn" id="togglePass" type="button" aria-label="إظهار كلمة المرور">
-          <i class="ri-eye-line"></i>
-        </button>
+        <button class="icon-btn" id="togglePass" type="button"><i class="ri-eye-line"></i></button>
         <span class="state-icon"></span>
       </div>
     </div>
@@ -152,229 +61,135 @@
       <a href="#" id="forgotLink">نسيت كلمة المرور؟</a>
     </div>
 
-    <button class="login-btn" id="loginBtn" onclick="login(event)">
-      <span id="loginText">تسجيل الدخول</span>
-      <span id="loginSpinner" style="display:none;">⏳ جاري...</span>
-    </button>
+    <button class="main" id="loginBtn" onclick="login()">تسجيل الدخول</button>
 
     <div class="divider">أو</div>
 
-    <!-- Google button -->
-    <div id="g_id_onload"
-         data-client_id="169941841275-n5h6h3bqa3ck0lll8dgd194uqb68b5jv.apps.googleusercontent.com"
-         data-callback="handleGoogleCredential"
-         data-auto_prompt="false"
-         data-ux_mode="popup">
-    </div>
-
-    <div class="google-wrap">
-      <div class="g_id_signin"
-           data-type="standard"
-           data-shape="pill"
-           data-theme="outline"
-           data-text="signin_with"
-           data-size="large"
-           data-logo_alignment="left">
-      </div>
-    </div>
-
-    <button class="signup-btn" onclick="location.href='register.html'">
-      <i class="ri-user-add-line"></i> إنشاء حساب جديد
-    </button>
+    <!-- we render the Google button with JS to avoid callback-name issues [page:2] -->
+    <div class="google-wrap"><div id="googleBtn"></div></div>
   </div>
 
 <script>
-  // ---------- UI ----------
-  function showMsg(text, type = 'success') {
-    const msg = document.getElementById("msg");
+  // ---------- Helpers ----------
+  function showMsg(text, type='success'){
+    const msg = document.getElementById('msg');
     msg.className = `message ${type}`;
-    msg.style.display = "block";
     msg.textContent = text;
-    if(type === 'success') setTimeout(() => { msg.style.display = "none"; }, 2000);
-    setLoading(false);
+    msg.style.display = 'block';
   }
 
-  function setLoading(isLoading){
-    const loginBtn = document.getElementById("loginBtn");
-    loginBtn.disabled = isLoading;
-    document.getElementById("loginText").style.display = isLoading ? "none" : "inline";
-    document.getElementById("loginSpinner").style.display = isLoading ? "inline" : "none";
-  }
-
-  function markError(id){
-    const el = document.getElementById(id);
-    el.classList.remove("input-error");
-    void el.offsetWidth;
-    el.classList.add("input-error");
-    setTimeout(() => el.classList.remove("input-error"), 350);
-  }
-
-  // Ripple
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('button');
-    if(!btn) return;
-    const rect = btn.getBoundingClientRect();
-    const circle = document.createElement('span');
-    circle.className = 'ripple';
-    const size = Math.max(rect.width, rect.height);
-    circle.style.width = circle.style.height = size + 'px';
-    circle.style.left = (e.clientX - rect.left - size/2) + 'px';
-    circle.style.top  = (e.clientY - rect.top  - size/2) + 'px';
-    btn.appendChild(circle);
-    setTimeout(() => circle.remove(), 600);
-  });
-
-  document.getElementById('forgotLink').addEventListener('click', function(ev){
-    ev.preventDefault();
-    showMsg("سيتم إضافة صفحة استرجاع كلمة المرور قريباً", "success");
-  });
-
-  // ---------- Dynamic icons ----------
-  function setFieldState(boxId, state) {
+  function setFieldState(boxId, state){
     const box = document.getElementById(boxId);
     const stateEl = box.querySelector('.state-icon');
     box.classList.remove('valid','invalid');
-
-    if(state === 'valid'){
-      box.classList.add('valid');
-      stateEl.innerHTML = '<i class="ri-check-line"></i>';
-    } else if(state === 'invalid'){
-      box.classList.add('invalid');
-      stateEl.innerHTML = '<i class="ri-close-line"></i>';
-    } else {
-      stateEl.innerHTML = '';
-    }
+    if(state === 'valid'){ box.classList.add('valid'); stateEl.innerHTML = '<i class="ri-check-line"></i>'; }
+    else if(state === 'invalid'){ box.classList.add('invalid'); stateEl.innerHTML = '<i class="ri-close-line"></i>'; }
+    else { stateEl.innerHTML = ''; }
   }
 
+  // Origin debug (optional): ensure same origin between pages
+  // console.log('origin:', location.origin);
+
+  // ---------- Dynamic icons ----------
   const usernameEl = document.getElementById('username');
   const passwordEl = document.getElementById('password');
 
   usernameEl.addEventListener('input', () => {
     const v = usernameEl.value.trim();
-    if(!v) return setFieldState('userBox', 'none');
-    setFieldState('userBox', v.length >= 3 ? 'valid' : 'invalid');
+    if(!v) return setFieldState('userBox','none');
+    setFieldState('userBox', v.length >= 3 ? 'valid':'invalid');
   });
 
   passwordEl.addEventListener('input', () => {
     const v = passwordEl.value;
-    if(!v) return setFieldState('passBox', 'none');
-    setFieldState('passBox', v.length >= 6 ? 'valid' : 'invalid');
+    if(!v) return setFieldState('passBox','none');
+    setFieldState('passBox', v.length >= 6 ? 'valid':'invalid');
   });
 
-  // Toggle password
-  const toggleBtn = document.getElementById('togglePass');
-  toggleBtn.addEventListener('click', () => {
+  document.getElementById('togglePass').addEventListener('click', () => {
     const isPass = passwordEl.type === 'password';
     passwordEl.type = isPass ? 'text' : 'password';
-    toggleBtn.innerHTML = isPass ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
-    passwordEl.focus();
+    document.getElementById('togglePass').innerHTML = isPass ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
+  });
+
+  document.getElementById('forgotLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    showMsg('سيتم إضافة صفحة استرجاع كلمة المرور قريباً', 'success');
   });
 
   // ---------- Local login (demo) ----------
-  function login(ev) {
-    if(ev) ev.preventDefault();
-
+  function login(){
     const username = usernameEl.value.trim();
     const password = passwordEl.value;
-    const remember = document.getElementById("remember").checked;
+    const remember = document.getElementById('remember').checked;
 
-    if(!username || !password) {
-      if(!username) { markError("username"); setFieldState('userBox','invalid'); }
-      if(!password) { markError("password"); setFieldState('passBox','invalid'); }
-      return showMsg("يرجى إدخال اسم المستخدم وكلمة المرور", "error");
-    }
-
-    if(username.length < 3) {
-      markError("username");
-      setFieldState('userBox','invalid');
-      return showMsg("اسم المستخدم يجب أن يكون 3 أحرف على الأقل", "error");
-    }
-
-    setLoading(true);
+    if(!username || !password) return showMsg('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+    if(username.length < 3) return showMsg('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'error');
 
     let users = [];
-    try { users = JSON.parse(localStorage.getItem("users") || "[]"); }
-    catch(e) { users = []; }
-
+    try{ users = JSON.parse(localStorage.getItem('users') || '[]'); }catch(e){}
     const user = users.find(u => u.username === username && u.password === password);
 
-    setTimeout(() => {
-      if(user) {
-        const userData = {
-          provider: "local",
-          loggedIn: true,
-          id: user.id || Date.now(),
-          username: user.username,
-          email: user.email || "",
-          lastLogin: Date.now()
-        };
-        localStorage.setItem("user", JSON.stringify(userData));
+    if(!user) return showMsg('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
 
-        if(remember) {
-          const expiry = Date.now() + 30*24*60*60*1000;
-          localStorage.setItem("rememberMe", JSON.stringify({ username: user.username, expires: expiry }));
-        } else {
-          localStorage.removeItem("rememberMe");
-        }
+    localStorage.setItem('user', JSON.stringify({
+      provider:'local',
+      loggedIn:true,
+      id: user.id || Date.now(),
+      username: user.username,
+      email: user.email || '',
+      lastLogin: Date.now()
+    }));
 
-        showMsg("✅ تم تسجيل الدخول بنجاح!", "success");
-        setTimeout(() => {
-          const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
-          window.location.href = fromPage;
-        }, 800);
-      } else {
-        setFieldState('userBox','invalid');
-        setFieldState('passBox','invalid');
-        showMsg("❌ اسم المستخدم أو كلمة المرور غير صحيحة", "error");
-      }
-    }, 450);
+    if(remember){
+      localStorage.setItem('rememberMe', JSON.stringify({ username:user.username, expires: Date.now() + 30*24*60*60*1000 }));
+    } else {
+      localStorage.removeItem('rememberMe');
+    }
+
+    const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
+    window.location.href = fromPage;
   }
 
   // ---------- Google Sign-In ----------
-  // Google returns an ID token JWT in response.credential in the callback. [web:12]
-  function decodeJwtPayload(idToken){
-    const base64Url = idToken.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
-      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-    ).join(''));
+  // GIS returns a JWT in response.credential; decode to get name/email/picture/sub (client display only). [page:1]
+  function decodeJwtResponse(token) {
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c){
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
     return JSON.parse(jsonPayload);
   }
 
-  function handleGoogleCredential(response) {
-    try {
-      setLoading(true);
+  function handleCredentialResponse(response) {
+    try{
+      const idToken = response && response.credential; // JWT [page:1]
+      if(!idToken) return showMsg('تعذر استلام بيانات Google', 'error');
 
-      const idToken = response && response.credential; // JWT [web:12]
-      if(!idToken) return showMsg("تعذر استلام بيانات Google. حاول مرة أخرى.", "error");
+      const payload = decodeJwtResponse(idToken);
 
-      const payload = decodeJwtPayload(idToken);
-
-      // Save consistent object for index.html
-      localStorage.setItem("user", JSON.stringify({
-        provider: "google",
-        loggedIn: true,
-        id: payload.sub || Date.now(),
-        name: payload.name || "",
-        email: payload.email || "",
-        picture: payload.picture || "",
-        idToken: idToken,
+      localStorage.setItem('user', JSON.stringify({
+        provider:'google',
+        loggedIn:true,
+        id: payload.sub || Date.now(),     // sub is recommended unique id [page:1]
+        name: payload.name || '',
+        email: payload.email || '',
+        picture: payload.picture || '',
+        idToken,
         lastLogin: Date.now()
       }));
 
-      // Go back
       const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
       window.location.href = fromPage;
-
-    } catch (e) {
-      showMsg("حدث خطأ أثناء تسجيل الدخول عبر Google", "error");
-    } finally {
-      setLoading(false);
+    } catch(e){
+      showMsg('حدث خطأ أثناء تسجيل الدخول عبر Google', 'error');
     }
   }
 
-  // Remember-me preload
-  window.addEventListener('load', function() {
+  // Initialize + render button after library loads [page:2]
+  window.addEventListener('load', () => {
+    // rememberMe preload
     const rememberData = localStorage.getItem("rememberMe");
     if(rememberData) {
       try {
@@ -390,10 +205,24 @@
         localStorage.removeItem("rememberMe");
       }
     }
+
+    // IMPORTANT: google.accounts.id must exist (library loaded)
+    if(!window.google || !google.accounts || !google.accounts.id) {
+      return showMsg('Google library لم تُحمّل. تأكد من الإنترنت ومن عدم حجب accounts.google.com', 'error');
+    }
+
+    google.accounts.id.initialize({
+      client_id: "169941841275-n5h6h3bqa3ck0lll8dgd194uqb68b5jv.apps.googleusercontent.com",
+      callback: handleCredentialResponse
+    }); // initialize [page:2]
+
+    google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      { theme: "outline", size: "large", shape: "pill", text: "signin_with" }
+    ); // renderButton [page:2]
   });
 
-  // Enter key login
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', (e) => {
     if(e.key === 'Enter') login();
   });
 </script>
