@@ -5,12 +5,14 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title id="t-title">مقالات محكمة</title>
-
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
 
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { width: 100%; overflow-x: hidden; }
+
 
     :root{
       --primary:#009bc4;
@@ -22,6 +24,7 @@
       --bg-overlay:rgba(15,23,42,0.35);
     }
 
+
     body {
       font-family: "Tajawal", sans-serif;
       background: #ffffff;
@@ -29,6 +32,7 @@
       line-height: 1.6;
       direction:rtl;
     }
+
 
     header{
       padding:10px 20px;
@@ -54,6 +58,7 @@
       transition:transform .2s;
     }
     .logo img:hover{transform:scale(1.05);}
+
 
     nav{
       flex:1;
@@ -93,6 +98,7 @@
       border-radius:999px;
     }
 
+
     .dropdown-content{
       display:none;
       position:absolute;
@@ -119,6 +125,7 @@
     }
     .dropdown:hover .dropdown-content{display:block;}
 
+
     .nav-search{
       flex:0 0 150px;
       position:relative;
@@ -144,6 +151,7 @@
       color:#9ca3af;
     }
 
+
     .actions{
       display:flex;
       align-items:center;
@@ -168,6 +176,7 @@
       border:none;
       box-shadow:0 3px 12px rgba(0,155,196,0.25);
     }
+
 
     .lang-wrapper{position:relative;}
     .lang-toggle{
@@ -197,6 +206,7 @@
     .lang-toggle[aria-expanded="true"] svg{
       transform:rotate(180deg);
     }
+
 
     .lang-menu{
       position:absolute;
@@ -230,6 +240,7 @@
       color:var(--primary);
     }
 
+
     .pill-circle{
       display:inline-flex;
       align-items:center;
@@ -253,6 +264,7 @@
       display:none;
     }
     .dropdown-academic .dropdown-content a{font-size:13px;}
+
 
     #menu-btn{
       display:none;
@@ -292,6 +304,7 @@
       transform:translateX(-50%) rotate(-45deg);
     }
 
+
     .backdrop{
       position:fixed;
       inset:0;
@@ -305,6 +318,7 @@
       opacity:1;
       visibility:visible;
     }
+
 
     .mobile-menu {
       display: none;
@@ -362,10 +376,12 @@
       color:var(--primary-dark);
     }
 
+
     .mobile-menu,
     .mobile-menu *{
       font-family:"Tajawal", sans-serif !important;
     }
+
 
     .mobile-dropdown-toggle{
       width:100%;
@@ -398,6 +414,7 @@
     }
     .mobile-dropdown.open .mobile-submenu{ display:block; }
 
+
     .hero {
       padding: clamp(80px, 20vw, 110px) clamp(25px, 8vw, 40px);
       text-align: center;
@@ -417,6 +434,7 @@
       line-height: 1.8;
     }
 
+
     section {
       padding: clamp(40px, 12vw, 60px) clamp(25px, 8vw, 40px);
     }
@@ -428,11 +446,13 @@
       padding-right: 12px;
     }
 
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 20px;
     }
+
 
     .card{
       border-radius:16px;
@@ -446,6 +466,15 @@
       max-width:360px;
       margin-inline:auto;
       cursor:pointer;
+      position:relative;
+    }
+    .card::before{
+      content:'';
+      position:absolute;
+      inset-inline:0;
+      top:0;
+      height:3px;
+      background:linear-gradient(90deg,#0aa2ca,#078fa8);
     }
     .card:hover{
       transform:translateY(-4px);
@@ -499,6 +528,15 @@
       color:#6b7280;
     }
 
+
+    .empty-state{
+      grid-column: 1/-1;
+      text-align:center;
+      color:#999;
+      padding: 60px 20px;
+    }
+
+
     footer {
       margin-top: clamp(30px, 8vw, 40px);
       padding: clamp(25px, 8vw, 35px);
@@ -507,6 +545,7 @@
       text-align: center;
       font-size: clamp(15px, 4vw, 18px);
     }
+
 
     .toast-container {
       position: fixed;
@@ -546,9 +585,11 @@
     }
     .toast.removing { animation: slideOut 0.3s ease-in-out; }
 
+
     @media(max-width:1100px){
       .nav-search{display:none;}
     }
+
 
     @media(max-width: 980px){
       nav{display:none;}
@@ -570,6 +611,7 @@
       }
     }
 
+
     @media(max-width: 600px){
       .grid {
         grid-template-columns: 1fr;
@@ -581,14 +623,17 @@
   </style>
 </head>
 
+
 <body>
 <div class="backdrop" id="backdrop" onclick="toggleMenu(false)"></div>
+
 
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-header">
     <img src="images/logo.png" class="mobile-logo" alt="Logo">
     <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
   </div>
+
 
   <div style="margin-bottom:20px;">
     <div class="lang-wrapper">
@@ -606,8 +651,10 @@
     </div>
   </div>
 
+
   <ul>
     <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
 
     <li class="mobile-dropdown">
       <button type="button" class="mobile-dropdown-toggle">
@@ -622,9 +669,11 @@
       </ul>
     </li>
 
+
     <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
     <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
     <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
 
     <li class="mobile-dropdown">
       <button type="button" class="mobile-dropdown-toggle">
@@ -640,6 +689,7 @@
       </ul>
     </li>
 
+
     <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
     <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
     <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
@@ -648,7 +698,9 @@
   </ul>
 </div>
 
+
 <div class="toast-container" id="toastContainer"></div>
+
 
 <header>
   <button
@@ -661,13 +713,16 @@
     <span></span><span></span><span></span>
   </button>
 
+
   <div class="logo" onclick="goToHome()">
     <img src="images/logo.png" alt="Logo">
   </div>
 
+
   <nav>
     <ul>
       <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
 
       <li class="dropdown">
         <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
@@ -679,9 +734,11 @@
         </div>
       </li>
 
+
       <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
       <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
       <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
 
       <li class="dropdown dropdown-academic">
         <a href="#academic" class="pill-circle" data-t="nav_academic">أكاديمي</a>
@@ -694,16 +751,19 @@
         </div>
       </li>
 
+
       <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
       <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
       <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
     </ul>
+
 
     <form class="nav-search" onsubmit="doSearch(event)">
       <input type="search" id="navSearchInput" placeholder="ابحث..." />
       <span>🔍</span>
     </form>
   </nav>
+
 
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
@@ -724,22 +784,27 @@
   </div>
 </header>
 
+
 <div class="hero">
   <h1 data-t="hero_title_articles_peer">مقالات محكمة</h1>
   <p data-t="hero_sub_articles_peer">اضغط على المقال لعرض المحتوى الكامل. يجب تسجيل الدخول أولاً.</p>
 </div>
+
 
 <section>
   <h2 data-t="sec_articles_peer_list">المقالات المحكمة</h2>
   <div class="grid" id="articlesPeerGrid"></div>
 </section>
 
+
 <footer data-t="footer_text">
   © جميع الحقوق محفوظة – منصتك العلمية
 </footer>
 
+
 <script>
   let user = JSON.parse(localStorage.getItem('user') || 'null');
+
 
   const translations = {
     ar:{
@@ -768,6 +833,10 @@
       toast_open_article:"جاري فتح المقال...",
       toast_login_required:"يجب تسجيل الدخول لعرض المحتوى",
       no_articles_peer:"لا توجد مقالات محكمة حالياً",
+      by_author:"بقلم:",
+      source_label:"المصدر:",
+      peer_badge:"مقال محكم",
+      unknown_date:"غير محدد",
       sp_politics:"تخصص علوم سياسية",
       sp_ir:"تخصص العلاقات الدولية",
       sp_admin_law:"تخصص القانون الإداري",
@@ -800,6 +869,10 @@
       toast_open_article:"Opening article...",
       toast_login_required:"You must log in to view the content",
       no_articles_peer:"No peer-reviewed articles yet",
+      by_author:"By:",
+      source_label:"Source:",
+      peer_badge:"Peer-reviewed",
+      unknown_date:"Unspecified",
       sp_politics:"Political Science",
       sp_ir:"International Relations",
       sp_admin_law:"Administrative Law",
@@ -832,6 +905,10 @@
       toast_open_article:"Ouverture de l'article...",
       toast_login_required:"Vous devez vous connecter pour voir le contenu",
       no_articles_peer:"Aucun article évalué pour le moment",
+      by_author:"Par :",
+      source_label:"Source :",
+      peer_badge:"Évalué",
+      unknown_date:"Non précisé",
       sp_politics:"Science politique",
       sp_ir:"Relations internationales",
       sp_admin_law:"Droit administratif",
@@ -840,43 +917,64 @@
     }
   };
 
+
   let currentLang = localStorage.getItem('lang') || 'ar';
+
+
+  // ✅ يمنع ظهور [object Object] (إذا كانت الحقول محفوظة كـ {ar,en,fr})
+  function getTextByLang(field, lang = currentLang) {
+    if (!field) return '';
+    if (typeof field === 'string') return field;
+    const v = field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
+    return (typeof v === 'string') ? v : '';
+  }
+
 
   function t(key){
     const dict = translations[currentLang] || translations.ar;
     return dict[key] || '';
   }
 
+
   function setLang(lang){
     currentLang = lang;
     localStorage.setItem('lang', lang);
     const dict = translations[lang] || translations.ar;
 
+
     document.documentElement.lang = lang;
     document.documentElement.dir  = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
 
+
     const titleEl = document.getElementById('t-title');
     if(titleEl && dict.title) titleEl.textContent = dict.title;
+
 
     const langCurrent = document.getElementById('langCurrent');
     const langCurrentMobile = document.getElementById('langCurrentMobile');
     if(langCurrent) langCurrent.textContent = lang.toUpperCase();
     if(langCurrentMobile) langCurrentMobile.textContent = lang.toUpperCase();
 
+
     document.querySelectorAll("[data-t]").forEach(el=>{
       const key=el.getAttribute("data-t");
       if(dict[key]) el.textContent = dict[key];
     });
+
 
     const m1=document.getElementById("langMenu");
     const m2=document.getElementById("langMenuMobile");
     if(m1) m1.style.display="none";
     if(m2) m2.style.display="none";
 
+
     document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
 
+
     renderArticlesPeer();
+    updateHeader();
   }
+
 
   function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
@@ -885,7 +983,7 @@
     toast.className = `toast ${type}`;
     const icons = {error:'❌',success:'✅',warning:'⚠️',info:'ℹ️'};
     toast.innerHTML = `
-      <span class="toast-icon">${icons[type]}</span>
+      <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
       <span class="toast-message">${message}</span>
     `;
     container.appendChild(toast);
@@ -895,9 +993,6 @@
     }, 3000);
   }
 
-  function isLoggedIn() {
-    return !!(user && user.username);
-  }
 
   function logout() {
     localStorage.removeItem("user");
@@ -906,12 +1001,15 @@
     setTimeout(() => location.reload(), 500);
   }
 
+
   function updateHeader() {
     const headerActions = document.getElementById("headerActions");
     const mobileLogin = document.getElementById("mobileLogin");
     const mobileRegister = document.getElementById("mobileRegister");
 
+
     if (!headerActions) return;
+
 
     if (user && user.username) {
       headerActions.innerHTML = `
@@ -931,29 +1029,36 @@
         <span style="margin-right:12px;font-size:13px;">${user.username}</span>
         <button class="btn primary" onclick="logout()" data-t="logout">${t('logout')}</button>
       `;
+
       if(mobileLogin)  mobileLogin.innerHTML = `<a href="#" onclick="logout();return false;" data-t="logout">${t('logout')}</a>`;
       if(mobileRegister) mobileRegister.style.display = "none";
     }
   }
+
 
   function toggleMenu(force){
     const menu=document.getElementById("mobileMenu");
     const backdrop=document.getElementById("backdrop");
     const btn=document.getElementById("menu-btn");
 
+
     if (!menu || !backdrop || !btn) return;
+
 
     const shouldOpen = typeof force === "boolean"
       ? force
       : menu.style.display !== "block";
 
+
     menu.style.display = shouldOpen ? "block" : "none";
     menu.classList.toggle("open", shouldOpen);
     backdrop.classList.toggle("active", shouldOpen);
 
+
     btn.classList.toggle("open", shouldOpen);
     btn.setAttribute("aria-expanded", String(shouldOpen));
   }
+
 
   function initMobileDropdowns(){
     document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
@@ -966,7 +1071,9 @@
     });
   }
 
+
   function goToHome(){window.location.href='index.html';}
+
 
   function doSearch(e){
     e.preventDefault();
@@ -976,20 +1083,25 @@
     window.location.href='search.html?q='+encodeURIComponent(q);
   }
 
+
   function toggleLangMenu(){
     const desktopMenu=document.getElementById("langMenu");
     const mobileMenu=document.getElementById("langMenuMobile");
     const toggles=document.querySelectorAll('.lang-toggle');
 
+
     const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
     const menu = mobileVisible ? mobileMenu : desktopMenu;
+
 
     if(!menu) return;
     const isOpen = menu.style.display==="block";
     menu.style.display = isOpen ? "none" : "block";
 
+
     toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
   }
+
 
   document.addEventListener('click',e=>{
     if(!e.target.closest('.lang-wrapper')){
@@ -1001,49 +1113,63 @@
     }
   });
 
+
   const articlesPeerGrid = document.getElementById("articlesPeerGrid");
+
 
   function renderArticlesPeer(){
     if (!articlesPeerGrid) return;
 
+
     const articlesData = JSON.parse(localStorage.getItem('articles') || '[]');
+
 
     articlesPeerGrid.innerHTML = '';
     if (articlesData.length === 0) {
-      articlesPeerGrid.innerHTML =
-        `<div style="grid-column: 1/-1; text-align:center; color:#999; padding: 40px; font-size: 16px;">
+      articlesPeerGrid.innerHTML = `
+        <div class="empty-state">
           ${t('no_articles_peer')}
-        </div>`;
+        </div>
+      `;
       return;
     }
+
 
     articlesData.forEach((item) => {
       const card = document.createElement("article");
       card.className = "card";
       if (item.id != null) card.dataset.id = item.id;
 
-      const title = item.title || 'بدون عنوان';
-      const author = item.author ? ('بقلم: '+item.author) : '';
+
+      const title = getTextByLang(item.title) || 'بدون عنوان';
+      const authorName = getTextByLang(item.author);
+      const date = getTextByLang(item.date) || t('unknown_date');
+      const source = getTextByLang(item.journal || item.source);
       const img = item.image || '';
-      const date = item.date || 'غير محدد';
-      const source = item.journal || item.source || '';
-      const descRaw = item.shortContent || item.short || item.description || '';
+
+      const descRaw = getTextByLang(item.shortContent || item.short || item.description) || '';
       const desc = descRaw.length > 220 ? descRaw.slice(0,220) + '…' : descRaw;
 
+
+      const authorPart = authorName ? `${t('by_author')} ${authorName}` : '';
+      const meta = [authorPart, date].filter(Boolean).join(' · ');
+
+
       card.innerHTML = `
-        ${img?`<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}"></div>`:''}
+        ${img?`<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}" loading="lazy"></div>`:''}
         <div class="card-body">
           <h3>${title}</h3>
-          <div class="meta">${author} · ${date}</div>
-          ${source?`<div class="source">المصدر: ${source}</div>`:''}
+          <div class="meta">${meta}</div>
+          ${source?`<div class="source">${t('source_label')} ${source}</div>`:''}
           <p>${desc}</p>
         </div>
         <div class="card-footer">
-          <span>مقال محكم</span>
+          <span>${t('peer_badge')}</span>
         </div>`;
       articlesPeerGrid.appendChild(card);
     });
   }
+
 
   function handleProtectedArticle(id) {
     if (!user || !user.username) {
@@ -1064,6 +1190,7 @@
     }
   }
 
+
   document.addEventListener('click', (e) => {
     const card = e.target.closest('.card');
     if (!card || !card.dataset.id) return;
@@ -1071,13 +1198,15 @@
     handleProtectedArticle(id);
   });
 
+
   window.addEventListener('DOMContentLoaded', () => {
-    setLang(currentLang);
-    updateHeader();
     initMobileDropdowns();
+    setLang(currentLang);
     renderArticlesPeer();
+    updateHeader();
   });
 </script>
+
 
 </body>
 </html>

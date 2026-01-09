@@ -5,7 +5,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title id="t-title">أنشطتنا</title>
-
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -851,38 +851,6 @@
   const mobileLogin = document.getElementById("mobileLogin");
   const mobileRegister = document.getElementById("mobileRegister");
 
-  function updateHeader() {
-    if (!headerActions) return;
-    if (user && user.username) {
-      headerActions.innerHTML = `
-        <div class="lang-wrapper">
-          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
-            <span id="langCurrent">AR</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7 10l5 5 5-5z"></path>
-            </svg>
-          </button>
-          <div class="lang-menu" id="langMenu">
-            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
-            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
-            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
-          </div>
-        </div>
-        <span style="margin-right:12px;font-size:13px;">${user.username}</span>
-        <button class="btn primary" onclick="logout()" data-t="logout">${t('logout')}</button>
-      `;
-      if(mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout();return false;" data-t="logout">${t('logout')}</a>`;
-      if(mobileRegister) mobileRegister.style.display = "none";
-    }
-  }
-
-  function logout() {
-    localStorage.removeItem("user");
-    user = null;
-    showToast(t('toast_logout_success') || 'تم تسجيل الخروج بنجاح', 'success');
-    setTimeout(() => location.reload(), 500);
-  }
-
   const activitiesGrid = document.getElementById("activitiesGrid");
 
   const translations = {
@@ -911,6 +879,10 @@
       toast_logout_success:"تم تسجيل الخروج بنجاح",
       toast_open_activity:"جاري فتح النشاط...",
       no_activities:"لا توجد أنشطة حالياً",
+      empty_activities_hint:"سيتم عرض الورش، الدورات، اللقاءات والفعاليات القادمة هنا بمجرد إضافتها من لوحة التحكم.",
+      location_label:"المكان:",
+      default_activity_type:"نشاط",
+      untitled_activity:"نشاط بدون عنوان",
       sp_politics:"تخصص علوم سياسية",
       sp_ir:"تخصص العلاقات الدولية",
       sp_admin_law:"تخصص القانون الإداري",
@@ -942,6 +914,10 @@
       toast_logout_success:"Logged out successfully",
       toast_open_activity:"Opening activity...",
       no_activities:"No activities yet",
+      empty_activities_hint:"Workshops, courses, meetings, and upcoming events will appear here once added from the admin panel.",
+      location_label:"Location:",
+      default_activity_type:"Activity",
+      untitled_activity:"Untitled activity",
       sp_politics:"Political Science",
       sp_ir:"International Relations",
       sp_admin_law:"Administrative Law",
@@ -973,6 +949,10 @@
       toast_logout_success:"Déconnexion réussie",
       toast_open_activity:"Ouverture de l'activité...",
       no_activities:"Aucune activité pour le moment",
+      empty_activities_hint:"Les ateliers, cours, rencontres et événements à venir apparaîtront ici une fois ajoutés depuis le panneau d'administration.",
+      location_label:"Lieu :",
+      default_activity_type:"Activité",
+      untitled_activity:"Activité sans titre",
       sp_politics:"Science politique",
       sp_ir:"Relations internationales",
       sp_admin_law:"Droit administratif",
@@ -986,6 +966,46 @@
   function t(key){
     const dict = translations[currentLang] || translations.ar;
     return dict[key] || '';
+  }
+
+  // ✅ لمنع ظهور [object Object] عند تخزين الحقول كـ {ar,en,fr}
+  function getTextByLang(field, lang = currentLang){
+    if(!field) return '';
+    if(typeof field === 'string') return field;
+    const v = field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
+    return (typeof v === 'string') ? v : '';
+  }
+
+  function updateHeader() {
+    if (!headerActions) return;
+    if (user && user.username) {
+      headerActions.innerHTML = `
+        <div class="lang-wrapper">
+          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+            <span id="langCurrent">${currentLang.toUpperCase()}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z"></path>
+            </svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
+          </div>
+        </div>
+        <span style="margin-right:12px;font-size:13px;">${user.username}</span>
+        <button class="btn primary" onclick="logout()" data-t="logout">${t('logout')}</button>
+      `;
+      if(mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout();return false;" data-t="logout">${t('logout')}</a>`;
+      if(mobileRegister) mobileRegister.style.display = "none";
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("user");
+    user = null;
+    showToast(t('toast_logout_success') || 'تم تسجيل الخروج بنجاح', 'success');
+    setTimeout(() => location.reload(), 500);
   }
 
   function setLang(lang){
@@ -1016,6 +1036,7 @@
 
     document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
 
+    updateHeader();
     renderActivities();
   }
 
@@ -1028,7 +1049,7 @@
       activitiesGrid.innerHTML = `
         <div class="empty-state">
           <h3>${t('no_activities')}</h3>
-          <p>سيتم عرض الورش، الدورات، اللقاءات والفعاليات القادمة هنا بمجرد إضافتها من لوحة التحكم.</p>
+          <p>${t('empty_activities_hint')}</p>
         </div>
       `;
       return;
@@ -1039,23 +1060,27 @@
       card.className = "card";
       if(item.id != null) card.dataset.id = item.id;
 
-      const dateText = item.date || '';
-      const locationText = item.location || item.place || '';
+      const title = getTextByLang(item.title) || t('untitled_activity');
+      const dateText = getTextByLang(item.date);
 
-      const authorText = locationText ? ('المكان: ' + locationText) : '';
-      const authorHTML = authorText ? `<div class="card-author">${authorText}</div>` : '';
+      const locationText = getTextByLang(item.location || item.place);
+      const locationHTML = locationText
+        ? `<div class="card-author">${t('location_label')} ${locationText}</div>`
+        : '';
 
-      const descRaw = item.short || item.description || '';
+      const descRaw = getTextByLang(item.short || item.description) || '';
       const desc = descRaw.length > 220 ? descRaw.slice(0,220) + '…' : descRaw;
+
+      const typeText = getTextByLang(item.type) || t('default_activity_type');
 
       card.innerHTML = `
         <div class="card-body">
-          <h3>${item.title || 'نشاط بدون عنوان'}</h3>
-          ${authorHTML}
+          <h3>${title}</h3>
+          ${locationHTML}
           <p>${desc}</p>
         </div>
         <div class="card-footer">
-          <span>${item.type || 'نشاط'}</span>
+          <span>${typeText}</span>
           ${dateText ? `<span>${dateText}</span>` : ''}
         </div>
       `;

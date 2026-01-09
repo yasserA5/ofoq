@@ -5,8 +5,9 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title id="t-title">إصداراتنا</title>
-
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
 
   <style>
     :root{
@@ -19,16 +20,19 @@
       --bg-overlay:rgba(15,23,42,0.35);
     }
 
+
     *{
       margin:0;
       padding:0;
       box-sizing:border-box;
     }
 
+
     html,body{
       width:100%;
       overflow-x:hidden;
     }
+
 
     body{
       font-family:"Tajawal",sans-serif;
@@ -37,6 +41,7 @@
       line-height:1.6;
       direction:rtl;
     }
+
 
     header{
       padding:10px 20px;
@@ -51,6 +56,7 @@
       gap:14px;
     }
 
+
     .logo{
       flex:0 0 auto;
       display:flex;
@@ -58,15 +64,18 @@
       justify-content:center;
     }
 
+
     .logo img{
       width:clamp(60px,12vw,85px);
       height:auto;
       transition:transform .2s;
     }
 
+
     .logo img:hover{
       transform:scale(1.05);
     }
+
 
     nav{
       flex:1;
@@ -75,6 +84,7 @@
       justify-content:space-between;
       gap:14px;
     }
+
 
     nav ul{
       list-style:none;
@@ -85,7 +95,9 @@
       flex-wrap:nowrap;
     }
 
+
     nav li{position:relative;}
+
 
     nav a{
       text-decoration:none;
@@ -96,8 +108,10 @@
       transition:.2s;
     }
 
+
     nav a:hover{color:var(--primary);}
     nav a.active{color:var(--primary);}
+
 
     nav a.active::after,
     nav a:hover::after{
@@ -110,6 +124,7 @@
       background:var(--primary);
       border-radius:999px;
     }
+
 
     .dropdown-content{
       display:none;
@@ -125,6 +140,7 @@
       z-index:1000;
     }
 
+
     .dropdown-content a{
       display:block;
       padding:8px 16px;
@@ -133,12 +149,15 @@
       font-size:13px;
     }
 
+
     .dropdown-content a:hover{
       background:#f1fbff;
       color:var(--primary);
     }
 
+
     .dropdown:hover .dropdown-content{display:block;}
+
 
     .nav-search{
       flex:0 0 150px;
@@ -165,11 +184,13 @@
       color:#9ca3af;
     }
 
+
     .actions{
       display:flex;
       align-items:center;
       gap:8px;
     }
+
 
     .btn{
       padding:6px 12px;
@@ -184,9 +205,11 @@
       white-space:nowrap;
     }
 
+
     .btn:hover{
       background:rgba(0,155,196,0.12);
     }
+
 
     .btn.primary{
       background:linear-gradient(90deg,var(--primary),var(--primary-dark));
@@ -194,6 +217,7 @@
       border:none;
       box-shadow:0 3px 12px rgba(0,155,196,0.25);
     }
+
 
     .lang-wrapper{position:relative;}
     .lang-toggle{
@@ -223,6 +247,7 @@
     .lang-toggle[aria-expanded="true"] svg{
       transform:rotate(180deg);
     }
+
 
     .lang-menu{
       position:absolute;
@@ -256,6 +281,7 @@
       color:var(--primary);
     }
 
+
     .pill-circle{
       display:inline-flex;
       align-items:center;
@@ -281,6 +307,7 @@
     .dropdown-academic .dropdown-content a{
       font-size:13px;
     }
+
 
     #menu-btn{
       display:none;
@@ -320,6 +347,7 @@
       transform:translateX(-50%) rotate(-45deg);
     }
 
+
     .backdrop{
       position:fixed;
       inset:0;
@@ -333,6 +361,7 @@
       opacity:1;
       visibility:visible;
     }
+
 
     .mobile-menu {
       display:none;
@@ -394,10 +423,12 @@
     }
     .mobile-menu ul li a.active{color:var(--primary);}
 
+
     .mobile-menu,
     .mobile-menu *{
       font-family:"Tajawal",sans-serif !important;
     }
+
 
     .mobile-dropdown-toggle{
       width:100%;
@@ -434,6 +465,7 @@
       display:block;
     }
 
+
     .hero{
       padding:clamp(80px,20vw,110px) clamp(25px,8vw,40px);
       text-align:center;
@@ -453,6 +485,7 @@
       line-height:1.8;
     }
 
+
     section{
       padding:clamp(40px,12vw,60px) clamp(25px,8vw,40px);
     }
@@ -464,11 +497,13 @@
       padding-right:12px;
     }
 
+
     .grid{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
       gap:20px;
     }
+
 
     .card{
       border-radius:16px;
@@ -498,6 +533,7 @@
       border-color:#cbd5e1;
     }
 
+
     .card-img-wrapper{
       width:100%;
       aspect-ratio:16 / 9;
@@ -509,6 +545,7 @@
       object-fit:cover;
       display:block;
     }
+
 
     .card-body{
       padding:12px 14px;
@@ -541,6 +578,7 @@
       color:#6b7280;
     }
 
+
     .empty-state{
       text-align:center;
       padding:clamp(60px,20vw,100px) clamp(20px,8vw,40px);
@@ -559,6 +597,7 @@
       line-height:1.7;
     }
 
+
     footer{
       margin-top:clamp(30px,8vw,40px);
       padding:clamp(25px,8vw,35px);
@@ -567,6 +606,7 @@
       text-align:center;
       font-size:clamp(15px,4vw,18px);
     }
+
 
     .toast-container{
       position:fixed;
@@ -604,9 +644,11 @@
     }
     .toast.removing{animation:slideOut .3s ease-in-out;}
 
+
     @media(max-width:1100px){
       .nav-search{display:none;}
     }
+
 
     @media(max-width:980px){
       nav{display:none;}
@@ -632,6 +674,7 @@
       }
     }
 
+
     @media(max-width:600px){
       .hero h1{font-size:28px;}
       .hero p{font-size:16px;}
@@ -644,6 +687,7 @@
       .card{max-width:100%;}
     }
 
+
     @media(max-width:480px){
       header{padding:10px 14px;}
       .logo img{width:65px;}
@@ -653,14 +697,17 @@
   </style>
 </head>
 
+
 <body>
 <div class="backdrop" id="backdrop" onclick="toggleMenu(false)"></div>
+
 
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-header">
     <img src="images/logo.png" class="mobile-logo" alt="Logo">
     <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
   </div>
+
 
   <div style="margin-bottom:20px;">
     <div class="lang-wrapper">
@@ -678,8 +725,10 @@
     </div>
   </div>
 
+
   <ul>
     <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
 
     <li class="mobile-dropdown">
       <button type="button" class="mobile-dropdown-toggle">
@@ -695,9 +744,11 @@
       </ul>
     </li>
 
+
     <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
     <li><a href="editions.html" class="active" data-t="nav_editions">إصداراتنا</a></li>
     <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
 
     <li class="mobile-dropdown">
       <button type="button" class="mobile-dropdown-toggle">
@@ -713,6 +764,7 @@
       </ul>
     </li>
 
+
     <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
     <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
     <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
@@ -721,7 +773,9 @@
   </ul>
 </div>
 
+
 <div class="toast-container" id="toastContainer"></div>
+
 
 <header>
   <button
@@ -734,13 +788,16 @@
     <span></span><span></span><span></span>
   </button>
 
+
   <div class="logo" onclick="goToHome()">
     <img src="images/logo.png" alt="Logo">
   </div>
 
+
   <nav>
     <ul>
       <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
 
       <li class="dropdown">
         <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
@@ -753,9 +810,11 @@
         </div>
       </li>
 
+
       <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
       <li><a href="editions.html" class="active" data-t="nav_editions">إصداراتنا</a></li>
       <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
 
       <li class="dropdown dropdown-academic">
         <a href="#academic" class="pill-circle" data-t="nav_academic">أكاديمي</a>
@@ -768,16 +827,19 @@
         </div>
       </li>
 
+
       <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
       <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
       <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
     </ul>
+
 
     <form class="nav-search" onsubmit="doSearch(event)">
       <input type="search" id="navSearchInput" placeholder="ابحث..." />
       <span>🔍</span>
     </form>
   </nav>
+
 
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
@@ -798,22 +860,27 @@
   </div>
 </header>
 
+
 <div class="hero">
   <h1 data-t="hero_title_editions">إصداراتنا</h1>
   <p data-t="hero_sub_editions">مجموعة من الإصدارات الفكرية والكتب والمجلات الدورية التي نصدرها لدعم البحث العلمي والمعرفة.</p>
 </div>
+
 
 <section>
   <h2 data-t="sec_editions_list">أحدث الإصدارات</h2>
   <div class="grid" id="editionsGrid"></div>
 </section>
 
+
 <footer data-t="footer_text">
   © جميع الحقوق محفوظة – منصتك العلمية
 </footer>
 
+
 <script>
   function goToHome(){window.location.href='index.html';}
+
 
   function toggleMenu(force){
     const menu=document.getElementById("mobileMenu");
@@ -821,17 +888,21 @@
     const btn=document.getElementById("menu-btn");
     if(!menu || !backdrop || !btn) return;
 
+
     const shouldOpen = typeof force === "boolean"
       ? force
       : menu.style.display !== "block";
+
 
     menu.style.display = shouldOpen ? "block" : "none";
     menu.classList.toggle("open", shouldOpen);
     backdrop.classList.toggle("active", shouldOpen);
 
+
     btn.classList.toggle("open", shouldOpen);
     btn.setAttribute("aria-expanded", String(shouldOpen));
   }
+
 
   function doSearch(e){
     e.preventDefault();
@@ -841,20 +912,25 @@
     window.location.href='search.html?q='+encodeURIComponent(q);
   }
 
+
   function toggleLangMenu(){
     const desktopMenu=document.getElementById("langMenu");
     const mobileMenu=document.getElementById("langMenuMobile");
     const toggles=document.querySelectorAll('.lang-toggle');
 
+
     const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
     const menu = mobileVisible ? mobileMenu : desktopMenu;
+
 
     if(!menu) return;
     const isOpen = menu.style.display==="block";
     menu.style.display = isOpen ? "none" : "block";
 
+
     toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
   }
+
 
   document.addEventListener('click',e=>{
     if(!e.target.closest('.lang-wrapper')){
@@ -865,6 +941,7 @@
       document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
     }
   });
+
 
   function showToast(message,type='info'){
     const container=document.getElementById('toastContainer');
@@ -883,10 +960,12 @@
     },3000);
   }
 
+
   let user=JSON.parse(localStorage.getItem("user")||"null");
   const headerActions=document.getElementById("headerActions");
   const mobileLogin=document.getElementById("mobileLogin");
   const mobileRegister=document.getElementById("mobileRegister");
+
 
   function updateHeader(){
     if(!headerActions) return;
@@ -913,6 +992,7 @@
     }
   }
 
+
   function logout(){
     localStorage.removeItem("user");
     user=null;
@@ -920,7 +1000,9 @@
     setTimeout(()=>location.reload(),500);
   }
 
+
   const editionsGrid=document.getElementById("editionsGrid");
+
 
   const translations = {
     ar:{
@@ -946,7 +1028,9 @@
       footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
       logout:"تسجيل الخروج",
       toast_logout_success:"تم تسجيل الخروج بنجاح",
-      toast_open_edition:"جاري فتح الإصدار..."
+      toast_open_edition:"جاري فتح الإصدار...",
+      no_editions_title:"لا توجد إصدارات حالياً",
+      no_editions_desc:"ستظهر هنا أحدث الإصدارات والكتب والمجلات بمجرد إضافتها من لوحة التحكم."
     },
     en:{
       title:"Our Publications",
@@ -971,7 +1055,9 @@
       footer_text:"© All rights reserved – Your Academic Platform",
       logout:"Logout",
       toast_logout_success:"Logged out successfully",
-      toast_open_edition:"Opening publication..."
+      toast_open_edition:"Opening publication...",
+      no_editions_title:"No publications yet",
+      no_editions_desc:"New books and periodicals will appear here once added from the admin dashboard."
     },
     fr:{
       title:"Nos publications",
@@ -996,81 +1082,113 @@
       footer_text:"© Tous droits réservés – Votre plateforme scientifique",
       logout:"Déconnexion",
       toast_logout_success:"Déconnexion réussie",
-      toast_open_edition:"Ouverture de la publication..."
+      toast_open_edition:"Ouverture de la publication...",
+      no_editions_title:"Aucune publication pour le moment",
+      no_editions_desc:"Les nouvelles publications apparaîtront ici une fois ajoutées depuis le tableau de bord."
     }
   };
 
+
   let currentLang = localStorage.getItem('lang') || 'ar';
+
+  // ✅ تمنع ظهور [object Object] عند عرض البيانات (title/author/description...)
+  function getTextByLang(field, lang = currentLang) {
+    if (!field) return '';
+    if (typeof field === 'string') return field;
+    const v = field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
+    return (typeof v === 'string') ? v : '';
+  }
+
+  function getAnyText(field, lang = currentLang) {
+    return getTextByLang(field, lang);
+  }
+
 
   function t(key){
     const dict = translations[currentLang] || translations.ar;
     return dict[key] || '';
   }
 
+
   function setLang(lang){
     currentLang = lang;
     localStorage.setItem('lang', lang);
     const dict = translations[lang] || translations.ar;
 
+
     document.documentElement.lang = lang;
     document.documentElement.dir  = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
 
+
     const titleEl = document.getElementById('t-title');
     if(titleEl && dict.title) titleEl.textContent = dict.title;
+
 
     const langCurrent = document.getElementById('langCurrent');
     const langCurrentMobile = document.getElementById('langCurrentMobile');
     if(langCurrent) langCurrent.textContent = lang.toUpperCase();
     if(langCurrentMobile) langCurrentMobile.textContent = lang.toUpperCase();
 
+
     document.querySelectorAll("[data-t]").forEach(el=>{
       const key=el.getAttribute("data-t");
       if(dict[key]) el.textContent = dict[key];
     });
+
 
     const m1=document.getElementById("langMenu");
     const m2=document.getElementById("langMenuMobile");
     if(m1) m1.style.display="none";
     if(m2) m2.style.display="none";
 
+
     document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+
+    // ✅ إعادة رسم الصفحة حسب اللغة
+    renderEditions();
   }
+
 
   function renderEditions(){
     const editionsData=JSON.parse(localStorage.getItem('editions')||'[]');
     if(!editionsGrid) return;
 
+
     editionsGrid.innerHTML='';
     if(editionsData.length===0){
       editionsGrid.innerHTML=`
         <div class="empty-state">
-          <h3>لا توجد إصدارات حالياً</h3>
-          <p>ستظهر هنا أحدث الإصدارات والكتب والمجلات بمجرد إضافتها من لوحة التحكم.</p>
+          <h3>${t('no_editions_title') || 'لا توجد إصدارات حالياً'}</h3>
+          <p>${t('no_editions_desc') || 'ستظهر هنا أحدث الإصدارات والكتب والمجلات بمجرد إضافتها من لوحة التحكم.'}</p>
         </div>
       `;
       return;
     }
+
 
     editionsData.forEach((item)=>{
       const card=document.createElement("article");
       card.className="card";
       if(item.id!=null) card.dataset.id=item.id;
 
+      const title = getAnyText(item.title) || 'بدون عنوان';
+      const authorName = getAnyText(item.author);
+      const descRaw = getAnyText(item.short || item.description) || '';
+      const desc = descRaw.length>220 ? descRaw.slice(0,220)+'…' : descRaw;
+
       const imgHTML=item.image
-        ? `<div class="card-img-wrapper"><img src="${item.image}" class="card-image" alt="${item.title || ''}" loading="lazy"></div>`
+        ? `<div class="card-img-wrapper"><img src="${item.image}" class="card-image" alt="${title}" loading="lazy"></div>`
         : '';
 
-      const authorHTML=item.author
-        ? `<div class="card-author">بقلم: ${item.author}</div>`
+      const authorHTML=authorName
+        ? `<div class="card-author">بقلم: ${authorName}</div>`
         : '';
 
-      const descRaw=item.short || item.description || '';
-      const desc=descRaw.length>220?descRaw.slice(0,220)+'…':descRaw;
 
       card.innerHTML=`
         ${imgHTML}
         <div class="card-body">
-          <h3>${item.title || 'بدون عنوان'}</h3>
+          <h3>${title}</h3>
           ${authorHTML}
           <p>${desc}</p>
         </div>
@@ -1081,6 +1199,7 @@
       editionsGrid.appendChild(card);
     });
   }
+
 
   function openEditionById(id){
     if(!id)return;
@@ -1095,11 +1214,13 @@
     }
   }
 
+
   document.addEventListener('click',(e)=>{
     const card=e.target.closest('.card');
     if(!card||!card.dataset.id)return;
     openEditionById(card.dataset.id);
   });
+
 
   function initMobileDropdowns(){
     document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
@@ -1112,6 +1233,7 @@
     });
   }
 
+
   window.addEventListener('DOMContentLoaded',()=>{
     updateHeader();
     setLang(currentLang);
@@ -1119,6 +1241,7 @@
     initMobileDropdowns();
   });
 </script>
+
 
 </body>
 </html>

@@ -5,12 +5,14 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title id="t-title">مقالات أجنبية</title>
-
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { width: 100%; overflow-x: hidden; }
+
 
     :root{
       --primary:#009bc4;
@@ -22,6 +24,7 @@
       --bg-overlay:rgba(15,23,42,0.35);
     }
 
+
     body {
       font-family: "Tajawal", sans-serif;
       background: #ffffff;
@@ -29,6 +32,7 @@
       line-height: 1.6;
       direction:rtl;
     }
+
 
     /* HEADER */
     header{
@@ -44,6 +48,7 @@
       gap:14px;
     }
 
+
     .logo{
       flex:0 0 auto;
       display:flex;
@@ -56,6 +61,7 @@
       transition:transform .2s;
     }
     .logo img:hover{transform:scale(1.05);}
+
 
     nav{
       flex:1;
@@ -95,6 +101,7 @@
       border-radius:999px;
     }
 
+
     .dropdown-content{
       display:none;
       position:absolute;
@@ -121,6 +128,7 @@
     }
     .dropdown:hover .dropdown-content{display:block;}
 
+
     .nav-search{
       flex:0 0 150px;
       position:relative;
@@ -146,6 +154,7 @@
       color:#9ca3af;
     }
 
+
     .actions{
       display:flex;
       align-items:center;
@@ -170,6 +179,7 @@
       border:none;
       box-shadow:0 3px 12px rgba(0,155,196,0.25);
     }
+
 
     .lang-wrapper{position:relative;}
     .lang-toggle{
@@ -199,6 +209,7 @@
     .lang-toggle[aria-expanded="true"] svg{
       transform:rotate(180deg);
     }
+
 
     .lang-menu{
       position:absolute;
@@ -232,6 +243,7 @@
       color:var(--primary);
     }
 
+
     .pill-circle{
       display:inline-flex;
       align-items:center;
@@ -252,6 +264,7 @@
       color:#111;
     }
     .dropdown-academic .dropdown-content a{font-size:13px;}
+
 
     /* MODERN BURGER BUTTON (MOBILE) */
     #menu-btn{
@@ -286,6 +299,7 @@
     #menu-btn span:nth-child(2){ top:20px; }
     #menu-btn span:nth-child(3){ top:27px; }
 
+
     #menu-btn.open span:nth-child(1){
       top:20px;
       transform:translateX(-50%) rotate(45deg);
@@ -297,6 +311,7 @@
       top:20px;
       transform:translateX(-50%) rotate(-45deg);
     }
+
 
     /* MOBILE MENU + OVERLAY */
     .backdrop{
@@ -312,6 +327,7 @@
       opacity:1;
       visibility:visible;
     }
+
 
     .mobile-menu {
       display: none;
@@ -356,6 +372,7 @@
       box-shadow:0 2px 8px rgba(15,23,42,0.15);
     }
 
+
     .mobile-menu ul { list-style: none; margin-top: 10px; }
     .mobile-menu ul li { margin-bottom: 14px; }
     .mobile-menu ul li a {
@@ -374,6 +391,7 @@
       background:#e0f2fe;
       color:var(--primary-dark);
     }
+
 
     .mobile-dropdown-toggle{
       width:100%;
@@ -419,15 +437,18 @@
       box-shadow:none;
     }
 
+
     .hero {
       padding: clamp(40px, 10vw, 60px) clamp(25px, 8vw, 40px);
       background:linear-gradient(135deg,#f6fbff,var(--primary-soft));
     }
 
+
     main{
       max-width:1100px;
       margin:0 auto;
     }
+
 
     .page-title{
       margin-bottom:18px;
@@ -453,6 +474,7 @@
       line-height:1.8;
     }
 
+
     section {
       padding: clamp(25px, 8vw, 40px) clamp(25px, 8vw, 40px);
     }
@@ -464,12 +486,14 @@
       padding-right: 12px;
     }
 
+
     /* === البطاقات الصغيرة Responsive بنسبة 16:9 === */
     .articles-grid{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
       gap:18px;
     }
+
 
     .card{
       border-radius:16px;
@@ -483,12 +507,22 @@
       max-width:360px;
       margin-inline:auto;
       cursor:pointer;
+      position:relative;
+    }
+    .card::before{
+      content:'';
+      position:absolute;
+      inset-inline:0;
+      top:0;
+      height:3px;
+      background:linear-gradient(90deg,#0aa2ca,#078fa8);
     }
     .card:hover{
       transform:translateY(-4px);
       box-shadow:0 14px 30px rgba(15,23,42,0.14);
       border-color:#cbd5e1;
     }
+
 
     .card-img-wrapper{
       width:100%;
@@ -502,6 +536,7 @@
       object-position:center;
       display:block;
     }
+
 
     .card-body{
       padding:12px 14px;
@@ -530,6 +565,7 @@
       line-height:1.7;
     }
 
+
     .card-footer{
       padding:0 14px 12px 14px;
       display:flex;
@@ -539,6 +575,7 @@
       color:#6b7280;
     }
 
+
     .empty-state{
       text-align:center;
       padding:40px 10px;
@@ -546,6 +583,7 @@
       font-size:14px;
       grid-column:1 / -1;
     }
+
 
     footer {
       margin-top: clamp(10px, 4vw, 20px);
@@ -555,6 +593,7 @@
       text-align: center;
       font-size: clamp(15px, 4vw, 18px);
     }
+
 
     .toast-container {
       position: fixed;
@@ -594,9 +633,11 @@
     }
     .toast.removing { animation: slideOut 0.3s ease-in-out; }
 
+
     @media(max-width:1100px){
       .nav-search{display:none;}
     }
+
 
     @media(max-width: 980px){
       nav{display:none;}
@@ -618,6 +659,7 @@
       }
     }
 
+
     @media(max-width: 768px){
       header { padding: 12px 16px; }
       .hero { padding: 30px 20px; }
@@ -631,6 +673,7 @@
       }
     }
 
+
     @media(max-width: 480px){
       header { padding: 10px 14px; }
       .logo img { width: 65px; }
@@ -641,14 +684,17 @@
   </style>
 </head>
 
+
 <body>
 <div class="backdrop" id="backdrop" onclick="toggleMenu(false)"></div>
+
 
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-header">
     <img src="images/logo.png" alt="Logo" class="mobile-logo">
     <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
   </div>
+
 
   <div style="margin-bottom:20px;">
     <div class="lang-wrapper">
@@ -666,8 +712,10 @@
     </div>
   </div>
 
+
   <ul>
     <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
 
     <!-- أبحاث ودراسات ▾ في الموبايل -->
     <li class="mobile-dropdown">
@@ -683,9 +731,11 @@
       </ul>
     </li>
 
+
     <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
     <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
     <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
 
     <!-- أكاديمي في الموبايل -->
     <li class="mobile-dropdown">
@@ -702,6 +752,7 @@
       </ul>
     </li>
 
+
     <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
     <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
     <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
@@ -710,7 +761,9 @@
   </ul>
 </div>
 
+
 <div class="toast-container" id="toastContainer"></div>
+
 
 <header>
   <button
@@ -723,13 +776,16 @@
     <span></span><span></span><span></span>
   </button>
 
+
   <div class="logo" onclick="goToHome()">
     <img src="images/logo.png" alt="Logo">
   </div>
 
+
   <nav>
     <ul>
       <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
 
       <li class="dropdown">
         <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
@@ -741,9 +797,11 @@
         </div>
       </li>
 
+
       <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
       <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
       <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
 
       <li class="dropdown dropdown-academic">
         <a href="#academic" class="pill-circle" data-t="nav_academic">أكاديمي</a>
@@ -756,16 +814,19 @@
         </div>
       </li>
 
+
       <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
       <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
       <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
     </ul>
+
 
     <form class="nav-search" onsubmit="doSearch(event)">
       <input type="search" id="navSearchInput" placeholder="ابحث..." />
       <span>🔍</span>
     </form>
   </nav>
+
 
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
@@ -786,6 +847,7 @@
   </div>
 </header>
 
+
 <div class="hero">
   <main>
     <div class="page-title">
@@ -800,9 +862,11 @@
   </main>
 </div>
 
+
 <section>
   <main>
     <h2 data-t="sec_foreign_list">مقالات أجنبية</h2>
+
 
     <div class="articles-grid" id="foreignGrid">
       <div class="empty-state" data-t="no_foreign">لا توجد مقالات أجنبية حالياً</div>
@@ -810,52 +874,65 @@
   </main>
 </section>
 
+
 <footer data-t="footer_text">
   © جميع الحقوق محفوظة – منصتك العلمية
 </footer>
 
+
 <script>
   function goToHome(){window.location.href='index.html';}
+
 
   function toggleMenu(force){
     const menu=document.getElementById("mobileMenu");
     const backdrop=document.getElementById("backdrop");
     const btn=document.getElementById("menu-btn");
+    if(!menu || !backdrop || !btn) return;
+
+
     const shouldOpen = typeof force === "boolean"
       ? force
       : menu.style.display !== "block";
 
+
     menu.style.display = shouldOpen ? "block" : "none";
     menu.classList.toggle("open", shouldOpen);
     backdrop.classList.toggle("active", shouldOpen);
-    if(btn){
-      btn.classList.toggle("open", shouldOpen);
-      btn.setAttribute("aria-expanded", String(shouldOpen));
-    }
+
+
+    btn.classList.toggle("open", shouldOpen);
+    btn.setAttribute("aria-expanded", String(shouldOpen));
   }
+
 
   function doSearch(e){
     e.preventDefault();
     const input=document.getElementById('navSearchInput');
     const q=input ? input.value.trim() : "";
-       if(!q) return;
+    if(!q) return;
     window.location.href='search.html?q='+encodeURIComponent(q);
   }
+
 
   function toggleLangMenu(){
     const desktopMenu=document.getElementById("langMenu");
     const mobileMenu=document.getElementById("langMenuMobile");
     const toggleBtns=document.querySelectorAll('.lang-toggle');
 
+
     const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
     const menu = mobileVisible ? mobileMenu : desktopMenu;
+
 
     if(!menu) return;
     const isOpen = menu.style.display==="block";
     menu.style.display = isOpen ? "none" : "block";
 
+
     toggleBtns.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
   }
+
 
   document.addEventListener('click',e=>{
     if(!e.target.closest('.lang-wrapper')){
@@ -868,13 +945,15 @@
     }
   });
 
+
   function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
+    if(!container) return;
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     const icons = {error:'❌',success:'✅',warning:'⚠️',info:'ℹ️'};
     toast.innerHTML = `
-      <span class="toast-icon">${icons[type]}</span>
+      <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
       <span class="toast-message">${message}</span>
     `;
     container.appendChild(toast);
@@ -884,49 +963,21 @@
     }, 3000);
   }
 
+
   let user = JSON.parse(localStorage.getItem("user") || "null");
   const headerActions = document.getElementById("headerActions");
   const mobileLogin = document.getElementById("mobileLogin");
   const mobileRegister = document.getElementById("mobileRegister");
 
-  function updateHeader() {
-    if (user && user.username) {
-      headerActions.innerHTML = `
-        <div class="lang-wrapper">
-          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
-            <span id="langCurrent">AR</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7 10l5 5 5-5z"></path>
-            </svg>
-          </button>
-          <div class="lang-menu" id="langMenu">
-            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
-            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
-            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
-          </div>
-        </div>
-        <span style="margin-right:12px;font-size:13px;">${user.username}</span>
-        <button class="btn primary" onclick="logout()" data-t="logout">تسجيل الخروج</button>
-      `;
-      if(mobileLogin)  mobileLogin.innerHTML = `<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
-      if(mobileRegister) mobileRegister.style.display = "none";
-    }
-  }
-
-  function logout() {
-    localStorage.removeItem("user");
-    user = null;
-    showToast(t('toast_logout_success'), 'success');
-    setTimeout(() => location.reload(), 500);
-  }
-
-  const foreignGrid = document.getElementById("foreignGrid");
 
   function loadForeignData() {
     return JSON.parse(localStorage.getItem('foreign-articles') || '[]');
   }
 
+
+  const foreignGrid = document.getElementById("foreignGrid");
   let foreignData = loadForeignData();
+
 
   const translations = {
     ar:{
@@ -957,6 +1008,10 @@
       foreign_article:"مقال أجنبي",
       no_title:"بدون عنوان",
       no_summary:"بدون ملخص",
+      by_author:"بقلم:",
+      source_label:"المصدر:",
+      language_label:"اللغة:",
+      unknown_date:"غير محدد",
       sp_politics:"تخصص علوم سياسية",
       sp_ir:"تخصص العلاقات الدولية",
       sp_admin_law:"تخصص القانون الإداري",
@@ -992,6 +1047,10 @@
       foreign_article:"Foreign article",
       no_title:"No title",
       no_summary:"No summary",
+      by_author:"By:",
+      source_label:"Source:",
+      language_label:"Language:",
+      unknown_date:"Unspecified",
       sp_politics:"Political Science",
       sp_ir:"International Relations",
       sp_admin_law:"Administrative Law",
@@ -1027,6 +1086,10 @@
       foreign_article:"Article étranger",
       no_title:"Sans titre",
       no_summary:"Pas de résumé",
+      by_author:"Par :",
+      source_label:"Source :",
+      language_label:"Langue :",
+      unknown_date:"Non précisé",
       sp_politics:"Science politique",
       sp_ir:"Relations internationales",
       sp_admin_law:"Droit administratif",
@@ -1036,82 +1099,160 @@
     }
   };
 
+
   let currentLang = localStorage.getItem('lang') || 'ar';
+
+
+  // ✅ يمنع ظهور [object Object] إذا كانت البيانات محفوظة كـ {ar,en,fr}
+  function getTextByLang(field, lang = currentLang) {
+    if (!field) return '';
+    if (typeof field === 'string') return field;
+    const v = field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
+    return (typeof v === 'string') ? v : '';
+  }
+
 
   function t(key){
     const dict = translations[currentLang] || translations.ar;
     return dict[key] || '';
   }
 
+
   function setLang(lang){
     currentLang = lang;
     localStorage.setItem('lang', lang);
     const dict = translations[lang] || translations.ar;
 
+
     document.documentElement.lang = lang;
     document.documentElement.dir  = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
 
+
     const titleEl = document.getElementById('t-title');
     if(titleEl && dict.title) titleEl.textContent = dict.title;
+
 
     const langCurrent = document.getElementById('langCurrent');
     const langCurrentMobile = document.getElementById('langCurrentMobile');
     if(langCurrent) langCurrent.textContent = lang.toUpperCase();
     if(langCurrentMobile) langCurrentMobile.textContent = lang.toUpperCase();
 
+
     document.querySelectorAll("[data-t]").forEach(el=>{
       const key=el.getAttribute("data-t");
       if(dict[key]) el.textContent = dict[key];
     });
+
 
     const m1=document.getElementById("langMenu");
     const m2=document.getElementById("langMenuMobile");
     if(m1) m1.style.display="none";
     if(m2) m2.style.display="none";
 
+
     document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+
 
     foreignData = loadForeignData();
     renderForeign();
+    updateHeader();
   }
 
-  function renderForeign(){
-    foreignGrid.innerHTML = '';
 
-    const list = foreignData;
+  function updateHeader() {
+    if(!headerActions) return;
+
+
+    if (user && user.username) {
+      headerActions.innerHTML = `
+        <div class="lang-wrapper">
+          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+            <span id="langCurrent">${currentLang.toUpperCase()}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z"></path>
+            </svg>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
+            <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
+            <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
+          </div>
+        </div>
+        <span style="margin-right:12px;font-size:13px;">${user.username}</span>
+        <button class="btn primary" onclick="logout()" data-t="logout">${t('logout')}</button>
+      `;
+      if(mobileLogin)  mobileLogin.innerHTML = `<a href="#" onclick="logout();return false;" data-t="logout">${t('logout')}</a>`;
+      if(mobileRegister) mobileRegister.style.display = "none";
+    }
+  }
+
+
+  function logout() {
+    localStorage.removeItem("user");
+    user = null;
+    showToast(t('toast_logout_success'), 'success');
+    setTimeout(() => location.reload(), 500);
+  }
+
+
+  function renderForeign(){
+    if(!foreignGrid) return;
+
+
+    foreignGrid.innerHTML = '';
+    const list = foreignData || [];
+
 
     if (!list.length) {
-      foreignGrid.innerHTML =
-        `<div class="empty-state">${t('no_foreign')}</div>`;
+      foreignGrid.innerHTML = `<div class="empty-state">${t('no_foreign')}</div>`;
       return;
     }
+
+
     list.forEach((item) => {
       const card = document.createElement("article");
       card.className = "card";
-      card.dataset.id = item.id;
+      if(item.id != null) card.dataset.id = item.id;
 
-      const title = item.title || t('no_title');
-      const author = item.author ? ('بقلم: '+item.author) : '';
-      const desc = item.description || item.short || t('no_summary');
+
+      const title = getTextByLang(item.title) || t('no_title');
+      const authorName = getTextByLang(item.author);
+      const descRaw = getTextByLang(item.description || item.short || item.summary) || t('no_summary');
+      const desc = descRaw.length > 220 ? descRaw.slice(0,220) + '…' : descRaw;
+
       const img = item.image || item.photo || '';
-      const date = item.date || 'غير محدد';
-      const source = item.journal || item.source || '';
-      const lang = item.lang || '';
+      const date = getTextByLang(item.date) || t('unknown_date');
+      const source = getTextByLang(item.journal || item.source);
+      const lang = getTextByLang(item.lang || item.language);
+
+
+      const authorPart = authorName ? `${t('by_author')} ${authorName}` : '';
+      const meta = [authorPart, date].filter(Boolean).join(' · ');
+
+
+      const sourceParts = [];
+      if(source) sourceParts.push(`${t('source_label')} ${source}`);
+      if(lang) sourceParts.push(`${t('language_label')} ${lang}`);
+      const sourceLine = sourceParts.join(' · ');
+
 
       card.innerHTML = `
-        ${img?`<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}"></div>`:''}
+        ${img?`<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}" loading="lazy"></div>`:''}
         <div class="card-body">
           <h3>${title}</h3>
-          <div class="meta">${author} · ${date}</div>
-          ${source?`<div class="source">المصدر: ${source}${lang?' · اللغة: '+lang:''}</div>`:''}
+          ${meta?`<div class="meta">${meta}</div>`:''}
+          ${sourceLine?`<div class="source">${sourceLine}</div>`:''}
           <p>${desc}</p>
         </div>
         <div class="card-footer">
           <span>${t('foreign_article')}</span>
         </div>`;
+
+
       foreignGrid.appendChild(card);
     });
   }
+
 
   function handleProtectedContent(id) {
     if (!user || !user.username) {
@@ -1129,6 +1270,7 @@
     }
   }
 
+
   // النقر على الكرت نفسه
   document.addEventListener('click', (e) => {
     const card = e.target.closest('.card');
@@ -1136,6 +1278,7 @@
     const id = card.dataset.id;
     handleProtectedContent(id);
   });
+
 
   function initMobileDropdowns(){
     document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
@@ -1146,6 +1289,7 @@
     });
   }
 
+
   window.addEventListener('DOMContentLoaded',()=>{
     updateHeader();
     setLang(currentLang);
@@ -1154,6 +1298,7 @@
     initMobileDropdowns();
   });
 </script>
+
 
 </body>
 </html>

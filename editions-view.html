@@ -1,393 +1,731 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>عرض الإصدار</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ofouq Academy | إصدار علمي</title>
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
+  <link rel="icon" type="image/png" href="images/ofouq-logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-
-<style>
-  * { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-  }
-  
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-  }
-  
-  body {
-    font-family: "Tajawal", sans-serif;
-    background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
-    padding: clamp(10px, 4vw, 20px);
-    line-height: 1.7;
-    min-height: 100vh;
-  }
-
-  .container {
-    max-width: 950px;
-    width: 100%;
-    margin: 0 auto;
-    background: white;
-    padding: clamp(25px, 6vw, 35px);
-    border-radius: clamp(12px, 3vw, 18px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #0aa2ca, #078fa8, #0d6b8c);
-  }
-
-  h1 {
-    margin: 0 0 clamp(20px, 6vw, 28px) 0;
-    color: #064b63;
-    font-size: clamp(22px, 7vw, 36px);
-    font-weight: 800;
-    line-height: 1.2;
-  }
-
-  .edition-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(12px, 4vw, 18px);
-    margin-bottom: clamp(25px, 7vw, 35px);
-    padding: clamp(15px, 5vw, 20px);
-    background: linear-gradient(135deg, #f6fbff, #e8f4f8);
-    border-radius: clamp(10px, 3vw, 14px);
-    border-right: 4px solid #0aa2ca;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: clamp(14px, 4vw, 16px);
-    color: #0a4f5f;
-  }
-
-  .meta-icon {
-    width: clamp(18px, 5vw, 22px);
-    height: clamp(18px, 5vw, 22px);
-    background: #0aa2ca;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: clamp(11px, 3vw, 13px);
-  }
-
-  .image-box {
-    margin-bottom: clamp(25px, 7vw, 35px);
-  }
-  .image-box img {
-    width: 100%;
-    height: clamp(200px, 40vw, 320px);
-    object-fit: cover;
-    border-radius: clamp(12px, 3.5vw, 16px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-  }
-
-  .section {
-    margin-bottom: clamp(25px, 7vw, 35px);
-  }
-
-  .label {
-    font-weight: 800;
-    margin-bottom: clamp(10px, 3vw, 15px);
-    color: #0d6b8c;
-    font-size: clamp(16px, 4.5vw, 20px);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .label-icon {
-    width: 24px;
-    height: 24px;
-    background: linear-gradient(135deg, #0aa2ca, #078fa8);
-    color: white;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 14px;
-  }
-
-  .content {
-    font-size: clamp(15px, 4.2vw, 17px);
-    color: #2d3748;
-    padding: clamp(18px, 5vw, 22px);
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: clamp(12px, 3.5vw, 16px);
-    border-right: 5px solid #e2e8f0;
-    min-height: clamp(70px, 15vw, 90px);
-    word-break: break-word;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
-  }
-
-  .content strong {
-    color: #0d6b8c;
-    font-weight: 700;
-  }
-
-  .file-box {
-    background: linear-gradient(135deg, #eef7fa, #e2edf2);
-    border: 3px solid #d9e7ec;
-    padding: clamp(20px, 6vw, 30px);
-    border-radius: clamp(14px, 4vw, 18px);
-    margin: clamp(20px, 6vw, 30px) 0;
-  }
-
-  .file-preview {
-    text-align: center;
-    margin-bottom: clamp(20px, 6vw, 30px);
-  }
-
-  iframe {
-    width: 100%;
-    height: clamp(300px, 70vw, 700px);
-    border-radius: clamp(12px, 3.5vw, 16px);
-    border: 2px solid #d1d5db;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    display: block;
-  }
-
-  video {
-    width: 100%;
-    height: clamp(250px, 60vw, 450px);
-    border-radius: clamp(12px, 3.5vw, 16px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  }
-
-  .btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #0aa2ca, #078fa8);
-    color: white;
-    padding: clamp(12px, 4vw, 16px) clamp(24px, 6vw, 32px);
-    border-radius: clamp(10px, 3vw, 14px);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: clamp(15px, 4.2vw, 17px);
-    margin-top: clamp(15px, 5vw, 20px);
-    box-shadow: 0 6px 20px rgba(10,162,202,0.3);
-    transition: all 0.3s ease;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s;
-  }
-
-  .btn:hover {
-    background: linear-gradient(135deg, #078fa8, #056b7f);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(10,162,202,0.4);
-  }
-
-  .btn:hover::before {
-    left: 100%;
-  }
-
-  .error {
-    text-align: center;
-    color: #dc3545;
-    font-size: clamp(20px, 7vw, 28px);
-    padding: clamp(60px, 25vw, 100px) clamp(25px, 10vw, 50px);
-    background: white;
-    border-radius: clamp(14px, 4vw, 20px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
-    margin: clamp(25px, 10vw, 50px) auto;
-    max-width: 90%;
-  }
-
-  /* RESPONSIVE */
-  @media(max-width:1200px){
-    .container { max-width: 95%; }
-  }
-
-  @media(max-width:768px){
-    body { padding: clamp(8px, 3vw, 12px); }
-    .container { padding: clamp(20px, 7vw, 28px); }
-    .edition-meta { flex-direction: column; align-items: flex-start; }
-  }
-
-  @media(max-width:480px){
-    body { padding: clamp(5px, 2.5vw, 8px); }
-    .container { 
-      padding: clamp(18px, 6vw, 22px); 
-      margin: 0 clamp(5px, 2vw, 10px); 
-      border-radius: clamp(10px, 3vw, 14px); 
+  <style>
+    :root{
+      --accent:#0f9bce;
+      --accent-soft:#e0f2fe;
+      --accent-dark:#0369a1;
+      --bg:#edf2f7;
+      --bg-soft:#f3f4f6;
+      --card:#ffffff;
+      --card-soft:#f9fafb;
+      --border:#e2e8f0;
+      --muted:#6b7280;
+      --text:#111827;
     }
-    .label { flex-direction: column; align-items: flex-start; gap: 6px; }
-  }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{width:100%;overflow-x:hidden;}
+    body{
+      font-family:"Tajawal",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.7;
+    }
 
-  @media(max-width:360px){
-    body { padding: clamp(3px, 2vw, 5px); }
-    .container { padding: clamp(15px, 6vw, 20px); }
-  }
-</style>
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter:blur(10px);
+      background:linear-gradient(90deg,#ffffffee,#e0f2fbee);
+      border-bottom:1px solid rgba(203,213,225,0.9);
+    }
+    .site-header-inner{
+      max-width:1180px;
+      margin:0 auto;
+      padding:10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .brand-logo{
+      width:36px;
+      height:36px;
+      border-radius:999px;
+      background:#ffffff;
+      border:1px solid #d1d5db;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      box-shadow:0 4px 10px rgba(148,163,184,0.6);
+    }
+    .brand-logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+    }
+    .brand-text-title{
+      font-size:16px;
+      font-weight:700;
+      color:#0f172a;
+    }
+    .brand-text-sub{
+      font-size:11px;
+      color:var(--muted);
+    }
 
+    .header-right{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .top-back-btn{
+      border-radius:999px;
+      border:1px solid #0f172a20;
+      background:linear-gradient(135deg,#0ea5e9,#22c55e);
+      color:#ffffff;
+      padding:6px 16px;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:700;
+      box-shadow:0 8px 18px rgba(34,197,94,0.35);
+      transition:transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+    .top-back-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 26px rgba(34,197,94,0.45);
+      filter:brightness(1.03);
+    }
+    .top-back-btn:active{
+      transform:translateY(0);
+      box-shadow:0 6px 14px rgba(34,197,94,0.3);
+    }
+
+    .lang-switch{
+      display:flex;
+      gap:6px;
+      font-size:12px;
+    }
+    .lang-btn{
+      border-radius:999px;
+      padding:3px 10px;
+      border:1px solid #cbd5f5;
+      background:#ffffff;
+      color:#374151;
+      cursor:pointer;
+      min-width:60px;
+    }
+    .lang-btn.active{
+      background:var(--accent);
+      border-color:var(--accent);
+      color:#ffffff;
+    }
+
+    .page-shell{
+      min-height:100vh;
+      padding:22px 10px 32px;
+    }
+    .layout{
+      max-width:1180px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:minmax(0,3.1fr) minmax(260px,1fr);
+      gap:22px;
+    }
+    @media(max-width:900px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .article-card{
+      background:var(--card);
+      border-radius:20px;
+      border:1px solid var(--border);
+      box-shadow:0 18px 50px rgba(148,163,184,0.35);
+      overflow:hidden;
+    }
+    .article-head{
+      padding:16px 18px 10px;
+      border-bottom:1px solid #e5e7eb;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      background:linear-gradient(135deg,#e0f2fe,#ffffff);
+    }
+    .article-title-main{
+      font-size:21px;
+      font-weight:700;
+      margin-bottom:4px;
+      color:#0f172a;
+    }
+    .article-subline{
+      font-size:12px;
+      color:#6b7280;
+    }
+    .article-head-right{
+      font-size:11px;
+      color:#9ca3af;
+      text-align:left;
+    }
+
+    .article-media{
+      padding:0 18px 16px;
+      background:#f3f4f6;
+    }
+    .media-frame{
+      position:relative;
+      width:100%;
+      max-width:1120px;
+      margin:0 auto;
+      padding-bottom:56.25%;
+      border-radius:16px;
+      overflow:hidden;
+      background:#000;
+      box-shadow:0 10px 25px rgba(148,163,184,0.55);
+    }
+    .article-media video,
+    .article-media img,
+    .article-media iframe{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      border:0;
+      object-fit:contain;
+      background:#000;
+    }
+    .article-media iframe{
+      border-radius:16px;
+    }
+
+    .article-body{
+      padding:18px 20px 22px;
+      background:var(--card-soft);
+    }
+    .article-type-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:3px 9px;
+      border-radius:999px;
+      background:var(--accent-soft);
+      color:var(--accent-dark);
+      font-size:11px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    .article-header-main h2{
+      font-size:19px;
+      margin-bottom:5px;
+      color:#111827;
+    }
+    .article-meta{
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .meta-dot::before{
+      content:"•";
+      margin:0 4px;
+      color:#d1d5db;
+    }
+    .divider{
+      height:1px;
+      background:linear-gradient(to right,transparent,#e5e7eb,transparent);
+      margin:16px 0 14px;
+    }
+    .section-block{
+      margin-bottom:18px;
+    }
+    .section-block h3{
+      font-size:14px;
+      margin-bottom:4px;
+      color:#111827;
+    }
+    .section-block p,
+    .section-block div{
+      font-size:14px;
+      color:#374151;
+      line-height:1.9;
+      white-space:pre-wrap;
+    }
+    .info-box{
+      margin-top:4px;
+      padding:9px 11px;
+      border-radius:10px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      font-size:12px;
+      color:#1e40af;
+    }
+
+    .sidebar{
+      background:#ffffff;
+      border-radius:18px;
+      border:1px solid var(--border);
+      padding:16px 16px 18px;
+      box-shadow:0 14px 40px rgba(148,163,184,0.35);
+      font-size:13px;
+      align-self:flex-start;
+    }
+    .sidebar h3{
+      font-size:14px;
+      margin-bottom:10px;
+      color:#0f172a;
+    }
+    .sidebar-row{
+      margin-bottom:10px;
+    }
+    .sidebar-label{
+      font-size:12px;
+      color:#6b7280;
+      margin-bottom:2px;
+    }
+    .sidebar-value{
+      color:#111827;
+    }
+    .sidebar-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:6px;
+    }
+    .sidebar-tag{
+      background:var(--accent-soft);
+      color:var(--accent-dark);
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:11px;
+    }
+
+    @media(max-width:640px){
+      .site-header-inner{flex-direction:column;align-items:flex-start;}
+      .page-shell{padding:18px 8px 26px;}
+      .article-body{padding:16px 14px 18px;}
+      .article-head{padding:14px 14px 8px;}
+      .article-title-main{font-size:18px;}
+    }
+
+    .site-footer{
+      padding:14px 10px 24px;
+      font-size:11px;
+      color:#6b7280;
+      text-align:center;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <h1 id="title">...</h1>
-
-  <div class="edition-meta" id="editionMeta">
-    <!-- سيتم ملؤه ديناميكيًا -->
-  </div>
-
-  <div id="imageBox" class="image-box"></div>
-
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">📄</div>
-      الملخص التنفيذي
+<header class="site-header">
+  <div class="site-header-inner">
+    <div class="brand">
+      <div class="brand-logo">
+        <img src="images/logo.png" alt="Ofouq logo">
+      </div>
+      <div>
+        <div class="brand-text-title" id="brandTitle">Ofouq Academy</div>
+        <div class="brand-text-sub" id="brandSubtitle">أكاديمية آفاق للبحث والتدريب</div>
+      </div>
     </div>
-    <div id="short" class="content"></div>
-  </div>
 
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">📖</div>
-      المحتوى الكامل
+    <div class="header-right">
+      <button type="button" class="top-back-btn" id="headerBackBtn" onclick="goBack()">
+        ← <span id="headerBackLabel">رجوع</span>
+      </button>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="ar" onclick="switchLang('ar')">عربي</button>
+        <button class="lang-btn" data-lang="fr" onclick="switchLang('fr')">Français</button>
+        <button class="lang-btn" data-lang="en" onclick="switchLang('en')">English</button>
+      </div>
     </div>
-    <div id="full" class="content"></div>
   </div>
+</header>
 
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">ℹ️</div>
-      تفاصيل إضافية
-    </div>
-    <div id="details" class="content"></div>
-  </div>
+<div class="page-shell">
+  <div class="layout">
 
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">📎</div>
-      الملفات المرفقة
-    </div>
-    <div id="fileBox" class="file-box">لا يوجد ملفات مرفقة.</div>
-  </div>
+    <article class="article-card">
 
-  <div style="text-align: center;">
-    <a href="javascript:history.back()" class="btn">← العودة للإصدارات</a>
+      <div class="article-head">
+        <div>
+          <div class="article-title-main" id="topTitle">عنوان الإصدار</div>
+          <div class="article-subline" id="topType">إصدار علمي</div>
+        </div>
+        <div class="article-head-right" id="headMeta"></div>
+      </div>
+
+      <section class="article-media" id="articleMedia"></section>
+
+      <section class="article-body">
+        <div class="article-type-pill" id="articleTypeLabel">إصدار علمي</div>
+
+        <header class="article-header-main">
+          <h2 id="articleTitle">عنوان الإصدار</h2>
+          <div class="article-meta">
+            <span id="articleAuthor">الجهة: غير محددة</span>
+            <span class="meta-dot" id="articleAffiliation">السلسلة: غير محددة</span>
+            <span class="meta-dot" id="articleDate">التاريخ: غير محدد</span>
+          </div>
+        </header>
+
+        <div class="divider"></div>
+
+        <section class="section-block">
+          <h3 id="labelSummary">الملخص</h3>
+          <p id="articleShort"></p>
+        </section>
+
+        <section class="section-block">
+          <h3 id="labelFull">المحتوى الكامل</h3>
+          <div id="articleFull"></div>
+        </section>
+
+        <section class="section-block">
+          <h3 id="labelDetails">تفاصيل إضافية</h3>
+          <p id="articleDetails"></p>
+        </section>
+
+        <div class="info-box" id="extraInfo" style="display:none;"></div>
+      </section>
+    </article>
+
+    <aside class="sidebar">
+      <h3 id="sidebarTitle">معلومات الإصدار</h3>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelAuthor">الجهة</div>
+        <div class="sidebar-value" id="sidebarAuthor">غير محددة</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelAffiliation">السلسلة</div>
+        <div class="sidebar-value" id="sidebarAffiliation">غير محددة</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelDate">التاريخ</div>
+        <div class="sidebar-value" id="sidebarDate">غير محدد</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelType">النوع</div>
+        <div class="sidebar-value" id="sidebarType">إصدار علمي</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
+        <div class="sidebar-tags" id="sidebarTags">
+          <span class="sidebar-tag" id="tag1">Ofouq</span>
+          <span class="sidebar-tag" id="tag2">إصدار علمي</span>
+        </div>
+      </div>
+    </aside>
+
   </div>
 </div>
 
+<footer class="site-footer" id="footerText">
+  © 2025 Ofouq Academy · جميع الحقوق محفوظة
+</footer>
+
 <script>
-  // جلب الإصدار من localStorage
-  let item = JSON.parse(localStorage.getItem('editionsView') || 'null');
-
-  if (!item) {
-    document.body.innerHTML = `
-      <div class="error">
-        ❌ الإصدار غير موجود
-        <br><br>
-        <a href="editions.html" class="btn">رجوع للإصدارات</a>
-      </div>
-    `;
+function goBack(){
+  if (document.referrer && document.referrer.indexOf(window.location.host) !== -1){
+    window.history.back();
   } else {
-    // عرض البيانات الأساسية
-    document.getElementById("title").textContent = item.title || "—";
-    document.getElementById("short").textContent = item.short || "—";
-    document.getElementById("full").textContent = item.full || "—";
-    document.getElementById("details").textContent = item.details || "—";
+    window.location.href = 'editions.html';
+  }
+}
 
-    // بيانات الإصدار (تاريخ + مؤلف)
-    const date = item.id ? new Date(item.id).toLocaleDateString('ar-EG') : 'غير محدد';
-    const author = item.author || 'فريق التحرير';
-    
-    document.getElementById("editionMeta").innerHTML = `
-      <div class="meta-item">
-        <div class="meta-icon">📅</div>
-        <span>تاريخ النشر: ${date}</span>
-      </div>
-      <div class="meta-item">
-        <div class="meta-icon">✍️</div>
-        <span>المؤلف: ${author}</span>
-      </div>
-    `;
+function getCurrentLang(){
+  return localStorage.getItem('uiLang') || 'ar';
+}
+function getTextByLang(field, lang){
+  if (!field) return '';
+  if (typeof field === 'string') return field;
+  return field[lang] || field.ar || field.fr || field.en || '';
+}
 
-    // الصورة الرئيسية
-    if (item.image) {
-      document.getElementById("imageBox").innerHTML = 
-        `<img src="${item.image}" alt="${item.title}" loading="lazy">`;
+async function translateText(text, fromLang, toLang){
+  if(!text || !text.trim()) return '';
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
+  try{
+    const res = await fetch(url);
+    const data = await res.json();
+    return (data && data.responseData && data.responseData.translatedText) || '';
+  }catch(e){
+    console.error('translation error', e);
+    return '';
+  }
+}
+
+async function autoFillTranslations(fieldObj){
+  const result = { ar: fieldObj.ar || '', fr: fieldObj.fr || '', en: fieldObj.en || '' };
+  const langs = ['ar','fr','en'];
+  const sourceLang = langs.find(l => result[l] && result[l].trim());
+  if(!sourceLang) return result;
+  const sourceText = result[sourceLang];
+  for(const target of langs){
+    if(target === sourceLang) continue;
+    if(!result[target] || !result[target].trim()){
+      const tr = await translateText(sourceText, sourceLang, target);
+      if(tr) result[target] = tr;
     }
+  }
+  return result;
+}
 
-    // الملفات المرفقة
-    let fileBox = document.getElementById("fileBox");
-    if (!item.file) {
-      fileBox.innerHTML = `
-        <div class="file-preview">
-          <div style="font-size: clamp(16px, 4.5vw, 20px); color: #666; margin-bottom: 15px;">
-            📚 لا توجد ملفات مرفقة لهذا الإصدار
-          </div>
-          <p style="color: #999; font-size: clamp(14px, 4vw, 16px);">
-            يمكن قراءة المحتوى أعلاه أو التواصل للحصول على نسخة مطبوعة
-          </p>
-        </div>
-      `;
-    } 
-    else if (item.file.startsWith("data:application/pdf")) {
-      fileBox.innerHTML = `
-        <div class="file-preview">
-          <iframe src="${item.file}" loading="lazy"></iframe>
-          <div style="margin-top: 20px;">
-            <a class="btn" href="${item.file}" download>📥 تحميل الإصدار PDF</a>
-          </div>
-        </div>
-      `;
-    }
-    else if (item.file.startsWith("data:video")) {
-      fileBox.innerHTML = `
-        <div class="file-preview">
-          <video controls preload="metadata">
-            <source src="${item.file}">
-            متصفحك لا يدعم تشغيل الفيديو.
+const uiTexts = {
+  ar: {
+    dir: 'rtl', langAttr: 'ar',
+    brandTitle: 'Ofouq Academy',
+    brandSubtitle: 'أكاديمية آفاق للبحث والتدريب',
+    back: 'رجوع',
+    sectionSummary: 'الملخص',
+    sectionFull: 'المحتوى الكامل',
+    sectionDetails: 'تفاصيل إضافية',
+    sidebarTitle: 'معلومات الإصدار',
+    labelAuthor: 'الجهة',
+    labelAffiliation: 'السلسلة',
+    labelDate: 'التاريخ',
+    labelType: 'النوع',
+    labelTags: 'وسوم مقترحة',
+    tag1: 'Ofouq',
+    tag2: 'إصدار علمي',
+    footer: '© 2025 Ofouq Academy · جميع الحقوق محفوظة',
+    unknownAuthor: 'غير محددة',
+    unknownAff: 'غير محددة',
+    unknownDate: 'غير محدد',
+    noTitle: 'بدون عنوان',
+    typeLabel: 'إصدار علمي'
+  },
+  fr: {
+    dir: 'ltr', langAttr: 'fr',
+    brandTitle: 'Académie Ofouq',
+    brandSubtitle: 'Centre de recherche et de formation',
+    back: 'Retour',
+    sectionSummary: 'Résumé',
+    sectionFull: 'Contenu complet',
+    sectionDetails: 'Détails supplémentaires',
+    sidebarTitle: 'Informations sur l’édition',
+    labelAuthor: 'Éditeur',
+    labelAffiliation: 'Collection',
+    labelDate: 'Date',
+    labelType: 'Type',
+    labelTags: 'Mots-clés suggérés',
+    tag1: 'Ofouq',
+    tag2: 'Édition scientifique',
+    footer: '© 2025 Académie Ofouq · Tous droits réservés',
+    unknownAuthor: 'Non spécifié',
+    unknownAff: 'Non spécifiée',
+    unknownDate: 'Non spécifiée',
+    noTitle: 'Sans titre',
+    typeLabel: 'Édition scientifique'
+  },
+  en: {
+    dir: 'ltr', langAttr: 'en',
+    brandTitle: 'Ofouq Academy',
+    brandSubtitle: 'Center for Research and Training',
+    back: 'Back',
+    sectionSummary: 'Summary',
+    sectionFull: 'Full content',
+    sectionDetails: 'Additional details',
+    sidebarTitle: 'Edition info',
+    labelAuthor: 'Publisher',
+    labelAffiliation: 'Series',
+    labelDate: 'Date',
+    labelType: 'Type',
+    labelTags: 'Suggested tags',
+    tag1: 'Ofouq',
+    tag2: 'Scientific edition',
+    footer: '© 2025 Ofouq Academy · All rights reserved',
+    unknownAuthor: 'Not specified',
+    unknownAff: 'Not specified',
+    unknownDate: 'Not specified',
+    noTitle: 'Untitled',
+    typeLabel: 'Scientific edition'
+  }
+};
+
+function applyLang(lang){
+  const t = uiTexts[lang] || uiTexts.ar;
+  document.documentElement.lang = t.langAttr;
+  document.documentElement.dir  = t.dir;
+
+  document.getElementById('brandTitle').textContent    = t.brandTitle;
+  document.getElementById('brandSubtitle').textContent = t.brandSubtitle;
+
+  document.getElementById('labelSummary').textContent = t.sectionSummary;
+  document.getElementById('labelFull').textContent    = t.sectionFull;
+  document.getElementById('labelDetails').textContent = t.sectionDetails;
+
+  document.getElementById('sidebarTitle').textContent     = t.sidebarTitle;
+  document.getElementById('labelAuthor').textContent      = t.labelAuthor;
+  document.getElementById('labelAffiliation').textContent = t.labelAffiliation;
+  document.getElementById('labelDate').textContent        = t.labelDate;
+  document.getElementById('labelType').textContent        = t.labelType;
+  document.getElementById('labelTags').textContent        = t.labelTags;
+  document.getElementById('tag1').textContent             = t.tag1;
+  document.getElementById('tag2').textContent             = t.tag2;
+  document.getElementById('footerText').textContent       = t.footer;
+  document.getElementById('headerBackLabel').textContent  = t.back;
+
+  document.getElementById('articleTypeLabel').textContent = t.typeLabel;
+  document.getElementById('topType').textContent          = t.typeLabel;
+  document.getElementById('sidebarType').textContent      = t.typeLabel;
+
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+function renderContentForLang(lang){
+  const it = window.displayItem;
+  if(!it) return;
+  const tUI = uiTexts[lang] || uiTexts.ar;
+
+  const title       = getTextByLang(it.title,   lang) || tUI.noTitle;
+  const shortText   = getTextByLang(it.short,   lang) || '';
+  const fullText    = getTextByLang(it.full,    lang) || '';
+  const detailsText = getTextByLang(it.details, lang) || '';
+
+  document.getElementById('articleTitle').textContent = title;
+  document.getElementById('topTitle').textContent     = title;
+
+  document.getElementById('articleShort').textContent   = shortText;
+  document.getElementById('articleFull').textContent    = fullText;
+  document.getElementById('articleDetails').textContent = detailsText;
+
+  const author      = it.author      || tUI.unknownAuthor;
+  const affiliation = it.affiliation || tUI.unknownAff;
+  const dateValue   = it.date        || tUI.unknownDate;
+
+  document.getElementById('articleAuthor').textContent      = tUI.labelAuthor      + ': ' + author;
+  document.getElementById('articleAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
+  document.getElementById('articleDate').textContent        = tUI.labelDate        + ': ' + dateValue;
+
+  const sbAuthor      = document.getElementById('sidebarAuthor');
+  const sbAffiliation = document.getElementById('sidebarAffiliation');
+  const sbDate        = document.getElementById('sidebarDate');
+  if(sbAuthor)      sbAuthor.textContent      = author;
+  if(sbAffiliation) sbAffiliation.textContent = affiliation;
+  if(sbDate)        sbDate.textContent        = dateValue;
+}
+
+async function switchLang(lang){
+  localStorage.setItem('uiLang', lang);
+  applyLang(lang);
+
+  if(window.displayItem){
+    const it = window.displayItem;
+    it.title   = await autoFillTranslations(it.title   || {});
+    it.short   = await autoFillTranslations(it.short   || {});
+    it.full    = await autoFillTranslations(it.full    || {});
+    it.details = await autoFillTranslations(it.details || {});
+    renderContentForLang(lang);
+  }
+}
+
+function getQueryParam(name){
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+// هذا الملف خاص بالإصدارات العلمية
+const type = 'editions';
+const id   = Number(getQueryParam('id'));
+
+const allData = JSON.parse(localStorage.getItem(type) || '[]');
+const item    = allData.find(i => i.id === id);
+window.displayItem = item;
+
+if(!item){
+  document.body.innerHTML =
+    '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
+}else{
+  const mediaContainer = document.getElementById('articleMedia');
+  const extraInfo      = document.getElementById('extraInfo');
+  let mediaHtml = '';
+
+  if(item.file){
+    const f = item.file;
+    const lower = f.toLowerCase();
+
+    if(lower.endsWith('.mp4') || lower.includes('.mp4?')){
+      const videoUrl = f.startsWith('/videos')
+        ? 'http://localhost:3000' + f
+        : f;
+
+      mediaHtml = `
+        <div class="media-frame">
+          <video controls>
+            <source src="${videoUrl}" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو أو الرابط غير صالح.
           </video>
-          <div style="margin-top: 20px;">
-            <a class="btn" href="${item.file}" download>📹 تحميل الفيديو</a>
-          </div>
         </div>
       `;
-    }
-    else {
-      fileBox.innerHTML = `
-        <div class="file-preview" style="text-align: center;">
-          <a class="btn" href="${item.file}" target="_blank" rel="noopener noreferrer">
-            🔗 فتح الرابط الخارجي
-          </a>
+    } else if(f.startsWith('http')){
+      mediaHtml = `
+        <div class="media-frame">
+          <iframe src="${f}"></iframe>
         </div>
       `;
     }
   }
+
+  const currentLangForAlt = getCurrentLang();
+  const titleForAlt = getTextByLang(item.title, currentLangForAlt) || 'بدون عنوان';
+
+  if(!mediaHtml && item.image){
+    mediaHtml = `
+      <div class="media-frame">
+        <img src="${item.image}" alt="${titleForAlt}">
+      </div>
+    `;
+  }
+
+  if(mediaHtml){
+    mediaContainer.innerHTML = mediaHtml;
+  } else {
+    mediaContainer.style.display='none';
+    if(item.file){
+      extraInfo.style.display='block';
+      extraInfo.textContent =
+        'هناك مرفق لهذا الإصدار، لكن لا يمكن عرضه مباشرة في هذه الصفحة.';
+    }
+  }
+}
+
+window.addEventListener('load', async ()=>{
+  if(window.displayItem){
+    const it = window.displayItem;
+    it.title   = await autoFillTranslations(it.title   || {});
+    it.short   = await autoFillTranslations(it.short   || {});
+    it.full    = await autoFillTranslations(it.full    || {});
+    it.details = await autoFillTranslations(it.details || {});
+  }
+  const savedLang = getCurrentLang();
+  applyLang(savedLang);
+  if(window.displayItem){
+    renderContentForLang(savedLang);
+  }
+});
 </script>
 
 </body>

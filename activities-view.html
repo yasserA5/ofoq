@@ -1,422 +1,170 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>تفاصيل النشاط</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ofouq Academy | عرض النشاط</title>
+<link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  * { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-  }
-  
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-  }
-  
-  body {
-    font-family: "Tajawal", sans-serif;
-    background: linear-gradient(135deg, #f5f7fb 0%, #e2e8f0 100%);
-    padding: clamp(10px, 4vw, 20px);
-    line-height: 1.7;
-    min-height: 100vh;
-  }
-
-  .container {
-    max-width: 950px;
-    width: 100%;
-    margin: 0 auto;
-    background: white;
-    padding: clamp(25px, 6vw, 35px);
-    border-radius: clamp(12px, 3vw, 18px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #22c55e, #16a34a, #15803d);
-  }
-
-  .activity-header {
-    text-align: center;
-    margin-bottom: clamp(25px, 7vw, 35px);
-    padding: clamp(20px, 6vw, 30px);
-    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-    border-radius: clamp(12px, 4vw, 16px);
-    border-right: 5px solid #22c55e;
-  }
-
-  h1 {
-    margin: 0 0 clamp(12px, 4vw, 18px) 0;
-    color: #166534;
-    font-size: clamp(24px, 7vw, 38px);
-    font-weight: 800;
-    line-height: 1.2;
-  }
-
-  .activity-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(15px, 5vw, 22px);
-    justify-content: center;
-    margin-bottom: clamp(20px, 6vw, 30px);
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: clamp(14px, 4vw, 16px);
-    color: #065f46;
-    background: rgba(34, 197, 94, 0.1);
-    padding: clamp(8px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
-    border-radius: clamp(20px, 6vw, 28px);
-    border: 2px solid rgba(34, 197, 94, 0.2);
-  }
-
-  .meta-icon {
-    width: clamp(20px, 6vw, 26px);
-    height: clamp(20px, 6vw, 26px);
-    background: #22c55e;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: clamp(12px, 3.5vw, 14px);
-  }
-
-  .image-box {
-    margin-bottom: clamp(30px, 8vw, 40px);
-  }
-  .image-box img {
-    width: 100%;
-    height: clamp(220px, 45vw, 350px);
-    object-fit: cover;
-    border-radius: clamp(14px, 4vw, 20px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-  }
-
-  .section {
-    margin-bottom: clamp(30px, 8vw, 40px);
-  }
-
-  .label {
-    font-weight: 800;
-    margin-bottom: clamp(12px, 4vw, 18px);
-    color: #0d6b8c;
-    font-size: clamp(17px, 5vw, 22px);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .label-icon {
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 15px;
-  }
-
-  .content {
-    font-size: clamp(15px, 4.2vw, 17px);
-    color: #1f2937;
-    padding: clamp(20px, 6vw, 25px);
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: clamp(14px, 4vw, 18px);
-    border-right: 5px solid #dcfce7;
-    min-height: clamp(80px, 18vw, 100px);
-    word-break: break-word;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    box-shadow: inset 0 3px 10px rgba(0,0,0,0.04);
-  }
-
-  .content strong {
-    color: #166534;
-    font-weight: 700;
-  }
-
-  .file-box {
-    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-    border: 3px solid #bbf7d0;
-    padding: clamp(25px, 7vw, 35px);
-    border-radius: clamp(16px, 5vw, 22px);
-    margin: clamp(25px, 7vw, 35px) 0;
-  }
-
-  .file-preview {
-    text-align: center;
-    margin-bottom: clamp(25px, 7vw, 35px);
-  }
-
-  iframe {
-    width: 100%;
-    height: clamp(320px, 75vw, 750px);
-    border-radius: clamp(14px, 4vw, 20px);
-    border: 3px solid #bbf7d0;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.18);
-    display: block;
-  }
-
-  video {
-    width: 100%;
-    height: clamp(280px, 65vw, 500px);
-    border-radius: clamp(14px, 4vw, 20px);
-    box-shadow: 0 10px 35px rgba(0,0,0,0.18);
-  }
-
-  .btn-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(12px, 4vw, 18px);
-    justify-content: center;
-    margin-top: clamp(20px, 6vw, 30px);
-  }
-
-  .btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
-    padding: clamp(13px, 4.5vw, 17px) clamp(26px, 7vw, 35px);
-    border-radius: clamp(12px, 3.5vw, 16px);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: clamp(15px, 4.2vw, 17px);
-    box-shadow: 0 6px 20px rgba(34,197,94,0.3);
-    transition: all 0.3s ease;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn.secondary {
-    background: linear-gradient(135deg, #0aa2ca, #078fa8);
-    box-shadow: 0 6px 20px rgba(10,162,202,0.3);
-  }
-
-  .btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s;
-  }
-
-  .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 35px rgba(34,197,94,0.4);
-  }
-
-  .btn:hover::before {
-    left: 100%;
-  }
-
-  .error {
-    text-align: center;
-    color: #dc2626;
-    font-size: clamp(22px, 7.5vw, 30px);
-    padding: clamp(70px, 28vw, 110px) clamp(30px, 12vw, 60px);
-    background: white;
-    border-radius: clamp(16px, 5vw, 24px);
-    box-shadow: 0 15px 50px rgba(0,0,0,0.12);
-    margin: clamp(30px, 12vw, 60px) auto;
-    max-width: 90%;
-  }
-
-  /* RESPONSIVE */
-  @media(max-width:1200px){
-    .container { max-width: 95%; }
-  }
-
-  @media(max-width:768px){
-    body { padding: clamp(8px, 3vw, 12px); }
-    .container { padding: clamp(22px, 7vw, 30px); }
-    .activity-meta { flex-direction: column; align-items: center; }
-    .btn-group { flex-direction: column; align-items: center; }
-  }
-
-  @media(max-width:480px){
-    body { padding: clamp(5px, 2.5vw, 8px); }
-    .container { 
-      padding: clamp(20px, 6.5vw, 25px); 
-      margin: 0 clamp(5px, 2vw, 10px); 
-      border-radius: clamp(10px, 3.5vw, 14px); 
-    }
-  }
-
-  @media(max-width:360px){
-    body { padding: clamp(3px, 2vw, 5px); }
-    .container { padding: clamp(16px, 6vw, 20px); }
-  }
+:root{--accent:#0f9bce;--accent-soft:#e0f2fe;--accent-dark:#0369a1;--bg:#edf2f7;--card:#ffffff;--card-soft:#f9fafb;--border:#e2e8f0;--muted:#6b7280;--text:#111827;--shadow:0 18px 50px rgba(148,163,184,0.35);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;overflow-x:hidden;}
+body{font-family:"Tajawal",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+.site-header{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:linear-gradient(90deg,#ffffffee,#e0f2fbee);border-bottom:1px solid rgba(203,213,225,0.9);}
+.site-header-inner{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-logo{width:36px;height:36px;border-radius:999px;background:#fff;border:1px solid #d1d5db;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 4px 10px rgba(148,163,184,0.6);}
+.brand-logo img{width:100%;height:100%;object-fit:contain;}
+.brand-text-title{font-size:16px;font-weight:700;color:#0f172a;}
+.brand-text-sub{font-size:11px;color:var(--muted);}
+.header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.top-back-btn{border-radius:999px;border:1px solid #0f172a20;background:linear-gradient(135deg,#0ea5e9,#22c55e);color:#fff;padding:6px 16px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:700;box-shadow:0 8px 18px rgba(34,197,94,0.35);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;}
+.top-back-btn:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(34,197,94,0.45);filter:brightness(1.03);}
+.top-back-btn:active{transform:translateY(0);box-shadow:0 6px 14px rgba(34,197,94,0.3);}
+.page-shell{min-height:100vh;padding:22px 10px 32px;}
+.layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,3.1fr) minmax(260px,1fr);gap:22px;}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}}
+.article-card{background:var(--card);border-radius:20px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;}
+.article-head{padding:16px 18px 10px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;background:linear-gradient(135deg,#e0f2fe,#fff);}
+.article-title-main{font-size:21px;font-weight:800;margin-bottom:4px;color:#0f172a;}
+.article-subline{font-size:12px;color:#6b7280;}
+.article-head-right{font-size:11px;color:#9ca3af;text-align:left;}
+.article-media{padding:0 18px 16px;background:#f3f4f6;}
+.media-frame{position:relative;width:100%;max-width:1120px;margin:0 auto;padding-bottom:56.25%;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 10px 25px rgba(148,163,184,0.55);}
+.article-media video,.article-media img,.article-media iframe{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain;background:#000;}
+.article-media iframe{border-radius:16px;}
+.article-body{padding:18px 20px 22px;background:var(--card-soft);}
+.article-type-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-dark);font-size:11px;font-weight:800;margin-bottom:8px;}
+.article-header-main h2{font-size:19px;margin-bottom:5px;color:#111827;}
+.article-meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px;}
+.meta-dot::before{content:"•";margin:0 4px;color:#d1d5db;}
+.divider{height:1px;background:linear-gradient(to right,transparent,#e5e7eb,transparent);margin:16px 0 14px;}
+.section-block{margin-bottom:18px;}
+.section-block h3{font-size:14px;margin-bottom:4px;color:#111827;}
+.section-block p,.section-block div{font-size:14px;color:#374151;line-height:1.9;white-space:pre-wrap;}
+.info-box{margin-top:4px;padding:9px 11px;border-radius:10px;background:#eff6ff;border:1px solid #bfdbfe;font-size:12px;color:#1e40af;}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid #dbeafe;background:#fff;color:#0f172a;font-weight:800;font-size:12px;text-decoration:none;cursor:pointer;}
+.action-btn.primary{background:linear-gradient(135deg,#0ea5e9,#0f9bce);border-color:#0ea5e9;color:#fff;}
+.action-btn:hover{filter:brightness(1.02);}
+.sidebar{background:#fff;border-radius:18px;border:1px solid var(--border);padding:16px 16px 18px;box-shadow:0 14px 40px rgba(148,163,184,0.35);font-size:13px;align-self:flex-start;}
+.sidebar h3{font-size:14px;margin-bottom:10px;color:#0f172a;}
+.sidebar-row{margin-bottom:10px;}
+.sidebar-label{font-size:12px;color:#6b7280;margin-bottom:2px;}
+.sidebar-value{color:#111827;word-break:break-word;}
+.sidebar-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.sidebar-tag{background:var(--accent-soft);color:var(--accent-dark);border-radius:999px;padding:2px 8px;font-size:11px;}
+.kv-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;margin-top:10px;}
+.kv{grid-column:span 6;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:10px;}
+.kv .k{font-size:12px;color:#6b7280;font-weight:800;margin-bottom:4px;}
+.kv .v{font-size:12px;color:#111827;font-weight:700;white-space:pre-wrap;word-break:break-word;}
+@media(max-width:900px){.kv{grid-column:span 12;}}
+.site-footer{padding:14px 10px 24px;font-size:11px;color:#6b7280;text-align:center;}
+#pdfContainer{display:none;font-family:"Tajawal",sans-serif;direction:rtl;color:#111827;line-height:1.9;background:#fff;padding:20px;width:100%;max-width:794px;}
+#pdfContainer h1{font-size:22px;font-weight:800;text-align:center;margin:10px 0 14px;padding-bottom:10px;border-bottom:3px solid #0f9bce;}
+#pdfContainer .meta-box{background:#e0f2fe;border-right:4px solid #0f9bce;padding:12px 14px;border-radius:10px;margin:0 0 16px;}
+#pdfContainer .meta-item{margin:6px 0;}
+#pdfContainer .section{margin:14px 0;padding:12px 14px;background:#f9fafb;border-radius:10px;border-right:3px solid #0f9bce;}
+#pdfContainer .section h2{font-size:16px;font-weight:800;margin:0 0 8px;}
+#pdfContainer .section p{margin:0;white-space:pre-wrap;word-break:break-word;font-size:13px;}
+#pdfContainer .footer{margin-top:22px;padding-top:12px;border-top:1px solid #e5e7eb;text-align:center;font-size:11px;color:#6b7280;}
 </style>
-
 </head>
 <body>
-
-<div class="container">
-  <div class="activity-header">
-    <h1 id="title">...</h1>
-    <div class="activity-meta" id="activityMeta">
-      <!-- سيتم ملؤه ديناميكيًا -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <div class="brand">
+      <div class="brand-logo"><img src="images/logo.png" alt="Ofouq logo"></div>
+      <div>
+        <div class="brand-text-title">Ofouq Academy</div>
+        <div class="brand-text-sub">أكاديمية آفاق للبحث والتدريب</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button type="button" class="top-back-btn" onclick="goBack()">← <span>رجوع</span></button>
     </div>
   </div>
+</header>
 
-  <div id="imageBox" class="image-box"></div>
-
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">📋</div>
-      نبذة عن النشاط
-    </div>
-    <div id="short" class="content"></div>
-  </div>
-
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">📄</div>
-      التفاصيل الكاملة
-    </div>
-    <div id="full" class="content"></div>
-  </div>
-
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">ℹ️</div>
-      معلومات إضافية
-    </div>
-    <div id="details" class="content"></div>
-  </div>
-
-  <div class="section">
-    <div class="label">
-      <div class="label-icon">📎</div>
-      المرفقات
-    </div>
-    <div id="fileBox" class="file-box">لا توجد مرفقات.</div>
-  </div>
-
-  <div class="btn-group">
-    <a href="activities.html" class="btn secondary">← رجوع للأنشطة</a>
-    <a href="javascript:window.print()" class="btn">🖨️ طباعة هذا النشاط</a>
+<div class="page-shell">
+  <div class="layout">
+    <article class="article-card">
+      <div class="article-head">
+        <div>
+          <div class="article-title-main" id="topTitle">عنوان المحتوى</div>
+          <div class="article-subline" id="topType">تصنيف المحتوى</div>
+        </div>
+        <div class="article-head-right" id="headMeta"></div>
+      </div>
+      <section class="article-media" id="articleMedia"></section>
+      <section class="article-body">
+        <div class="article-type-pill" id="articleTypeLabel">محتوى</div>
+        <header class="article-header-main">
+          <h2 id="articleTitle">عنوان</h2>
+          <div class="article-meta">
+            <span id="articleAuthor">الكاتب: غير محدد</span>
+            <span class="meta-dot" id="articleAffiliation">المؤسسة: غير محددة</span>
+            <span class="meta-dot" id="articleDate">التاريخ: غير محدد</span>
+          </div>
+        </header>
+        <div class="actions" id="actionsRow"></div>
+        <div class="divider"></div>
+        <section class="section-block"><h3>الملخص</h3><p id="articleShort"></p></section>
+        <section class="section-block"><h3>المحتوى الكامل</h3><div id="articleFull"></div></section>
+        <section class="section-block"><h3>تفاصيل إضافية</h3><p id="articleDetails"></p></section>
+        <section class="section-block"><h3>كل الحقول</h3><div class="kv-grid" id="allFields"></div></section>
+        <div class="info-box" id="extraInfo" style="display:none;"></div>
+      </section>
+    </article>
+    <aside class="sidebar">
+      <h3>معلومات النشر</h3>
+      <div class="sidebar-row"><div class="sidebar-label">الكاتب</div><div class="sidebar-value" id="sidebarAuthor">غير محدد</div></div>
+      <div class="sidebar-row"><div class="sidebar-label">المؤسسة</div><div class="sidebar-value" id="sidebarAffiliation">غير محددة</div></div>
+      <div class="sidebar-row"><div class="sidebar-label">التاريخ</div><div class="sidebar-value" id="sidebarDate">غير محدد</div></div>
+      <div class="sidebar-row"><div class="sidebar-label">التصنيف</div><div class="sidebar-value" id="sidebarType">محتوى</div></div>
+      <div class="sidebar-row"><div class="sidebar-label">وسوم</div><div class="sidebar-tags" id="sidebarTags"></div></div>
+    </aside>
   </div>
 </div>
 
+<div id="pdfContainer">
+  <h1 id="pdfTitle"></h1>
+  <div class="meta-box">
+    <div class="meta-item"><strong>التصنيف:</strong> <span id="pdfType"></span></div>
+    <div class="meta-item"><strong>الكاتب:</strong> <span id="pdfAuthor"></span></div>
+    <div class="meta-item"><strong>المؤسسة:</strong> <span id="pdfAffiliation"></span></div>
+    <div class="meta-item"><strong>التاريخ:</strong> <span id="pdfDate"></span></div>
+  </div>
+  <div class="section"><h2>الملخص</h2><p id="pdfShort"></p></div>
+  <div class="section"><h2>المحتوى الكامل</h2><p id="pdfFull"></p></div>
+  <div class="section"><h2>التفاصيل الإضافية</h2><p id="pdfDetails"></p></div>
+  <div class="footer">© 2026 Ofouq Academy · جميع الحقوق محفوظة</div>
+</div>
+
+<footer class="site-footer">© 2026 Ofouq Academy · جميع الحقوق محفوظة</footer>
+
 <script>
-  // جلب النشاط من localStorage
-  let item = JSON.parse(localStorage.getItem('activitiesView') || 'null');
-
-  if (!item) {
-    document.body.innerHTML = `
-      <div class="error">
-        ❌ النشاط غير موجود
-        <br><br>
-        <a href="activities.html" class="btn">رجوع للأنشطة</a>
-      </div>
-    `;
-  } else {
-    // عرض البيانات الأساسية
-    document.getElementById("title").textContent = item.title || "—";
-    document.getElementById("short").textContent = item.short || "—";
-    document.getElementById("full").textContent = item.full || "—";
-    document.getElementById("details").textContent = item.details || "—";
-
-    // بيانات النشاط (تاريخ + مكان + نوع)
-    const date = item.date || (item.id ? new Date(item.id).toLocaleDateString('ar-EG') : 'غير محدد');
-    const location = item.location || item.place || 'غير محدد';
-    const type = item.type || 'نشاط علمي';
-    
-    document.getElementById("activityMeta").innerHTML = `
-      <div class="meta-item">
-        <div class="meta-icon">📅</div>
-        <span>${date}</span>
-      </div>
-      <div class="meta-item">
-        <div class="meta-icon">📍</div>
-        <span>${location}</span>
-      </div>
-      <div class="meta-item">
-        <div class="meta-icon">🏷️</div>
-        <span>${type}</span>
-      </div>
-    `;
-
-    // الصورة الرئيسية
-    if (item.image) {
-      document.getElementById("imageBox").innerHTML = 
-        `<img src="${item.image}" alt="${item.title}" loading="lazy">`;
-    }
-
-    // المرفقات
-    let fileBox = document.getElementById("fileBox");
-    if (!item.file) {
-      fileBox.innerHTML = `
-        <div class="file-preview">
-          <div style="font-size: clamp(18px, 5vw, 22px); color: #666; margin-bottom: 20px;">
-            📁 لا توجد مرفقات لهذا النشاط
-          </div>
-          <p style="color: #999; font-size: clamp(15px, 4.2vw, 17px); line-height: 1.7;">
-            يمكنك قراءة التفاصيل أعلاه أو التواصل مع الفريق للحصول على مواد إضافية
-          </p>
-        </div>
-      `;
-    } 
-    else if (item.file.startsWith("data:application/pdf")) {
-      fileBox.innerHTML = `
-        <div class="file-preview">
-          <iframe src="${item.file}" loading="lazy"></iframe>
-          <div style="margin-top: 25px;">
-            <a class="btn" href="${item.file}" download>📥 تحميل المرفق PDF</a>
-          </div>
-        </div>
-      `;
-    }
-    else if (item.file.startsWith("data:video")) {
-      fileBox.innerHTML = `
-        <div class="file-preview">
-          <video controls preload="metadata">
-            <source src="${item.file}">
-            متصفحك لا يدعم تشغيل الفيديو.
-          </video>
-          <div style="margin-top: 25px;">
-            <a class="btn" href="${item.file}" download>📹 تحميل الفيديو</a>
-          </div>
-        </div>
-      `;
-    }
-    else {
-      fileBox.innerHTML = `
-        <div class="file-preview" style="text-align: center;">
-          <a class="btn" href="${item.file}" target="_blank" rel="noopener noreferrer">
-            🔗 فتح الرابط الخارجي
-          </a>
-        </div>
-      `;
-    }
-  }
+const STORAGE_KEY="activities";
+function goBack(){if(window.history.length>1){window.history.back();}else{window.location.href='index.html';}}
+function getParam(n){return new URLSearchParams(location.search).get(n);}
+function safeJsonParse(raw,fallback){try{return JSON.parse(raw);}catch(e){return fallback;}}
+function getTextByLang(field){const lang=(localStorage.getItem('lang')||'ar');if(!field)return'';if(typeof field==='string')return field;return field[lang]||field.ar||field.fr||field.en||'';}
+function htmlToText(input){if(!input)return'';if(typeof input!=='string')return String(input);if(input.indexOf('<')===-1&&input.indexOf('>')===-1)return input;const div=document.createElement('div');div.innerHTML=input;return (div.innerText||div.textContent||'').trim();}
+function normalize(v){if(v===null||v===undefined)return'';if(typeof v==='string')return v;if(typeof v==='number'||typeof v==='boolean')return String(v);if(Array.isArray(v))return v.map(x=>normalize(x)).filter(Boolean).join('، ');if(typeof v==='object'){if('ar'in v||'fr'in v||'en'in v)return getTextByLang(v);return JSON.stringify(v,null,2);}return String(v);}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));}
+function detectDownloadUrl(item){return item.fileUrl||item.downloadUrl||item.url||item.link||item.pdf||item.attachment||item.docUrl||item.file||'';}
+function inferTypeLabel(){const t=STORAGE_KEY;const map={research:'بحث محكم',articles:'مقال محكم',files:'ملف بحثي','general-articles':'مقال عام','foreign-articles':'مقال أجنبي','articles-foreign':'مقال أجنبي',editions:'إصدار علمي',activities:'نشاط',talks:'حوار',training:'تكوين',live:'بث مباشر'};return map[t]||'محتوى';}
+function buildMedia(item){const media=document.getElementById('articleMedia');const extra=document.getElementById('extraInfo');if(!media||!extra)return;let html='';const f=detectDownloadUrl(item);const isHttp=(u)=>/^https?:\/\//i.test(u);if(f){const lower=String(f).toLowerCase();if(lower.includes('.mp4')){html=`<div class="media-frame"><video controls controlsList="nodownload"><source src="${esc(f)}" type="video/mp4">متصفحك لا يدعم تشغيل الفيديو.</video></div>`;}else if(isHttp(f)&&(lower.includes('youtube.com')||lower.includes('youtu.be')||lower.includes('drive.google.com')||lower.includes('docs.google.com')||lower.includes('embed'))){html=`<div class="media-frame"><iframe src="${esc(f)}" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" allowfullscreen></iframe></div>`;}else if(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(f)){html=`<div class="media-frame"><img src="${esc(f)}" alt=""></div>`;}else if(/\.(pdf)(\?.*)?$/i.test(f)){html=`<div class="media-frame"><iframe src="${esc(f)}" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-same-origin allow-scripts"></iframe></div>`;}}if(!html&&item.image){html=`<div class="media-frame"><img src="${esc(item.image)}" alt=""></div>`;}if(html){media.innerHTML=html;}else{media.style.display='none';if(f){extra.style.display='block';extra.textContent='يوجد مرفق/رابط لهذا المحتوى، لكنه لا يمكن عرضه هنا. استخدم زر فتح/تحميل.';}}}
+function renderAllFields(item){const container=document.getElementById('allFields');if(!container)return;const skip=new Set(['short','full','details','content','fullContent','body','description','shortContent','image','cover']);const entries=Object.entries(item||{}).filter(([k,_])=>!skip.has(k));container.innerHTML=entries.map(([k,v])=>`<div class="kv"><div class="k">${esc(k)}</div><div class="v">${esc(normalize(v))}</div></div>`).join('');}
+function renderActions(item){const row=document.getElementById('actionsRow');if(!row)return;const u=detectDownloadUrl(item);let html='';if(u){html+=`<a class="action-btn primary" href="${esc(u)}" target="_blank" rel="noopener">فتح المرفق</a>`;html+=`<a class="action-btn" href="${esc(u)}" download>تحميل المرفق</a>`;}row.innerHTML=html;}
+function sanitizeFilename(name){const s=String(name||'content').trim();return s.replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').slice(0,80)||'content';}
+function downloadBlob(filename,blob){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+function buildPlainText(item){const title=getTextByLang(item.title||item.name)||'';const author=normalize(item.author)||'';const dateValue=normalize(item.date||item.createdAt)||'';const typeLabel=inferTypeLabel();const shortRaw=getTextByLang(item.short||item.summary||item.abstract||'');const fullRaw=getTextByLang(item.full||item.content||item.fullContent||item.body||'');const detailsRaw=getTextByLang(item.details||item.description||'');const lines=[];if(title)lines.push(title);lines.push('');if(typeLabel)lines.push('التصنيف: '+typeLabel);if(author)lines.push('الكاتب: '+author);if(dateValue)lines.push('التاريخ: '+dateValue);lines.push('');if(shortRaw){lines.push('الملخص:');lines.push(htmlToText(shortRaw));lines.push('');}if(fullRaw){lines.push('المحتوى الكامل:');lines.push(htmlToText(fullRaw));lines.push('');}if(detailsRaw){lines.push('تفاصيل إضافية:');lines.push(htmlToText(detailsRaw));lines.push('');}return lines.join('\n');}
+function downloadAsPDF(item){const title=getTextByLang(item.title||item.name)||'content';const typeLabel=inferTypeLabel();const author=normalize(item.author)||'غير محدد';const affiliation=normalize(item.affiliation||item.institution||item.university)||'غير محددة';const dateValue=normalize(item.date||item.createdAt)||'غير محدد';const shortRaw=getTextByLang(item.short||item.summary||item.abstract||'');const fullRaw=getTextByLang(item.full||item.content||item.fullContent||item.body||'');const detailsRaw=getTextByLang(item.details||item.description||'');document.getElementById('pdfTitle').textContent=title;document.getElementById('pdfType').textContent=typeLabel;document.getElementById('pdfAuthor').textContent=author;document.getElementById('pdfAffiliation').textContent=affiliation;document.getElementById('pdfDate').textContent=dateValue;document.getElementById('pdfShort').textContent=htmlToText(shortRaw)||'لا يوجد ملخص';document.getElementById('pdfFull').textContent=htmlToText(fullRaw)||'لا يوجد محتوى';document.getElementById('pdfDetails').textContent=htmlToText(detailsRaw)||'لا توجد تفاصيل';const element=document.getElementById('pdfContainer');const opt={margin:[10,10,10,10],filename:sanitizeFilename(title)+'.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,logging:false},jsPDF:{orientation:'portrait',unit:'mm',format:'a4'}};html2pdf().set(opt).from(element).save();}
+function setupContentDownload(item){const row=document.getElementById('actionsRow');if(!row)return;const btnTxt=document.createElement('button');btnTxt.type='button';btnTxt.className='action-btn';btnTxt.textContent='تحميل المحتوى (TXT)';btnTxt.addEventListener('click',()=>{const title=getTextByLang(item.title||item.name)||'content';const filename=sanitizeFilename(title)+'.txt';const text=buildPlainText(item);downloadBlob(filename,new Blob([text],{type:'text/plain;charset=utf-8'}));});const btnJson=document.createElement('button');btnJson.type='button';btnJson.className='action-btn';btnJson.textContent='تحميل التفاصيل (JSON)';btnJson.addEventListener('click',()=>{const title=getTextByLang(item.title||item.name)||'content';const filename=sanitizeFilename(title)+'.json';const json=JSON.stringify(item,null,2);downloadBlob(filename,new Blob([json],{type:'application/json;charset=utf-8'}));});const btnPdf=document.createElement('button');btnPdf.type='button';btnPdf.className='action-btn';btnPdf.textContent='تحميل المحتوى (PDF)';btnPdf.addEventListener('click',()=>{downloadAsPDF(item);});row.appendChild(btnTxt);row.appendChild(btnJson);row.appendChild(btnPdf);}
+(function(){const idRaw=getParam('id');const id=idRaw===null?null:String(idRaw);const list=safeJsonParse(localStorage.getItem(STORAGE_KEY)||'[]',[]);const item=list.find(x=>String(x?.id)===id);if(!item){document.body.innerHTML='<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';return;}const typeLabel=inferTypeLabel();document.getElementById('articleTypeLabel').textContent=typeLabel;document.getElementById('topType').textContent=typeLabel;document.getElementById('sidebarType').textContent=typeLabel;const title=getTextByLang(item.title||item.name)||'بدون عنوان';document.getElementById('articleTitle').textContent=title;document.getElementById('topTitle').textContent=title;const shortRaw=getTextByLang(item.short||item.summary||item.abstract||'');document.getElementById('articleShort').textContent=htmlToText(shortRaw);const fullRaw=getTextByLang(item.full||item.content||item.fullContent||item.body||'');document.getElementById('articleFull').textContent=htmlToText(fullRaw);const detailsRaw=getTextByLang(item.details||item.description||'');document.getElementById('articleDetails').textContent=htmlToText(detailsRaw);const author=normalize(item.author)||'غير محدد';const affiliation=normalize(item.affiliation||item.institution||item.university)||'غير محددة';const dateValue=normalize(item.date||item.createdAt)||'غير محدد';document.getElementById('articleAuthor').textContent='الكاتب: '+author;document.getElementById('articleAffiliation').textContent='المؤسسة: '+affiliation;document.getElementById('articleDate').textContent='التاريخ: '+dateValue;document.getElementById('sidebarAuthor').textContent=author;document.getElementById('sidebarAffiliation').textContent=affiliation;document.getElementById('sidebarDate').textContent=dateValue;const tagsEl=document.getElementById('sidebarTags');const tags=Array.isArray(item.tags)?item.tags:(typeof item.tags==='string'?item.tags.split(','):[]);tagsEl.innerHTML=(tags||[]).map(t=>t&&String(t).trim()).filter(Boolean).map(t=>`<span class="sidebar-tag">${esc(t)}</span>`).join('')||'<span class="sidebar-tag">Ofouq</span>';const meta=[];meta.push('ID: '+esc(item.id));if(item.views!=null)meta.push('Views: '+esc(item.views));document.getElementById('headMeta').textContent=meta.join(' · ');buildMedia(item);renderActions(item);setupContentDownload(item);renderAllFields(item);})();
 </script>
-
 </body>
 </html>
