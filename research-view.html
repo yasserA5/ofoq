@@ -3,155 +3,303 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>عرض البحث</title>
+  <title>Ofouq Academy | عرض المحتوى</title>
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
+  <link rel="icon" type="image/png" href="images/ofouq-logo.png">
 
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --accent:#0aa2ca;
-      --accent-dark:#078fa8;
-      --bg:#0f172a;
-      --bg-soft:#0b1726;
+      --accent:#0f9bce;
+      --accent-soft:#e0f2fe;
+      --accent-dark:#0369a1;
+      --bg:#edf2f7;
+      --bg-soft:#f3f4f6;
       --card:#ffffff;
+      --card-soft:#f9fafb;
+      --border:#e2e8f0;
       --muted:#6b7280;
-      --border:#e5e7eb;
+      --text:#111827;
     }
     *{box-sizing:border-box;margin:0;padding:0;}
     html,body{width:100%;overflow-x:hidden;}
     body{
       font-family:"Tajawal",sans-serif;
-      background:radial-gradient(circle at top,#0b2537,#020617);
-      color:#0f172a;
+      background:var(--bg);
+      color:var(--text);
       line-height:1.7;
     }
 
-    /* إطار الصفحة */
-    .page-shell{
-      min-height:100vh;
-      padding:18px 10px 32px;
-      background:linear-gradient(135deg,#020617 0%,#020617 35%,#0a1726 100%);
+    /* =========================
+       Anti-copy (soft protection)
+       ========================= */
+    body, .article-card, .sidebar, .site-header, .site-footer, #articleFull, #articleShort, #articleDetails {
+      -webkit-user-select:none;
+      -ms-user-select:none;
+      user-select:none;
+    }
+    /* Allow selection inside inputs only (if any later) */
+    input, textarea {
+      -webkit-user-select:text;
+      -ms-user-select:text;
+      user-select:text;
     }
 
-    .article-layout{
+    /* Black shield overlay */
+    #shield{
+      position:fixed;
+      inset:0;
+      background:#000;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .12s ease;
+      z-index:999999;
+    }
+    #shield.on{ opacity:1; pointer-events:auto; }
+
+    /* Watermark layer */
+    #wm{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:999998;
+      opacity:.14;
+      mix-blend-mode:multiply;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      color:#0f172a;
+      text-align:center;
+      white-space:pre-line;
+      transform: rotate(-22deg);
+      font-size:18px;
+      gap:0;
+    }
+    #wm .wm-box{
+      padding:18px 26px;
+      border-radius:18px;
+      background:rgba(255,255,255,.35);
+      border:1px dashed rgba(15,23,42,.25);
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+      backdrop-filter: blur(2px);
+      animation: wmMove 7s ease-in-out infinite;
+    }
+    @keyframes wmMove{
+      0%,100%{ transform: translate(0,0); }
+      50%{ transform: translate(12px,-10px); }
+    }
+
+    /* Print: hide page */
+    @media print { body{ display:none !important; } }
+
+    /* الهيدر + لغات + زر رجوع */
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter:blur(10px);
+      background:linear-gradient(90deg,#ffffffee,#e0f2fbee);
+      border-bottom:1px solid rgba(203,213,225,0.9);
+    }
+    .site-header-inner{
       max-width:1180px;
       margin:0 auto;
-    }
-
-    /* شريط علوي بسيط */
-    .top-bar{
+      padding:10px 16px;
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      margin-bottom:18px;
-      color:#e5f3ff;
-      gap:12px;
+      justify-content:space-between;
+      gap:16px;
       flex-wrap:wrap;
     }
-    .top-bar-title{
+    .brand{
       display:flex;
       align-items:center;
       gap:10px;
     }
-    .top-bar-logo{
-      width:34px;
-      height:34px;
-      border-radius:10px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+    .brand-logo{
+      width:36px;
+      height:36px;
+      border-radius:999px;
+      background:#ffffff;
+      border:1px solid #d1d5db;
       display:flex;
       align-items:center;
       justify-content:center;
-      color:#fff;
-      font-weight:800;
-      font-size:14px;
-    }
-    .top-bar h1{
-      font-size:16px;
-      font-weight:600;
-    }
-    .top-bar a{
-      color:#9ca3af;
-      font-size:13px;
-      text-decoration:none;
-    }
-    .top-bar a:hover{color:#e5f3ff;}
-
-    /* المحتوى الرئيسي كبطاقة */
-    .article-card{
-      background:var(--card);
-      border-radius:18px;
-      box-shadow:0 20px 50px rgba(0,0,0,0.30);
       overflow:hidden;
-      border:1px solid rgba(148,163,184,0.25);
+      box-shadow:0 4px 10px rgba(148,163,184,0.6);
     }
-
-    .article-media{
-      margin:0;
-      background:#020617;
-      padding:10px 10px 4px;
-      border-bottom:1px solid rgba(148,163,184,0.2);
-    }
-    .media-frame{
-      width:100%;
-      max-width:1160px;
-      height:78vh;
-      border-radius:14px;
-      overflow:hidden;
-      background:#000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .article-media video,
-    .article-media img{
+    .brand-logo img{
       width:100%;
       height:100%;
       object-fit:contain;
-      background:#000;
     }
+    .brand-text-title{
+      font-size:16px;
+      font-weight:700;
+      color:#0f172a;
+    }
+    .brand-text-sub{
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .header-right{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .top-back-btn{
+      border-radius:999px;
+      border:1px solid #0f172a20;
+      background:linear-gradient(135deg,#0ea5e9,#22c55e);
+      color:#ffffff;
+      padding:6px 16px;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:700;
+      box-shadow:0 8px 18px rgba(34,197,94,0.35);
+      transition:transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+    .top-back-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 26px rgba(34,197,94,0.45);
+      filter:brightness(1.03);
+    }
+    .top-back-btn:active{
+      transform:translateY(0);
+      box-shadow:0 6px 14px rgba(34,197,94,0.3);
+    }
+
+    .lang-switch{
+      display:flex;
+      gap:6px;
+      font-size:12px;
+    }
+    .lang-btn{
+      border-radius:999px;
+      padding:3px 10px;
+      border:1px solid #cbd5f5;
+      background:#ffffff;
+      color:#374151;
+      cursor:pointer;
+      min-width:60px;
+    }
+    .lang-btn.active{
+      background:var(--accent);
+      border-color:var(--accent);
+      color:#ffffff;
+    }
+
+    /* الإطار العام */
+    .page-shell{
+      min-height:100vh;
+      padding:22px 10px 32px;
+    }
+    .layout{
+      max-width:1180px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:minmax(0,3.1fr) minmax(260px,1fr);
+      gap:22px;
+    }
+    @media(max-width:900px){
+      .layout{ grid-template-columns:1fr; }
+    }
+
+    /* بطاقة المحتوى */
+    .article-card{
+      background:var(--card);
+      border-radius:20px;
+      border:1px solid var(--border);
+      box-shadow:0 18px 50px rgba(148,163,184,0.35);
+      overflow:hidden;
+    }
+    .article-head{
+      padding:16px 18px 10px;
+      border-bottom:1px solid #e5e7eb;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      background:linear-gradient(135deg,#e0f2fe,#ffffff);
+    }
+    .article-title-main{
+      font-size:21px;
+      font-weight:700;
+      margin-bottom:4px;
+      color:#0f172a;
+    }
+    .article-subline{
+      font-size:12px;
+      color:#6b7280;
+    }
+    .article-head-right{
+      font-size:11px;
+      color:#9ca3af;
+      text-align:left;
+    }
+
+    /* الفيديو / الصورة بنسبة 16:9 */
+    .article-media{
+      padding:0 18px 16px;
+      background:#f3f4f6;
+    }
+    .media-frame{
+      position:relative;
+      width:100%;
+      max-width:1120px;
+      margin:0 auto;
+      padding-bottom:56.25%;
+      border-radius:16px;
+      overflow:hidden;
+      background:#000;
+      box-shadow:0 10px 25px rgba(148,163,184,0.55);
+    }
+    .article-media video,
+    .article-media img,
     .article-media iframe{
+      position:absolute;
+      inset:0;
       width:100%;
       height:100%;
       border:0;
-      border-radius:14px;
+      object-fit:contain;
+      background:#000;
     }
+    .article-media iframe{ border-radius:16px; }
 
     .article-body{
-      padding:20px 20px 24px;
+      padding:18px 20px 22px;
+      background:var(--card-soft);
     }
-
-    .breadcrumb{
-      font-size:13px;
-      color:var(--muted);
-      margin-bottom:6px;
-    }
-    .breadcrumb a{
-      color:var(--accent);
-      text-decoration:none;
-    }
-    .breadcrumb a:hover{text-decoration:underline;}
-
     .article-type-pill{
       display:inline-flex;
       align-items:center;
       gap:6px;
       padding:3px 9px;
       border-radius:999px;
-      background:rgba(8,145,178,0.06);
+      background:var(--accent-soft);
       color:var(--accent-dark);
-      font-size:12px;
+      font-size:11px;
       font-weight:700;
-      margin-bottom:6px;
+      margin-bottom:8px;
     }
-
     .article-header-main h2{
-      font-size:22px;
-      margin-bottom:6px;
-      color:#0f172a;
+      font-size:19px;
+      margin-bottom:5px;
+      color:#111827;
     }
     .article-meta{
-      font-size:13px;
-      color:#6b7280;
+      font-size:12px;
+      color:var(--muted);
       display:flex;
       flex-wrap:wrap;
       gap:8px;
@@ -159,20 +307,16 @@
     .meta-dot::before{
       content:"•";
       margin:0 4px;
-      color:#9ca3af;
+      color:#d1d5db;
     }
-
     .divider{
       height:1px;
       background:linear-gradient(to right,transparent,#e5e7eb,transparent);
       margin:16px 0 14px;
     }
-
-    .section-block{
-      margin-bottom:14px;
-    }
+    .section-block{ margin-bottom:18px; }
     .section-block h3{
-      font-size:15px;
+      font-size:14px;
       margin-bottom:4px;
       color:#111827;
     }
@@ -183,58 +327,110 @@
       line-height:1.9;
       white-space:pre-wrap;
     }
-
     .info-box{
-      margin-top:10px;
-      padding:10px 12px;
+      margin-top:4px;
+      padding:9px 11px;
       border-radius:10px;
       background:#eff6ff;
-      border:1px solid #dbeafe;
-      font-size:13px;
-      color:#1e3a8a;
+      border:1px solid #bfdbfe;
+      font-size:12px;
+      color:#1e40af;
     }
 
-    @media(max-width:900px){
-      .page-shell{padding:12px 8px 20px;}
-      .media-frame{height:65vh;}
-      .article-body{padding:16px 14px 18px;}
+    /* الشريط الجانبي */
+    .sidebar{
+      background:#ffffff;
+      border-radius:18px;
+      border:1px solid var(--border);
+      padding:16px 16px 18px;
+      box-shadow:0 14px 40px rgba(148,163,184,0.35);
+      font-size:13px;
+      align-self:flex-start;
     }
-    @media(max-width:600px){
-      .top-bar{flex-direction:column;align-items:flex-start;}
-      .media-frame{height:60vh;}
-      .article-body{padding:14px 12px 16px;}
-      .article-header-main h2{font-size:19px;}
+    .sidebar h3{
+      font-size:14px;
+      margin-bottom:10px;
+      color:#0f172a;
+    }
+    .sidebar-row{ margin-bottom:10px; }
+    .sidebar-label{ font-size:12px; color:#6b7280; margin-bottom:2px; }
+    .sidebar-value{ color:#111827; }
+    .sidebar-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:6px;
+    }
+    .sidebar-tag{
+      background:var(--accent-soft);
+      color:var(--accent-dark);
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:11px;
+    }
+
+    @media(max-width:640px){
+      .site-header-inner{flex-direction:column;align-items:flex-start;}
+      .page-shell{padding:18px 8px 26px;}
+      .article-body{padding:16px 14px 18px;}
+      .article-head{padding:14px 14px 8px;}
+      .article-title-main{font-size:18px;}
+    }
+
+    .site-footer{
+      padding:14px 10px 24px;
+      font-size:11px;
+      color:#6b7280;
+      text-align:center;
     }
   </style>
 </head>
+
 <body>
+  <!-- overlays -->
+  <div id="wm" aria-hidden="true"><div class="wm-box" id="wmText"></div></div>
+  <div id="shield" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <div class="brand">
+      <div class="brand-logo">
+        <img src="images/logo.png" alt="Ofouq logo">
+      </div>
+      <div>
+        <div class="brand-text-title" id="brandTitle">Ofouq Academy</div>
+        <div class="brand-text-sub" id="brandSubtitle">أكاديمية آفاق للبحث والتدريب</div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button type="button" class="top-back-btn" id="headerBackBtn" onclick="goBack()">
+        ← <span id="headerBackLabel">رجوع</span>
+      </button>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="ar" onclick="switchLang('ar')">عربي</button>
+        <button class="lang-btn" data-lang="fr" onclick="switchLang('fr')">Français</button>
+        <button class="lang-btn" data-lang="en" onclick="switchLang('en')">English</button>
+      </div>
+    </div>
+  </div>
+</header>
 
 <div class="page-shell">
-  <div class="article-layout">
-
-    <header class="top-bar">
-      <div class="top-bar-title">
-        <div class="top-bar-logo">OF</div>
-        <div>
-          <h1>Ofouq Academy — عرض المحتوى</h1>
-          <a href="index.html">الرجوع للواجهة الرئيسية</a>
-        </div>
-      </div>
-      <div style="font-size:12px;color:#9ca3af;">
-        تم إنشاؤه عبر لوحة التحكم الداخلية
-      </div>
-    </header>
+  <div class="layout">
 
     <article class="article-card">
+      <div class="article-head">
+        <div>
+          <div class="article-title-main" id="topTitle">عنوان المحتوى</div>
+          <div class="article-subline" id="topType">تصنيف المحتوى</div>
+        </div>
+        <div class="article-head-right" id="headMeta"></div>
+      </div>
 
       <section class="article-media" id="articleMedia"></section>
 
       <section class="article-body">
-        <nav class="breadcrumb">
-          <a href="index.html">الرئيسية</a> /
-          <span id="bcType">محتوى</span>
-        </nav>
-
         <div class="article-type-pill" id="articleTypeLabel">محتوى</div>
 
         <header class="article-header-main">
@@ -249,17 +445,17 @@
         <div class="divider"></div>
 
         <section class="section-block">
-          <h3>الملخص</h3>
+          <h3 id="labelSummary">الملخص</h3>
           <p id="articleShort"></p>
         </section>
 
         <section class="section-block">
-          <h3>المحتوى الكامل</h3>
+          <h3 id="labelFull">المحتوى الكامل</h3>
           <div id="articleFull"></div>
         </section>
 
         <section class="section-block">
-          <h3>تفاصيل إضافية</h3>
+          <h3 id="labelDetails">تفاصيل إضافية</h3>
           <p id="articleDetails"></p>
         </section>
 
@@ -267,59 +463,353 @@
       </section>
     </article>
 
+    <aside class="sidebar">
+      <h3 id="sidebarTitle">معلومات النشر</h3>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelAuthor">الكاتب</div>
+        <div class="sidebar-value" id="sidebarAuthor">غير محدد</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelAffiliation">المؤسسة</div>
+        <div class="sidebar-value" id="sidebarAffiliation">غير محددة</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelDate">التاريخ</div>
+        <div class="sidebar-value" id="sidebarDate">غير محدد</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelType">التصنيف</div>
+        <div class="sidebar-value" id="sidebarType">محتوى</div>
+      </div>
+
+      <div class="sidebar-row">
+        <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
+        <div class="sidebar-tags" id="sidebarTags">
+          <span class="sidebar-tag" id="tag1">Ofouq</span>
+          <span class="sidebar-tag" id="tag2">بحث علمي</span>
+        </div>
+      </div>
+    </aside>
+
   </div>
 </div>
 
+<footer class="site-footer" id="footerText">
+  © 2025 Ofouq Academy · جميع الحقوق محفوظة
+</footer>
+
 <script>
+/* =========================
+   Anti-copy + Shield + WM
+   ========================= */
+
+// Prevent right-click
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// Prevent copy/cut/paste (soft)
+document.addEventListener('copy', (e) => e.preventDefault());
+document.addEventListener('cut', (e) => e.preventDefault());
+document.addEventListener('paste', (e) => e.preventDefault());
+
+// Block common shortcuts (soft)
+document.addEventListener('keydown', (e) => {
+  const k = (e.key || '').toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && ['c','x','v','p','s','u','a'].includes(k)) e.preventDefault();
+  if (e.key === 'F12') e.preventDefault();
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].includes(k)) e.preventDefault();
+});
+
+// Shield logic: hide content when tab is not visible (visibilitychange is a standard signal). [web:103]
+const shield = document.getElementById('shield');
+function shieldOn(){ shield.classList.add('on'); }
+function shieldOff(){ shield.classList.remove('on'); }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') shieldOn();
+  else shieldOff();
+});
+window.addEventListener('blur', shieldOn);
+window.addEventListener('focus', shieldOff);
+window.addEventListener('beforeprint', shieldOn);
+window.addEventListener('afterprint', shieldOff);
+
+// Try to react to PrintScreen (not reliable across OS/browsers)
+document.addEventListener('keyup', (e) => {
+  if (e.key === 'PrintScreen') {
+    shieldOn();
+    setTimeout(shieldOff, 1200);
+  }
+});
+
+// Watermark based on logged-in user (from localStorage). localStorage is origin-scoped. [web:67]
+function getUser(){
+  try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch(e){ return null; }
+}
+function setWatermark(){
+  const u = getUser();
+  const wm = document.getElementById('wmText');
+  const who = (u && u.loggedIn) ? (u.email || u.username || u.name || 'USER') : 'GUEST';
+  const now = new Date().toLocaleString();
+  wm.textContent = `Ofouq Academy\n${who}\n${now}`;
+}
+setWatermark();
+setInterval(setWatermark, 15000);
+
+/* =========================
+   Your original page logic
+   ========================= */
+
+function goBack(){
+  if (window.history.length > 1){
+    window.history.back();
+  } else {
+    window.location.href = 'index.html';
+  }
+}
+
+function getCurrentLang(){
+  return localStorage.getItem('uiLang') || 'ar';
+}
+function getTextByLang(field, lang){
+  if (!field) return '';
+  if (typeof field === 'string') return field;
+  return field[lang] || field.ar || field.fr || field.en || '';
+}
+
+/* ترجمة النص باستخدام MyMemory */
+async function translateText(text, fromLang, toLang){
+  if(!text || !text.trim()) return '';
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
+  try{
+    const res = await fetch(url);
+    const data = await res.json();
+    return (data && data.responseData && data.responseData.translatedText) || '';
+  }catch(e){
+    console.error('translation error', e);
+    return '';
+  }
+}
+
+/* إكمال الترجمات الناقصة للحقل */
+async function autoFillTranslations(fieldObj){
+  const result = { ar: fieldObj.ar || '', fr: fieldObj.fr || '', en: fieldObj.en || '' };
+  const langs = ['ar','fr','en'];
+  const sourceLang = langs.find(l => result[l] && result[l].trim());
+  if(!sourceLang) return result;
+  const sourceText = result[sourceLang];
+  for(const target of langs){
+    if(target === sourceLang) continue;
+    if(!result[target] || !result[target].trim()){
+      const tr = await translateText(sourceText, sourceLang, target);
+      if(tr) result[target] = tr;
+    }
+  }
+  return result;
+}
+
+/* نصوص الواجهة */
+const uiTexts = {
+  ar: {
+    dir: 'rtl', langAttr: 'ar',
+    brandTitle: 'Ofouq Academy',
+    brandSubtitle: 'أكاديمية آفاق للبحث والتدريب',
+    back: 'رجوع',
+    sectionSummary: 'الملخص',
+    sectionFull: 'المحتوى الكامل',
+    sectionDetails: 'تفاصيل إضافية',
+    sidebarTitle: 'معلومات النشر',
+    labelAuthor: 'الكاتب',
+    labelAffiliation: 'المؤسسة',
+    labelDate: 'التاريخ',
+    labelType: 'التصنيف',
+    labelTags: 'وسوم مقترحة',
+    tag1: 'Ofouq',
+    tag2: 'بحث علمي',
+    footer: '© 2025 Ofouq Academy · جميع الحقوق محفوظة',
+    unknownAuthor: 'غير محدد',
+    unknownAff: 'غير محددة',
+    unknownDate: 'غير محدد',
+    noTitle: 'بدون عنوان'
+  },
+  fr: {
+    dir: 'ltr', langAttr: 'fr',
+    brandTitle: 'Académie Ofouq',
+    brandSubtitle: 'Centre de recherche et de formation',
+    back: 'Retour',
+    sectionSummary: 'Résumé',
+    sectionFull: 'Contenu complet',
+    sectionDetails: 'Détails supplémentaires',
+    sidebarTitle: 'Informations de publication',
+    labelAuthor: 'Auteur',
+    labelAffiliation: 'Institution',
+    labelDate: 'Date',
+    labelType: 'Catégorie',
+    labelTags: 'Mots-clés suggérés',
+    tag1: 'Ofouq',
+    tag2: 'Recherche',
+    footer: '© 2025 Académie Ofouq · Tous droits réservés',
+    unknownAuthor: 'Non spécifié',
+    unknownAff: 'Non spécifiée',
+    unknownDate: 'Non spécifiée',
+    noTitle: 'Sans titre'
+  },
+  en: {
+    dir: 'ltr', langAttr: 'en',
+    brandTitle: 'Ofouq Academy',
+    brandSubtitle: 'Center for Research and Training',
+    back: 'Back',
+    sectionSummary: 'Summary',
+    sectionFull: 'Full content',
+    sectionDetails: 'Additional details',
+    sidebarTitle: 'Publication info',
+    labelAuthor: 'Author',
+    labelAffiliation: 'Affiliation',
+    labelDate: 'Date',
+    labelType: 'Category',
+    labelTags: 'Suggested tags',
+    tag1: 'Ofouq',
+    tag2: 'Research',
+    footer: '© 2025 Ofouq Academy · All rights reserved',
+    unknownAuthor: 'Not specified',
+    unknownAff: 'Not specified',
+    unknownDate: 'Not specified',
+    noTitle: 'Untitled'
+  }
+};
+
+const typeLabels = {
+  research:{ar:'بحث محكم',fr:'Recherche scientifique',en:'Research paper'},
+  articles:{ar:'مقال محكم',fr:'Article scientifique',en:'Scholarly article'},
+  files:{ar:'ملف بحثي',fr:'Fichier de recherche',en:'Research file'},
+  'general-articles':{ar:'مقال عام',fr:'Article général',en:'General article'},
+  'foreign-articles':{ar:'مقال أجنبي',fr:'Article étranger',en:'Foreign article'},
+  'special-politics':{ar:'تخصص علوم سياسية',fr:'Sciences politiques',en:'Political science'},
+  'special-ir':{ar:'تخصص العلاقات الدولية',fr:'Relations internationales',en:'International relations'},
+  'special-admin-law':{ar:'تخصص القانون الإداري',fr:'Droit administratif',en:'Administrative law'},
+  'special-const-law':{ar:'تخصص القانون الدستوري',fr:'Droit constitutionnel',en:'Constitutional law'},
+  'special-public-policy':{ar:'تخصص السياسات العمومية',fr:'Politiques publiques',en:'Public policy'},
+  editions:{ar:'إصدار علمي',fr:'Édition scientifique',en:'Scientific edition'},
+  activities:{ar:'نشاط',fr:'Activité',en:'Activity'},
+  talks:{ar:'حوار',fr:'Entretien',en:'Talk'},
+  training:{ar:'تكوين',fr:'Formation',en:'Training'},
+  live:{ar:'بث مباشر',fr:'Direct',en:'Live stream'}
+};
+
+function getTypeLabel(type, lang){
+  const t = typeLabels[type];
+  if(!t) return 'محتوى';
+  return t[lang] || t.ar;
+}
+
+/* لغة واجهة */
+function applyLang(lang){
+  const t = uiTexts[lang] || uiTexts.ar;
+  document.documentElement.lang = t.langAttr;
+  document.documentElement.dir  = t.dir;
+
+  document.getElementById('brandTitle').textContent     = t.brandTitle;
+  document.getElementById('brandSubtitle').textContent  = t.brandSubtitle;
+
+  document.getElementById('labelSummary').textContent = t.sectionSummary;
+  document.getElementById('labelFull').textContent    = t.sectionFull;
+  document.getElementById('labelDetails').textContent = t.sectionDetails;
+
+  document.getElementById('sidebarTitle').textContent      = t.sidebarTitle;
+  document.getElementById('labelAuthor').textContent       = t.labelAuthor;
+  document.getElementById('labelAffiliation').textContent  = t.labelAffiliation;
+  document.getElementById('labelDate').textContent         = t.labelDate;
+  document.getElementById('labelType').textContent         = t.labelType;
+  document.getElementById('labelTags').textContent         = t.labelTags;
+  document.getElementById('tag1').textContent              = t.tag1;
+  document.getElementById('tag2').textContent              = t.tag2;
+  document.getElementById('footerText').textContent        = t.footer;
+  document.getElementById('headerBackLabel').textContent   = t.back;
+
+  const currentType = window.currentContentType || 'research';
+  const typeLabel   = getTypeLabel(currentType, lang);
+  document.getElementById('articleTypeLabel').textContent = typeLabel;
+  document.getElementById('topType').textContent          = typeLabel;
+  document.getElementById('sidebarType').textContent      = typeLabel;
+
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+/* عرض المحتوى حسب اللغة */
+function renderContentForLang(lang){
+  const it = window.displayItem;
+  if(!it) return;
+  const tUI = uiTexts[lang] || uiTexts.ar;
+
+  const title       = getTextByLang(it.title,   lang) || tUI.noTitle;
+  const shortText   = getTextByLang(it.short,   lang) || '';
+  const fullText    = getTextByLang(it.full,    lang) || '';
+  const detailsText = getTextByLang(it.details, lang) || '';
+
+  document.getElementById('articleTitle').textContent = title;
+  document.getElementById('topTitle').textContent     = title;
+
+  document.getElementById('articleShort').textContent   = shortText;
+  document.getElementById('articleFull').textContent    = fullText;
+  document.getElementById('articleDetails').textContent = detailsText;
+
+  const author      = it.author      || tUI.unknownAuthor;
+  const affiliation = it.affiliation || tUI.unknownAff;
+  const dateValue   = it.date        || tUI.unknownDate;
+
+  document.getElementById('articleAuthor').textContent      = tUI.labelAuthor      + ': ' + author;
+  document.getElementById('articleAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
+  document.getElementById('articleDate').textContent        = tUI.labelDate        + ': ' + dateValue;
+
+  const sbAuthor      = document.getElementById('sidebarAuthor');
+  const sbAffiliation = document.getElementById('sidebarAffiliation');
+  const sbDate        = document.getElementById('sidebarDate');
+  if(sbAuthor)      sbAuthor.textContent      = author;
+  if(sbAffiliation) sbAffiliation.textContent = affiliation;
+  if(sbDate)        sbDate.textContent        = dateValue;
+}
+
+/* مبدّل اللغة */
+async function switchLang(lang){
+  localStorage.setItem('uiLang', lang);
+  applyLang(lang);
+
+  if(window.displayItem){
+    const it = window.displayItem;
+    it.title   = await autoFillTranslations(it.title   || {});
+    it.short   = await autoFillTranslations(it.short   || {});
+    it.full    = await autoFillTranslations(it.full    || {});
+    it.details = await autoFillTranslations(it.details || {});
+    renderContentForLang(lang);
+  }
+}
+
+/* قراءة بارامترات URL */
 function getQueryParam(name){
-  const params=new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);
   return params.get(name);
 }
 
 const type = getQueryParam('type') || 'research';
 const id   = Number(getQueryParam('id'));
+window.currentContentType = type;
 
-const typeLabels = {
-  'research':'بحث محكم',
-  'articles':'مقال محكم',
-  'files':'ملف بحثي',
-  'general-articles':'مقال عام',
-  'foreign-articles':'مقال أجنبي',
-  'special-politics':'تخصص علوم سياسية',
-  'special-ir':'تخصص العلاقات الدولية',
-  'special-admin-law':'تخصص القانون الإداري',
-  'special-const-law':'تخصص القانون الدستوري',
-  'special-public-policy':'تخصص السياسات العمومية',
-  'editions':'إصدار علمي',
-  'activities':'نشاط',
-  'talks':'حوار',
-  'training':'تكوين',
-  'live':'بث مباشر'
-};
-
-document.getElementById('bcType').textContent       = typeLabels[type] || 'محتوى';
-document.getElementById('articleTypeLabel').textContent = typeLabels[type] || 'محتوى';
-
-const allData = JSON.parse(localStorage.getItem(type) || '[]');
+const allData = JSON.parse(localStorage.getItem(type) || '[]'); // origin-specific storage [web:67]
 const item    = allData.find(i => i.id === id);
+window.displayItem = item;
 
 if(!item){
   document.body.innerHTML =
-    '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#e5e7eb;">العنصر غير موجود أو تم حذفه.</p>';
-} else {
-  document.getElementById('articleTitle').textContent        = item.title || 'بدون عنوان';
-  document.getElementById('articleAuthor').textContent       = 'الكاتب: ' + (item.author || 'غير محدد');
-  document.getElementById('articleAffiliation').textContent  = 'المؤسسة: ' + (item.affiliation || 'غير محددة');
-  document.getElementById('articleDate').textContent         = 'التاريخ: ' + (item.date || 'غير محدد');
-  document.getElementById('articleShort').textContent        = item.short || '';
-  document.getElementById('articleFull').textContent         = item.full  || '';
-  document.getElementById('articleDetails').textContent      = item.details || '';
-
+    '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
+}else{
   const mediaContainer = document.getElementById('articleMedia');
   const extraInfo      = document.getElementById('extraInfo');
   let mediaHtml = '';
-
-  console.log('ITEM FILE =', item.file);
 
   if(item.file){
     const f = item.file;
@@ -330,11 +820,9 @@ if(!item){
         ? 'http://localhost:3000' + f
         : f;
 
-      console.log('VIDEO URL =', videoUrl);
-
       mediaHtml = `
         <div class="media-frame">
-          <video controls>
+          <video controls controlsList="nodownload">
             <source src="${videoUrl}" type="video/mp4">
             متصفحك لا يدعم تشغيل الفيديو أو الرابط غير صالح.
           </video>
@@ -349,10 +837,13 @@ if(!item){
     }
   }
 
+  const currentLangForAlt = getCurrentLang();
+  const titleForAlt = getTextByLang(item.title, currentLangForAlt) || 'بدون عنوان';
+
   if(!mediaHtml && item.image){
     mediaHtml = `
       <div class="media-frame">
-        <img src="${item.image}" alt="${item.title || ''}">
+        <img src="${item.image}" alt="${titleForAlt}">
       </div>
     `;
   }
@@ -368,6 +859,21 @@ if(!item){
     }
   }
 }
+
+window.addEventListener('load', async ()=>{
+  if(window.displayItem){
+    const it = window.displayItem;
+    it.title   = await autoFillTranslations(it.title   || {});
+    it.short   = await autoFillTranslations(it.short   || {});
+    it.full    = await autoFillTranslations(it.full    || {});
+    it.details = await autoFillTranslations(it.details || {});
+  }
+  const savedLang = getCurrentLang();
+  applyLang(savedLang);
+  if(window.displayItem){
+    renderContentForLang(savedLang);
+  }
+});
 </script>
 
 </body>
