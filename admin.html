@@ -1305,9 +1305,14 @@ eTag">فعال/مضاف</span>
       </main>
     </div>
 
-    <script>
+<script type="module">
+import { db } from "./firebase-init.js";
+import {
+  collection, addDoc, getDocs, query, orderBy, deleteDoc, doc
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
       const ADMIN_CODE_CONST = "admin";
-      const ADMIN_PASS_CONST = "ofouqaca20252026";
+      const ADMIN_PASS_CONST = "12356";
 
       // رفع الفيديو إلى سيرفر Node
       async function uploadVideoToServer(file) {
@@ -2386,6 +2391,26 @@ async function translateText(text, fromLang, toLang) {
           image: "",
           file: "",
         };
+  // ✅ Firestore: research فقط
+  if (key === 'research') {
+    try{
+      const ref = await addDoc(collection(db, "research"), newObj);
+      newObj.docId = ref.id;
+
+      // حدّث الواجهة
+      db['research'].unshift(newObj);
+      renderList('research');
+      resetForm('research');
+      updateStats();
+
+      alert('✅ تم حفظ البحث في Firestore');
+      return;
+    }catch(e){
+      console.error("Firestore save error:", e);
+      alert('❌ خطأ أثناء الحفظ في Firestore: ' + (e.code || e.message));
+      return;
+    }
+  }
 
         if (cfg.key === "live") {
           newObj.file = document.getElementById("live_link").value.trim();
@@ -2535,6 +2560,26 @@ async function translateText(text, fromLang, toLang) {
       }
 
       function deleteItem(key, id) {
+        if (key === 'research') {
+    const item = db['research'].find(i => i.id === id);
+    if (!item || !item.docId) return alert('docId غير موجود لهذا العنصر');
+
+    if (!confirm('حذف هذا البحث من Firestore؟')) return;
+
+    deleteDoc(doc(db, "research", item.docId))
+      .then(()=>{
+        db['research'] = db['research'].filter(i => i.id !== id);
+        renderList('research');
+        updateStats();
+      })
+      .catch(e=>{
+        console.error(e);
+        alert('خطأ حذف: ' + (e.code || e.message));
+      });
+
+    return;
+  }
+
         if (!confirm("هل تريد حذف هذا العنصر نهائياً؟")) return;
         db[key] = db[key].filter((i) => i.id !== id);
         localStorage.setItem(key, JSON.stringify(db[key]));
@@ -2570,24 +2615,35 @@ async function translateText(text, fromLang, toLang) {
         alert("✅ تم مسح جميع البيانات");
       }
 
-      window.addEventListener("load", () => {
-        if (sessionStorage.getItem("adminAuthed") === "1") {
-          document.getElementById("adminLock").style.display = "none";
-          const app = document.querySelector(".app");
-          app.style.display = "grid";
-          requestAnimationFrame(() => app.classList.add("visible"));
-          applyUiTranslations();
-          showSection(currentSection);
-        } else {
-          document.getElementById("adminLock").style.display = "flex";
-          document.querySelector(".app").style.display = "none";
-        }
-        updateStats();
-        const statsCard = document.getElementById("statsCard");
-        if (statsCard) {
-          setTimeout(() => statsCard.classList.add("visible"), 80);
-        }
-      });
+window.addEventListener('load', async ()=>{
+  if (sessionStorage.getItem('adminAuthed') === '1'){
+    document.getElementById('adminLock').style.display = 'none';
+    const app = document.querySelector('.app');
+    app.style.display = 'grid';
+    requestAnimationFrame(()=> app.classList.add('visible'));
+    applyUiTranslations();
+    showSection(currentSection);
+  } else {
+    document.getElementById('adminLock').style.display = 'flex';
+    document.querySelector('.app').style.display = 'none';
+  }
+
+  // ✅ تحميل research من Firestore عند فتح الادمن
+  try{
+    const q = query(collection(db, "research"), orderBy("id", "desc"));
+    const snap = await getDocs(q);
+    db['research'] = [];
+    snap.forEach(d => db['research'].push({ docId: d.id, ...d.data() }));
+  }catch(e){
+    console.error("Firestore load research error:", e);
+  }
+
+  updateStats();
+
+  // لو انت داخل قسم research الآن، أعد رسم القائمة
+  renderList('research');
+});
+
 
       document.addEventListener("keypress", (e) => {
         if (

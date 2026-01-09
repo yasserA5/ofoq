@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Firestore Test</title>
+</head>
+<body style="font-family:Arial;padding:16px;">
+  <h3>Firestore test...</h3>
+  <pre id="out">Running...</pre>
+
+  <script type="module">
+    import { db } from "./firebase-init.js";
+    import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+    const out = document.getElementById("out");
+
+    async function run(){
+      try{
+        await addDoc(collection(db, "research"), { hello: "world", createdAt: Date.now() });
+        const snap = await getDocs(collection(db, "research"));
+        out.textContent = "OK ✅\nDocs count = " + snap.size;
+      }catch(e){
+        out.textContent =
+          "ERROR ❌\n" +
+          "code: " + (e?.code || "no-code") + "\n" +
+          "message: " + (e?.message || String(e));
+      }
+    }
+    run();
+  </script>
+</body>
+</html>
