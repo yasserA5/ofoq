@@ -1304,8 +1304,7 @@ eTag">فعال/مضاف</span>
         <div id="sectionArea"></div>
       </main>
     </div>
-<script type="module" src="./firestore-bridge.js"></script>
-
+<script type="module" src="firestore-bridge.js"></script>
 <script>
 
       const ADMIN_CODE_CONST = "admin";
@@ -2614,15 +2613,23 @@ window.addEventListener('load', async ()=>{
     document.querySelector('.app').style.display = 'none';
   }
 
-  // ✅ تحميل research من Firestore عند فتح الادمن
-  try{
-    const q = query(collection(db, "research"), orderBy("id", "desc"));
-    const snap = await getDocs(q);
-    db['research'] = [];
-    snap.forEach(d => db['research'].push({ docId: d.id, ...d.data() }));
-  }catch(e){
-    console.error("Firestore load research error:", e);
-  }
+// research Firestore
+try {
+  if (!window.fs) throw new Error("Firestore bridge not loaded");
+
+  const q = window.fs.query(
+    window.fs.collection(window.fs.db, "research"),
+    window.fs.orderBy("id", "desc")
+  );
+
+  const snap = await window.fs.getDocs(q);
+
+  db['research'] = [];
+  snap.forEach(d => db['research'].push({ docId: d.id, ...d.data() }));
+} catch (e) {
+  console.error("Firestore load research error:", e);
+}
+
 
   updateStats();
 
