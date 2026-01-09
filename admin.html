@@ -2389,25 +2389,33 @@ async function translateText(text, fromLang, toLang) {
           file: "",
         };
   // ✅ Firestore: research فقط
-  if (key === 'research') {
-    try{
-      const ref = await addDoc(collection(db, "research"), newObj);
-      newObj.docId = ref.id;
-
-      // حدّث الواجهة
-      db['research'].unshift(newObj);
-      renderList('research');
-      resetForm('research');
-      updateStats();
-
-      alert('✅ تم حفظ البحث في Firestore');
-      return;
-    }catch(e){
-      console.error("Firestore save error:", e);
-      alert('❌ خطأ أثناء الحفظ في Firestore: ' + (e.code || e.message));
+if (key === 'research') {
+  try {
+    if (!window.fs) {
+      alert("Firestore لم يجهز بعد. انتظر ثانية ثم جرّب.");
       return;
     }
+
+    const ref = await window.fs.addDoc(
+      window.fs.collection(window.fs.db, "research"),
+      newObj
+    );
+
+    newObj.docId = ref.id;
+    db['research'].unshift(newObj);
+
+    renderList('research');
+    resetForm('research');
+    updateStats();
+    alert('✅ تم حفظ البحث في Firestore');
+    return;
+
+  } catch (e) {
+    console.error(e);
+    alert('❌ خطأ أثناء الحفظ في Firestore: ' + (e.code || e.message));
+    return;
   }
+}
 
         if (cfg.key === "live") {
           newObj.file = document.getElementById("live_link").value.trim();
