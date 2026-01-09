@@ -1311,8 +1311,8 @@ import {
   collection, addDoc, getDocs, query, orderBy, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-      const ADMIN_CODE_CONST = "yasser";
-      const ADMIN_PASS_CONST = "Yasser126";
+      const ADMIN_CODE_CONST = "admin";
+      const ADMIN_PASS_CONST = "12356";
 
       // رفع الفيديو إلى سيرفر Node
       async function uploadVideoToServer(file) {
@@ -2560,26 +2560,7 @@ async function translateText(text, fromLang, toLang) {
       }
 
       function deleteItem(key, id) {
-        if (key === 'research') {
-    const item = db['research'].find(i => i.id === id);
-    if (!item || !item.docId) return alert('docId غير موجود لهذا العنصر');
-
-    if (!confirm('حذف هذا البحث من Firestore؟')) return;
-
-    deleteDoc(doc(db, "research", item.docId))
-      .then(()=>{
-        db['research'] = db['research'].filter(i => i.id !== id);
-        renderList('research');
-        updateStats();
-      })
-      .catch(e=>{
-        console.error(e);
-        alert('خطأ حذف: ' + (e.code || e.message));
-      });
-
-    return;
-  }
-
+      
         if (!confirm("هل تريد حذف هذا العنصر نهائياً؟")) return;
         db[key] = db[key].filter((i) => i.id !== id);
         localStorage.setItem(key, JSON.stringify(db[key]));
