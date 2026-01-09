@@ -1304,15 +1304,12 @@ eTag">فعال/مضاف</span>
         <div id="sectionArea"></div>
       </main>
     </div>
+<script type="module" src="./firestore-bridge.js"></script>
 
-<script type="module">
-import { db } from "./firebase-init.js";
-import {
-  collection, addDoc, getDocs, query, orderBy, deleteDoc, doc
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+<script>
 
       const ADMIN_CODE_CONST = "admin";
-      const ADMIN_PASS_CONST = "12356";
+      const ADMIN_PASS_CONST = "ofouqaca12";
 
       // رفع الفيديو إلى سيرفر Node
       async function uploadVideoToServer(file) {
