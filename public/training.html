@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title id="t-title">تكوينات</title>
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width: 100%; overflow-x: hidden; }
+
+    body {
+      font-family: "Tajawal", sans-serif;
+      background: #ffffff;
+      color: #111827;
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    header {
+      padding: clamp(12px,3vw,18px) clamp(20px,5vw,30px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      box-shadow:0 2px 18px rgba(0,0,0,0.07);
+      position:sticky;
+      top:0;
+      z-index:999;
+      gap:12px;
+    }
+
+    /* الشعار في المنتصف على الموبايل وقابل للضغط */
+    .logo {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .logo img {
+      width: clamp(60px,12vw,85px);
+      height: auto;
+      transition: transform 0.2s ease;
+    }
+    .logo img:hover,
+    .logo img:active {
+      transform: scale(1.05);
+    }
+
+    /* NAV */
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: clamp(15px,4vw,30px);
+      align-items: center;
+    }
+    nav ul li { position: relative; }
+    nav ul li a {
+      text-decoration: none;
+      color: #374151;
+      font-size: clamp(14px,3vw,18px);
+      font-weight: 600;
+      padding: 6px;
+      transition: .2s;
+      white-space:nowrap;
+    }
+    nav ul li a:hover,
+    nav ul li a.active { color: #16a34a; }
+
+    /* DROPDOWN */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.13);
+      padding: 12px 0;
+      border-radius: 8px;
+      min-width: 200px;
+      z-index: 1000;
+      border:1px solid #e5e7eb;
+    }
+    .dropdown-content a {
+      display: block;
+      padding: 10px 20px;
+      white-space: nowrap;
+      color: #333;
+      font-size: 16px;
+    }
+    .dropdown:hover .dropdown-content { display: block; }
+
+    /* BUTTONS */
+    .actions {
+      display: flex;
+      gap: clamp(8px,2vw,12px);
+      align-items: center;
+    }
+    .btn {
+      padding: clamp(8px,2vw,10px) clamp(16px,4vw,20px);
+      border-radius: 26px;
+      border: 2px solid #16a34a;
+      background: rgba(22,163,74,0.06);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(14px,3vw,16px);
+      transition: .2s;
+      color: #15803d;
+      white-space: nowrap;
+    }
+    .btn.primary {
+      background: linear-gradient(90deg,#16a34a,#15803d);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 18px rgba(22,163,74,0.35);
+    }
+
+    /* Language */
+    .lang-wrapper{position:relative;}
+    .lang-toggle{
+      border:none;
+      background:#fff;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:13px;
+      cursor:pointer;
+      color:#166534;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:700;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      transition:.2s;
+    }
+    .lang-toggle:hover{background:#f8fafc;}
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      border-radius:12px;
+      min-width:140px;
+      border:1px solid #e2e8f0;
+      display:none;
+      z-index:1200;
+      overflow:hidden;
+    }
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:10px 14px;
+      text-align:right;
+      font-size:13px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.2s;
+    }
+    .lang-menu button:hover{background:#f1f5f9;color:#16a34a;}
+
+    /* Burger (mobile only) */
+    #menu-btn{
+      display:none; /* shown in media query */
+      font-size: clamp(24px,6vw,30px);
+      cursor: pointer;
+      background: rgba(22,163,74,0.1);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      border: none;
+      color:#166534;
+      flex:0 0 auto;
+    }
+
+    /* MOBILE MENU */
+    .mobile-menu{
+      display:none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(80%,350px);
+      height: 100%;
+      background: #fff;
+      box-shadow: -3px 0 12px rgba(0,0,0,0.1);
+      padding: clamp(20px,8vw,30px);
+      z-index: 2000;
+      overflow-y: auto;
+    }
+    .mobile-menu ul { list-style: none; margin-top: 20px; }
+    .mobile-menu ul li { margin-bottom: 18px; }
+    .mobile-menu ul li a{
+      font-size: clamp(18px,5vw,20px);
+      text-decoration: none;
+      color: #111827;
+      font-weight:700;
+      display:block;
+      padding:6px 8px;
+      border-radius:10px;
+    }
+    .mobile-menu ul li a.active { color:#16a34a; background:#ecfdf5; }
+
+    .mobile-dropdown-toggle{
+      width:100%;
+      background:transparent;
+      border:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:clamp(18px,5vw,20px);
+      color:#111827;
+      cursor:pointer;
+      padding:6px 8px;
+      border-radius:10px;
+      font-weight:700;
+    }
+    .mobile-submenu{list-style:none;margin-top:10px;margin-right:12px;display:none;}
+    .mobile-submenu a{font-size:16px;font-weight:700;color:#374151;}
+    .mobile-dropdown.open .mobile-submenu{display:block;}
+
+    /* HERO */
+    .hero {
+      padding: clamp(80px,20vw,110px) clamp(25px,8vw,40px);
+      text-align: center;
+      background: linear-gradient(135deg, #ecfdf5 0%, #dcfce7 100%);
+    }
+    .hero h1 {
+      font-size: clamp(24px,8vw,36px);
+      font-weight: 800;
+      color: #166534;
+      margin-bottom: clamp(12px,4vw,18px);
+    }
+    .hero p {
+      font-size: clamp(16px,4vw,18px);
+      max-width: 800px;
+      margin: auto;
+      color: #374151;
+      line-height: 1.8;
+    }
+
+    /* SECTION */
+    section {
+      padding: clamp(40px,12vw,60px) clamp(25px,8vw,40px);
+    }
+    section h2 {
+      font-size: clamp(22px,6vw,30px);
+      margin-bottom: 20px;
+      color: #166534;
+      border-right: 5px solid #16a34a;
+      padding-right: 12px;
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(clamp(260px,42vw,320px),1fr));
+      gap: clamp(20px,6vw,25px);
+    }
+
+    .card {
+      padding: clamp(18px,5vw,22px);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor:pointer;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.16);
+    }
+
+    .card-level {
+      font-size: clamp(12px,3.2vw,14px);
+      color: #166534;
+      font-weight: 600;
+      background: #dcfce7;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      width:fit-content;
+    }
+
+    .card h3 {
+      font-size: clamp(16px,4.5vw,20px);
+      margin-bottom: 4px;
+      color: #111827;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .card-trainer {
+      color: #047857;
+      font-size: clamp(13px,3.5vw,15px);
+      font-weight: 600;
+    }
+
+    .card-meta {
+      font-size: clamp(12px,3.2vw,14px);
+      color: #6b7280;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .card p {
+      font-size: clamp(14px,3.8vw,16px);
+      color: #4b5563;
+      line-height: 1.7;
+      flex-grow: 1;
+      margin-top: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card-badge {
+      font-size: clamp(12px,3.2vw,14px);
+      color: #166534;
+      background: #ecfdf5;
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: clamp(8px,2.7vw,10px) clamp(14px,4vw,18px);
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 700;
+      font-size: clamp(13px,3.5vw,15px);
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(22,163,74,0.35);
+    }
+    .card-btn:hover {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(22,163,74,0.45);
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: clamp(30px,8vw,40px);
+      padding: clamp(25px,8vw,35px);
+      background: linear-gradient(135deg, #0d6b8c, #0a4f5f);
+      color: #fff;
+      text-align: center;
+      font-size: clamp(15px,4vw,18px);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: clamp(60px,20vw,100px) clamp(20px,8vw,40px);
+      color: #9ca3af;
+      grid-column: 1/-1;
+    }
+    .empty-state h3 {
+      font-size: clamp(20px,6vw,28px);
+      margin-bottom: 12px;
+      color: #4b5563;
+    }
+    .empty-state p {
+      font-size: clamp(15px,4vw,17px);
+      max-width: 520px;
+      margin: 0 auto 20px;
+      line-height: 1.7;
+    }
+
+    /* TOAST */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 5000;
+    }
+    .toast {
+      background: #fff;
+      padding: clamp(12px,3vw,16px) clamp(16px,4vw,20px);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease-in-out;
+      max-width: 90vw;
+    }
+    .toast.success { border-right: 4px solid #22c55e; }
+    .toast.info { border-right: 4px solid #16a34a; }
+    .toast.warning { border-right: 4px solid #fbbf24; }
+    .toast-icon { font-size: clamp(18px,5vw,20px); }
+    .toast-message {
+      color: #333;
+      font-weight: 600;
+      font-size: clamp(14px,3.5vw,16px);
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(-100%); opacity: 0; }
+    }
+    .toast.removing { animation: slideOut 0.3s ease-in-out; }
+
+    @media(max-width: 980px){
+      nav ul { display: none; }
+      .actions { display: none; }
+      #menu-btn { display: flex; }
+
+      header { justify-content: space-between; }
+      .logo { flex: 1; }
+
+      .toast-container {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+      }
+    }
+
+    @media(max-width: 600px){
+      .hero h1 { font-size: 28px; }
+      .hero p { font-size: 16px; }
+      section { padding: 40px 15px; }
+      section h2 { font-size: 24px; }
+      .grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <img src="images/logo.png" style="width: clamp(65px,15vw,80px); margin-bottom: 12px;" alt="Logo">
+
+  <div style="margin-bottom:16px;">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false" title="Language">
+        <span id="langCurrentMobile">AR</span>
+        <span style="font-size:12px;">▾</span>
+      </button>
+      <div class="lang-menu" id="langMenuMobile">
+        <button type="button" onclick="setLang('ar')">العربية</button>
+        <button type="button" onclick="setLang('en')">English</button>
+        <button type="button" onclick="setLang('fr')">Français</button>
+      </div>
+    </div>
+  </div>
+
+  <ul>
+    <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle" data-t="nav_studies">أبحاث ودراسات ▾</button>
+      <ul class="mobile-submenu">
+        <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+        <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+        <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+        <li><a href="general-articles.html" data-t="nav_general_articles">مقالات عامة</a></li>
+      </ul>
+    </li>
+
+    <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+    <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+    <li><a href="talks.html" data-t="nav_talks">حوارات</a></li>
+    <li><a href="training.html" class="active" data-t="nav_training">تكوينات</a></li>
+    <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+    <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+    <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    <li id="mobileLogin"><a href="login.html" data-t="nav_login">تسجيل الدخول</a></li>
+    <li id="mobileRegister"><a href="register.html" data-t="nav_join">انضم إلينا</a></li>
+  </ul>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<header>
+  <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Menu">☰</button>
+
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
+  <nav>
+    <ul>
+      <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+      <li class="dropdown">
+        <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
+        <div class="dropdown-content">
+          <a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a>
+          <a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a>
+          <a href="files.html" data-t="nav_files">ملفات بحثية</a>
+          <a href="general-articles.html" data-t="nav_general_articles">مقالات عامة</a>
+        </div>
+      </li>
+      <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+      <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+      <li><a href="talks.html" data-t="nav_talks">حوارات</a></li>
+      <li><a href="training.html" class="active" data-t="nav_training">تكوينات</a></li>
+      <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+      <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+      <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    </ul>
+  </nav>
+
+  <div class="actions" id="headerActions">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false" title="Language">
+        <span id="langCurrent">AR</span>
+        <span style="font-size:12px;">▾</span>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button type="button" onclick="setLang('ar')">العربية</button>
+        <button type="button" onclick="setLang('en')">English</button>
+        <button type="button" onclick="setLang('fr')">Français</button>
+      </div>
+    </div>
+
+    <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+    <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1 data-t="hero_title">تكوينات</h1>
+  <p data-t="hero_sub">برامج ودورات تدريبية موجهة للباحثين والطلاب والمهتمين، تجمع بين الجانب النظري والتطبيقي لبناء المهارات العلمية.</p>
+</div>
+
+<section>
+  <h2 data-t="sec_title">البرامج التدريبية المتاحة</h2>
+  <div class="grid" id="trainingGrid"></div>
+</section>
+
+<footer data-t="footer_text">© جميع الحقوق محفوظة – منصتك العلمية</footer>
+
+<script>
+  function goToHome() { window.location.href = 'index.html'; }
+
+  function toggleMenu() {
+    const menu = document.getElementById("mobileMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+  }
+
+  function toggleLangMenu(){
+    const desktopMenu=document.getElementById("langMenu");
+    const mobileMenu=document.getElementById("langMenuMobile");
+    const toggles=document.querySelectorAll('.lang-toggle');
+
+    const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
+    const menu = mobileVisible ? mobileMenu : desktopMenu;
+    if(!menu) return;
+
+    const isOpen = menu.style.display === 'block';
+    menu.style.display = isOpen ? 'none' : 'block';
+    toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
+  }
+
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.lang-wrapper')){
+      const m1=document.getElementById('langMenu');
+      const m2=document.getElementById('langMenuMobile');
+      if(m1) m1.style.display='none';
+      if(m2) m2.style.display='none';
+      document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+    }
+  });
+
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if(!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    const icons = { success: '✅', info: 'ℹ️', warning:'⚠️' };
+    toast.innerHTML = `
+      <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+      <span class="toast-message">${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('removing');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  // i18n
+  const translations = {
+    ar:{
+      title:"تكوينات",
+      nav_home:"الرئيسية",
+      nav_studies:"أبحاث ودراسات ▾",
+      nav_research_peer:"أبحاث محكمة",
+      nav_articles_peer:"مقالات محكمة",
+      nav_files:"ملفات بحثية",
+      nav_general_articles:"مقالات عامة",
+      nav_editions:"إصداراتنا",
+      nav_activities:"أنشطتنا",
+      nav_talks:"حوارات",
+      nav_training:"تكوينات",
+      nav_live:"بث مباشر",
+      nav_rules:"شروط النشر",
+      nav_contact:"اتصل بنا",
+      nav_login:"تسجيل الدخول",
+      nav_join:"انضم إلينا",
+      hero_title:"تكوينات",
+      hero_sub:"برامج ودورات تدريبية موجهة للباحثين والطلاب والمهتمين، تجمع بين الجانب النظري والتطبيقي لبناء المهارات العلمية.",
+      sec_title:"البرامج التدريبية المتاحة",
+      footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
+      hello:"مرحبًا،",
+      logout:"تسجيل الخروج",
+      toast_logout_success:"تم تسجيل الخروج بنجاح",
+      toast_open_training:"جاري فتح صفحة التكوين...",
+      empty_title:"لا توجد تكوينات حالياً",
+      empty_sub:"ستظهر هنا البرامج التدريبية والدورات وورش العمل بمجرد إضافتها من لوحة التحكم.",
+      level_default:"مستوى عام",
+      trainer_label:"المؤطر:",
+      date_label:"📅",
+      duration_label:"⏱️",
+      mode_label:"🖥️",
+      mode_default:"حضوري / عن بعد",
+      title_fallback:"تكوين بدون عنوان",
+      category_default:"برنامج تدريبي",
+      details_btn:"تفاصيل / تسجيل"
+    },
+    en:{
+      title:"Training",
+      nav_home:"Home",
+      nav_studies:"Research & Studies ▾",
+      nav_research_peer:"Peer-reviewed research",
+      nav_articles_peer:"Peer-reviewed articles",
+      nav_files:"Research files",
+      nav_general_articles:"General articles",
+      nav_editions:"Our publications",
+      nav_activities:"Activities",
+      nav_talks:"Talks",
+      nav_training:"Training",
+      nav_live:"Live",
+      nav_rules:"Submission rules",
+      nav_contact:"Contact",
+      nav_login:"Login",
+      nav_join:"Join us",
+      hero_title:"Training",
+      hero_sub:"Training programs and courses for researchers, students, and interested learners, combining theory and practice.",
+      sec_title:"Available programs",
+      footer_text:"© All rights reserved – Your academic platform",
+      hello:"Hello,",
+      logout:"Logout",
+      toast_logout_success:"Logged out successfully",
+      toast_open_training:"Opening training page...",
+      empty_title:"No training programs yet",
+      empty_sub:"Training programs will appear here once added from the admin panel.",
+      level_default:"General level",
+      trainer_label:"Trainer:",
+      date_label:"📅",
+      duration_label:"⏱️",
+      mode_label:"🖥️",
+      mode_default:"In-person / Online",
+      title_fallback:"Untitled training",
+      category_default:"Training program",
+      details_btn:"Details / Register"
+    },
+    fr:{
+      title:"Formations",
+      nav_home:"Accueil",
+      nav_studies:"Recherches et études ▾",
+      nav_research_peer:"Recherches évaluées",
+      nav_articles_peer:"Articles évalués",
+      nav_files:"Dossiers de recherche",
+      nav_general_articles:"Articles généraux",
+      nav_editions:"Nos publications",
+      nav_activities:"Activités",
+      nav_talks:"Entretiens",
+      nav_training:"Formations",
+      nav_live:"Direct",
+      nav_rules:"Conditions",
+      nav_contact:"Contact",
+      nav_login:"Connexion",
+      nav_join:"Rejoignez-nous",
+      hero_title:"Formations",
+      hero_sub:"Programmes et cours pour chercheurs, étudiants et apprenants, combinant théorie et pratique.",
+      sec_title:"Programmes disponibles",
+      footer_text:"© Tous droits réservés – Votre plateforme académique",
+      hello:"Bonjour,",
+      logout:"Déconnexion",
+      toast_logout_success:"Déconnexion réussie",
+      toast_open_training:"Ouverture de la formation...",
+      empty_title:"Aucune formation pour le moment",
+      empty_sub:"Les formations apparaîtront ici une fois ajoutées depuis le panneau d’administration.",
+      level_default:"Niveau général",
+      trainer_label:"Formateur :",
+      date_label:"📅",
+      duration_label:"⏱️",
+      mode_label:"🖥️",
+      mode_default:"Présentiel / En ligne",
+      title_fallback:"Formation sans titre",
+      category_default:"Programme de formation",
+      details_btn:"Détails / Inscription"
+    }
+  };
+
+  let currentLang = localStorage.getItem('lang') || 'ar';
+
+  function t(key){
+    const dict = translations[currentLang] || translations.ar;
+    return dict[key] || '';
+  }
+
+  // ✅ لمنع ظهور [object Object] إذا كانت البيانات محفوظة كـ {ar,en,fr}
+  function getTextByLang(field, lang = currentLang){
+    if(!field) return '';
+    if(typeof field === 'string') return field;
+    const v = field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
+    return (typeof v === 'string') ? v : '';
+  }
+
+  let user = JSON.parse(localStorage.getItem("user") || "null");
+  const headerActions = document.getElementById("headerActions");
+  const mobileLogin = document.getElementById("mobileLogin");
+  const mobileRegister = document.getElementById("mobileRegister");
+
+  function updateHeader() {
+    if (!headerActions) return;
+
+    if (user && user.username) {
+      headerActions.innerHTML = `
+        <div class="lang-wrapper">
+          <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false" title="Language">
+            <span id="langCurrent">${currentLang.toUpperCase()}</span>
+            <span style="font-size:12px;">▾</span>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button type="button" onclick="setLang('ar')">العربية</button>
+            <button type="button" onclick="setLang('en')">English</button>
+            <button type="button" onclick="setLang('fr')">Français</button>
+          </div>
+        </div>
+        <span style="font-weight:800;color:#166534;">${t('hello')} ${user.username}</span>
+        <button class="btn primary" onclick="logout()" data-t="logout">${t('logout')}</button>
+      `;
+
+      if(mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout();return false;" data-t="logout">${t('logout')}</a>`;
+      if(mobileRegister) mobileRegister.style.display = "none";
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("user");
+    user = null;
+    showToast(t('toast_logout_success'), 'success');
+    setTimeout(() => location.reload(), 500);
+  }
+
+  function setLang(lang){
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
+
+    const titleEl = document.getElementById('t-title');
+    if(titleEl) titleEl.textContent = (translations[lang] || translations.ar).title;
+
+    const lc = document.getElementById('langCurrent');
+    const lcm = document.getElementById('langCurrentMobile');
+    if(lc) lc.textContent = lang.toUpperCase();
+    if(lcm) lcm.textContent = lang.toUpperCase();
+
+    document.querySelectorAll('[data-t]').forEach(el=>{
+      const key = el.getAttribute('data-t');
+      const dict = translations[lang] || translations.ar;
+      if(dict[key]) el.textContent = dict[key];
+    });
+
+    const m1=document.getElementById('langMenu');
+    const m2=document.getElementById('langMenuMobile');
+    if(m1) m1.style.display='none';
+    if(m2) m2.style.display='none';
+    document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+
+    updateHeader();
+    renderTraining();
+  }
+
+  // Mobile dropdowns
+  function initMobileDropdowns(){
+    document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent = btn.closest('.mobile-dropdown');
+        if(parent) parent.classList.toggle('open');
+      });
+    });
+  }
+
+  // DYNAMIC TRAINING CONTENT
+  const trainingGrid = document.getElementById("trainingGrid");
+
+  function renderTraining(){
+    if(!trainingGrid) return;
+
+    const trainingData = JSON.parse(localStorage.getItem('training') || '[]');
+    trainingGrid.innerHTML = '';
+
+    if (trainingData.length === 0) {
+      trainingGrid.innerHTML = `
+        <div class="empty-state">
+          <h3>${t('empty_title')}</h3>
+          <p>${t('empty_sub')}</p>
+        </div>
+      `;
+      return;
+    }
+
+    trainingData.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      if(item.id != null) card.dataset.id = item.id;
+
+      const level = getTextByLang(item.level) || t('level_default');
+      const trainerName = getTextByLang(item.trainer || item.instructor);
+
+      const dateText = getTextByLang(item.date) || '';
+      const duration = getTextByLang(item.duration) || '';
+      const mode = getTextByLang(item.mode) || t('mode_default');
+
+      const title = getTextByLang(item.title) || t('title_fallback');
+      const shortText = getTextByLang(item.short || item.description) || '';
+      const category = getTextByLang(item.category) || t('category_default');
+
+      const trainerHTML = trainerName ? `<div class="card-trainer">${t('trainer_label')} ${trainerName}</div>` : '';
+      const metaParts = [
+        dateText ? `<span>${t('date_label')} ${dateText}</span>` : '',
+        duration ? `<span>${t('duration_label')} ${duration}</span>` : '',
+        `<span>${t('mode_label')} ${mode}</span>`
+      ].filter(Boolean).join('');
+
+      card.innerHTML = `
+        <div class="card-level">🎓 ${level}</div>
+        <h3>${title}</h3>
+        ${trainerHTML}
+        <div class="card-meta">${metaParts}</div>
+        <p>${shortText}</p>
+        <div class="card-footer">
+          <span class="card-badge">${category}</span>
+          <button class="card-btn" type="button" onclick="openTraining('${item.id ?? ''}')">${t('details_btn')}</button>
+        </div>
+      `;
+
+      trainingGrid.appendChild(card);
+    });
+  }
+
+  function openTraining(id) {
+    const list = JSON.parse(localStorage.getItem('training') || '[]');
+    const training = list.find(item => String(item.id) === String(id));
+
+    if (training) {
+      localStorage.setItem('trainingView', JSON.stringify(training));
+      showToast(t('toast_open_training'), 'info');
+      setTimeout(() => {
+        window.open('training-view.html', '_blank');
+      }, 500);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded',()=>{
+    updateHeader();
+    setLang(currentLang);
+    initMobileDropdowns();
+    renderTraining();
+  });
+</script>
+
+</body>
+</html>

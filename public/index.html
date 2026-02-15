@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title id="t-title">الرئيسية</title>
+  <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg">
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:100%;overflow-x:hidden;}
+    body{
+      font-family:"Tajawal",sans-serif;
+      background:#ffffff;
+      color:#222;
+      line-height:1.7;
+      direction:rtl;
+    }
+
+    :root{
+      --primary:#009bc4;
+      --primary-dark:#00667f;
+      --primary-soft:#e5f6f9;
+      --nav-bg:#e7f5f8;
+      --text-main:#23424b;
+      --gold:#d4af37;
+    }
+
+    /* HEADER – smaller / minimal */
+    header{
+      padding:10px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:var(--nav-bg);
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      position:sticky;
+      top:0;
+      z-index:999;
+      gap:14px;
+    }
+
+    .logo{
+      flex:0 0 auto;
+      display:flex;
+      cursor:pointer;
+    }
+    .logo img{
+      width:68px;
+      height:auto;
+      transition:transform .2s;
+    }
+    .logo img:hover{transform:scale(1.05);}
+
+    /* NAV + search */
+    nav{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    nav ul{
+      list-style:none;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+    }
+    nav li{position:relative;}
+    nav a{
+      text-decoration:none;
+      color:var(--text-main);
+      font-size:13px;
+      font-weight:600;
+      padding:4px 2px;
+      transition:.2s;
+    }
+    nav a:hover{color:var(--primary);}
+    nav a.active{
+      color:var(--primary);
+    }
+    nav a.active::after,
+    nav a:hover::after{
+      content:"";
+      position:absolute;
+      bottom:-2px;
+      inset-inline-start:0;
+      width:100%;
+      height:2px;
+      background:var(--primary);
+      border-radius:999px;
+    }
+
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:8px 0;
+      border-radius:10px;
+      min-width:210px;
+      border:1px solid #e5e7eb;
+      z-index:1000;
+    }
+    .dropdown-content a{
+      display:block;
+      padding:8px 16px;
+      color:var(--text-main);
+      white-space:nowrap;
+      font-size:13px;
+    }
+    .dropdown-content a:hover{
+      background:#f1fbff;
+      color:var(--primary);
+    }
+    .dropdown:hover .dropdown-content{display:block;}
+
+    /* small search bar */
+    .nav-search{
+      flex:0 0 150px;
+      position:relative;
+      display:flex;
+      align-items:center;
+    }
+    .nav-search input{
+      width:100%;
+      padding:5px 26px 5px 8px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      font-size:11px;
+      outline:none;
+    }
+    .nav-search input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 2px rgba(0,155,196,0.18);
+    }
+    .nav-search span{
+      position:absolute;
+      left:8px;
+      font-size:13px;
+      color:#9ca3af;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .lang-wrapper{position:relative;}
+    .lang-toggle{
+      border:none;
+      background:#ffffff;
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:11px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      border-radius:10px;
+      min-width:120px;
+      border:1px solid #e5e7eb;
+      display:none;
+      z-index:1200;
+    }
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:7px 10px;
+      text-align:right;
+      font-size:11px;
+      cursor:pointer;
+    }
+    .lang-menu button:hover{background:#f3f4f6;}
+
+    .btn{
+      padding:6px 12px;
+      border-radius:26px;
+      border:2px solid rgba(0,155,196,0.45);
+      background:rgba(0,155,196,0.06);
+      cursor:pointer;
+      font-weight:700;
+      font-size:11px;
+      transition:.2s;
+      color:var(--primary-dark);
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(0,155,196,0.12);}
+    .btn.primary{
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      border:none;
+      box-shadow:0 3px 12px rgba(0,155,196,0.25);
+    }
+
+    /* أكاديمي – full gold, black text */
+    .pill-circle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 18px;
+      border-radius:999px;
+      background:var(--gold);
+      color:#111;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
+    }
+    .pill-circle::before{
+      content:"●";
+      font-size:9px;
+      margin-left:6px;
+      color:#111;
+    }
+    /* hide the dot only inside the mobile dropdown pill so font looks clean */
+    .mobile-dropdown-toggle .pill-circle::before{
+      content:"";
+      display:none;
+    }
+
+    .dropdown-academic .dropdown-content a{
+      font-size:13px;
+    }
+
+    #menu-btn{
+      display:none;
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      border:none;
+      background:rgba(0,155,196,0.22);
+      color:var(--primary-dark);
+      font-size:20px;
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .mobile-menu{
+      display:none;
+      position:fixed;
+      top:0;
+      right:0;
+      width:min(80%,340px);
+      height:100%;
+      background:#ffffff;
+      box-shadow:-3px 0 12px rgba(0,0,0,0.1);
+      padding:24px 20px;
+      z-index:2000;
+      overflow-y:auto;
+    }
+    .mobile-menu-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .mobile-logo{
+      width:52px;
+      height:auto;
+    }
+    .mobile-close{
+      border:none;
+      background:rgba(0,155,196,0.1);
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      font-size:20px;
+      cursor:pointer;
+      color:var(--primary-dark);
+    }
+    .mobile-menu ul{list-style:none;margin-top:16px;}
+    .mobile-menu li{margin-bottom:16px;}
+    .mobile-menu a{
+      font-size:17px;
+      text-decoration:none;
+      color:#222;
+    }
+
+    /* Mobile academic dropdown */
+    .mobile-dropdown-toggle{
+      width:100%;
+      background:transparent;
+      border:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:14px;   /* smaller text in mobile */
+      color:#222;
+      cursor:pointer;
+      padding:0;
+    }
+    .mobile-dropdown-arrow{
+      font-size:11px;   /* smaller arrow */
+      color:#6b7280;
+    }
+    .mobile-submenu{
+      list-style:none;
+      margin-top:8px;
+      margin-right:14px;
+      display:none;
+    }
+    .mobile-submenu li{
+      margin-bottom:10px;
+    }
+    .mobile-submenu a{
+      font-size:15px;
+    }
+    .mobile-dropdown.open .mobile-submenu{
+      display:block;
+    }
+
+    /* HERO + sections */
+    .hero{
+      padding:clamp(60px,14vw,90px) clamp(20px,7vw,40px);
+      background:linear-gradient(135deg,#f6fbff,var(--primary-soft));
+      display:flex;
+      flex-wrap:wrap;
+      gap:30px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .hero-main{
+      flex:1 1 260px;
+      text-align:right;
+    }
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#e0f2fe;
+      color:var(--gold);
+      font-size:12px;
+      margin-bottom:10px;
+    }
+    .hero-main h1{
+      font-size:clamp(24px,5vw,34px);
+      font-weight:800;
+      color:#064b63;
+      margin-bottom:10px;
+    }
+    .hero-main p{
+      font-size:clamp(14px,3vw,17px);
+      color:#4b5c63;
+      max-width:520px;
+      margin-bottom:18px;
+    }
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .hero-side{
+      flex:1 1 260px;
+      display:flex;
+      justify-content:center;
+    }
+    .hero-card{
+      background:#ffffff;
+      border-radius:18px;
+      box-shadow:0 12px 30px rgba(15,23,42,0.14);
+      padding:18px;
+      max-width:320px;
+    }
+    .hero-card h3{
+      font-size:15px;
+      margin-bottom:8px;
+      color:#0f172a;
+    }
+    .hero-card ul{
+      padding-right:18px;
+      font-size:13px;
+      color:#4b5563;
+      line-height:1.7;
+    }
+
+    .stats{
+      display:flex;
+      flex-wrap:wrap;
+      gap:16px;
+      margin-top:18px;
+    }
+    .stat-item{
+      flex:1 1 130px;
+      background:#ffffff;
+      border-radius:14px;
+      padding:8px 12px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      text-align:center;
+    }
+    .stat-item strong{
+      display:block;
+      font-size:17px;
+      color:#0d6b8c;
+    }
+    .stat-item span{
+      font-size:11px;
+      color:#6b7280;
+    }
+
+    section{
+      padding:clamp(32px,8vw,52px) clamp(20px,6vw,40px);
+    }
+    section h2{
+      font-size:clamp(20px,4.4vw,28px);
+      margin-bottom:18px;
+      color:#0d6b8c;
+      border-right:4px solid #0d6b8c;
+      padding-right:10px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(clamp(230px,42vw,260px),1fr));
+      gap:clamp(18px,4vw,24px);
+    }
+
+    .card{
+      padding:0;
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 2px 15px rgba(0,0,0,0.08);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .card-img-wrapper{
+      width:100%;
+      height:190px;
+      overflow:hidden;
+    }
+    .card-img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .card-body{
+      padding:14px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      flex:1;
+    }
+    .card h3{
+      color:#0d6b8c;
+      font-size:15px;
+    }
+    .card p{
+      color:#666;
+      font-size:13px;
+      line-height:1.6;
+      flex:1;
+    }
+    .card-author{
+      color:#9ca3af;
+      font-size:11px;
+    }
+    .card-footer{
+      padding:0 16px 12px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      color:#6b7280;
+    }
+    .card-btn{
+      padding:6px 11px;
+      background:#0d6b8c;
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:12px;
+    }
+
+    .features-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+    }
+    .feature-box{
+      background:#ffffff;
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 2px 14px rgba(0,0,0,0.06);
+    }
+    .feature-box h3{
+      font-size:15px;
+      margin-bottom:6px;
+      color:#0d6b8c;
+    }
+    .feature-box p{
+      font-size:13px;
+      color:#555;
+    }
+
+    .empty-state{
+      text-align:center;
+      padding:30px 20px;
+      color:#999;
+      font-size:14px;
+    }
+
+    footer{
+      margin-top:34px;
+      padding:24px;
+      background:#0d6b8c;
+      color:#fff;
+      text-align:center;
+      font-size:14px;
+    }
+
+    @media(max-width:1100px){
+      .nav-search{display:none;}
+    }
+
+    @media(max-width:980px){
+      nav{display:none;}
+      .actions{display:none;}
+      #menu-btn{
+        display:flex;
+        order:-1;
+      }
+      header{justify-content:center;}
+      .logo{margin-inline:auto;}
+
+      /* mobile pill - slightly smaller */
+      .mobile-menu .pill-circle{
+        padding:4px 14px;
+        font-size:12px;
+      }
+    }
+    @media(max-width:768px){
+      header{padding:8px 14px;}
+      .hero{padding:50px 16px;}
+      section{padding:30px 16px;}
+      .grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+    }
+    /* ===== Moving latest items (hero right box) ===== */
+.ticker{
+  background:#ffffff;
+  border-radius:18px;
+  box-shadow:0 12px 30px rgba(15,23,42,0.14);
+  padding:14px 14px 10px;
+  max-width:360px;
+  width:100%;
+}
+.ticker-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ticker h3{margin:0;font-size:14px;color:#0f172a;}
+.ticker-viewport{
+  overflow:hidden;border-radius:14px;border:1px solid #e2e8f0;
+  background:linear-gradient(180deg,#ffffff,#f8fbff);
+}
+.ticker-track{
+  display:flex;gap:10px;padding:10px;
+  will-change:transform;transition:transform .45s ease;
+}
+.ticker-item{
+  min-width:280px;max-width:280px;background:#fff;border:1px solid #e2e8f0;
+  border-radius:14px;padding:10px 12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+.ticker-item .k{font-size:11px;color:#64748b;margin-bottom:4px;}
+.ticker-item .t{font-size:13px;font-weight:800;color:#0d6b8c;margin:0 0 6px;line-height:1.5;}
+.ticker-item .d{font-size:12px;color:#475569;margin:0;line-height:1.6;}
+.ticker-dots{display:flex;justify-content:center;gap:6px;margin-top:10px;}
+.ticker-dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1;cursor:pointer;}
+.ticker-dot.active{background:var(--primary);}
+.ticker-hint{margin:8px 0 0;font-size:11px;color:#6b7280;text-align:center;}
+@media (max-width:768px){
+  .ticker{max-width:100%;}
+  .ticker-item{min-width:240px;max-width:240px;}
+}
+
+  </style>
+</head>
+<body>
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-header">
+    <img src="images/logo.png" class="mobile-logo" alt="Logo">
+    <button class="mobile-close" type="button" onclick="toggleMenu()">✕</button>
+  </div>
+  <ul>
+    <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+    <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
+    <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
+    <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
+    <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
+    <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+    <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+    <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
+    <!-- Academic dropdown in mobile -->
+    <li class="mobile-dropdown">
+      <button type="button" class="mobile-dropdown-toggle">
+        <span class="pill-circle" data-t="nav_academic">أكاديمي</span>
+        <span class="mobile-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mobile-submenu">
+        <li><a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a></li>
+        <li><a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a></li>
+        <li><a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a></li>
+        <li><a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a></li>
+        <li><a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a></li>
+      </ul>
+    </li>
+
+    <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+    <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+    <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    <li id="mobileLogin"><a href="login.html" data-t="nav_login">تسجيل الدخول</a></li>
+    <li id="mobileRegister"><a href="register.html" data-t="nav_join">انضم إلينا</a></li>
+  </ul>
+</div>
+
+<header>
+  <button id="menu-btn" onclick="toggleMenu()">☰</button>
+
+  <div class="logo" onclick="goToHome()">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+
+  <nav>
+    <ul>
+      <li><a href="index.html" class="active" data-t="nav_home">الرئيسية</a></li>
+      <li class="dropdown">
+        <a href="#" data-t="nav_studies">أبحاث ودراسات ▾</a>
+        <div class="dropdown-content">
+          <a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a>
+          <a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a>
+          <a href="files.html" data-t="nav_files">ملفات بحثية</a>
+          <a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a>
+        </div>
+      </li>
+
+      <li><a href="general-articles.html" data-t="nav_articles">مقالات</a></li>
+      <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
+      <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
+
+      <!-- Academic dropdown with specializations -->
+      <li class="dropdown dropdown-academic">
+        <a href="#academic" class="pill-circle" data-t="nav_academic">أكاديمي</a>
+        <div class="dropdown-content">
+          <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+          <a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a>
+          <a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a>
+          <a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a>
+          <a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a>
+        </div>
+      </li>
+
+      <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
+      <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
+      <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
+    </ul>
+
+    <form class="nav-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInput" placeholder="ابحث..." />
+      <span>🔍</span>
+    </form>
+  </nav>
+
+  <div class="actions" id="headerActions">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" onclick="toggleLangMenu()">
+        <span id="langCurrent">AR</span> ▾
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('fr')">Français</button>
+      </div>
+    </div>
+    <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+    <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-main">
+    <div class="hero-badge" data-t="badge_text">منصة علمية ذهبية للباحثين والمهتمين</div>
+    <h1 data-t="hero_title">منصة علمية لنشر المعرفة والأبحاث</h1>
+    <p data-t="hero_sub">
+      بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات، مستوحاة من المنصات الأكاديمية الاحترافية مع واجهة عربية سهلة الاستخدام.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn primary" onclick="location.href='register.html'" data-t="hero_cta_primary">ابدأ رحلتك البحثية الآن</button>
+      <button class="btn" onclick="document.getElementById('research').scrollIntoView({behavior:'smooth'})" data-t="hero_cta_secondary">استكشف المحتوى العلمي</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <strong id="stat1_number">0</strong>
+        <span data-t="stat1_label">بحث محكّم</span>
+      </div>
+      <div class="stat-item">
+        <strong id="stat2_number">0</strong>
+        <span data-t="stat2_label">مقال علمي</span>
+      </div>
+      <div class="stat-item">
+        <strong id="stat3_number">0</strong>
+        <span data-t="stat3_label">مشارك مسجل</span>
+      </div>
+      <div class="stat-item">
+        <strong id="stat4_number">0</strong>
+        <span data-t="stat4_label">نشاط وورشة</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-side">
+    <div class="ticker">
+      <div class="ticker-head">
+        <h3 data-t="latest_ticker_title">آخر الإضافات</h3>
+      </div>
+
+      <div class="ticker-viewport" id="tickerViewport">
+        <div class="ticker-track" id="tickerTrack">
+          <!-- will be filled automatically -->
+        </div>
+      </div>
+
+      <div class="ticker-dots" id="tickerDots"></div>
+      <p class="ticker-hint" data-t="latest_ticker_hint">يتحدّث تلقائياً حسب ما تضيفه في لوحة الإدارة.</p>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2 data-t="sec_features">ما الذي يميز هذه المنصة؟</h2>
+  <div class="features-grid">
+    <div class="feature-box">
+      <h3 data-t="f1_title">تكامل بين المقالات والبرامج</h3>
+      <p data-t="f1_text">كل تخصص أكاديمي يمكن ربطه بالمقالات والأبحاث ذات الصلة حتى يتحول المحتوى النظري إلى مسار تعلّم واضح.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="f2_title">مسارات تخصصية مرنة</h3>
+      <p data-t="f2_text">يمكن للزائر اختيار تخصص محدد ومتابعة مواده وأنشطته المرتبطة به ضمن قسم أكاديمي.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="f3_title">إدارة محتوى من لوحة تحكم</h3>
+      <p data-t="f3_text">كل مقال أو بحث تضيفه من لوحة الإدارة يظهر في بطاقة بصور كاملة غير مقصوصة بفضل خاصية object-fit في الصور.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="f4_title">تجربة قريبة من المنصات الاحترافية</h3>
+      <p data-t="f4_text">شريط بحث علوي وأقسام متعددة للمحتوى تجعل التصفح شبيهاً بالمنصات الأكاديمية الكبيرة.</p>
+    </div>
+  </div>
+</section>
+
+<section id="tracks">
+  <h2 data-t="sec_tracks">مسارات التخصص الأكاديمي</h2>
+  <div class="features-grid">
+    <div class="feature-box">
+      <h3 data-t="tracks_politics_title">تخصص العلوم السياسية</h3>
+      <p data-t="tracks_politics_text">يركز على تحليل النظم السياسية، الأحزاب، والانتخابات، مع ربطها بالتحولات الديمقراطية في العالم العربي.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="tracks_ir_title">تخصص العلاقات الدولية</h3>
+      <p data-t="tracks_ir_text">يتناول نظريات العلاقات الدولية، الفاعلين الدوليين، والسياسات الخارجية، مع دراسات حالة من المنطقة.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="tracks_admin_const_title">تخصص القانون الإداري والدستوري</h3>
+      <p data-t="tracks_admin_const_text">يشرح تنظيم الإدارة العمومية، الرقابة على العمل الإداري، وبنية الدساتير والمؤسسات العليا في الدولة.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="tracks_public_policy_title">تخصص السياسات العمومية</h3>
+      <p data-t="tracks_public_policy_text">يركز على تصميم وتنفيذ وتقييم السياسات العمومية، مع أدوات عملية لتحليل السياسات والبرامج الحكومية.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how-to-start">
+  <h2 data-t="sec_how">كيف تبدأ؟</h2>
+  <div class="features-grid">
+    <div class="feature-box">
+      <h3 data-t="how_step1_title">١. إنشاء حساب</h3>
+      <p data-t="how_step1_text">قم بإنشاء حساب جديد من صفحة التسجيل حتى تتمكن من حفظ الدورات والمقالات التي تهمك ومتابعة تقدمك.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="how_step2_title">٢. اختيار التخصص</h3>
+      <p data-t="how_step2_text">من قائمة أكاديمي اختر التخصص الذي يناسبك ثم استعرض الأبحاث والمقالات والأنشطة المرتبطة به.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="how_step3_title">٣. متابعة المحتوى</h3>
+      <p data-t="how_step3_text">ابدأ بقراءة الأبحاث والمقالات، ثم انتقل إلى البرامج أو الورش المتاحة ضمن نفس الحقل المعرفي.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="how_step4_title">٤. المساهمة العلمية</h3>
+      <p data-t="how_step4_text">بعد التسجيل يمكنك إرسال أبحاثك أو مقالاتك إلى لجنة التحرير لنشرها ضمن أقسام المنصة المختلفة.</p>
+    </div>
+  </div>
+</section>
+
+<section id="research">
+  <h2 data-t="sec_research">أحدث الأبحاث</h2>
+  <div class="grid" id="researchGrid">
+    <div class="empty-state">
+      <p data-t="empty_items">لا توجد عناصر حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section id="editions">
+  <h2 data-t="sec_editions">إصداراتنا</h2>
+  <div class="grid" id="editionsGrid">
+    <div class="empty-state">
+      <p data-t="empty_items">لا توجد عناصر حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section id="activities">
+  <h2 data-t="sec_activities">أنشطتنا وورش العمل</h2>
+  <div class="grid" id="activitiesGrid">
+    <div class="empty-state">
+      <p data-t="empty_items">لا توجد عناصر حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section id="academic">
+  <h2 data-t="sec_academic">المحتوى الأكاديمي</h2>
+  <div class="grid" id="academicGrid">
+    <div class="empty-state">
+      <p data-t="empty_items">لا توجد عناصر حالياً</p>
+    </div>
+  </div>
+</section>
+
+<section id="live">
+  <h2 data-t="sec_live">البث المباشر</h2>
+  <p style="font-size:clamp(16px,3.2vw,20px); color:#444;" data-t="live_text">
+    سيتم عرض البث المباشر هنا عند توفره مع ربطه بالبرامج والتخصصات ذات الصلة.
+  </p>
+</section>
+
+<footer data-t="footer_text">
+  © جميع الحقوق محفوظة – منصتك العلمية
+</footer>
+
+<script>
+  function goToHome(){window.location.href='index.html';}
+
+  function toggleMenu(){
+    const menu=document.getElementById("mobileMenu");
+    const btn=document.getElementById("menu-btn");
+    const open=menu.style.display==="block";
+    menu.style.display=open?"none":"block";
+    btn.textContent=open?"☰":"✕";
+  }
+
+  function toggleLangMenu(){
+    const menu=document.getElementById("langMenu");
+    if(!menu) return;
+    menu.style.display = menu.style.display==="block" ? "none" : "block";
+  }
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.lang-wrapper')){
+      const m=document.getElementById('langMenu');
+      if(m) m.style.display='none';
+    }
+  });
+
+  function doSearch(e){
+    e.preventDefault();
+    const input=document.getElementById('navSearchInput');
+    const q=input ? input.value.trim() : "";
+    if(!q) return;
+    window.location.href='search.html?q='+encodeURIComponent(q);
+  }
+
+  let user = JSON.parse(localStorage.getItem("user") || "null");
+  let currentLang = localStorage.getItem('lang') || 'ar';
+
+  function updateHeader(){
+    const headerActions=document.getElementById("headerActions");
+    const mobileLogin=document.getElementById("mobileLogin");
+    const mobileRegister=document.getElementById("mobileRegister");
+
+    if(user && user.username){
+      headerActions.innerHTML = `
+        <div class="lang-wrapper">
+          <button class="lang-toggle" onclick="toggleLangMenu()">
+            <span id="langCurrent">AR</span> ▾
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button onclick="setLang('ar')">العربية</button>
+            <button onclick="setLang('en')">English</button>
+            <button onclick="setLang('fr')">Français</button>
+          </div>
+        </div>
+        <span style="margin-right:8px;font-size:12px;">${user.username}</span>
+        <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
+      `;
+      if(mobileLogin)  mobileLogin.innerHTML=`<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
+      if(mobileRegister) mobileRegister.style.display="none";
+    }
+  }
+
+  function logout(){
+    localStorage.removeItem("user");
+    user=null;
+    location.reload();
+  }
+
+  function renderContent(storageKey, gridId){
+    const grid=document.getElementById(gridId);
+    const items=JSON.parse(localStorage.getItem(storageKey) || '[]');
+    grid.innerHTML='';
+    if(!items.length){
+      grid.innerHTML=`<div class="empty-state"><p data-t="empty_items">لا توجد عناصر حالياً</p></div>`;
+      return;
+    }
+    items.forEach((item,index)=>{
+      const card=document.createElement('div');
+      card.className='card';
+      const title=item.title || 'بدون عنوان';
+      const author=item.author ? 'بقلم: '+item.author : '';
+      const desc=item.description || item.short || item.details || 'بدون وصف';
+      const img=item.image || item.photo || '';
+
+      card.innerHTML=`
+        ${img ? `<div class="card-img-wrapper"><img src="${img}" alt="${title}" class="card-img"></div>` : ''}
+        <div class="card-body">
+          <h3>${title}</h3>
+          <span class="card-author">${author}</span>
+          <p>${desc}</p>
+        </div>
+        <div class="card-footer">
+          <span>${storageKey}</span>
+          <button class="card-btn" onclick="goToPage('${storageKey}',${index})">عرض المزيد</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function goToPage(pageType,index){
+    const list=JSON.parse(localStorage.getItem(pageType) || '[]');
+    const selected=list[index];
+    if(selected){localStorage.setItem('selectedItem',JSON.stringify(selected));}
+    const pageMap={
+      'research':'research.html',
+      'articles':'articles.html',
+      'files':'files.html',
+      'general-articles':'general-articles.html',
+      'editions':'editions.html',
+      'activities':'activities.html',
+      'training':'training.html'
+    };
+    window.location.href=pageMap[pageType] || 'index.html';
+  }
+
+  // dynamic stats from localStorage
+  function updateStats(){
+    const research   = JSON.parse(localStorage.getItem('research')   || '[]');
+    const articles   = JSON.parse(localStorage.getItem('articles')   || '[]');
+    const users      = JSON.parse(localStorage.getItem('users')      || '[]');
+    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+
+    const n1 = research.length;
+    const n2 = articles.length;
+    const n3 = users.length;
+    const n4 = activities.length;
+
+    const el1 = document.getElementById('stat1_number');
+    const el2 = document.getElementById('stat2_number');
+    const el3 = document.getElementById('stat3_number');
+    const el4 = document.getElementById('stat4_number');
+
+    if(el1) el1.textContent = n1;
+    if(el2) el2.textContent = n2;
+    if(el3) el3.textContent = n3;
+    if(el4) el4.textContent = n4;
+
+    const statsWrap = document.querySelector('.stats');
+    if(statsWrap && n1 === 0 && n2 === 0 && n3 === 0 && n4 === 0){
+      statsWrap.style.display = 'none';
+    } else if(statsWrap){
+      statsWrap.style.display = 'flex';
+    }
+  }
+
+  const translations = {
+    ar:{
+      title:"الرئيسية",
+      nav_home:"الرئيسية",
+      nav_studies:"أبحاث ودراسات ▾",
+      nav_research_peer:"أبحاث محكمة",
+      nav_articles_peer:"مقالات محكمة",
+      nav_files:"ملفات بحثية",
+      nav_foreign:"مقالات أجنبية",
+      nav_articles:"مقالات",
+      nav_editions:"إصداراتنا",
+      nav_activities:"أنشطتنا",
+      nav_academic:"أكاديمي",
+      nav_live:"بث مباشر",
+      nav_rules:"شروط النشر",
+      nav_contact:"اتصل بنا",
+      nav_login:"تسجيل الدخول",
+      nav_join:"انضم إلينا",
+      badge_text:"منصة علمية ذهبية للباحثين والمهتمين",
+      hero_title:"منصة علمية لنشر المعرفة والأبحاث",
+      hero_sub:"بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات، مستوحاة من المنصات الأكاديمية الاحترافية مع واجهة عربية سهلة الاستخدام.",
+      hero_cta_primary:"ابدأ رحلتك البحثية الآن",
+      hero_cta_secondary:"استكشف المحتوى العلمي",
+      stat1_label:"بحث محكّم",
+      stat2_label:"مقال علمي",
+      stat3_label:"مشارك مسجل",
+      stat4_label:"نشاط وورشة",
+      hero_card_title:"منصة متخصصة في العلوم السياسية والقانونية والاجتماعية و الاقتصادية",
+      hero_card_li1:"مساقات وبرامج في العلوم السياسية والعلاقات الدولية والسياسات العمومية.",
+      hero_card_li2:"أبحاث ومقالات محكمة تغطي قضايا الدولة، النظام الدولي، والتحولات الدستورية.",
+      hero_card_li3:"ملفات مرجعية للطلبة والباحثين في القانون الإداري والقانون الدستوري.",
+      hero_card_li4:"مسار أكاديمي واضح من المقال إلى التخصص ثم البرنامج الكامل.",
+      sec_features:"ما الذي يميز هذه المنصة؟",
+      f1_title:"تكامل بين المقالات والبرامج",
+      f1_text:"كل تخصص أكاديمي يمكن ربطه بالمقالات والأبحاث ذات الصلة حتى يتحول المحتوى النظري إلى مسار تعلّم واضح.",
+      f2_title:"مسارات تخصصية مرنة",
+      f2_text:"يمكن للزائر اختيار تخصص محدد ومتابعة مواده وأنشطته المرتبطة به ضمن قسم أكاديمي.",
+      f3_title:"إدارة محتوى من لوحة تحكم",
+      f3_text:"كل مقال أو بحث تضيفه من لوحة الإدارة يظهر في بطاقة بصور كاملة غير مقصوصة بفضل خاصية object-fit في الصور.",
+      f4_title:"تجربة قريبة من المنصات الاحترافية",
+      f4_text:"شريط بحث علوي وأقسام متعددة للمحتوى تجعل التصفح شبيهاً بالمنصات الأكاديمية الكبيرة.",
+      sec_tracks:"مسارات التخصص الأكاديمي",
+      tracks_politics_title:"تخصص العلوم السياسية",
+      tracks_politics_text:"يركز على تحليل النظم السياسية، الأحزاب، والانتخابات، مع ربطها بالتحولات الديمقراطية في العالم العربي.",
+      tracks_ir_title:"تخصص العلاقات الدولية",
+      tracks_ir_text:"يتناول نظريات العلاقات الدولية، الفاعلين الدوليين، والسياسات الخارجية، مع دراسات حالة من المنطقة.",
+      tracks_admin_const_title:"تخصص القانون الإداري والدستوري",
+      tracks_admin_const_text:"يشرح تنظيم الإدارة العمومية، الرقابة على العمل الإداري، وبنية الدساتير والمؤسسات العليا في الدولة.",
+      tracks_public_policy_title:"تخصص السياسات العمومية",
+      tracks_public_policy_text:"يركز على تصميم وتنفيذ وتقييم السياسات العمومية، مع أدوات عملية لتحليل السياسات والبرامج الحكومية.",
+      sec_how:"كيف تبدأ؟",
+      how_step1_title:"١. إنشاء حساب",
+      how_step1_text:"قم بإنشاء حساب جديد من صفحة التسجيل حتى تتمكن من حفظ الدورات والمقالات التي تهمك ومتابعة تقدمك.",
+      how_step2_title:"٢. اختيار التخصص",
+      how_step2_text:"من قائمة أكاديمي اختر التخصص الذي يناسبك ثم استعرض الأبحاث والمقالات والأنشطة المرتبطة به.",
+      how_step3_title:"٣. متابعة المحتوى",
+      how_step3_text:"ابدأ بقراءة الأبحاث والمقالات، ثم انتقل إلى البرامج أو الورش المتاحة ضمن نفس الحقل المعرفي.",
+      how_step4_title:"٤. المساهمة العلمية",
+      how_step4_text:"بعد التسجيل يمكنك إرسال أبحاثك أو مقالاتك إلى لجنة التحرير لنشرها ضمن أقسام المنصة المختلفة.",
+      sec_research:"أحدث الأبحاث",
+      sec_editions:"إصداراتنا",
+      sec_activities:"أنشطتنا وورش العمل",
+      sec_academic:"المحتوى الأكاديمي",
+      sec_live:"البث المباشر",
+      empty_items:"لا توجد عناصر حالياً",
+      live_text:"سيتم عرض البث المباشر هنا عند توفره مع ربطه بالبرامج والتخصصات ذات الصلة.",
+      footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
+      logout:"تسجيل الخروج",
+      sp_politics:"تخصص علوم سياسية",
+      sp_ir:"تخصص العلاقات الدولية",
+      sp_admin_law:"تخصص القانون الإداري",
+      sp_const_law:"تخصص القانون الدستوري",
+      sp_public_policy:"تخصص السياسات العمومية"
+    },
+    en:{
+      title:"Home",
+      nav_home:"Home",
+      nav_studies:"Research & Studies ▾",
+      nav_research_peer:"Peer-reviewed Papers",
+      nav_articles_peer:"Scholarly Articles",
+      nav_files:"Research Files",
+      nav_foreign:"Foreign Articles",
+      nav_articles:"Articles",
+      nav_editions:"Our Publications",
+      nav_activities:"Activities",
+      nav_academic:"Academic",
+      nav_live:"Live",
+      nav_rules:"Submission Rules",
+      nav_contact:"Contact us",
+      nav_login:"Login",
+      nav_join:"Join us",
+      badge_text:"A golden scientific platform for researchers and enthusiasts",
+      hero_title:"A scientific platform for publishing knowledge and research",
+      hero_sub:"An integrated structure for research, articles, scientific files, and courses, inspired by professional academic platforms with an easy Arabic interface.",
+      hero_cta_primary:"Start your research journey now",
+      hero_cta_secondary:"Explore scientific content",
+      stat1_label:"Peer-reviewed paper",
+      stat2_label:"Scientific article",
+      stat3_label:"Registered participant",
+      stat4_label:"Activity & workshop",
+      hero_card_title:"A platform specialized in political, legal, social, and economic sciences",
+      hero_card_li1:"Tracks and programs in political science, international relations, and public policy.",
+      hero_card_li2:"Peer-reviewed research and articles covering the state, international system, and constitutional transformations.",
+      hero_card_li3:"Reference files for students and researchers in administrative and constitutional law.",
+      hero_card_li4:"A clear academic pathway from article to specialization and full program.",
+      sec_features:"What makes this platform unique?",
+      f1_title:"Integration between articles and programs",
+      f1_text:"Each academic specialization can be linked to related articles and research so that theory becomes a clear learning path.",
+      f2_title:"Flexible specialization tracks",
+      f2_text:"Visitors can choose a specific specialization and follow its materials and related activities within the Academic section.",
+      f3_title:"Content management from an admin panel",
+      f3_text:"Every article or research item you add from the admin panel appears as a card with full, uncropped images thanks to object-fit.",
+      f4_title:"Experience close to professional platforms",
+      f4_text:"A top search bar and multiple content sections make browsing feel like major academic platforms.",
+      sec_tracks:"Academic specialization tracks",
+      tracks_politics_title:"Political Science track",
+      tracks_politics_text:"Focuses on analyzing political systems, parties, and elections, linked to democratic transitions in the Arab world.",
+      tracks_ir_title:"International Relations track",
+      tracks_ir_text:"Covers theories of international relations, international actors, and foreign policy, with regional case studies.",
+      tracks_admin_const_title:"Administrative & Constitutional Law track",
+      tracks_admin_const_text:"Explains public administration organization, control over administrative action, and the structure of constitutions and higher state institutions.",
+      tracks_public_policy_title:"Public Policy track",
+      tracks_public_policy_text:"Focuses on designing, implementing, and evaluating public policies with practical tools for policy and program analysis.",
+      sec_how:"How to start?",
+      how_step1_title:"1. Create an account",
+      how_step1_text:"Create a new account from the registration page so you can save courses and articles you like and track your progress.",
+      how_step2_title:"2. Choose a specialization",
+      how_step2_text:"From the Academic menu, choose the specialization that suits you, then browse its related research, articles, and activities.",
+      how_step3_title:"3. Follow the content",
+      how_step3_text:"Start by reading research and articles, then move on to the available programs or workshops in the same field.",
+      how_step4_title:"4. Contribute scientifically",
+      how_step4_text:"After registering, you can submit your research or articles to the editorial board to publish them in different sections of the platform.",
+      sec_research:"Latest research",
+      sec_editions:"Our editions",
+      sec_activities:"Our activities and workshops",
+      sec_academic:"Academic content",
+      sec_live:"Live broadcast",
+      empty_items:"No items yet",
+      live_text:"Live broadcasts will appear here when available, linked to relevant programs and tracks.",
+      footer_text:"© All rights reserved – Your Academic Platform",
+      logout:"Logout",
+      sp_politics:"Political Science",
+      sp_ir:"International Relations",
+      sp_admin_law:"Administrative Law",
+      sp_const_law:"Constitutional Law",
+      sp_public_policy:"Public Policy"
+    },
+    fr:{
+      title:"Accueil",
+      nav_home:"Accueil",
+      nav_studies:"Recherches et études ▾",
+      nav_research_peer:"Recherches évaluées",
+      nav_articles_peer:"Articles scientifiques",
+      nav_files:"Dossiers de recherche",
+      nav_foreign:"Articles étrangers",
+      nav_articles:"Articles",
+      nav_editions:"Nos publications",
+      nav_activities:"Activités",
+      nav_academic:"Académique",
+      nav_live:"Direct",
+      nav_rules:"Conditions de publication",
+      nav_contact:"Contactez-nous",
+      nav_login:"Connexion",
+      nav_join:"Rejoignez-nous",
+      badge_text:"Une plateforme scientifique dorée pour les chercheurs et les passionnés",
+      hero_title:"Plateforme spécialisée en sciences politiques, juridiques, sociales et économiques",
+      hero_sub:"Une structure intégrée pour les recherches, articles, dossiers scientifiques et cours, inspirée des plateformes académiques professionnelles avec une interface arabe simple.",
+      hero_cta_primary:"Commencez votre parcours de recherche maintenant",
+      hero_cta_secondary:"Explorer le contenu scientifique",
+      stat1_label:"Recherche évaluée",
+      stat2_label:"Article scientifique",
+      stat3_label:"Participant inscrit",
+      stat4_label:"Activité & atelier",
+      hero_card_title:"Plateforme spécialisée en sciences politiques et juridiques",
+      hero_card_li1:"Parcours et programmes en sciences politiques, relations internationales et politiques publiques.",
+      hero_card_li2:"Recherches et articles évalués couvrant l'État, le système international et les transformations constitutionnelles.",
+      hero_card_li3:"Dossiers de référence pour les étudiants et chercheurs en droit administratif et constitutionnel.",
+      hero_card_li4:"Un parcours académique clair, de l'article à la spécialisation puis au programme complet.",
+      sec_features:"Qu'est-ce qui distingue cette plateforme ?",
+      f1_title:"Intégration entre articles et programmes",
+      f1_text:"Chaque spécialisation académique peut être reliée aux articles et recherches associés afin de transformer la théorie en parcours d'apprentissage clair.",
+      f2_title:"Parcours de spécialisation flexibles",
+      f2_text:"Le visiteur peut choisir une spécialisation précise et suivre ses contenus et activités associées dans la section Académique.",
+      f3_title:"Gestion de contenu via un tableau de bord",
+      f3_text:"Chaque article ou recherche ajouté depuis le panneau d'administration apparaît sous forme de carte avec des images complètes grâce à object-fit.",
+      f4_title:"Expérience proche des grandes plateformes",
+      f4_text:"Une barre de recherche supérieure et plusieurs sections de contenu rendent la navigation proche des grandes plateformes académiques.",
+      sec_tracks:"Parcours de spécialisation académique",
+      tracks_politics_title:"Parcours science politique",
+      tracks_politics_text:"Se concentre sur l'analyse des systèmes politiques, des partis et des élections, en lien avec les transitions démocratiques dans le monde arabe.",
+      tracks_ir_title:"Parcours relations internationales",
+      tracks_ir_text:"Traite des théories des relations internationales, des acteurs internationaux et des politiques étrangères, avec des études de cas régionales.",
+      tracks_admin_const_title:"Parcours droit administratif et constitutionnel",
+      tracks_admin_const_text:"Explique l'organisation de l'administration publique, le contrôle de l'action administrative et la structure des constitutions et des institutions supérieures de l'État.",
+      tracks_public_policy_title:"Parcours politiques publiques",
+      tracks_public_policy_text:"Se concentre sur la conception, la mise en œuvre et l'évaluation des politiques publiques, avec des outils pratiques pour analyser politiques et programmes.",
+      sec_how:"Par où commencer ?",
+      how_step1_title:"1. Créer un compte",
+      how_step1_text:"Créez un nouveau compte depuis la page d'inscription pour pouvoir enregistrer les cours et articles qui vous intéressent et suivre vos progrès.",
+      how_step2_title:"2. Choisir la spécialisation",
+      how_step2_text:"Depuis le menu Académique, choisissez la spécialisation qui vous convient puis parcourez ses recherches, articles et activités associées.",
+      how_step3_title:"3. Suivre le contenu",
+      how_step3_text:"Commencez par lire les recherches et articles, puis passez aux programmes ou ateliers disponibles dans le même domaine.",
+      how_step4_title:"4. Contribuer scientifiquement",
+      how_step4_text:"Après inscription, vous pouvez envoyer vos recherches ou articles au comité éditorial pour les publier dans les différentes rubriques de la plateforme.",
+      sec_research:"Dernières recherches",
+      sec_editions:"Nos éditions",
+      sec_activities:"Nos activités et ateliers",
+      sec_academic:"Contenu académique",
+      sec_live:"Diffusion en direct",
+      empty_items:"Aucun élément pour le moment",
+      live_text:"La diffusion en direct apparaîtra ici lorsqu'elle sera disponible, reliée aux programmes et parcours concernés.",
+      footer_text:"© Tous droits réservés – Votre plateforme scientifique",
+      logout:"Déconnexion",
+      sp_politics:"Science politique",
+      sp_ir:"Relations internationales",
+      sp_admin_law:"Droit administratif",
+      sp_const_law:"Droit constitutionnel",
+      sp_public_policy:"Politiques publiques"
+    }
+  };
+
+  function setLang(lang){
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+
+    const dict = translations[lang] || translations.ar;
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
+
+    const titleEl = document.getElementById('t-title');
+    if(titleEl && dict.title) titleEl.textContent = dict.title;
+
+    const langCurrent = document.getElementById('langCurrent');
+    if(langCurrent) langCurrent.textContent = lang.toUpperCase();
+
+    document.querySelectorAll("[data-t]").forEach(el=>{
+      const key=el.getAttribute("data-t");
+      if(dict[key]) el.textContent=dict[key];
+    });
+
+    const menu=document.getElementById("langMenu");
+    if(menu) menu.style.display="none";
+
+    updateStats();
+  }
+
+  function initMobileDropdowns(){
+    document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent = btn.closest('.mobile-dropdown');
+        if(parent){
+          parent.classList.toggle('open');
+        }
+      });
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded',()=>{
+    renderContent('research','researchGrid');
+    renderContent('editions','editionsGrid');
+    renderContent('activities','activitiesGrid');
+    renderContent('training','academicGrid');
+    updateHeader();
+    setLang(currentLang);
+    initMobileDropdowns();
+  });
+
+  // ===== Moving ticker (auto) =====
+let tickerIndex = 0;
+let tickerTimer = null;
+
+function esc(str){
+  return String(str).replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[s]));
+}
+
+function collectLatest(){
+  const sources = [
+    { key: "research", label: "بحث" },
+    { key: "articles", label: "مقال" },
+    { key: "files", label: "ملف" },
+    { key: "activities", label: "نشاط" },
+    { key: "editions", label: "إصدار" }
+  ];
+
+  const all = [];
+  sources.forEach(src => {
+    const arr = JSON.parse(localStorage.getItem(src.key) || "[]");
+    arr.forEach((item, idx) => {
+      all.push({
+        type: src.label,
+        storageKey: src.key,
+        index: idx,
+        title: item.title || "بدون عنوان",
+        desc: item.description || item.short || item.details || ""
+      });
+    });
+  });
+
+  return all.slice(0, 10);
+}
+
+function renderTicker(){
+  const track = document.getElementById("tickerTrack");
+  const dotsWrap = document.getElementById("tickerDots");
+  if(!track || !dotsWrap) return;
+
+  const items = collectLatest();
+
+  if(!items.length){
+    track.innerHTML = `
+      <div class="ticker-item" style="min-width:100%;max-width:100%">
+        <div class="k">لا توجد عناصر</div>
+        <p class="t">أضف أبحاث/مقالات من لوحة الإدارة</p>
+        <p class="d">سيظهر آخر ما تضيفه هنا تلقائياً.</p>
+      </div>
+    `;
+    dotsWrap.innerHTML = "";
+    return;
+  }
+
+  track.innerHTML = items.map(x => `
+    <div class="ticker-item">
+      <div class="k">${esc(x.type)} • ${esc(x.storageKey)}</div>
+      <p class="t">${esc(x.title)}</p>
+      <p class="d">${esc(x.desc).slice(0, 110)}${x.desc.length > 110 ? "..." : ""}</p>
+    </div>
+  `).join("");
+
+  dotsWrap.innerHTML = items.map((_, i) =>
+    `<span class="ticker-dot ${i===0?'active':''}" onclick="goTicker(${i})"></span>`
+  ).join("");
+
+  tickerIndex = 0;
+  applyTicker();
+  startTicker(items.length);
+}
+
+function applyTicker(){
+  const track = document.getElementById("tickerTrack");
+  if(!track) return;
+  const item = track.querySelector(".ticker-item");
+  if(!item) return;
+  const w = item.offsetWidth + 10;
+  track.style.transform = `translateX(${-w * tickerIndex}px)`;
+
+  const dots = document.querySelectorAll(".ticker-dot");
+  dots.forEach((d, i) => d.classList.toggle("active", i === tickerIndex));
+}
+
+function goTicker(i){
+  tickerIndex = i;
+  applyTicker();
+}
+
+function startTicker(count){
+  if(tickerTimer) clearInterval(tickerTimer);
+  tickerTimer = setInterval(() => {
+    tickerIndex = (tickerIndex + 1) % count;
+    applyTicker();
+  }, 3000);
+}
+
+</script>
+
+</body>
+</html>

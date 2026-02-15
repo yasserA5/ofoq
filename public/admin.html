@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة التحكم</title>
+    <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --accent: #0ea5e9;
+        --accent-soft: rgba(14, 165, 233, 0.12);
+        --accent-dark: #0369a1;
+        --bg: radial-gradient(
+          circle at top left,
+          #020617 0,
+          #020617 25%,
+          #020617 40%,
+          #020617 100%
+        );
+        --bg-elevated: rgba(15, 23, 42, 0.75);
+        --card: rgba(15, 23, 42, 0.85);
+        --border-subtle: rgba(148, 163, 184, 0.25);
+        --muted: #9ca3af;
+        --text: #e5e7eb;
+        --danger: #ef4444;
+        --success: #22c55e;
+        --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.65);
+        --blur: 18px;
+        --transition-fast: 0.16s ease-out;
+        --transition-med: 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        overflow-x: hidden;
+      }
+      body {
+        margin: 0;
+        font-family: "Tajawal", sans-serif;
+        background: #020617;
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .admin-lock {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          circle at top,
+          #0f172a 0,
+          #020617 55%,
+          #000 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 9999;
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        overflow: auto;
+        opacity: 1;
+        transition: opacity var(--transition-med),
+          visibility var(--transition-med);
+      }
+      .admin-lock.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .admin-lock-card {
+        background: linear-gradient(
+          135deg,
+          rgba(15, 23, 42, 0.92),
+          rgba(15, 23, 42, 0.75)
+        );
+        border-radius: 22px;
+        padding: 26px 22px 22px;
+        width: 100%;
+        max-width: 380px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        position: relative;
+        overflow: hidden;
+        transform: translateY(0);
+        opacity: 1;
+        transition: transform var(--transition-med),
+          opacity var(--transition-med);
+      }
+      .admin-lock.hidden .admin-lock-card {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      .admin-lock-card::before {
+        content: "";
+        position: absolute;
+        inset: auto -30%;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(
+          circle,
+          rgba(56, 189, 248, 0.38),
+          transparent 60%
+        );
+        top: -60px;
+        right: -40px;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+      .admin-lock-card h2 {
+        margin: 0 0 6px;
+        font-size: 22px;
+        color: #e2f3ff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .admin-lock-card h2 i {
+        font-size: 22px;
+        color: #38bdf8;
+      }
+      .admin-lock-card p {
+        margin: 0 0 18px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .admin-input {
+        position: relative;
+        margin-bottom: 12px;
+        text-align: right;
+      }
+      .admin-input i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 18px;
+      }
+      .admin-input input {
+        width: 100%;
+        padding: 10px 14px 10px 42px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--text);
+        font-size: 14px;
+        font-family: "Tajawal", sans-serif;
+        outline: none;
+        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s,
+          transform 0.1s;
+      }
+      .admin-input input::placeholder {
+        color: #6b7280;
+        font-size: 13px;
+      }
+      .admin-input input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+        background: rgba(15, 23, 42, 0.95);
+        transform: translateY(-1px);
+      }
+      .admin-btn {
+        width: 100%;
+        padding: 11px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, #0ea5e9, #22c1c3);
+        color: #0b1220;
+        font-weight: 800;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
+        transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
+      }
+      .admin-btn:hover {
+        filter: brightness(1.03);
+        transform: translateY(-1px);
+        box-shadow: 0 16px 40px rgba(56, 189, 248, 0.45);
+      }
+      .admin-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 8px 18px rgba(56, 189, 248, 0.25);
+      }
+      .admin-error {
+        font-size: 13px;
+        color: var(--danger);
+        margin-top: 8px;
+        display: none;
+      }
+      .app {
+        display: grid;
+        grid-template-columns: clamp(230px, 24vw, 270px) 1fr;
+        min-height: 100vh;
+        gap: 16px;
+        padding: 16px;
+        background: radial-gradient(
+          circle at top left,
+          #0b1120 0,
+          #020617 40%,
+          #000 100%
+        );
+        position: relative;
+        z-index: 1;
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity var(--transition-med),
+          transform var(--transition-med);
+      }
+      .app.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .app::before {
+        content: "";
+        position: fixed;
+        inset: auto;
+        width: 220px;
+        height: 220px;
+        top: 10%;
+        left: -60px;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.4),
+          transparent 60%
+        );
+        opacity: 0.18;
+        pointer-events: none;
+        z-index: -1;
+      }
+      .app::after {
+        content: "";
+        position: fixed;
+        inset: auto;
+        width: 240px;
+        height: 240px;
+        bottom: -80px;
+        right: -40px;
+        background: radial-gradient(
+          circle,
+          rgba(8, 47, 73, 0.85),
+          transparent 65%
+        );
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: -1;
+      }
+      aside.sidebar {
+        background: var(--bg-elevated);
+        border-radius: 20px;
+        padding: 18px 16px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .brand .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        background: radial-gradient(circle at top, #38bdf8, #0ea5e9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 16px;
+        color: #0b1220;
+      }
+      .brand-text-title {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9ca3af;
+      }
+      .brand-text-sub {
+        font-size: 11px;
+        color: #6b7280;
+      }
+      nav.side-menu {
+        flex: 1;
+        margin-top: 10px;
+        padding-right: 2px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #4b5563 transparent;
+      }
+      nav.side-menu::-webkit-scrollbar {
+        width: 4px;
+      }
+      nav.side-menu::-webkit-scrollbar-thumb {
+        background: #4b5563;
+        border-radius: 999px;
+      }
+      nav.side-menu button {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: #e5e7eb;
+        text-align: right;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        line-height: 1.4;
+        margin-bottom: 4px;
+        transition: background var(--transition-fast), transform 0.08s,
+          color var(--transition-fast), box-shadow var(--transition-fast);
+      }
+      nav.side-menu button span {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      nav.side-menu button i {
+        font-size: 16px;
+        opacity: 0.85;
+      }
+      nav.side-menu button:hover {
+        background: rgba(15, 23, 42, 0.85);
+        color: #f9fafb;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.8);
+      }
+      nav.side-menu button.active {
+        background: rgba(15, 23, 42, 1);
+        color: #e0f2fe;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+      }
+      .sidebar-footer {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding-top: 10px;
+        border-top: 1px dashed rgba(148, 163, 184, 0.4);
+      }
+      .sidebar-footer button {
+        border: 0;
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+        padding: 4px 11px;
+        border-radius: 999px;
+        font-size: 11px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        transition: background var(--transition-fast), transform 0.1s,
+          box-shadow 0.1s;
+      }
+      .sidebar-footer button i {
+        font-size: 13px;
+      }
+      .sidebar-footer button:hover {
+        background: rgba(15, 23, 42, 1);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+      }
+      main.app-main {
+        padding: 16px 4px 16px 0;
+        overflow: auto;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .topbar h2 {
+        margin: 0;
+        color: #e0f2fe;
+        font-size: 21px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .topbar h2 span.icon-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        color: #7dd3fc;
+        font-size: 15px;
+      }
+      .topbar-sub {
+        font-size: 11px;
+        color: #6b7280;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+.btn {
+  border: 0;
+  padding: 7px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: background var(--transition-fast), transform 0.08s,
+    box-shadow 0.1s, color var(--transition-fast);
+}
+
+      
+      .btn.primary {
+        background: linear-gradient(135deg, #0ea5e9, #22c55e);
+        color: #04101f;
+        box-shadow: 0 10px 25px rgba(34, 197, 94, 0.35);
+      }
+      .btn.primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 35px rgba(34, 197, 94, 0.45);
+      }
+      .btn.primary:active {
+        transform: translateY(0);
+        box-shadow: 0 8px 18px rgba(34, 197, 94, 0.25);
+      }
+      .btn.ghost {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        color: #e5e7eb;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.8);
+      }
+      .btn.ghost:hover {
+        background: rgba(15, 23, 42, 1);
+        transform: translateY(-1px);
+      }
+      .btn.small {
+        padding: 4px 7px;
+        font-size: 11px;
+        box-shadow: none;
+      }
+      .card {
+        background: var(--card);
+        padding: 14px 14px 16px;
+        border-radius: 18px;
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        backdrop-filter: blur(var(--blur));
+        -webkit-backdrop-filter: blur(var(--blur));
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity var(--transition-med),
+          transform var(--transition-med);
+      }
+      .card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .card h3 {
+        margin: 0 0 10px 0;
+        font-size: 15px;
+        color: #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .card h3 i {
+        color: #38bdf8;
+        font-size: 18px;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .stat-card {
+        background: rgba(15, 23, 42, 0.92);
+        border-radius: 14px;
+        padding: 10px 11px;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        position: relative;
+        overflow: hidden;
+        transform: translateY(8px);
+        opacity: 0;
+        transition: opacity var(--transition-med),
+          transform var(--transition-med), box-shadow var(--transition-fast),
+          border-color var(--transition-fast), background var(--transition-fast);
+      }
+      .stat-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        inset: auto;
+        top: -40px;
+        right: -40px;
+        width: 90px;
+        height: 90px;
+        background: radial-gradient(
+          circle,
+          rgba(56, 189, 248, 0.3),
+          transparent 60%
+        );
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      .stat-label {
+        font-size: 11px;
+        color: #9ca3af;
+        z-index: 1;
+      }
+      .stat-value {
+        font-size: 18px;
+        font-weight: 800;
+        color: #e5e7eb;
+        z-index: 1;
+      }
+      .stat-tag {
+        font-size: 10px;
+        color: #22c55e;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 1;
+      }
+      .stat-icon {
+        position: absolute;
+        left: 8px;
+        bottom: 8px;
+        font-size: 18px;
+        color: #7dd3fc;
+        opacity: 0.7;
+        z-index: 0;
+      }
+      .stat-card:hover {
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.95);
+        border-color: #38bdf8;
+        background: rgba(15, 23, 42, 1);
+      }
+      .stats-small {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+        font-size: 11px;
+        color: #9ca3af;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1.5fr minmax(260px, 0.9fr);
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .form-row {
+        margin-bottom: 8px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 4px;
+        font-size: 12px;
+        color: #9ca3af;
+      }
+      input[type="text"],
+      input[type="url"],
+      input[type="file"] {
+        width: 100%;
+        padding: 8px 9px;
+        border-radius: 11px;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        font-size: 13px;
+        font-family: inherit;
+        line-height: 1.5;
+        background: rgba(15, 23, 42, 0.95);
+        color: var(--text);
+        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s,
+          transform 0.08s;
+      }
+      input[type="file"] {
+        padding: 6px 9px;
+        font-size: 12px;
+      }
+      input::placeholder {
+        color: #6b7280;
+        font-size: 11px;
+      }
+      input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+        background: rgba(15, 23, 42, 0.98);
+        transform: translateY(-1px);
+      }
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 11px;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        font-size: 13px;
+        font-family: inherit;
+        line-height: 1.5;
+        background: rgba(15, 23, 42, 0.95);
+        color: #e5e7eb;
+        resize: vertical;
+        min-height: 80px;
+        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s,
+          transform 0.08s;
+      }
+      textarea::placeholder {
+        color: #6b7280;
+        font-size: 11px;
+      }
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+        background: rgba(15, 23, 42, 0.98);
+        transform: translateY(-1px);
+      }
+      .editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 6px;
+        padding: 4px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+      .editor-toolbar button {
+        border: none;
+        background: transparent;
+        color: #e5e7eb;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 13px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        transition: background 0.15s, color 0.15s, transform 0.08s,
+          box-shadow 0.15s;
+      }
+      .editor-toolbar button i {
+        font-size: 16px;
+      }
+      .editor-toolbar button:hover {
+        background: rgba(15, 23, 42, 1);
+        color: #7dd3fc;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.9);
+      }
+      .editor-toolbar button.active {
+        background: rgba(37, 99, 235, 0.95);
+        color: #e5e7eb;
+        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.65);
+      }
+      .editor-area {
+        min-height: 120px;
+        border-radius: 11px;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        padding: 8px 9px;
+        background: rgba(15, 23, 42, 0.95);
+        color: #e5e7eb;
+        overflow: auto;
+        font-size: 13px;
+      }
+      .editor-area:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+      }
+      .preview-img {
+        width: 100%;
+        height: 145px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+      }
+      .list-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .item-card {
+        background: rgba(15, 23, 42, 0.92);
+        padding: 11px 9px 10px;
+        border-radius: 14px;
+        position: relative;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+        overflow: hidden;
+        transition: transform 0.12s, box-shadow 0.15s, border-color 0.12s,
+          background 0.12s;
+      }
+      .item-card::before {
+        content: "";
+        position: absolute;
+        inset: auto;
+        top: -40px;
+        right: -40px;
+        width: 110px;
+        height: 110px;
+        background: radial-gradient(
+          circle,
+          rgba(56, 189, 248, 0.3),
+          transparent 60%
+        );
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      .item-card:hover {
+        transform: translateY(-2px) translateZ(0);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.9);
+        border-color: #38bdf8;
+        background: rgba(15, 23, 42, 1);
+      }
+      .item-card h3 {
+        margin: 0 0 5px 0;
+        font-size: 14px;
+        color: #e5e7eb;
+      }
+      .item-card p {
+        margin: 0 0 6px 0;
+        color: #9ca3af;
+        font-size: 12px;
+        min-height: 35px;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .item-actions {
+        display: flex;
+        gap: 4px;
+        position: absolute;
+        top: 7px;
+        left: 7px;
+        z-index: 2;
+      }
+      .item-actions button {
+        padding: 3px 6px;
+        border-radius: 999px;
+        border: 0;
+        cursor: pointer;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .item-image-thumb {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+      }
+      .meta {
+        font-size: 10px;
+        color: #9ca3af;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      a.link {
+        color: #7dd3fc;
+        text-decoration: none;
+        font-size: 12px;
+      }
+      a.link:hover {
+        text-decoration: underline;
+      }
+      .empty-state {
+        padding: 24px 10px;
+        text-align: center;
+        color: #6b7280;
+        font-size: 12px;
+      }
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+          gap: 12px;
+          padding: 12px;
+        }
+        aside.sidebar {
+          flex-direction: row;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 12px;
+          border-radius: 18px;
+        }
+        .brand {
+          margin-bottom: 0;
+        }
+        nav.side-menu {
+          display: flex;
+          gap: 6px;
+          overflow-x: auto;
+          overflow-y: hidden;
+          margin-top: 0;
+          padding-bottom: 4px;
+        }
+        nav.side-menu button {
+          white-space: nowrap;
+          padding: 6px 10px;
+          flex-shrink: 0;
+        }
+        main.app-main {
+          padding-inline: 0;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 768px) {
+        .app {
+          padding: 10px;
+        }
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+        .controls {
+          width: 100%;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 480px) {
+        .list-grid {
+          grid-template-columns: 1fr;
+        }
+        .item-card {
+          padding: 12px
+ 10px;
+        }
+        .admin-lock-card {
+          max-width: 100%;
+          padding: 22px 18px;
+        }
+        .admin-lock {
+          padding: 12px;
+        }
+        .topbar h2 {
+          font-size: 19px;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-height: 520px) {
+        .admin-lock {
+          align-items: flex-start;
+        }
+        .admin-lock-card {
+          margin-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="adminLock" class="admin-lock">
+      <div class="admin-lock-card">
+        <h2>
+          <i class="ri-shield-user-line"></i>
+          <span data-i18n="loginTitle">دخول الأدمن</span>
+        </h2>
+        <p data-i18n="loginDesc">
+          هذه اللوحة محمية. أدخل كود الأدمن وكلمة المرور للمتابعة إلى إدارة
+          المحتوى.
+        </p>
+        <div class="admin-input">
+          <i class="ri-user-3-line"></i>
+          <input id="adminCode" type="text" placeholder="كود الأدمن " />
+        </div>
+        <div class="admin-input">
+          <i class="ri-lock-password-line"></i>
+          <input id="adminPass" type="password" placeholder="كلمة المرور" />
+        </div>
+        <button class="admin-btn" onclick="checkAdminLogin()">
+          <span data-i18n="loginButton">دخول إلى اللوحة</span>
+          <i class="ri-arrow-left-line"></i>
+        </button>
+        <div id="adminError" class="admin-error" data-i18n="loginError">
+          بيانات الدخول غير صحيحة
+        </div>
+      </div>
+    </div>
+
+    <div class="app" style="display: none">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">AD</div>
+          <div>
+            <div class="brand-text-title" data-i18n="brandTitle">
+              لوحة التحكم
+            </div>
+            <div class="brand-text-sub" data-i18n="brandSub">
+              لوحة التحكم
+            </div>
+          </div>
+        </div>
+        <nav class="side-menu" role="navigation" aria-label="Sections">
+          <button class="active" onclick="showSection('research',this)">
+            <span>
+              <i class="ri-file-text-line"></i>
+              <span data-i18n="navResearch">أبحاث محكمة</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('articles',this)">
+            <span>
+              <i class="ri-file-paper-line"></i>
+              <span data-i18n="navArticles">مقالات محكمة</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('files',this)">
+            <span>
+              <i class="ri-folder-3-line"></i>
+              <span data-i18n="navFiles">ملفات بحثية</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('general-articles',this)">
+            <span>
+              <i class="ri-newspaper-line"></i>
+              <span data-i18n="navGeneral">مقالات عامة</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('foreign-articles',this)">
+            <span>
+              <i class="ri-article-line"></i>
+              <span data-i18n="navForeign">مقالات أجنبية</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('special-politics',this)">
+            <span>
+              <i class="ri-government-line"></i>
+              <span data-i18n="navPol">علوم سياسية</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('special-ir',this)">
+            <span>
+              <i class="ri-global-line"></i>
+              <span data-i18n="navIR">علاقات دولية</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('special-admin-law',this)">
+            <span>
+              <i class="ri-briefcase-4-line"></i>
+              <span data-i18n="navAdminLaw">قانون إداري</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('special-const-law',this)">
+            <span>
+              <i class="ri-balance-line"></i>
+              <span data-i18n="navConstLaw">قانون دستوري</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('special-public-policy',this)">
+            <span>
+              <i class="ri-community-line"></i>
+              <span data-i18n="navPolicy">سياسات عمومية</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('editions',this)">
+            <span>
+              <i class="ri-book-open-line"></i>
+              <span data-i18n="navEditions">إصداراتنا</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('activities',this)">
+            <span>
+              <i class="ri-calendar-2-line"></i>
+              <span data-i18n="navActivities">أنشطتنا</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('talks',this)">
+            <span>
+              <i class="ri-voiceprint-line"></i>
+              <span data-i18n="navTalks">حوارات</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('training',this)">
+            <span>
+              <i class="ri-train-line"></i>
+              <span data-i18n="navTraining">تكوينات</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('live',this)">
+            <span>
+              <i class="ri-live-line"></i>
+              <span data-i18n="navLive">البث المباشر</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+          <button onclick="showSection('owner',this)">
+            <span>
+              <i class="ri-admin-line"></i>
+              <span data-i18n="nav">لوحة المالك</span>
+            </span>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+        </nav>
+        <div class="sidebar-footer">
+          <span data-i18n="footerMadeBy">مُنشأ بواسطتك</span>
+          <button onclick="adminLogout()">
+            <i class="ri-logout-circle-line"></i>
+            <span data-i18n="logoutBtn">تسجيل خروج</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="app-main">
+        <div class="topbar">
+          <div class="topbar-left">
+            <h2 id="sectionTitle">
+              <span class="icon-badge">
+                <i class="ri-layout-row-line"></i>
+              </span>
+              <span data-i18n="defaultSectionTitle">أبحاث محكمة</span>
+            </h2>
+            <div class="topbar-sub" data-i18n="topbarSub">
+              إدارة كل أقسام المنصة من مكان واحد لصاحب الموقع والفريق.
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn ghost" onclick="clearAllData()">
+              <i class="ri-database-2-line"></i>
+              <span data-i18n="btnClearAll">مسح كل البيانات</span>
+            </button>
+            <button class="btn primary" onclick="exportData()">
+              <i class="ri-download-cloud-2-line"></i>
+              <span data-i18n="btnExport">تصدير JSON</span>
+            </button>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-right: 6px;
+              "
+            >
+              <span class="muted" id="languageLabel">اللغة:</span>
+              <button class="btn small ghost" onclick="switchLang('ar')">
+                AR
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="statsCard" class="card">
+          <h3>
+            <i class="ri-bar-chart-2-line"></i>
+            <span data-i18n="statsTitle">إحصائيات الموقع</span>
+          </h3>
+          <div class="stats-grid">
+            <div class="stat-card" id="stat_total_items">
+              <div class="stat-label" data-i18n="statTotalItems">
+                إجمالي العناصر
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-arrow-up-s-line"></i>
+                <span data-i18n="statTotalTag">كل الأقسام</span>
+              </div>
+              <i class="ri-database-2-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_research">
+              <div class="stat-label" data-i18n="statResearch">
+                أبحاث محكمة
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-file-list-2-line"></i>
+                <span data-i18n="statResearchTag">عدد الأبحاث</span>
+              </div>
+              <i class="ri-file-text-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_articles">
+              <div class="stat-label" data-i18n="statArticles">
+                مقالات محكمة
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-article-line"></i>
+                <span data-i18n="statArticlesTag">مقالات منشورة</span>
+              </div>
+              <i class="ri-file-paper-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_videos">
+              <div class="stat-label" data-i18n="statVideos">
+                فيديوهات/مرفقات
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-play-circle-line"></i>
+                <span data-i18n="statVideosTag">روابط أو ملفات</span>
+              </div>
+              <i class="ri-live-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_today">
+              <div class="stat-label" data-i18n="statToday">
+                عناصر اليوم
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-time-line"></i>
+                <span data-i18n="statTodayTag">آخر 24 ساعة</span>
+              </div>
+              <i class="ri-time-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_sections_data">
+              <div class="stat-label" data-i18n="statSectionsData">
+                أقسام بها بيانات
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-grid-line"></i>
+                <span data-i18n="statSectionsDataTag">من إجمالي الأقسام</span>
+              </div>
+              <i class="ri-layout-grid-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_sections_files">
+              <div class="stat-label" data-i18n="statSectionsFiles">
+                أقسام بها مرفقات
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-attachment-line"></i>
+                <span data-i18n="statSectionsFilesTag">فيديو/روابط</span>
+              </div>
+              <i class="ri-attachment-2 stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_live">
+              <div class="stat-label" data-i18n="statLive">
+                البثوث المباشرة
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-live-line"></i>
+                <span data-i18n="statLiv
+eTag">فعال/مضاف</span>
+              </div>
+              <i class="ri-broadcast-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_avg_per_section">
+              <div class="stat-label" data-i18n="statAvgPerSection">
+                متوسط العناصر/قسم
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-functions"></i>
+                <span data-i18n="statAvgPerSectionTag">متوسط عام</span>
+              </div>
+              <i class="ri-pie-chart-2-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_last7">
+              <div class="stat-label" data-i18n="statLast7">
+                عناصر آخر 7 أيام
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-calendar-event-line"></i>
+                <span data-i18n="statLast7Tag">نشاط أسبوعي</span>
+              </div>
+              <i class="ri-line-chart-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_avg_length_ar">
+              <div class="stat-label" data-i18n="statAvgLengthAr">
+                متوسط طول المحتوى (عربي)
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-text-spacing"></i>
+                <span data-i18n="statAvgLengthArTag">عدد الأحرف</span>
+              </div>
+              <i class="ri-file-word-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_multilang_items">
+              <div class="stat-label" data-i18n="statMultiLang">
+                عناصر متعددة اللغات
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-translate"></i>
+                <span data-i18n="statMultiLangTag">لغتان أو أكثر</span>
+              </div>
+              <i class="ri-translate-2 stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_words_ar">
+              <div class="stat-label" data-i18n="statWordsAr">
+                إجمالي أحرف العربية
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-earth-line"></i>
+                <span data-i18n="statWordsAllTag">كل المحتوى</span>
+              </div>
+              <i class="ri-file-word-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_words_fr">
+              <div class="stat-label" data-i18n="statWordsFr">
+                إجمالي أحرف الفرنسية
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-earth-line"></i>
+                <span data-i18n="statWordsAllTag">كل المحتوى</span>
+              </div>
+              <i class="ri-file-word-line stat-icon"></i>
+            </div>
+            <div class="stat-card" id="stat_words_en">
+              <div class="stat-label" data-i18n="statWordsEn">
+                إجمالي أحرف الإنجليزية
+              </div>
+              <div class="stat-value">0</div>
+              <div class="stat-tag">
+                <i class="ri-earth-line"></i>
+                <span data-i18n="statWordsAllTag">كل المحتوى</span>
+              </div>
+              <i class="ri-file-word-line stat-icon"></i>
+            </div>
+          </div>
+          <div class="stats-small" id="statsSmall"></div>
+        </div>
+
+        <div id="sectionArea"></div>
+      </main>
+    </div>
+<script type="module" src="./firestore-bridge.js"></script>
+<script>
+
+      const ADMIN_CODE_CONST = "admin";
+      const ADMIN_PASS_CONST = "ofouqaca12";
+
+      // رفع الفيديو إلى سيرفر Node
+      async function uploadVideoToServer(file) {
+        const formData = new FormData();
+        formData.append("video", file); // multer.single('video')
+        const res = await fetch("http://localhost:3000/upload-video", {
+          method: "POST",
+          body: formData,
+        });
+        if (!res.ok) {
+          throw new Error("فشل رفع الفيديو إلى السيرفر");
+        }
+        const data = await res.json();
+        if (!data || !data.url) {
+          throw new Error("استجابة غير متوقعة من السيرفر");
+        }
+        return data.url; // مثل: /videos/xxx.mp4
+      }
+
+async function translateText(text, fromLang, toLang) {
+  const trimmed = text.trim();
+  if (!trimmed) return "";
+
+  // MyMemory غالباً كيرفض أكثر من ~500 حرف
+  const maxLen = 500;
+  const toSend = trimmed.length > maxLen ? trimmed.slice(0, maxLen) : trimmed;
+
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
+    toSend
+  )}&langpair=${fromLang}|${toLang}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return (data && data.responseData && data.responseData.translatedText) || "";
+  } catch (e) {
+    console.error("Translation error", e);
+    return "";
+  }
+}
+
+// attachAutoTranslateForTriplet("full", key);
+      function attachAutoTranslateForTriplet(prefixId, sectionKey) {
+        const arInput = document.getElementById(`${sectionKey}_${prefixId}_ar`);
+        const frInput = document.getElementById(`${sectionKey}_${prefixId}_fr`);
+        const enInput = document.getElementById(`${sectionKey}_${prefixId}_en`);
+        if (!arInput || !frInput || !enInput) return;
+
+        let typingTimer;
+        const debounceTime = 700;
+
+        async function handleSourceChange(sourceInput, sourceCode) {
+          clearTimeout(typingTimer);
+          typingTimer = setTimeout(async () => {
+            const text = sourceInput.value.trim();
+            if (!text) return;
+
+            if (sourceCode !== "ar") arInput.placeholder = "جارٍ الترجمة...";
+            if (sourceCode !== "fr") frInput.placeholder = "جاري الترجمة...";
+            if (sourceCode !== "en") enInput.placeholder = "جاري الترجمة...";
+
+            let target1, target2;
+            if (sourceCode === "ar") {
+              target1 = "fr";
+              target2 = "en";
+            } else if (sourceCode === "fr") {
+              target1 = "ar";
+              target2 = "en";
+            } else {
+              target1 = "ar";
+              target2 = "fr";
+            }
+
+            const [t1, t2] = await Promise.all([
+              translateText(text, sourceCode, target1),
+              translateText(text, sourceCode, target2),
+            ]);
+
+            if (target1 === "ar") arInput.value = t1;
+            if (target1 === "fr") frInput.value = t1;
+            if (target1 === "en") enInput.value = t1;
+            if (target2 === "ar") arInput.value = t2;
+            if (target2 === "fr") frInput.value = t2;
+            if (target2 === "en") enInput.value = t2;
+
+            arInput.placeholder = "النص بالعربية";
+            frInput.placeholder = "نص";
+            enInput.placeholder = "نص";
+          }, debounceTime);
+        }
+
+        arInput.addEventListener("input", () =>
+          handleSourceChange(arInput, "ar")
+        );
+        frInput.addEventListener("input", () =>
+          handleSourceChange(frInput, "fr")
+        );
+        enInput.addEventListener("input", () =>
+          handleSourceChange(enInput, "en")
+        );
+      }
+
+      let currentEditor = null;
+      document.addEventListener("focusin", (e) => {
+        if (e.target.classList.contains("editor-area")) {
+          currentEditor = e.target;
+        }
+      });
+
+      function formatText(cmd) {
+        if (!currentEditor) return;
+        currentEditor.focus();
+        document.execCommand(cmd, false, null);
+      }
+
+      function getEditorHtml(sectionKey, fieldId) {
+        const editor = document.querySelector(
+          `.editor-area[data-bind-field="${sectionKey}_${fieldId}"]`
+        );
+        return editor ? editor.innerHTML.trim() : "";
+      }
+function waitForFS(timeoutMs = 4000){
+  return new Promise((resolve, reject)=>{
+    const t0 = Date.now();
+    const tick = ()=>{
+      if (window.fs && window.fs.addDoc) return resolve();
+      if (Date.now() - t0 > timeoutMs) return reject(new Error("fs not ready"));
+      setTimeout(tick, 50);
+    };
+    tick();
+  });
+}
+
+      function unlockApp() {
+        const lock = document.getElementById("adminLock");
+        const app = document.querySelector(".app");
+        lock.classList.add("hidden");
+        setTimeout(() => {
+          lock.style.display = "none";
+        }, 240);
+        app.style.display = "grid";
+        requestAnimationFrame(() => app.classList.add("visible"));
+        applyUiTranslations();
+      }
+
+      function checkAdminLogin() {
+        const code = document.getElementById("adminCode").value.trim();
+        const pass = document.getElementById("adminPass").value;
+        const err = document.getElementById("adminError");
+        if (code === ADMIN_CODE_CONST && pass === ADMIN_PASS_CONST) {
+          sessionStorage.setItem("adminAuthed", "1");
+          err.style.display = "none";
+          unlockApp();
+          showSection(currentSection || "research");
+        } else {
+          err.style.display = "block";
+        }
+      }
+
+      function adminLogout() {
+        sessionStorage.removeItem("adminAuthed");
+        const app = document.querySelector(".app");
+        const lock = document.getElementById("adminLock");
+        app.classList.remove("visible");
+        setTimeout(() => {
+          app.style.display = "none";
+          lock.style.display = "flex";
+          requestAnimationFrame(() => lock.classList.remove("hidden"));
+        }, 220);
+        document.getElementById("adminCode").value = "";
+        document.getElementById("adminPass").value = "";
+      }
+
+      function getTextByLang(field, lang) {
+        if (!field) return "";
+        if (typeof field === "string") return field;
+        return field[lang] || field.ar || field.fr || field.en || "";
+      }
+
+      const SECTIONS = [
+        { key: "research", title: "أبحاث محكمة", allowFile: true },
+        { key: "articles", title: "مقالات محكمة", allowFile: true },
+        { key: "files", title: "ملفات بحثية", allowFile: true },
+        { key: "general-articles", title: "مقالات عامة", allowFile: true },
+        { key: "foreign-articles", title: "مقالات أجنبية", allowFile: true },
+        { key: "special-politics", title: "تخصص علوم سياسية", allowFile: true },
+        { key: "special-ir", title: "تخصص العلاقات الدولية", allowFile: true },
+        {
+          key: "special-admin-law",
+          title: "تخصص القانون الإداري",
+          allowFile: true,
+        },
+        {
+          key: "special-const-law",
+          title: "تخصص القانون الدستوري",
+          allowFile: true,
+        },
+        {
+          key: "special-public-policy",
+          title: "تخصص السياسات العمومية",
+          allowFile: true,
+        },
+        { key: "editions", title: "إصداراتنا", allowFile: true },
+        { key: "activities", title: "أنشطتنا", allowFile: true },
+        { key: "talks", title: "حوارات", allowFile: true },
+        { key: "training", title: "تكوينات", allowFile: true },
+        { key: "live", title: "البث المباشر", allowFile: false },
+      ];
+
+      const UI_STRINGS = {
+  ar: { languageLabel: "اللغة:" }
+};
+
+      const UI_TEXT = {
+  ar: {
+          loginTitle: "دخول الأدمن",
+          loginDesc:
+            "هذه اللوحة محمية. أدخل كود الأدمن وكلمة المرور للمتابعة إلى إدارة المحتوى.",
+          loginButton: "دخول إلى اللوحة",
+          loginError: "بيانات الدخول غير صحيحة",
+          brandTitle: "لوحة التحكم",
+          brandSub: "لوحة إدارة الموقع",
+          navResearch: "أبحاث محكمة",
+          navArticles: "مقالات محكمة",
+          navFiles: "ملفات بحثية",
+          navGeneral: "مقالات عامة",
+          navForeign: "مقالات أجنبية",
+          navPol: "علوم سياسية",
+          navIR: "علاقات دولية",
+          navAdminLaw: "قانون إداري",
+          navConstLaw: "قانون دستوري",
+          navPolicy: "سياسات عمومية",
+          navEditions: "إصداراتنا",
+          navActivities: "أنشطتنا",
+          navTalks: "حوارات",
+          navTraining: "تكوينات",
+          navLive: "البث المباشر",
+          nav: "لوحة المالك",
+          footerMadeBy: "مُنشأ بواسطتك",
+          logoutBtn: "تسجيل خروج",
+          defaultSectionTitle: "أبحاث محكمة",
+          topbarSub:
+            "إدارة كل أقسام المنصة من مكان واحد لصاحب الموقع والفريق.",
+   
+       btnClearAll: "مسح كل البيانات",
+          btnExport: "تصدير JSON",
+          statsTitle: "إحصائيات الموقع",
+          statTotalItems: "إجمالي العناصر",
+          statTotalTag: "كل الأقسام",
+          statResearch: "أبحاث محكمة",
+          statResearchTag: "عدد الأبحاث",
+          statArticles: "مقالات محكمة",
+          statArticlesTag: "مقالات منشورة",
+          statVideos: "فيديوهات/مرفقات",
+          statVideosTag: "روابط أو ملفات",
+          statToday: "عناصر اليوم",
+          statTodayTag: "آخر 24 ساعة",
+          statSectionsData: "أقسام بها بيانات",
+          statSectionsDataTag: "من إجمالي الأقسام",
+          statSectionsFiles: "أقسام بها مرفقات",
+          statSectionsFilesTag: "فيديو/روابط",
+          statLive: "البثوث المباشرة",
+          statLiveTag: "فعال/مضاف",
+          statAvgPerSection: "متوسط العناصر/قسم",
+          statAvgPerSectionTag: "متوسط عام",
+          statLast7: "عناصر آخر 7 أيام",
+          statLast7Tag: "نشاط أسبوعي",
+          statAvgLengthAr: "متوسط طول المحتوى (عربي)",
+          statAvgLengthArTag: "عدد الأحرف",
+          statMultiLang: "عناصر متعددة اللغات",
+          statMultiLangTag: "لغتان أو أكثر",
+          statWordsAr: "إجمالي أحرف العربية",
+          statWordsFr: "إجمالي أحرف الفرنسية",
+          statWordsEn: "إجمالي أحرف الإنجليزية",
+          statWordsAllTag: "كل المحتوى",
+          ownerTitle: "لوحة المالك",
+          ownerIntro: "نظرة شاملة على أداء المحتوى في المنصة.",
+          ownerChart1: "توزيع العناصر حسب الأقسام.",
+          ownerChart2: "عدد العناصر المضافة خلال آخر 7 أيام.",
+          ownerChart3: "متوسط طول المحتوى العربي حسب القسم.",
+          ownerSummaryTitle: "ملخص سريع",
+        }
+};
+
+      let currentLang = 'ar';
+
+      function applyUiTranslations() {
+        const dict = UI_TEXT[currentLang];
+        if (!dict) return;
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (dict[key]) el.textContent = dict[key];
+        });
+        const sectionTitleSpan = document.querySelector(
+          "#sectionTitle span:nth-child(2)"
+        );
+        if (sectionTitleSpan && currentSection === "research") {
+          sectionTitleSpan.textContent = dict.defaultSectionTitle;
+        }
+      }
+
+      function switchLang(lang) {
+  if (lang !== 'ar') return;
+        currentLang = lang;
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+        const label = document.getElementById("languageLabel");
+        if (label) label.textContent = UI_STRINGS[lang].languageLabel;
+        applyUiTranslations();
+      }
+
+      let db = {};
+      SECTIONS.forEach(
+        (s) => (db[s.key] = JSON.parse(localStorage.getItem(s.key)) || [])
+      );
+
+      function uid() {
+        return Date.now() + Math.floor(Math.random() * 999);
+      }
+
+      let currentSection = "research";
+
+      function updateStats() {
+        let totalItems = 0;
+        let videosCount = 0;
+        let liveCount = (db["live"] || []).length;
+        let sectionsWithData = 0;
+        let sectionsWithFiles = 0;
+        let todayItems = 0;
+        let last7Items = 0;
+        let totalFullLengthAr = 0;
+        let multiLangItems = 0;
+        let totalCharsAr = 0;
+        let totalCharsFr = 0;
+        let totalCharsEn = 0;
+
+        const today = new Date();
+        const todayDate = today.toDateString();
+        const sevenDaysAgo = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - 7
+        );
+        const perSectionCounts = {};
+
+        SECTIONS.forEach((s) => {
+          const arr = db[s.key] || [];
+          if (arr.length > 0) sectionsWithData++;
+          let secHasFile = false;
+
+          arr.forEach((it) => {
+            totalItems++;
+            if (
+              it.file &&
+              (it.file.startsWith("http") || it.file.startsWith("/videos/"))
+            ) {
+              videosCount++;
+              secHasFile = true;
+            }
+
+            const created = new Date(it.id);
+            const createdDate = created.toDateString();
+            if (createdDate === todayDate) todayItems++;
+            if (created >= sevenDaysAgo) last7Items++;
+
+            if (it.full) {
+              if (it.full.ar) {
+                totalFullLengthAr += it.full.ar.length;
+                totalCharsAr += it.full.ar.length;
+              }
+              if (it.full.fr) {
+                totalCharsFr += it.full.fr.length;
+              }
+              if (it.full.en) {
+                totalCharsEn += it.full.en.length;
+              }
+              let langCount = 0;
+              if (it.full.ar && it.full.ar.trim()) langCount++;
+              if (it.full.fr && it.full.fr.trim()) langCount++;
+              if (it.full.en && it.full.en.trim()) langCount++;
+              if (langCount >= 2) multiLangItems++;
+            }
+          });
+
+          if (secHasFile) sectionsWithFiles++;
+          perSectionCounts[s.key] = arr.length;
+        });
+
+        const sectionsCount = SECTIONS.length;
+        const avgPerSection = sectionsCount
+          ? Math.round(totalItems / sectionsCount)
+          : 0;
+        const avgLengthAr = totalItems
+          ? Math.round(totalFullLengthAr / totalItems)
+          : 0;
+
+        const setVal = (id, val) => {
+          const el = document.querySelector(`#${id} .stat-value`);
+          if (el) el.textContent = val;
+        };
+
+        setVal("stat_total_items", totalItems);
+        setVal("stat_research", perSectionCounts["research"] || 0);
+        setVal("stat_articles", perSectionCounts["articles"] || 0);
+        setVal("stat_videos", videosCount);
+        setVal("stat_today", todayItems);
+        setVal("stat_sections_data", sectionsWithData);
+        setVal("stat_sections_files", sectionsWithFiles);
+        setVal("stat_live", liveCount);
+        setVal("stat_avg_per_section", avgPerSection);
+        setVal("stat_last7", last7Items);
+        setVal("stat_avg_length_ar", avgLengthAr);
+        setVal("stat_multilang_items", multiLangItems);
+        setVal("stat_words_ar", totalCharsAr);
+        setVal("stat_words_fr", totalCharsFr);
+        setVal("stat_words_en", totalCharsEn);
+
+        const statsSmall = document.getElementById("statsSmall");
+        if (statsSmall) {
+          statsSmall.innerHTML =
+            `<span>إجمالي العناصر: ${totalItems}</span>` +
+            `<span> · عناصر اليوم: ${todayItems}</span>` +
+            `<span> · عناصر آخر 7 أيام: ${last7Items}</span>` +
+            `<span> · متوسط العناصر لكل قسم: ${avgPerSection}</span>` +
+            `<span> · متوسط طول المحتوى العربي: ${avgLengthAr} حرفًا</span>` +
+            `<span> · عناصر متعددة اللغات: ${multiLangItems}</span>` +
+            `<span> · أحرف عربية: ${totalCharsAr}</span>` +
+            `<span> · أحرف فرنسية: ${totalCharsFr}</span>` +
+            `<span> · أحرف إنجليزية: ${totalCharsEn}</span>` +
+            `<span> · أقسام تحتوي بيانات: ${sectionsWithData}/${SECTIONS.length}</span>` +
+            `<span> · أقسام بها مرفقات/فيديو: ${sectionsWithFiles}</span>` +
+            `<span> · عدد البثوث المباشرة: ${liveCount}</span>`;
+        }
+
+        document.querySelectorAll(".stat-card").forEach((card, i) => {
+          setTimeout(() => card.classList.add("visible"), 90 * i);
+        });
+      }
+
+      let ownerCharts = {};
+
+      function buildCharts() {
+        const sectionsLabels = SECTIONS.map((s) => s.title);
+        const counts = SECTIONS.map((s) => (db[s.key] || []).length);
+
+        const today = new Date();
+        const daysLabels = [];
+        const daysCounts = [];
+
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() - i
+          );
+          const label = d.toLocaleDateString("ar-EG", {
+            day: "2-digit",
+            month: "2-digit",
+          });
+          daysLabels.push(label);
+
+          let countDay = 0;
+          SECTIONS.forEach((sec) => {
+            (db[sec.key] || []).forEach((item) => {
+              const dItem = new Date(item.id);
+              if (
+                dItem.getFullYear() === d.getFullYear() &&
+                dItem.getMonth() === d.getMonth() &&
+                dItem.getDate() === d.getDate()
+              ) {
+                countDay++;
+              }
+            });
+          });
+          daysCounts.push(countDay);
+        }
+
+        const lengthPerSection = SECTIONS.map((sec) => {
+          const arr = db[sec.key] || [];
+          if (!arr.length) return 0;
+          let sum = 0;
+          arr.forEach((item) => {
+            if (item.full && item.full.ar) {
+              sum += item.full.ar.length;
+            }
+          });
+          return Math.round(sum / (arr.length || 1));
+        });
+
+        if (ownerCharts.itemsPerSection) ownerCharts.itemsPerSection.destroy();
+        if (ownerCharts.last7Days) ownerCharts.last7Days.destroy();
+        if (ownerCharts.lengthChart) ownerCharts.lengthChart.destroy();
+
+        const ctx1 = document
+          .getElementById("chartItemsPerSection")
+          ?.getContext("2d");
+        if (ctx1) {
+          ownerCharts.itemsPerSection = new Chart(ctx1, {
+            type: "bar",
+            data: {
+              labels: sectionsLabels,
+              datasets: [
+                {
+                  label: "عدد العناصر",
+                  data: counts,
+                  backgroundColor: "rgba(56,189,248,0.6)",
+                  borderRadius: 6,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  ticks: { color: "#9ca3af", font: { size: 10 } },
+                  grid: { display: false },
+                },
+                y: {
+                  ticks: { color: "#9ca3af", beginAtZero: true },
+                  grid: { color: "rgba(30,64,175,0.3)" },
+                },
+              },
+            },
+          });
+        }
+
+        const ctx2 = document
+          .getElementById("chartLast7Days")
+          ?.getContext("2d");
+        if (ctx2) {
+          ownerCharts.last7Days = new Chart(ctx2, {
+            type: "line",
+            data: {
+              labels: daysLabels,
+              datasets: [
+                {
+                  label: "عناصر جديدة",
+                  data: daysCounts,
+                  fill: true,
+                  backgroundColor: "rgba(34,197,94,0.18)",
+                  borderColor: "#22c55e",
+                  tension: 0.3,
+                  pointRadius: 3,
+                  pointBackgroundColor: "#22c55e",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  ticks: { color: "#9ca3af", font: { size: 10 } },
+                  grid: { display: false },
+                },
+                y: {
+                  ticks: { color: "#9ca3af", beginAtZero: true },
+                  grid: { color: "rgba(15,23,42,0.6)" },
+                },
+              },
+            },
+          });
+        }
+
+        const ctx3 = document
+          .getElementById("chartContentLength")
+          ?.getContext("2d");
+        if (ctx3) {
+          ownerCharts.lengthChart = new Chart(ctx3, {
+            type: "radar",
+            data: {
+              labels: sectionsLabels,
+              datasets: [
+                {
+                  label: "متوسط طول المحتوى",
+                  data: lengthPerSection,
+                  backgroundColor: "rgba(59,130,246,0.2)",
+                  borderColor: "#3b82f6",
+                  pointBackgroundColor: "#3b82f6",
+                },
+              ],
+            },
+            options: {
+              plugins: { legend: { display: false } },
+              scales: {
+                r: {
+               
+   grid: { color: "rgba(148,163,184,0.4)" },
+                  pointLabels: { color: "#9ca3af", font: { size: 9 } },
+                  ticks: { display: false },
+                },
+              },
+            },
+          });
+        }
+
+        const totalItems = counts.reduce((a, b) => a + b, 0);
+        const weekTotal = daysCounts.reduce((a, b) => a + b, 0);
+        const maxCount = Math.max(...counts);
+        const topIndex = counts.indexOf(maxCount);
+        const topSectionName =
+          maxCount > 0 ? sectionsLabels[topIndex] : "لا يوجد";
+        const maxLen = Math.max(...lengthPerSection);
+        const maxLenIndex = lengthPerSection.indexOf(maxLen);
+        const maxLenName = maxLen > 0 ? sectionsLabels[maxLenIndex] : "لا يوجد";
+
+        const sTotal = document.getElementById("ownerSummary_total");
+        const sWeek = document.getElementById("ownerSummary_week");
+        const sTop = document.getElementById("ownerSummary_topSection");
+        const sLong = document.getElementById("ownerSummary_longest");
+
+        if (sTotal)
+          sTotal.textContent = `إجمالي العناصر المنشورة: ${totalItems}.`;
+        if (sWeek)
+          sWeek.textContent = `عناصر تمت إضافتها خلال آخر 7 أيام: ${weekTotal}.`;
+        if (sTop)
+          sTop.textContent = `أكثر الأقسام نشاطًا: ${topSectionName} (${maxCount} عناصر).`;
+        if (sLong)
+          sLong.textContent = `أطول محتوى عربي في قسم: ${maxLenName} (متوسط ${maxLen} حرفًا).`;
+      }
+
+      function showSection(key, btnEl) {
+        currentSection = key;
+        const secObj = SECTIONS.find((s) => s.key === key);
+        const secTitleEl = document
+          .getElementById("sectionTitle")
+          .querySelector("span:nth-child(2)");
+
+        if (secObj) {
+          secTitleEl.textContent = secObj.title;
+        } else {
+          secTitleEl.textContent = UI_TEXT[currentLang].ownerTitle;
+        }
+
+        document
+          .querySelectorAll(".side-menu button")
+          .forEach((b) => b.classList.remove("active"));
+        if (btnEl) btnEl.classList.add("active");
+
+        const area = document.getElementById("sectionArea");
+        area.style.opacity = "0";
+        area.style.transform = "translateY(10px)";
+
+        setTimeout(() => {
+          area.innerHTML = "";
+
+          if (key === "owner") {
+            const dict = UI_TEXT[currentLang];
+            const ownerCard = document.createElement("div");
+            ownerCard.className = "card";
+            ownerCard.innerHTML = `
+              <h3><i class="ri-user-star-line"></i> ${dict.ownerTitle}</h3>
+              <div class="muted" style="margin-bottom:10px;">${dict.ownerIntro}</div>
+              <div style="display:grid;grid-template-columns:2fr 1.4fr;gap:12px;align-items:flex-start;">
+                <div>
+                  <canvas id="chartItemsPerSection" height="140"></canvas>
+                  <div class="muted" style="margin-top:6px;font-size:11px;">${dict.ownerChart1}</div>
+                </div>
+                <div>
+                  <canvas id="chartLast7Days" height="140"></canvas>
+                  <div class="muted" style="margin-top:6px;font-size:11px;">${dict.ownerChart2}</div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1.4fr 1.4fr;gap:12px;margin-top:14px;">
+                <div>
+                  <canvas id="chartContentLength" height="120"></canvas>
+                  <div class="muted" style="margin-top:6px;font-size:11px;">${dict.ownerChart3}</div>
+                </div>
+                <div class="card" style="background:rgba(15,23,42,0.9);border-radius:14px;">
+                  <h3 style="margin-bottom:6px;"><i class="ri-flashlight-line"></i> ${dict.ownerSummaryTitle}</h3>
+                  <ul style="padding-left:18px;margin:0;font-size:12px;color:#9ca3af;line-height:1.6;">
+                    <li id="ownerSummary_total"></li>
+                    <li id="ownerSummary_week"></li>
+                    <li id="ownerSummary_topSection"></li>
+                    <li id="ownerSummary_longest"></li>
+                  </ul>
+                </div>
+              </div>
+            `;
+            area.appendChild(ownerCard);
+            requestAnimationFrame(() => {
+              ownerCard.classList.add("visible");
+              area.style.opacity = "1";
+              area.style.transform = "translateY(0)";
+            });
+            buildCharts();
+            return;
+          }
+
+          const secCfg = secObj;
+          if (!secCfg) return;
+
+          const formCard = document.createElement("div");
+          formCard.className = "card";
+          formCard.innerHTML = `
+            <h3><i class="ri-edit-2-line"></i> إضافة / تعديل — ${
+              secCfg.title
+            }</h3>
+            <div class="form-grid">
+              <div>
+                <div class="form-row">
+                  <label>العنوان (عربي)</label>
+                  <input type="text" id="${key}_title_ar" placeholder="العنوان بالعربية">
+                </div>
+                <div class="form-row">
+                  <label>العنوان </label>
+                  <input type="text" id="${key}_title_fr" placeholder="العنوان">
+                </div>
+                <div class="form-row">
+                  <label>Title </label>
+                  <input type="text" id="${key}_title_en" placeholder="العنوان">
+                </div>
+
+                <!-- اسم الكاتب / الباحث متعدد اللغات -->
+                <div class="form-row">
+                  <label>اسم الكاتب / الباحث</label>
+                  <input type="text" id="${key}_author_ar" placeholder="مثال: د. فلان الفلاني">
+                </div>
+                <div class="form-row">
+                  <label>Auteur / Chercheur</label>
+                  <input type="text" id="${key}_author_fr" placeholder="Ex: Dr. Nom Prénom">
+                </div>
+                <div class="form-row">
+                  <label>Author / Researcher</label>
+                  <input type="text" id="${key}_author_en" placeholder="e.g. Dr. John Doe">
+                </div>
+
+                <!-- المؤسسة / الجامعة -->
+                <div class="form-row">
+                  <label>المؤسسة / الجامعة (اختياري)</label>
+                  <input type="text" id="${key}_affiliation_ar" placeholder="مثال: جامعة كذا">
+                </div>
+                <div class="form-row">
+                  <label>Institution / Université (Optionnel)</label>
+                  <input type="text" id="${key}_affiliation_fr" placeholder="Ex: Université X">
+                </div>
+                <div class="form-row">
+                  <label>Institution / University (Optional)</label>
+                  <input type="text" id="${key}_affiliation_en" placeholder="e.g. University X">
+                </div>
+
+                <!-- تاريخ النشر -->
+                <div class="form-row">
+                  <label>تاريخ النشر (اختياري)</label>
+                  <input type="text" id="${key}_date_ar" placeholder="مثال: مارس 2025">
+                </div>
+                <div class="form-row">
+                  <label>Date de publication (Optionnel)</label>
+                  <input type="text" id="${key}_date_fr" placeholder="Ex: Mars 2025">
+                </div>
+                <div class="form-row">
+                  <label>Publication date (Optional)</label>
+                  <input type="text" id="${key}_date_en" placeholder="e.g. March 2025">
+                </div>
+
+                ${
+                  secCfg.key !== "live"
+                    ? `
+                  <div class="form-row">
+                    <label>الملخص (عربي)</label>
+                    <textarea id="${key}_short_ar" placeholder="ملخص بالعربية"></textarea>
+                  </div>
+                  <div class="form-row">
+                    <label>Résumé </label>
+                    <textarea id="${key}_short_fr" placeholder="Résumé en français"></textarea>
+                  </div>
+                  <div class="form-row">
+                    <label>Summary </label>
+                    <textarea id="${key}_short_en" placeholder="Summary in "></textarea>
+                  </div>
+
+                  <div class="form-row">
+                    <label>المحتوى الكامل (عربي)</label>
+                    <div class="editor-toolbar">
+                      <button type="button" onclick="formatText('bold')" title="عريض"><i class="ri-bold"></i></button>
+                      <button type="button" onclick="formatText('italic')" title="مائل"><i class="ri-italic"></i></button>
+                      <button type="button" onclick="formatText('underline')" title="تحته خط"><i class="ri-underline"></i></button>
+                      <button type="button" onclick="formatText('insertUnorderedList')" title="قائمة نقطية"><i class="ri-list-unordered"></i></button>
+                      <button type="button" onclick="formatText('insertOrderedList')" title="قائمة رقمية"><i class="ri-list-ordered"></i></button>
+                      <button type="button" onclick="formatText('justifyRight')" title="يمين"><i class="ri-align-right"></i></button>
+                      <button type="button" onclick="formatText('justifyCenter')" title="وسط"><i class="ri-align-center"></i></button>
+                      <button type="button" onclick="formatText('justifyLeft')" title="يسار"><i class="ri-align-left"></i></button>
+                    </div>
+                    <!-- حقل مخفي لربط الترجمة الآلية -->
+                    <textarea id="${key}_full_ar" style="display:none;"></textarea>
+                    <div id="${key}_full_ar_editor"
+                         class="editor-area"
+                         contenteditable="true"
+                         data-bind-field="${key}_full_ar"></div>
+                  </div>
+
+                  <div class="form-row">
+                    <label>Contenu complet </label>
+                    <textarea id="${key}_full_fr" placeholder="Texte complet en français"></textarea>
+                  </div>
+                  <div class="form-row">
+                    <label>Full content </label>
+                    <textarea id="${key}_full_en" placeholder="Full text in "></textarea>
+                  </div>
+
+                  <div class="form-row">
+                    <label>تفاصيل إضافية (عربي)</label>
+                    <textarea id="${key}_details_ar" placeholder="ملاحظات أو كلمات مفتاحية بالعربية"></textarea>
+                  </div>
+                  <div class="form-row">
+                    <label>Détails supplémentaires </label>
+                    <textarea id="${key}_details_fr" placeholder="Détails ou mots-clés en français"></textarea>
+                  </div>
+                  <div class="form-row">
+                    <label>Additional details </label>
+                    <textarea id="${key}_details_en" placeholder="Notes or keywords in "></textarea>
+                  </div>
+                  ${
+                    secCfg.allowFile
+                      ? `
+                    <div class="form-row">
+                      <label>رابط خارجي (فيديو كبير / PDF)</label>
+                      <input type="url" id="${key}_fileurl" placeholder="https://youtube.com/... أو رابط PDF أو mp4">
+                    </div>`
+                      : ""
+                  }
+                `
+                    : ""
+                }
+              </div>
+
+              <div>
+                ${
+                  secCfg.key !== "live"
+                    ? `
+                  <div class="form-row">
+                    <label>صورة غلاف (من الجهاز)</label>
+                    <input type="file" id="${key}_image" accept="image/*">
+                  </div>
+                  <div class="form-row">
+                    <label>فيديو كبير من جهازك (يتم رفعه للسيرفر)</label>
+                    <input type="file" id="${key}_video" accept="video/*">
+                  </div>
+                `
+                    : `
+                  <div class="form-row">
+                    <label>رابط ا
+لبث المباشر</label>
+                    <input type="url" id="live_link" placeholder="رابط البث (YouTube, Vimeo...)">
+                  </div>
+                `
+                }
+                <div class="form-row">
+                  <label>معاينة الملفات</label>
+                  <div id="${key}_preview" class="muted">لا توجد معاينات بعد.</div>
+                </div>
+                <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+                  <button class="btn primary" onclick="saveItem('${key}')">
+                    <i class="ri-check-line"></i> حفظ
+                  </button>
+                  <button class="btn ghost" onclick="resetForm('${key}')">
+                    <i class="ri-refresh-line"></i> تفريغ الحقول
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          area.appendChild(formCard);
+
+          const listCard = document.createElement("div");
+          listCard.className = "card";
+          listCard.innerHTML = `
+            <h3><i class="ri-list-unordered"></i> العناصر في ${secCfg.title}</h3>
+            <div id="${key}_list" class="list-grid"></div>
+          `;
+          area.appendChild(listCard);
+
+          requestAnimationFrame(() => {
+            document.querySelectorAll("#sectionArea .card").forEach((c, i) => {
+              setTimeout(() => c.classList.add("visible"), 90 * i);
+            });
+          });
+
+          if (secCfg.key !== "live") {
+            attachAutoTranslateForTriplet("title", key);
+            attachAutoTranslateForTriplet("short", key);
+            attachAutoTranslateForTriplet("full", key);
+            attachAutoTranslateForTriplet("details", key);
+
+            // مزامنة محرر المحتوى العربي مع textarea المخفية للترجمة الآلية
+            const fullEditor = document.getElementById(`${key}_full_ar_editor`);
+            const fullHidden = document.getElementById(`${key}_full_ar`);
+            if (fullEditor && fullHidden) {
+              fullEditor.addEventListener("input", () => {
+                fullHidden.value = fullEditor.innerText;
+                fullHidden.dispatchEvent(
+                  new Event("input", { bubbles: true })
+                );
+              });
+            }
+
+            const imgInput = document.getElementById(`${key}_image`);
+            const videoInput = document.getElementById(`${key}_video`);
+            const preview = document.getElementById(`${key}_preview`);
+
+            if (imgInput) {
+              imgInput.addEventListener("change", () => {
+                if (imgInput.files[0]) {
+                  const url = URL.createObjectURL(imgInput.files[0]);
+                  preview.innerHTML = `<img src="${url}" class="preview-img">`;
+                }
+              });
+            }
+
+            if (videoInput) {
+              videoInput.addEventListener("change", () => {
+                if (videoInput.files[0]) {
+                  const file = videoInput.files[0];
+                  const url = URL.createObjectURL(file);
+                  const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+                  preview.innerHTML = `
+                    <video controls style="width:100%;border-radius:12px;max-height:260px;border:1px solid rgba(148,163,184,0.4);">
+                      <source src="${url}">
+                    </video>
+                    <div class="muted">فيديو محلي: ${file.name} — الحجم: ${sizeMB} MB (سيتم رفعه عند الحفظ)</div>
+                  `;
+                }
+              });
+            }
+          }
+
+          renderList(key);
+          updateStats();
+          requestAnimationFrame(() => {
+            area.style.opacity = "1";
+            area.style.transform = "translateY(0)";
+          });
+        }, 150);
+      }
+
+      function resetForm(key) {
+        const cfg = SECTIONS.find((s) => s.key === key);
+
+        ["ar", "fr", "en"].forEach((lang) => {
+          const t = document.getElementById(`${key}_title_${lang}`);
+          if (t) t.value = "";
+
+          // الحقول النصية الأخرى
+          if (cfg.key !== "live") {
+            const s = document.getElementById(`${key}_short_${lang}`);
+            const d = document.getElementById(`${key}_details_${lang}`);
+            if (s) s.value = "";
+            if (d) d.value = "";
+            if (lang !== "ar") {
+              const f = document.getElementById(`${key}_full_${lang}`);
+              if (f) f.value = "";
+            }
+          }
+
+          // حقول الكاتب
+          const a = document.getElementById(`${key}_author_${lang}`);
+          if (a) a.value = "";
+
+          // حقول المؤسسة
+          const aff = document.getElementById(`${key}_affiliation_${lang}`);
+          if (aff) aff.value = "";
+
+          // حقول التاريخ
+          const dt = document.getElementById(`${key}_date_${lang}`);
+          if (dt) dt.value = "";
+        });
+
+        if (cfg.key !== "live") {
+          const editor = document.querySelector(
+            `.editor-area[data-bind-field="${key}_full_ar"]`
+          );
+          if (editor) editor.innerHTML = "";
+        }
+
+        if (cfg.key !== "live") {
+          const img = document.getElementById(`${key}_image`);
+          const vid = document.getElementById(`${key}_video`);
+          if (img) img.value = "";
+          if (vid) vid.value = "";
+          const url = document.getElementById(`${key}_fileurl`);
+          if (url) url.value = "";
+          document.getElementById(`${key}_preview`).innerHTML =
+            "لا توجد معاينات بعد.";
+        } else {
+          const liveLink = document.getElementById("live_link");
+          if (liveLink) liveLink.value = "";
+        }
+      }
+
+      function renderList(key) {
+        const listEl = document.getElementById(`${key}_list`);
+        if (!listEl) return;
+
+        listEl.innerHTML = "";
+        const data = db[key] || [];
+        if (!data.length) {
+          listEl.innerHTML =
+            '<div class="empty-state">لا توجد عناصر بعد.</div>';
+          return;
+        }
+
+        data.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "item-card";
+
+          const dateLabel =
+            getTextByLang(item.date, "ar") ||
+            new Date(item.id).toLocaleString("ar-EG");
+          const titleAr = getTextByLang(item.title, "ar");
+          const shortArFull = getTextByLang(item.short, "ar");
+          const shortText = shortArFull
+            ? shortArFull.length > 100
+              ? shortArFull.slice(0, 100) + "..."
+              : shortArFull
+            : "";
+          const authorLabel = getTextByLang(item.author, "ar") || "غير محدد";
+
+          const attachLabel = item.file
+            ? item.file.startsWith("/videos/")
+              ? "فيديو مرفوع"
+              : item.file.startsWith("http")
+              ? "رابط خارجي"
+              : "مرفق"
+            : "لا يوجد مرفقات";
+
+          div.innerHTML = `
+            <div class="item-actions">
+              <button title="تعديل" class="btn small" onclick="loadForEdit('${key}',${item.id})"
+                style="background:var(--accent);color:#04101f;">
+                <i class="ri-edit-box-line"></i>
+              </button>
+              <button title="حذف" class="btn small"
+                style="background:var(--danger);color:#f9fafb;"
+                onclick="deleteItem('${key}',${item.id})">
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </div>
+            ${
+              item.image
+                ? `<img src="${item.image}" class="item-image-thumb">`
+                : ""
+            }
+            <h3>${titleAr}</h3>
+            <p>${shortText}</p>
+            <div class="meta">
+              الكاتب: ${authorLabel} · ${attachLabel} · ${dateLabel}
+            </div>
+            <div style="margin-top:6px;">
+              ${
+                key !== "live"
+                  ? `<a class="link" href="research-view.html?id=${item.id}&type=${key}" target="_blank">عرض التفاصيل / الفيديو</a>`
+                  : `<a class="link" href="${item.file}" target="_blank">مشاهدة البث</a>`
+              }
+            </div>
+          `;
+          listEl.appendChild(div);
+        });
+      }
+
+      async function saveItem(key) {
+        const cfg = SECTIONS.find((s) => s.key === key);
+
+        const title_ar = (
+          document.getElementById(`${key}_title_ar`)?.value || ""
+        ).trim();
+        const title_fr = (
+          document.getElementById(`${key}_title_fr`)?.value || ""
+        ).trim();
+        const title_en = (
+          document.getElementById(`${key}_title_en`)?.value || ""
+        ).trim();
+
+        if (!title_ar && !title_fr && !title_en) {
+          return alert("الرجاء إدخال عنوان في لغة واحدة على الأقل");
+        }
+
+        const newObj = {
+          id: uid(),
+          title: { ar: title_ar, fr: title_fr, en: title_en },
+          short: { ar: "", fr: "", en: "" },
+          full: { ar: "", fr: "", en: "" },
+          details: { ar: "", fr: "", en: "" },
+          author: { ar: "", fr: "", en: "" },
+          affiliation: { ar: "", fr: "", en: "" },
+          date: { ar: "", fr: "", en: "" },
+          image: "",
+          file: "",
+        };
+  // ✅ Firestore: research فقط
+if (key === 'research') {
+  try {
+    if (!window.fs) {
+      alert("Firestore لم يجهز بعد. انتظر ثانية ثم جرّب.");
+      return;
+    }
+
+    const ref = await window.fs.addDoc(
+      window.fs.collection(window.fs.db, "research"),
+      newObj
+    );
+
+    newObj.docId = ref.id;
+    db['research'].unshift(newObj);
+
+    renderList('research');
+    resetForm('research');
+    updateStats();
+    alert('✅ تم حفظ البحث في Firestore');
+    return;
+localStorage.setItem("research", JSON.stringify(dbresearch));
+localStorage.setItem("lastUpdated", String(Date.now()));
+
+  } catch (e) {
+    console.error(e);
+    alert('❌ خطأ أثناء الحفظ في Firestore: ' + (e.code || e.message));
+    
+    return;
+  
+  }
+}
+
+        if (cfg.key === "live") {
+          newObj.file = document.getElementById("live_link").value.trim();
+          if (!newObj.file) return alert("ضع رابط البث المباشر");
+          db[key].push(newObj);
+          localStorage.setItem(key, JSON.stringify(db[key]));
+          renderList(key);
+          resetForm(key);
+          updateStats();
+          alert("تم حفظ البث المباشر");
+          return;
+        }
+
+        ["ar", "fr", "en"].forEach((lang) => {
+          newObj.short[lang] = (
+            document.getElementById(`${key}_short_${lang}`)?.value || ""
+          ).trim();
+          if (lang === "ar") {
+            newObj.full[lang] = getEditorHtml(key, "full_ar");
+          } else {
+            newObj.full[lang] = (
+              document.getElementById(`${key}_full_${lang}`)?.value || ""
+            ).trim();
+          }
+          newObj.details[lang] = (
+            document.getElementById(`${key}_details_${lang}`)?.value || ""
+          ).trim();
+
+          newObj.author[lang] = (
+            document.getElementById(`${key}_author_${lang}`)?.value || ""
+          ).trim();
+          newObj.affiliation[lang] = (
+            document.getElementById(`${key}_affiliation_${lang}`)?.value || ""
+          ).trim();
+          newObj.date[lang] = (
+            document.getElementById(`${key}_date_${lang}`)?.value || ""
+          ).trim();
+        });
+
+        const imageInput = document.getElementById(`${key}_image`);
+        const videoInput = document.getElementById(`${key}_video`);
+        const externalUrl = (
+          document.getElementById(`${key}_fileurl`)?.value || ""
+        ).trim();
+
+        try {
+          if (imageInput && imageInput.files[0]) {
+            const imgFile = imageInput.files[0];
+            if (imgFile.size > 6 * 1024 * 1024) {
+              if (!confirm("الصورة أكبر من 6MB — هل تريد المتابعة؟")) return;
+            }
+            const reader = new FileReader();
+            newObj.image = await new Promise((res, rej) => {
+              reader.onload = (e) => res(e.target.result);
+              reader.onerror = rej;
+              reader.readAsDataURL(imgFile);
+            });
+          }
+
+          if (externalUrl) {
+            newObj.file = externalUrl;
+          } else if (videoInput && videoInput.files[0]) {
+            const vFile = videoInput.files[0];
+            const sizeMB = (vFile.size / 1024 / 1024).toFixed(1);
+            if (
+              !confirm(
+                `سيتم رفع فيديو حجمه ${sizeMB} MB إلى السيرفر.\nمتابعة الرفع؟`
+              )
+            )
+              return;
+            const videoUrl = await uploadVideoToServer(vFile);
+            newObj.file = videoUrl;
+          }
+
+          db[key].push(newObj);
+          localStorage.setItem(key, JSON.stringify(db[key]));
+          renderList(key);
+         
+ resetForm(key);
+          updateStats();
+          alert("✅ تمت الإضافة بنجاح.");
+        } catch (err) {
+          console.error(err);
+          alert("❌ حدث خطأ أثناء معالجة الملفات أو رفع الفيديو");
+        }
+      }
+
+      function loadForEdit(key, id) {
+        const data = db[key] || [];
+        const item = data.find((i) => i.id === id);
+        if (!item) return alert("العنصر غير موجود");
+
+        ["ar", "fr", "en"].forEach((lang) => {
+          const t = document.getElementById(`${key}_title_${lang}`);
+          if (t) t.value = getTextByLang(item.title, lang);
+
+          if (key !== "live") {
+            const s = document.getElementById(`${key}_short_${lang}`);
+            const d = document.getElementById(`${key}_details_${lang}`);
+            if (s) s.value = getTextByLang(item.short, lang);
+            if (d) d.value = getTextByLang(item.details, lang);
+
+            if (lang === "ar") {
+              const editor = document.querySelector(
+                `.editor-area[data-bind-field="${key}_full_ar"]`
+              );
+              if (editor) editor.innerHTML = getTextByLang(item.full, lang);
+              const hiddenFull = document.getElementById(`${key}_full_ar`);
+              if (hiddenFull)
+                hiddenFull.value = getTextByLang(item.full, lang);
+            } else {
+              const f = document.getElementById(`${key}_full_${lang}`);
+              if (f) f.value = getTextByLang(item.full, lang);
+            }
+          }
+
+          const a = document.getElementById(`${key}_author_${lang}`);
+          if (a) a.value = getTextByLang(item.author, lang);
+          const aff = document.getElementById(`${key}_affiliation_${lang}`);
+          if (aff) aff.value = getTextByLang(item.affiliation, lang);
+          const dt = document.getElementById(`${key}_date_${lang}`);
+          if (dt) dt.value = getTextByLang(item.date, lang);
+        });
+
+        if (key !== "live") {
+          const urlInput = document.getElementById(`${key}_fileurl`);
+          if (urlInput)
+            urlInput.value =
+              item.file && item.file.startsWith("http") ? item.file : "";
+          const preview = document.getElementById(`${key}_preview`);
+          if (item.image) {
+            preview.innerHTML = `<img src="${item.image}" class="preview-img">`;
+          } else if (item.file) {
+            preview.innerHTML = `<div class="muted">مرفق محفوظ: ${item.file}</div>`;
+          } else {
+            preview.innerHTML = `<div class="muted">لا توجد معاينات</div>`;
+          }
+        } else {
+          document.getElementById("live_link").value = item.file || "";
+        }
+
+        db[key] = db[key].filter((i) => i.id !== id);
+        localStorage.setItem(key, JSON.stringify(db[key]));
+        renderList(key);
+        updateStats();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function deleteItem(key, id) {
+      
+        if (!confirm("هل تريد حذف هذا العنصر نهائياً؟")) return;
+        db[key] = db[key].filter((i) => i.id !== id);
+        localStorage.setItem(key, JSON.stringify(db[key]));
+        renderList(key);
+        updateStats();
+      }
+
+      function exportData() {
+        const exportObj = {};
+        SECTIONS.forEach((s) => (exportObj[s.key] = db[s.key] || []));
+        const blob = new Blob([JSON.stringify(exportObj, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "site-data.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function clearAllData() {
+        if (!confirm("⚠️ سيتم حذف كل البيانات من localStorage نهائياً. متأكد؟"))
+          return;
+        SECTIONS.forEach((s) => {
+          localStorage.removeItem(s.key);
+          db[s.key] = [];
+        });
+        showSection("research");
+        updateStats();
+        alert("✅ تم مسح جميع البيانات");
+      }
+
+window.addEventListener('load', async ()=>{
+  if (sessionStorage.getItem('adminAuthed') === '1'){
+    document.getElementById('adminLock').style.display = 'none';
+    const app = document.querySelector('.app');
+    app.style.display = 'grid';
+    requestAnimationFrame(()=> app.classList.add('visible'));
+    applyUiTranslations();
+    showSection(currentSection);
+  } else {
+    document.getElementById('adminLock').style.display = 'flex';
+    document.querySelector('.app').style.display = 'none';
+  }
+
+// research Firestore
+try {
+  if (!window.fs) throw new Error("Firestore bridge not loaded");
+
+  const q = window.fs.query(
+    window.fs.collection(window.fs.db, "research"),
+    window.fs.orderBy("id", "desc")
+  );
+
+  const snap = await window.fs.getDocs(q);
+
+  db['research'] = [];
+  snap.forEach(d => db['research'].push({ docId: d.id, ...d.data() }));
+} catch (e) {
+  console.error("Firestore load research error:", e);
+}
+
+
+  updateStats();
+
+  // لو انت داخل قسم research الآن، أعد رسم القائمة
+  renderList('research');
+});
+
+
+      document.addEventListener("keypress", (e) => {
+        if (
+          e.key === "Enter" &&
+          document.getElementById("adminLock").style.display !== "none"
+        ) {
+          checkAdminLogin();
+        }
+      });
+    </script>
+  </body>
+</html>
