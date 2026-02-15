@@ -1304,7 +1304,7 @@ eTag">فعال/مضاف</span>
         <div id="sectionArea"></div>
       </main>
     </div>
-<script type="module" src="firestore-bridge.js"></script>
+<script type="module" src="./firestore-bridge.js"></script>
 <script>
 
       const ADMIN_CODE_CONST = "admin";
@@ -1430,6 +1430,17 @@ async function translateText(text, fromLang, toLang) {
         );
         return editor ? editor.innerHTML.trim() : "";
       }
+function waitForFS(timeoutMs = 4000){
+  return new Promise((resolve, reject)=>{
+    const t0 = Date.now();
+    const tick = ()=>{
+      if (window.fs && window.fs.addDoc) return resolve();
+      if (Date.now() - t0 > timeoutMs) return reject(new Error("fs not ready"));
+      setTimeout(tick, 50);
+    };
+    tick();
+  });
+}
 
       function unlockApp() {
         const lock = document.getElementById("adminLock");
@@ -2408,11 +2419,15 @@ if (key === 'research') {
     updateStats();
     alert('✅ تم حفظ البحث في Firestore');
     return;
+localStorage.setItem("research", JSON.stringify(dbresearch));
+localStorage.setItem("lastUpdated", String(Date.now()));
 
   } catch (e) {
     console.error(e);
     alert('❌ خطأ أثناء الحفظ في Firestore: ' + (e.code || e.message));
+    
     return;
+  
   }
 }
 
