@@ -2,15 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>تسجيل الدخول</title>
 
   <link rel="icon" type="image/png" href="images/ofouq-logo.jpeg" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script> <!-- GIS [page:4] -->
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
@@ -21,77 +18,18 @@
       justify-content:center;
       align-items:center;
       padding:20px;
-      background: radial-gradient(1200px 600px at 20% 0%, rgba(10,162,202,.20), transparent 55%),
-                  radial-gradient(900px 500px at 90% 90%, rgba(34,197,94,.18), transparent 55%),
-                  linear-gradient(135deg,#f5f7fb 0%,#e2e8f0 100%);
-      overflow:hidden;
+      background: linear-gradient(135deg,#f5f7fb 0%,#e2e8f0 100%);
     }
-
-    /* background particles */
-    .dot{
-      position:fixed;
-      width:10px;height:10px;border-radius:999px;
-      background:rgba(10,162,202,.25);
-      filter: blur(.2px);
-      z-index:-1;
-      animation: drift 10s linear infinite;
-    }
-    .dot:nth-child(1){top:10%;left:8%;animation-duration:12s}
-    .dot:nth-child(2){top:20%;left:90%;animation-duration:14s;background:rgba(34,197,94,.22)}
-    .dot:nth-child(3){top:75%;left:10%;animation-duration:16s}
-    .dot:nth-child(4){top:85%;left:80%;animation-duration:18s;background:rgba(34,197,94,.20)}
-    @keyframes drift{
-      0%{ transform: translate(0,0) scale(1); opacity:.6; }
-      50%{ transform: translate(30px,-20px) scale(1.15); opacity:.35; }
-      100%{ transform: translate(0,0) scale(1); opacity:.6; }
-    }
-
     .container{
       width:100%;
-      max-width:395px;
-      background:rgba(255,255,255,.86);
-      backdrop-filter: blur(10px);
+      max-width:420px;
+      background:#fff;
       border:1px solid rgba(148,163,184,.25);
-      border-radius:22px;
-      padding:28px;
+      border-radius:18px;
+      padding:26px;
       box-shadow: 0 18px 55px rgba(2, 6, 23, .12);
-      position:relative;
-      overflow:hidden;
-      transform: translateY(12px);
-      opacity:0;
-      animation: popIn .55s cubic-bezier(.2,.9,.2,1) forwards;
     }
-
-    /* top gradient line */
-    .container::before{
-      content:'';
-      position:absolute;top:0;left:0;right:0;height:4px;
-      background:linear-gradient(90deg,#0aa2ca,#078fa8);
-    }
-
-    /* shimmer highlight */
-    .container::after{
-      content:'';
-      position:absolute;
-      top:-60px; left:-90px;
-      width:140px; height:220px;
-      transform: rotate(25deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
-      animation: shine 3.6s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes shine{
-      0%,50%{ transform: translateX(-40px) rotate(25deg); opacity:0; }
-      55%{ opacity:1; }
-      100%{ transform: translateX(520px) rotate(25deg); opacity:0; }
-    }
-
-    @keyframes popIn{
-      from{ opacity:0; transform: translateY(18px) scale(.98); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
-    }
-
-    h2{margin:6px 0 8px;color:#0a4f5f;font-weight:800;font-size:26px}
+    h2{margin:6px 0 10px;color:#0a4f5f;font-weight:800;font-size:26px}
     .subtitle{margin-bottom:16px;color:#64748b;font-size:13px;line-height:1.7}
 
     .message{
@@ -103,147 +41,62 @@
       font-weight:600;
       text-align:right;
     }
-    .message.success{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-right:4px solid #34d399}
-    .message.error{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border-right:4px solid #f87171}
+    .message.success{background:#10b981;color:#fff}
+    .message.error{background:#ef4444;color:#fff}
 
     .input-box{position:relative;margin-bottom:14px}
     .base-icon{
       position:absolute;left:16px;top:50%;
       transform:translateY(-50%);
       font-size:18px;color:#94a3b8;
-      pointer-events:none;transition:.18s;
+      pointer-events:none;
     }
-
     .input-box input{
       width:100%;
-      padding:14px 92px 14px 50px;
+      padding:14px 16px 14px 48px;
       border:2px solid #e5e7eb;
-      border-radius:25px;
+      border-radius:14px;
       background:#f8fafc;
       outline:none;
       font-family:'Tajawal',sans-serif;
       font-size:15px;
-      transition:.2s;
     }
-    .input-box input:focus{
-      border-color:#0aa2ca;
-      background:#fff;
-      box-shadow:0 0 0 4px rgba(10,162,202,.12);
-    }
-    .input-box input:focus ~ .base-icon{ color:#0aa2ca; }
-
-    .actions{
-      position:absolute;right:10px;top:50%;
-      transform:translateY(-50%);
-      display:flex;gap:8px;align-items:center;
-    }
-    .icon-btn{
-      width:32px;height:32px;border-radius:999px;
-      border:1px solid #e5e7eb;background:#fff;color:#64748b;
-      display:flex;align-items:center;justify-content:center;
-      cursor:pointer;transition:.15s;
-    }
-    .icon-btn:hover{ transform:translateY(-1px); border-color:#cbd5e1; }
-    .icon-btn:active{ transform:translateY(0) scale(.98); }
-
-    .state-icon{
-      width:32px;height:32px;border-radius:999px;
-      display:flex;align-items:center;justify-content:center;
-      opacity:0;transform:scale(.88);
-      transition:.18s;border:1px solid transparent;
-    }
-    .input-box.valid .state-icon{opacity:1;background:rgba(16,185,129,.12);color:#10b981;border-color:rgba(16,185,129,.18);transform:scale(1)}
-    .input-box.invalid .state-icon{opacity:1;background:rgba(239,68,68,.12);color:#ef4444;border-color:rgba(239,68,68,.18);transform:scale(1)}
-
-    @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(6px)} 40%{transform:translateX(-6px)} 60%{transform:translateX(4px)} 80%{transform:translateX(-4px)} }
-    .input-error{ border-color:#ef4444 !important; animation: shake .28s ease; background:#fff; }
-
     .row{display:flex;justify-content:space-between;align-items:center;margin:10px 0 16px;font-size:14px;color:#64748b;gap:10px}
     .row a{color:#0aa2ca;text-decoration:none;font-weight:700}
-    .row a:hover{color:#078fa8}
 
     button{
       width:100%;
       padding:14px;
       border:none;
-      border-radius:25px;
+      border-radius:14px;
       font-size:16px;
       font-weight:800;
       cursor:pointer;
       font-family:'Tajawal',sans-serif;
-      transition:.2s;
-      position:relative;
-      overflow:hidden;
     }
-
-    .ripple{
-      position:absolute;border-radius:50%;
-      transform:scale(0);
-      animation:ripple .55s linear;
-      background: rgba(255,255,255,.55);
-      pointer-events:none;
-    }
-    @keyframes ripple{ to { transform: scale(3.2); opacity:0; } }
-
     .login-btn{
       background: linear-gradient(135deg,#0aa2ca,#078fa8);
       color:#fff;
-      box-shadow:0 10px 30px rgba(10,162,202,.22);
     }
-    .login-btn:hover:not(:disabled){ transform: translateY(-2px); box-shadow:0 16px 40px rgba(10,162,202,.28); }
-    .login-btn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
-
-    .divider{margin:16px 0 12px;color:#94a3b8;font-size:14px;position:relative}
-    .divider::before{
-      content:'';
-      position:absolute;top:50%;
-      right:calc(50% + 16px);
-      left:calc(50% - 16px);
-      height:1px;background:#e5e7eb;
-    }
-
-    .google-wrap{display:flex;justify-content:center;margin-bottom:10px}
-
-    .signup-btn{
-      background:#f1f5f9;
-      color:#0f172a;
-      border:2px solid #e2e8f0;
-      font-weight:800;
-    }
-    .signup-btn:hover{ background:#e2e8f0; transform: translateY(-1px); }
-
-    @media(max-width:480px){
-      body{padding:10px}
-      .container{padding:22px}
-      .input-box input{padding:12px 86px 12px 45px;font-size:14px}
-    }
+    .login-btn:disabled{opacity:.65;cursor:not-allowed}
   </style>
 </head>
 
 <body>
-  <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-
   <div class="container">
     <h2>تسجيل الدخول</h2>
-    <div class="subtitle">مرحباً بك، تابع إلى حسابك بسهولة.</div>
+    <div class="subtitle">سجّل دخولك بحساب Firebase (Email/Password).</div>
 
     <div id="msg" class="message"></div>
 
-    <div class="input-box" id="userBox">
-      <i class="ri-user-3-line base-icon"></i>
-      <input id="username" type="text" placeholder="اسم المستخدم" autocomplete="username" required>
-      <div class="actions"><span class="state-icon"></span></div>
+    <div class="input-box">
+      <i class="ri-mail-line base-icon"></i>
+      <input id="email" type="email" placeholder="البريد الإلكتروني" autocomplete="email" required>
     </div>
 
-    <div class="input-box" id="passBox">
+    <div class="input-box">
       <i class="ri-lock-password-line base-icon"></i>
       <input id="password" type="password" placeholder="كلمة المرور" autocomplete="current-password" required>
-      <div class="actions">
-        <button class="icon-btn" id="togglePass" type="button" aria-label="إظهار كلمة المرور">
-          <i class="ri-eye-line"></i>
-        </button>
-        <span class="state-icon"></span>
-      </div>
     </div>
 
     <div class="row">
@@ -251,219 +104,92 @@
       <a href="#" id="forgotLink">نسيت كلمة المرور؟</a>
     </div>
 
-    <button class="login-btn" id="loginBtn" onclick="loginLocal(event)">
+    <button class="login-btn" id="loginBtn" type="button">
       <span id="loginText">تسجيل الدخول</span>
-      <span id="loginSpinner" style="display:none;">⏳ جاري...</span>
-    </button>
-
-    <div class="divider">أو</div>
-
-    <div class="google-wrap">
-      <div id="googleBtn"></div>
-    </div>
-
-    <button class="signup-btn" type="button" onclick="location.href='register.html'">
-      <i class="ri-user-add-line"></i> إنشاء حساب جديد
+      <span id="loginSpinner" style="display:none;">جاري...</span>
     </button>
   </div>
 
-<script>
-  // ---- UI ----
-  function showMsg(text, type='success'){
-    const msg = document.getElementById('msg');
-    msg.className = 'message ' + type;
-    msg.textContent = text;
-    msg.style.display = 'block';
-    if(type === 'success') setTimeout(() => msg.style.display = 'none', 2200);
-  }
+  <script type="module">
+    import { auth } from "./firebase-init.js";
+    import {
+      signInWithEmailAndPassword,
+      setPersistence,
+      browserLocalPersistence,
+      browserSessionPersistence,
+      sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-  function setLoading(v){
-    const btn = document.getElementById('loginBtn');
-    btn.disabled = v;
-    document.getElementById('loginText').style.display = v ? 'none' : 'inline';
-    document.getElementById('loginSpinner').style.display = v ? 'inline' : 'none';
-  }
+    const emailEl = document.getElementById("email");
+    const passEl = document.getElementById("password");
+    const rememberEl = document.getElementById("remember");
+    const btn = document.getElementById("loginBtn");
 
-  function setFieldState(boxId, state){
-    const box = document.getElementById(boxId);
-    const stateEl = box.querySelector('.state-icon');
-    box.classList.remove('valid','invalid');
-
-    if(state === 'valid'){ box.classList.add('valid'); stateEl.innerHTML = '<i class="ri-check-line"></i>'; }
-    else if(state === 'invalid'){ box.classList.add('invalid'); stateEl.innerHTML = '<i class="ri-close-line"></i>'; }
-    else { stateEl.innerHTML = ''; }
-  }
-
-  function markError(id){
-    const el = document.getElementById(id);
-    el.classList.remove('input-error');
-    void el.offsetWidth;
-    el.classList.add('input-error');
-    setTimeout(() => el.classList.remove('input-error'), 350);
-  }
-
-  // Ripple for all buttons
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if(!btn) return;
-    const rect = btn.getBoundingClientRect();
-    const r = document.createElement('span');
-    r.className = 'ripple';
-    const size = Math.max(rect.width, rect.height);
-    r.style.width = r.style.height = size + 'px';
-    r.style.left = (e.clientX - rect.left - size/2) + 'px';
-    r.style.top  = (e.clientY - rect.top  - size/2) + 'px';
-    btn.appendChild(r);
-    setTimeout(() => r.remove(), 600);
-  });
-
-  // ---- Inputs dynamic icons ----
-  const usernameEl = document.getElementById('username');
-  const passwordEl = document.getElementById('password');
-
-  usernameEl.addEventListener('input', () => {
-    const v = usernameEl.value.trim();
-    if(!v) return setFieldState('userBox','none');
-    setFieldState('userBox', v.length >= 3 ? 'valid' : 'invalid');
-  });
-
-  passwordEl.addEventListener('input', () => {
-    const v = passwordEl.value;
-    if(!v) return setFieldState('passBox','none');
-    setFieldState('passBox', v.length >= 6 ? 'valid' : 'invalid');
-  });
-
-  // Toggle password with dynamic icon
-  document.getElementById('togglePass').addEventListener('click', () => {
-    const isPass = passwordEl.type === 'password';
-    passwordEl.type = isPass ? 'text' : 'password';
-    document.getElementById('togglePass').innerHTML = isPass ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
-    passwordEl.focus();
-  });
-
-  document.getElementById('forgotLink').addEventListener('click', (e) => {
-    e.preventDefault();
-    showMsg('سيتم إضافة صفحة استرجاع كلمة المرور قريباً', 'success');
-  });
-
-  // ---- Local login (demo) ----
-  function loginLocal(ev){
-    if(ev) ev.preventDefault();
-    const username = usernameEl.value.trim();
-    const password = passwordEl.value;
-    const remember = document.getElementById('remember').checked;
-
-    if(!username || !password){
-      if(!username) markError('username');
-      if(!password) markError('password');
-      return showMsg('يرجى إدخال اسم المستخدم وكلمة المرور', 'error');
+    function showMsg(text, type="success"){
+      const msg = document.getElementById("msg");
+      msg.className = "message " + type;
+      msg.textContent = text;
+      msg.style.display = "block";
+      if(type === "success") setTimeout(() => (msg.style.display = "none"), 2200);
     }
 
-    setLoading(true);
+    function setLoading(v){
+      btn.disabled = v;
+      document.getElementById("loginText").style.display = v ? "none" : "inline";
+      document.getElementById("loginSpinner").style.display = v ? "inline" : "none";
+    }
 
-    let users = [];
-    try{ users = JSON.parse(localStorage.getItem('users') || '[]'); }catch(e){ users = []; }
-    const user = users.find(u => u.username === username && u.password === password);
+    async function doLogin(){
+      const email = emailEl.value.trim();
+      const password = passEl.value;
 
-    setTimeout(() => {
-      if(!user){
+      if(!email || !password){
+        return showMsg("أدخل البريد الإلكتروني وكلمة المرور.", "error");
+      }
+
+      setLoading(true);
+
+      try{
+        // تذكرني => Local persistence، غير ذلك => Session persistence
+        await setPersistence(auth, rememberEl.checked ? browserLocalPersistence : browserSessionPersistence);
+
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+
+        localStorage.setItem("user", JSON.stringify({
+          provider: "firebase",
+          loggedIn: true,
+          uid: cred.user.uid,
+          email: cred.user.email || email,
+          lastLogin: Date.now()
+        }));
+
+        const fromPage = sessionStorage.getItem("loginFrom") || "index.html";
+        window.location.href = fromPage;
+
+      } catch (e){
+        showMsg("تعذر تسجيل الدخول: " + (e?.message || ""), "error");
         setLoading(false);
-        setFieldState('userBox','invalid');
-        setFieldState('passBox','invalid');
-        return showMsg('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
-      }
-
-      localStorage.setItem('user', JSON.stringify({
-        provider:'local',
-        loggedIn:true,
-        id: user.id || Date.now(),
-        username: user.username,
-        email: user.email || '',
-        lastLogin: Date.now()
-      }));
-
-      if(remember){
-        localStorage.setItem('rememberMe', JSON.stringify({ username: user.username, expires: Date.now() + 30*24*60*60*1000 }));
-      } else {
-        localStorage.removeItem('rememberMe');
-      }
-
-      const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
-      window.location.href = fromPage;
-    }, 250);
-  }
-
-  // ---- Google Sign-In ----
-  // Credential response includes a JWT in response.credential. [page:4]
-  function decodeJwtPayload(token){
-    const part = token.split('.')[1];
-    const base64 = part.replace(/-/g,'+').replace(/_/g,'/');
-    const json = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    return JSON.parse(json);
-  }
-
-  function onGoogleCredential(response){
-    try{
-      const idToken = response && response.credential; // JWT [page:4]
-      if(!idToken) return showMsg('تعذر استلام بيانات Google', 'error');
-
-      const p = decodeJwtPayload(idToken);
-
-      localStorage.setItem('user', JSON.stringify({
-        provider:'google',
-        loggedIn:true,
-        id: p.sub || Date.now(),    // sub is unique identifier [page:4]
-        name: p.name || '',
-        email: p.email || '',
-        picture: p.picture || '',
-        idToken,
-        lastLogin: Date.now()
-      }));
-
-      const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
-      window.location.assign(new URL(fromPage, window.location.origin).toString());
-    } catch(e){
-      showMsg('حدث خطأ أثناء تسجيل الدخول عبر Google', 'error');
-    }
-  }
-
-  window.addEventListener('load', () => {
-    // prefill rememberMe
-    const rememberData = localStorage.getItem("rememberMe");
-    if(rememberData) {
-      try {
-        const data = JSON.parse(rememberData);
-        if(data.expires > Date.now()) {
-          usernameEl.value = data.username || '';
-          document.getElementById("remember").checked = true;
-          usernameEl.dispatchEvent(new Event('input'));
-        } else {
-          localStorage.removeItem("rememberMe");
-        }
-      } catch(e) {
-        localStorage.removeItem("rememberMe");
       }
     }
 
-    if(!window.google || !google.accounts || !google.accounts.id){
-      return showMsg('Google library لم تُحمّل. تأكد من الإنترنت', 'error');
-    }
+    btn.addEventListener("click", doLogin);
 
-    google.accounts.id.initialize({
-      client_id: "169941841275-n5h6h3bqa3ck0lll8dgd194uqb68b5jv.apps.googleusercontent.com",
-      callback: onGoogleCredential,
-      ux_mode: "popup"
-    }); // initialize [page:4]
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") doLogin();
+    });
 
-    google.accounts.id.renderButton(
-      document.getElementById("googleBtn"),
-      { theme: "outline", size: "large", shape: "pill", text: "signin_with" }
-    ); // renderButton [page:4]
-  });
+    document.getElementById("forgotLink").addEventListener("click", async (e) => {
+      e.preventDefault();
+      const email = emailEl.value.trim();
+      if(!email) return showMsg("اكتب بريدك أولاً ثم اضغط نسيت كلمة المرور.", "error");
 
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') loginLocal();
-  });
-</script>
+      try{
+        await sendPasswordResetEmail(auth, email);
+        showMsg("تم إرسال رابط استرجاع كلمة المرور إلى بريدك.", "success");
+      } catch (err){
+        showMsg("تعذر إرسال رابط الاسترجاع: " + (err?.message || ""), "error");
+      }
+    });
+  </script>
 </body>
 </html>
