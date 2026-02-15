@@ -1,6 +1,7 @@
 // firebase-init.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA14BXeVtyme64MYHQcfnThyted_mNIZPY",
@@ -14,3 +15,8 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+export const auth = getAuth(app);
+onAuthStateChanged(auth, (user) => {
+  console.log("Auth user:", user ? user.uid : null);
+});

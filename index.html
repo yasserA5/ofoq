@@ -558,6 +558,41 @@
       section{padding:30px 16px;}
       .grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
     }
+    /* ===== Moving latest items (hero right box) ===== */
+.ticker{
+  background:#ffffff;
+  border-radius:18px;
+  box-shadow:0 12px 30px rgba(15,23,42,0.14);
+  padding:14px 14px 10px;
+  max-width:360px;
+  width:100%;
+}
+.ticker-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ticker h3{margin:0;font-size:14px;color:#0f172a;}
+.ticker-viewport{
+  overflow:hidden;border-radius:14px;border:1px solid #e2e8f0;
+  background:linear-gradient(180deg,#ffffff,#f8fbff);
+}
+.ticker-track{
+  display:flex;gap:10px;padding:10px;
+  will-change:transform;transition:transform .45s ease;
+}
+.ticker-item{
+  min-width:280px;max-width:280px;background:#fff;border:1px solid #e2e8f0;
+  border-radius:14px;padding:10px 12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+.ticker-item .k{font-size:11px;color:#64748b;margin-bottom:4px;}
+.ticker-item .t{font-size:13px;font-weight:800;color:#0d6b8c;margin:0 0 6px;line-height:1.5;}
+.ticker-item .d{font-size:12px;color:#475569;margin:0;line-height:1.6;}
+.ticker-dots{display:flex;justify-content:center;gap:6px;margin-top:10px;}
+.ticker-dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1;cursor:pointer;}
+.ticker-dot.active{background:var(--primary);}
+.ticker-hint{margin:8px 0 0;font-size:11px;color:#6b7280;text-align:center;}
+@media (max-width:768px){
+  .ticker{max-width:100%;}
+  .ticker-item{min-width:240px;max-width:240px;}
+}
+
   </style>
 </head>
 <body>
@@ -670,10 +705,12 @@
     <p data-t="hero_sub">
       بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات، مستوحاة من المنصات الأكاديمية الاحترافية مع واجهة عربية سهلة الاستخدام.
     </p>
+
     <div class="hero-actions">
       <button class="btn primary" onclick="location.href='register.html'" data-t="hero_cta_primary">ابدأ رحلتك البحثية الآن</button>
       <button class="btn" onclick="document.getElementById('research').scrollIntoView({behavior:'smooth'})" data-t="hero_cta_secondary">استكشف المحتوى العلمي</button>
     </div>
+
     <div class="stats">
       <div class="stat-item">
         <strong id="stat1_number">0</strong>
@@ -695,17 +732,23 @@
   </div>
 
   <div class="hero-side">
-    <div class="hero-card">
-      <h3 data-t="hero_card_title" >منصة متخصصة في العلوم السياسية والقانونية والاجتماعية و الاقتصادية </h3>
-      <ul>
-        <li data-t="hero_card_li1">مساقات وبرامج في العلوم السياسية والعلاقات الدولية والسياسات العمومية.</li>
-        <li data-t="hero_card_li2">أبحاث ومقالات محكمة تغطي قضايا الدولة، النظام الدولي، والتحولات الدستورية.</li>
-        <li data-t="hero_card_li3">ملفات مرجعية للطلبة والباحثين في القانون الإداري والقانون الدستوري.</li>
-        <li data-t="hero_card_li4">مسار أكاديمي واضح من المقال إلى التخصص ثم البرنامج الكامل.</li>
-      </ul>
+    <div class="ticker">
+      <div class="ticker-head">
+        <h3 data-t="latest_ticker_title">آخر الإضافات</h3>
+      </div>
+
+      <div class="ticker-viewport" id="tickerViewport">
+        <div class="ticker-track" id="tickerTrack">
+          <!-- will be filled automatically -->
+        </div>
+      </div>
+
+      <div class="ticker-dots" id="tickerDots"></div>
+      <p class="ticker-hint" data-t="latest_ticker_hint">يتحدّث تلقائياً حسب ما تضيفه في لوحة الإدارة.</p>
     </div>
   </div>
 </section>
+
 
 <section>
   <h2 data-t="sec_features">ما الذي يميز هذه المنصة؟</h2>
@@ -1231,6 +1274,104 @@
     setLang(currentLang);
     initMobileDropdowns();
   });
+
+  // ===== Moving ticker (auto) =====
+let tickerIndex = 0;
+let tickerTimer = null;
+
+function esc(str){
+  return String(str).replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[s]));
+}
+
+function collectLatest(){
+  const sources = [
+    { key: "research", label: "بحث" },
+    { key: "articles", label: "مقال" },
+    { key: "files", label: "ملف" },
+    { key: "activities", label: "نشاط" },
+    { key: "editions", label: "إصدار" }
+  ];
+
+  const all = [];
+  sources.forEach(src => {
+    const arr = JSON.parse(localStorage.getItem(src.key) || "[]");
+    arr.forEach((item, idx) => {
+      all.push({
+        type: src.label,
+        storageKey: src.key,
+        index: idx,
+        title: item.title || "بدون عنوان",
+        desc: item.description || item.short || item.details || ""
+      });
+    });
+  });
+
+  return all.slice(0, 10);
+}
+
+function renderTicker(){
+  const track = document.getElementById("tickerTrack");
+  const dotsWrap = document.getElementById("tickerDots");
+  if(!track || !dotsWrap) return;
+
+  const items = collectLatest();
+
+  if(!items.length){
+    track.innerHTML = `
+      <div class="ticker-item" style="min-width:100%;max-width:100%">
+        <div class="k">لا توجد عناصر</div>
+        <p class="t">أضف أبحاث/مقالات من لوحة الإدارة</p>
+        <p class="d">سيظهر آخر ما تضيفه هنا تلقائياً.</p>
+      </div>
+    `;
+    dotsWrap.innerHTML = "";
+    return;
+  }
+
+  track.innerHTML = items.map(x => `
+    <div class="ticker-item">
+      <div class="k">${esc(x.type)} • ${esc(x.storageKey)}</div>
+      <p class="t">${esc(x.title)}</p>
+      <p class="d">${esc(x.desc).slice(0, 110)}${x.desc.length > 110 ? "..." : ""}</p>
+    </div>
+  `).join("");
+
+  dotsWrap.innerHTML = items.map((_, i) =>
+    `<span class="ticker-dot ${i===0?'active':''}" onclick="goTicker(${i})"></span>`
+  ).join("");
+
+  tickerIndex = 0;
+  applyTicker();
+  startTicker(items.length);
+}
+
+function applyTicker(){
+  const track = document.getElementById("tickerTrack");
+  if(!track) return;
+  const item = track.querySelector(".ticker-item");
+  if(!item) return;
+  const w = item.offsetWidth + 10;
+  track.style.transform = `translateX(${-w * tickerIndex}px)`;
+
+  const dots = document.querySelectorAll(".ticker-dot");
+  dots.forEach((d, i) => d.classList.toggle("active", i === tickerIndex));
+}
+
+function goTicker(i){
+  tickerIndex = i;
+  applyTicker();
+}
+
+function startTicker(count){
+  if(tickerTimer) clearInterval(tickerTimer);
+  tickerTimer = setInterval(() => {
+    tickerIndex = (tickerIndex + 1) % count;
+    applyTicker();
+  }, 3000);
+}
+
 </script>
 
 </body>
