@@ -802,6 +802,29 @@
 </footer>
 
 <script type="module" src="/firestore-bridge.js"></script>
+<script>
+  async function syncFirestoreToLocal() {
+    try {
+      await waitForFS(); // من admin.html
+      const sections = ['research', 'articles', 'editions', 'activities'];
+      for (let sec of sections) {
+        const q = window.fs.query(window.fs.collection(window.fs.db, sec), 
+                   window.fs.orderBy('id', 'desc'));
+        const snap = await window.fs.getDocs(q);
+        const data = snap.docs.map(d => ({docId: d.id, ...d.data()}));
+        localStorage.setItem(sec, JSON.stringify(data));
+        renderContent(sec, sec + 'Grid');
+      }
+      updateStats();
+      console.log('✅ Firestore synced to localStorage');
+    } catch(e) {
+      console.error('Firestore sync failed:', e);
+    }
+  }
+  
+  window.addEventListener('load', syncFirestoreToLocal);
+</script>
+
 
 <script>
   function goToHome(){window.location.href='index.html';}
