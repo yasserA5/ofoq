@@ -1594,5 +1594,33 @@ window.showSection = function(key){
   attachAutoTranslateForTriplet(key, "full");
 };
 
+async function cleanFirestoreSection(section) {
+  if (!window.fs || !confirm(`حذف كل محتوى ${section} من Firestore؟`)) return;
+  
+  try {
+    const { db, collection, getDocs, deleteDoc, doc } = window.fs;
+    const q = collection(db, section);
+    const snap = await getDocs(q);
+    
+    let deleted = 0;
+    snap.forEach(async (d) => {
+      const ref = doc(db, section, d.id);
+      await deleteDoc(ref);
+      deleted++;
+    });
+    
+    console.log(`✅ تم حذف ${deleted} وثيقة من ${section}`);
+    alert(`تم حذف ${deleted} عنصر من ${section}`);
+    
+    // إعادة تحميل القسم للتحقق
+    setTimeout(() => showSection(section), 1000);
+  } catch (e) {
+    console.error('خطأ في الحذف:', e);
+    alert('خطأ: ' + e.message);
+  }
+}
+
+// استخدام: cleanFirestoreSection('research')
+
 </script>
 
