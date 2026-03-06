@@ -899,6 +899,62 @@
   window.addEventListener('load', syncFirestoreToLocal);
 </script>
 <script>
+  function checkAuth() {
+    const user = JSON.parse(
+      localStorage.getItem('user') ||
+      sessionStorage.getItem('user') ||
+      'null'
+    );
+
+    if (!user || !user.loggedIn) {
+      sessionStorage.setItem('loginFrom', 'index.html');
+      window.location.href = 'login.html';
+      return false;
+    }
+
+    return true;
+  }
+
+  if (!checkAuth()) {
+    throw new Error('Not logged in');
+  }
+
+  async function syncFirestoreToLocal() {
+    try {
+      const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
+        const t0 = Date.now();
+        function tick() {
+          if (window.fs && window.fs.getDocs) return resolve();
+          if (Date.now() - t0 > timeoutMs) return reject(new Error('fs not ready'));
+          setTimeout(tick, 50);
+        }
+        tick();
+      });
+
+      await waitForFS();
+
+      const { db, collection, query, orderBy, getDocs } = window.fs;
+      const sections = ['research', 'editions', 'activities'];
+
+      for (const key of sections) {
+        const q = query(collection(db, key), orderBy('id', 'desc'));
+        const snap = await getDocs(q);
+        const data = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
+        localStorage.setItem(key, JSON.stringify(data));
+        renderContent(key, key + 'Grid');
+      }
+
+      updateStats();
+      console.log('Synced Firestore to localStorage');
+    } catch (e) {
+      console.error('Sync error', e);
+    }
+  }
+
+  window.addEventListener('load', syncFirestoreToLocal);
+</script>
+
+<script>
   async function syncFirestoreToLocal() {
     try {
       await waitForFS(); // من admin.html
@@ -922,6 +978,7 @@
 </script>
 
 <script>
+  
 
   function goToHome(){window.location.href='index.html';}
 
@@ -952,40 +1009,54 @@
     if(!q) return;
     window.location.href='search.html?q='+encodeURIComponent(q);
   }
+let user = JSON.parse(
+  localStorage.getItem("user") ||
+  sessionStorage.getItem("user") ||
+  "null"
+);
 
-  let user = JSON.parse(localStorage.getItem("user") || "null");
-  let currentLang = localStorage.getItem('lang') || 'ar';
+function updateHeader(){
+  const headerActions = document.getElementById("headerActions");
+  const mobileLogin = document.getElementById("mobileLogin");
+  const mobileRegister = document.getElementById("mobileRegister");
 
-  function updateHeader(){
-    const headerActions=document.getElementById("headerActions");
-    const mobileLogin=document.getElementById("mobileLogin");
-    const mobileRegister=document.getElementById("mobileRegister");
+  if(user && user.loggedIn){
+    const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
 
-    if(user && user.username){
-      headerActions.innerHTML = `
-        <div class="lang-wrapper">
-          <button class="lang-toggle" onclick="toggleLangMenu()">
-            <span id="langCurrent">AR</span> ▾
-          </button>
-          <div class="lang-menu" id="langMenu">
-            <button onclick="setLang('ar')">العربية</button>
-            <button onclick="setLang('en')">English</button>
-            <button onclick="setLang('fr')">Français</button>
-          </div>
+    headerActions.innerHTML = `
+      <div class="lang-wrapper">
+        <button class="lang-toggle" onclick="toggleLangMenu()">
+          <span id="langCurrent">AR</span>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <button onclick="setLang('ar')">العربية</button>
+          <button onclick="setLang('en')">English</button>
+          <button onclick="setLang('fr')">Français</button>
         </div>
-        <span style="margin-right:8px;font-size:12px;">${user.username}</span>
-        <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
-      `;
-      if(mobileLogin)  mobileLogin.innerHTML=`<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
-      if(mobileRegister) mobileRegister.style.display="none";
+      </div>
+      <span style="margin-right:8px;font-size:12px;">${displayName}</span>
+      <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
+    `;
+
+    if(mobileLogin){
+      mobileLogin.innerHTML = `<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
+    }
+
+    if(mobileRegister){
+      mobileRegister.style.display = "none";
     }
   }
+}
 
-  function logout(){
-    localStorage.removeItem("user");
-    user=null;
-    location.reload();
-  }
+
+
+function logout(){
+  localStorage.removeItem("user");
+  sessionStorage.removeItem("user");
+  user = null;
+  location.reload();
+}
+
 
   function renderContent(storageKey, gridId){
     const grid=document.getElementById(gridId);

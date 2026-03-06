@@ -85,7 +85,7 @@
 <body>
   <div class="container">
     <h2>تسجيل الدخول</h2>
-    <div class="subtitle">سجّل دخولك بحساب Firebase (Email/Password).</div>
+    <div class="subtitle">سجّل دخولك للوصول إلى المحتوى الكامل.</div>
 
     <div id="msg" class="message"></div>
 
@@ -108,19 +108,29 @@
       <span id="loginText">تسجيل الدخول</span>
       <span id="loginSpinner" style="display:none;">جاري...</span>
     </button>
+    <div style="margin-top:12px;">
+  <button
+    type="button"
+    onclick="window.location.href='register.html'"
+    style="
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:14px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      font-family:'Tajawal',sans-serif;
+      background:#eef2ff;
+      color:#0a4f5f;
+    ">
+    إنشاء حساب
+  </button>
+</div>
+
   </div>
-<script type="module" src="/firestore-bridge.js"></script>
 
-  <script type="module">
-    import { auth } from "./firebase-init.js";
-    import {
-      signInWithEmailAndPassword,
-      setPersistence,
-      browserLocalPersistence,
-      browserSessionPersistence,
-      sendPasswordResetEmail
-    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
+  <script>
     const emailEl = document.getElementById("email");
     const passEl = document.getElementById("password");
     const rememberEl = document.getElementById("remember");
@@ -131,7 +141,11 @@
       msg.className = "message " + type;
       msg.textContent = text;
       msg.style.display = "block";
-      if(type === "success") setTimeout(() => (msg.style.display = "none"), 2200);
+      if(type === "success") {
+        setTimeout(() => {
+          msg.style.display = "none";
+        }, 2200);
+      }
     }
 
     function setLoading(v){
@@ -140,9 +154,9 @@
       document.getElementById("loginSpinner").style.display = v ? "inline" : "none";
     }
 
-    async function doLogin(){
+    function doLogin(){
       const email = emailEl.value.trim();
-      const password = passEl.value;
+      const password = passEl.value.trim();
 
       if(!email || !password){
         return showMsg("أدخل البريد الإلكتروني وكلمة المرور.", "error");
@@ -150,27 +164,30 @@
 
       setLoading(true);
 
-      try{
-        // تذكرني => Local persistence، غير ذلك => Session persistence
-        await setPersistence(auth, rememberEl.checked ? browserLocalPersistence : browserSessionPersistence);
+      const userData = {
+        provider: "local",
+        loggedIn: true,
+        uid: "visitor_" + Date.now(),
+        email,
+        name: email.split("@")[0],
+        lastLogin: Date.now()
+      };
 
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-
-        localStorage.setItem("user", JSON.stringify({
-          provider: "firebase",
-          loggedIn: true,
-          uid: cred.user.uid,
-          email: cred.user.email || email,
-          lastLogin: Date.now()
-        }));
-
-        const fromPage = sessionStorage.getItem("loginFrom") || "index.html";
-        window.location.href = fromPage;
-
-      } catch (e){
-        showMsg("تعذر تسجيل الدخول: " + (e?.message || ""), "error");
-        setLoading(false);
+      if (rememberEl.checked) {
+        localStorage.setItem("user", JSON.stringify(userData));
+        sessionStorage.removeItem("user");
+      } else {
+        sessionStorage.setItem("user", JSON.stringify(userData));
+        localStorage.removeItem("user");
       }
+
+      showMsg("تم تسجيل الدخول بنجاح.", "success");
+
+      const fromPage = sessionStorage.getItem("loginFrom") || "index.html";
+
+      setTimeout(() => {
+        window.location.href = fromPage;
+      }, 700);
     }
 
     btn.addEventListener("click", doLogin);
@@ -179,17 +196,9 @@
       if(e.key === "Enter") doLogin();
     });
 
-    document.getElementById("forgotLink").addEventListener("click", async (e) => {
+    document.getElementById("forgotLink").addEventListener("click", (e) => {
       e.preventDefault();
-      const email = emailEl.value.trim();
-      if(!email) return showMsg("اكتب بريدك أولاً ثم اضغط نسيت كلمة المرور.", "error");
-
-      try{
-        await sendPasswordResetEmail(auth, email);
-        showMsg("تم إرسال رابط استرجاع كلمة المرور إلى بريدك.", "success");
-      } catch (err){
-        showMsg("تعذر إرسال رابط الاسترجاع: " + (err?.message || ""), "error");
-      }
+      showMsg("في هذه النسخة، يمكنك إدخال أي بريد وكلمة مرور للدخول.", "success");
     });
   </script>
 </body>
