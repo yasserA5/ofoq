@@ -1232,26 +1232,37 @@ async function upsertFirestore(collectionKey, obj){
 
 
 /* ========= حذف (FIXED: delete by docId = id) ========= */
-async function deleteItem(key, id){
-  const ok = confirm("هل تريد حذف هذا العنصر؟ (سيُحذف من localStorage و Firestore)");
-  if (!ok) return;
+async function deleteItem(sectionKey, docId) {
+  const arr = db[sectionKey] || [];
+  const idx = arr.findIndex(it => it.docId === docId || it.id === docId);
+  if (idx === -1) return;
 
-  // حذف محلي
-  db[key] = (db[key] || []).filter(x => x.id !== id);
-  localStorage.setItem(key, JSON.stringify(db[key]));
-  renderList(key);
+  const item = arr[idx];
 
-  // حذف من Firestore
-  if (!requireFs()) return;
-
-  try{
-    const docId = String(id); // نفس القاعدة: docId = id
-    await window.fs.deleteDoc(window.fs.doc(window.fs.db, key, docId));
-  }catch(e){
-    console.error(e);
-    alert("تم الحذف محليًا، لكن تعذر الحذف من Firestore.");
+  // 1) حذف من Firestore
+  try {
+    if (window.fs && item.docId) {
+      const { db: fsdb, doc, deleteDoc } = window.fs;
+      const ref = doc(fsdb, sectionKey, item.docId);
+      await deleteDoc(ref);
+      console.log('✅ Deleted from Firestore:', sectionKey, item.docId);
+    }
+  } catch (e) {
+    console.error('❌ Firestore delete error', e);
   }
+
+  // 2) حذف من الذاكرة المحلية
+  arr.splice(idx, 1);
+  db[sectionKey] = arr;
+
+  // 3) (اختياري) حفظ نسخة محدثة في localStorage للوحة التحكم
+  localStorage.setItem(sectionKey, JSON.stringify(arr));
+
+  // 4) تحديث الواجهة والإحصاءات
+  renderList(sectionKey);
+  updateStats();
 }
+
 
 /* ========= تفريغ الفورم ========= */
 function resetForm(key){
@@ -1322,8 +1333,9 @@ function renderList(key){
     wrap.className = "item";
     wrap.innerHTML = `
       <div class="item-actions">
-        <button class="mini" title="تعديل" onclick="loadForEdit('${key}', ${item.id})"><i class="ri-edit-box-line"></i></button>
-        <button class="mini danger" title="حذف" onclick="deleteItem('${key}', ${item.id})"><i class="ri-delete-bin-line"></i></button>
+        <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')"><i class="ri-edit-box-line"></i></button>
+        <!-- التغيير الوحيد: استخدم item.docId بدل item.id -->
+        <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
       </div>
       ${imgHtml}
       <div class="item-body">
