@@ -899,25 +899,6 @@
   window.addEventListener('load', syncFirestoreToLocal);
 </script>
 <script>
-  function checkAuth() {
-    const user = JSON.parse(
-      localStorage.getItem('user') ||
-      sessionStorage.getItem('user') ||
-      'null'
-    );
-
-    if (!user || !user.loggedIn) {
-      sessionStorage.setItem('loginFrom', 'index.html');
-      window.location.href = 'login.html';
-      return false;
-    }
-
-    return true;
-  }
-
-  if (!checkAuth()) {
-    throw new Error('Not logged in');
-  }
 
   async function syncFirestoreToLocal() {
     try {
