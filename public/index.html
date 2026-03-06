@@ -866,6 +866,41 @@
 <script>
   async function syncFirestoreToLocal() {
     try {
+      // انتظر حتى يجهز bridge (نفس فكرة waitForFS)
+      const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
+        const t0 = Date.now();
+        (function tick() {
+          if (window.fs && window.fs.getDocs) return resolve();
+          if (Date.now() - t0 > timeoutMs) return reject(new Error('fs not ready'));
+          setTimeout(tick, 50);
+        })();
+      });
+
+      await waitForFS();
+
+      const { db, collection, query, orderBy, getDocs } = window.fs;
+      const sections = ['research', 'editions', 'activities'];
+
+      for (const key of sections) {
+        const q = query(collection(db, key), orderBy('id', 'desc'));
+        const snap = await getDocs(q);
+        const data = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
+        localStorage.setItem(key, JSON.stringify(data));
+        renderContent(key, key + 'Grid');   // دالة موجودة في index.html
+      }
+
+      updateStats(); // موجودة في index.html
+      console.log('Synced Firestore → localStorage');
+    } catch (e) {
+      console.error('Sync error', e);
+    }
+  }
+
+  window.addEventListener('load', syncFirestoreToLocal);
+</script>
+<script>
+  async function syncFirestoreToLocal() {
+    try {
       await waitForFS(); // من admin.html
       const sections = ['research', 'articles', 'editions', 'activities'];
       for (let sec of sections) {
