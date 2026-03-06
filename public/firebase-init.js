@@ -3,8 +3,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebas
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyA14BXeVtyme64MYHQcfnThyted_mNIZPY",
+  apiKey: "AIzaSyAl4BXeVtym6e4MYHQcfnThyted_mNIZPY",
   authDomain: "ofouq-academie.firebaseapp.com",
   projectId: "ofouq-academie",
   storageBucket: "ofouq-academie.firebasestorage.app",
@@ -12,7 +13,6 @@ const firebaseConfig = {
   appId: "1:479091527932:web:379085d6bac81b61f30779",
   measurementId: "G-V69EP1BSDW"
 };
-
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
