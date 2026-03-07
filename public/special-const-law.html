@@ -588,42 +588,80 @@
     window.location.href='search.html?q='+encodeURIComponent(q);
   }
 
-  let user=JSON.parse(localStorage.getItem("user")||"null");
-  let currentLang='ar';
+let user = JSON.parse(
+  localStorage.getItem("user") ||
+  sessionStorage.getItem("user") ||
+  "null"
+);
 
-  function updateHeader(){
-    const headerActions=document.getElementById("headerActions");
-    const mobileLogin=document.getElementById("mobileLogin");
-    const mobileRegister=document.getElementById("mobileRegister");
+function updateHeader(){
+  const headerActions = document.getElementById("headerActions");
+  const mobileLogin = document.getElementById("mobileLogin");
+  const mobileRegister = document.getElementById("mobileRegister");
 
-    if(user && user.username){
-      if(headerActions){
-        headerActions.innerHTML = `
-          <div class="lang-wrapper">
-            <button class="lang-toggle" onclick="toggleLangMenu()">
-              <span id="langCurrent">AR</span> ▾
-            </button>
-            <div class="lang-menu" id="langMenu">
-              <button onclick="setLang('ar')">العربية</button>
-              <button onclick="setLang('en')">English</button>
-              <button onclick="setLang('fr')">Français</button>
-            </div>
+  if(user && user.loggedIn){
+    const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
+
+    if (headerActions) {
+      headerActions.innerHTML = `
+        <div class="lang-wrapper">
+          <button class="lang-toggle" onclick="toggleLangMenu()">
+            <span id="langCurrent">AR</span>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button onclick="setLang('ar')">العربية</button>
+            <button onclick="setLang('en')">English</button>
+            <button onclick="setLang('fr')">Français</button>
           </div>
-          <span style="margin-right:8px;font-size:12px;">${user.username}</span>
-          <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
-        `;
-      }
-      if(mobileLogin)  mobileLogin.innerHTML=`<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
-      if(mobileRegister) mobileRegister.style.display="none";
+        </div>
+        <span style="margin-right:8px;font-size:12px;">${displayName}</span>
+        <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
+      `;
+    }
+
+    if (mobileLogin) {
+      mobileLogin.innerHTML = `<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
+    }
+
+    if (mobileRegister) {
+      mobileRegister.style.display = "none";
+    }
+  } else {
+    if (headerActions) {
+      headerActions.innerHTML = `
+        <div class="lang-wrapper">
+          <button class="lang-toggle" onclick="toggleLangMenu()">
+            <span id="langCurrent">AR</span>
+          </button>
+          <div class="lang-menu" id="langMenu">
+            <button onclick="setLang('ar')">العربية</button>
+            <button onclick="setLang('en')">English</button>
+            <button onclick="setLang('fr')">Français</button>
+          </div>
+        </div>
+        <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="navlogin">تسجيل الدخول</button>
+        <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="navjoin">انضم إلينا</button>
+      `;
+    }
+
+    if (mobileLogin) {
+      mobileLogin.innerHTML = `<a href="login.html" data-t="navlogin">تسجيل الدخول</a>`;
+    }
+
+    if (mobileRegister) {
+      mobileRegister.style.display = "";
+      mobileRegister.innerHTML = `<a href="register.html" data-t="navjoin">انضم إلينا</a>`;
     }
   }
+}
 
-  function logout(){
-    localStorage.removeItem("user");
-    user=null;
-    showToast(translations[currentLang].logout_toast || 'تم تسجيل الخروج بنجاح');
-    setTimeout(()=>location.reload(),500);
-  }
+
+function logout(){
+  localStorage.removeItem("user");
+  sessionStorage.removeItem("user");
+  user = null;
+  location.reload();
+}
 
   const translations = {
     ar: {
