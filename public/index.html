@@ -1057,6 +1057,69 @@ function esc(str) {
         localStorage.setItem(key, JSON.stringify(data));
         renderContent(key, key + 'Grid');   // دالة موجودة في index.html
       }
+function renderLatestResearchAndArticles(gridId = 'researchGrid') {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+
+  const lang = getCurrentLang();
+  const research = JSON.parse(localStorage.getItem('research') || '[]');
+  const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+
+  const all = [
+    ...research.map((item, index) => ({
+      ...item,
+      _type: 'research',
+      _index: index
+    })),
+    ...articles.map((item, index) => ({
+      ...item,
+      _type: 'articles',
+      _index: index
+    }))
+  ].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+
+  grid.innerHTML = '';
+
+  if (!all.length) {
+    grid.innerHTML = `<div class="empty-state"><p data-t="emptyitems">لا توجد عناصر بعد</p></div>`;
+    return;
+  }
+
+  all.slice(0, 8).forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const title = getByLang(item.title, lang) || '';
+    const author = getByLang(item.author, lang) || '';
+    const desc =
+      getByLang(item.description, lang) ||
+      getByLang(item.short, lang) ||
+      getByLang(item.details, lang) ||
+      '';
+
+    const img = item.image || item.photo || '';
+    const typeLabel = item._type === 'research'
+      ? (lang === 'en' ? 'Research' : lang === 'fr' ? 'Recherche' : 'بحث')
+      : (lang === 'en' ? 'Article' : lang === 'fr' ? 'Article' : 'مقال');
+
+    card.innerHTML = `
+      ${img ? `<div class="card-img-wrapper"><img src="${esc(img)}" alt="${esc(title)}" class="card-img"></div>` : ''}
+      <div class="card-body">
+        <h3>${esc(title)}</h3>
+        ${author ? `<span class="card-author">${esc(author)}</span>` : ''}
+        <p>${esc(desc)}</p>
+      </div>
+      <div class="card-footer">
+        <span>${esc(typeLabel)}</span>
+        <button class="card-btn" onclick="goToPage('${item._type}', ${item._index})">
+          ${lang === 'en' ? 'Read more' : lang === 'fr' ? 'Lire plus' : 'اقرأ المزيد'}
+        </button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
 
       updateStats(); // موجودة في index.html
       console.log('Synced Firestore → localStorage');
@@ -1596,7 +1659,7 @@ function renderContent(storageKey, gridId) {
   }
 
   window.addEventListener('DOMContentLoaded',()=>{
-    renderContent('research','researchGrid');
+  renderLatestResearchAndArticles('researchGrid');
     renderContent('editions','editionsGrid');
     renderContent('activities','activitiesGrid');
     renderContent('training','academicGrid');
