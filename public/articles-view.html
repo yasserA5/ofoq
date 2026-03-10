@@ -1376,13 +1376,35 @@ function renderContentForLang(lang){
       }
     }
   }
-
 const type = 'articles';
-const rawId = getQueryParam('id');
+const id = Number(getQueryParam('id'));
 const allData = JSON.parse(localStorage.getItem(type) || '[]');
-
-const item = allData.find(i => String(i.id) === String(rawId));
+const item = allData.find(i => i.id === id);
 window.displayItem = item;
+
+if(!item){
+  document.body.innerHTML = '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
+} else {
+  renderMedia(item);
+}
+
+// DEBUG - Remove after fixing
+console.log('=== DEBUG INFO ===');
+console.log('Query param id:', getQueryParam('id'));
+console.log('All articles data:', JSON.parse(localStorage.getItem('articles') || '[]'));
+console.log('Found item:', window.displayItem);
+console.log('Item keys:', window.displayItem ? Object.keys(window.displayItem) : 'NO ITEM');
+console.log('Item title:', window.displayItem?.title);
+console.log('Item short:', window.displayItem?.short);
+console.log('====================');
+
+window.addEventListener('DOMContentLoaded', () => {
+  const savedLang = getCurrentLang();
+  applyLang(savedLang);
+  if(window.displayItem){
+    renderContentForLang(savedLang);
+  }
+});
 
 
   if(!item){
