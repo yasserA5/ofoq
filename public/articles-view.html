@@ -1004,7 +1004,6 @@
 <footer class="site-footer" id="footerText">
   © 2025 Ofouq Academy · جميع الحقوق محفوظة
 </footer>
-<script type="module" src="firestore-bridge.js"></script>
 
 <script>
   function getCurrentLang() {
@@ -1503,13 +1502,10 @@ if (tagsBox) {
 
   window.displayItem = getArticleById();
 
-window.addEventListener('DOMContentLoaded', async () => {
-  initMobileDropdowns();
-  await syncArticlesFromFirestore();
-  setLang(currentLang);
-  updateHeader();
-});
-
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedLang = getCurrentLang();
+    applyLang(savedLang);
+  });
 </script>
 
 </body>

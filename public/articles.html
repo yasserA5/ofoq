@@ -921,6 +921,7 @@
   © جميع الحقوق محفوظة – منصتك العلمية
 </footer>
 
+<script type="module" src="firestore-bridge.js"></script>
 
 <script>
 function getStoredUser() {
@@ -938,6 +939,37 @@ function getStoredUser() {
 let user = getStoredUser();
 
 
+async function syncArticlesFromFirestore() {
+  try {
+    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
+      const start = Date.now();
+      function check() {
+        if (window.fs && window.fs.getDocs && window.fs.collection) return resolve();
+        if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
+        setTimeout(check, 50);
+      }
+      check();
+    });
+
+    await waitForFS();
+
+    const col = window.fs.collection(window.fs.db, 'articles');
+    const snap = await window.fs.getDocs(col);
+
+    const arr = [];
+    snap.forEach(docSnap => {
+      arr.push({
+        docId: docSnap.id,
+        ...docSnap.data()
+      });
+    });
+
+    arr.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+    localStorage.setItem('articles', JSON.stringify(arr));
+  } catch (error) {
+    console.error('Articles sync failed:', error);
+  }
+}
 
   const translations = {
     ar:{
@@ -1359,12 +1391,13 @@ function handleProtectedArticle(id) {
   });
 
 
-  window.addEventListener('DOMContentLoaded', () => {
-    initMobileDropdowns();
-    setLang(currentLang);
-    renderArticlesPeer();
-    updateHeader();
-  });
+window.addEventListener('DOMContentLoaded', async () => {
+  initMobileDropdowns();
+  await syncArticlesFromFirestore();
+  setLang(currentLang);
+  updateHeader();
+});
+
 </script>
 
 
