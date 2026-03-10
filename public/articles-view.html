@@ -1288,13 +1288,11 @@ function esc(str) {
               <div class="sidebar-value" id="sidebarType">مقال محكم</div>
             </div>
 
-            <div class="sidebar-row">
-              <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
-              <div class="sidebar-tags">
-                <span class="sidebar-tag" id="tag1">Ofouq</span>
-                <span class="sidebar-tag" id="tag2">مقال محكم</span>
-              </div>
-            </div>
+    <div class="sidebar-row">
+  <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
+  <div class="sidebar-tags" id="sidebarTags"></div>
+</div>
+
           </aside>
         </div>
       </div>
@@ -1385,8 +1383,20 @@ function esc(str) {
     document.getElementById('labelDate').textContent = t.labelDate;
     document.getElementById('labelType').textContent = t.labelType;
     document.getElementById('labelTags').textContent = t.labelTags;
-    document.getElementById('tag1').textContent = t.tag1;
-    document.getElementById('tag2').textContent = t.tag2;
+const tagsBox = document.getElementById('sidebarTags');
+if (tagsBox) {
+  if (keywords.length) {
+    tagsBox.innerHTML = keywords
+      .map(word => `<span class="sidebar-tag">${escapeHtml(word)}</span>`)
+      .join('');
+  } else {
+    tagsBox.innerHTML = `
+      <span class="sidebar-tag">${escapeHtml(t.tag1)}</span>
+      <span class="sidebar-tag">${escapeHtml(t.tag2)}</span>
+    `;
+  }
+}
+
     document.getElementById('articleTypeLabel').textContent = t.typeLabel;
     document.getElementById('sidebarType').textContent = t.typeLabel;
 
@@ -1426,6 +1436,15 @@ function esc(str) {
       getTextByLang(it.extra, lang) ||
       getTextByLang(it.additionalDetails, lang) ||
       '';
+const rawKeywords =
+  getTextByLang(it.details, lang) ||
+  getTextByLang(it.details, 'ar') ||
+  '';
+
+const keywords = rawKeywords
+  .split(/[\n،,;|]+/)
+  .map(x => x.trim())
+  .filter(Boolean);
 
     const author =
       getTextByLang(it.author, lang) ||
