@@ -40,13 +40,11 @@
       font-family:"Tajawal",sans-serif;
       background:linear-gradient(180deg,#f8fbfd 0%, #eef7fa 100%);
       color:var(--text);
-      line-height:1.8;
+      line-height:1.9;
       direction:rtl;
     }
 
-    a{
-      color:inherit;
-    }
+    a{ color:inherit; text-decoration:none; }
 
     header{
       padding:10px 20px;
@@ -95,9 +93,7 @@
       flex-wrap:nowrap;
     }
 
-    nav li{
-      position:relative;
-    }
+    nav li{ position:relative; }
 
     nav a{
       text-decoration:none;
@@ -173,11 +169,6 @@
       background:#fff;
     }
 
-    .nav-search input:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 2px rgba(0,155,196,0.18);
-    }
-
     .nav-search span{
       position:absolute;
       left:8px;
@@ -215,9 +206,7 @@
       box-shadow:0 3px 12px rgba(0,155,196,0.25);
     }
 
-    .lang-wrapper{
-      position:relative;
-    }
+    .lang-wrapper{ position:relative; }
 
     .lang-toggle{
       border:none;
@@ -257,6 +246,7 @@
       font-size:12px;
       cursor:pointer;
       font-weight:500;
+      font-family:inherit;
     }
 
     .lang-menu button:hover{
@@ -319,9 +309,7 @@
       transform:translateX(-50%) rotate(45deg);
     }
 
-    #menu-btn.open span:nth-child(2){
-      opacity:0;
-    }
+    #menu-btn.open span:nth-child(2){ opacity:0; }
 
     #menu-btn.open span:nth-child(3){
       top:20px;
@@ -709,6 +697,29 @@
       color:#374151;
       line-height:2;
       white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .content-html{
+      white-space:normal !important;
+    }
+
+    .content-html p,
+    .content-html li,
+    .content-html div{
+      white-space:normal;
+    }
+
+    .content-html ul,
+    .content-html ol{
+      padding-inline-start:22px;
+      margin:10px 0;
+    }
+
+    .content-html img{
+      max-width:100%;
+      border-radius:12px;
+      height:auto;
     }
 
     .info-box{
@@ -766,12 +777,35 @@
     }
 
     .sidebar-tag{
-      background:var(--accent-soft, #e0f2fe);
-      color:var(--accent-dark, #0369a1);
+      background:#e0f2fe;
+      color:#0369a1;
       border-radius:999px;
       padding:4px 9px;
       font-size:11px;
       font-weight:700;
+    }
+
+    .empty-wrap{
+      max-width:760px;
+      margin:60px auto;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:24px;
+      box-shadow:var(--shadow-lg);
+      padding:28px 22px;
+      text-align:center;
+    }
+
+    .empty-wrap h2{
+      color:#0f172a;
+      margin-bottom:10px;
+      font-size:22px;
+    }
+
+    .empty-wrap p{
+      color:#64748b;
+      font-size:15px;
+      margin-bottom:18px;
     }
 
     .site-footer{
@@ -847,7 +881,7 @@
 
   <div class="nav-sheet-top">
     <div class="nav-sheet-brand">
-      <img src="https://raw.githubusercontent.com/yasserA5/ofoq-logos/main/logo1.png" alt="Logo">
+      <img src="logo1.png" alt="Logo">
       <div>
         <strong>أفق</strong>
         <span>منصة أكاديمية حديثة</span>
@@ -960,93 +994,12 @@
         <button type="button" onclick="switchLang('fr')">Français</button>
       </div>
     </div>
-    <button class="btn" onclick="goBack()">رجوع</button>
+    <button class="btn" onclick="goBack()" id="backBtnText">رجوع</button>
     <button class="btn primary" onclick="window.print()">طباعة</button>
   </div>
 </header>
 
-<div class="page-shell">
-  <section class="hero-article">
-    <div class="hero-top">
-      <div>
-        <div class="article-type-pill" id="articleTypeLabel">مقال محكم</div>
-        <h1 id="articleTitleHero">عنوان المقال</h1>
-        <p class="hero-desc" id="articleShortHero"></p>
-      </div>
-
-      <div class="hero-meta">
-        <div class="hero-meta-row" id="heroAuthor">الكاتب: غير محدد</div>
-        <div class="hero-meta-row" id="heroAffiliation">المؤسسة: غير محددة</div>
-        <div class="hero-meta-row" id="heroDate">التاريخ: غير محدد</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="layout">
-    <article class="article-card">
-      <section class="article-media" id="articleMedia"></section>
-
-      <section class="article-body">
-        <div class="article-meta">
-          <span id="articleAuthor">الكاتب: غير محدد</span>
-          <span id="articleAffiliation">المؤسسة: غير محددة</span>
-          <span id="articleDate">التاريخ: غير محدد</span>
-        </div>
-
-        <div class="divider"></div>
-
-        <section class="section-block">
-          <h3 id="labelSummary">الملخص</h3>
-          <p id="articleShort"></p>
-        </section>
-
-        <section class="section-block">
-          <h3 id="labelFull">المحتوى الكامل</h3>
-          <div id="articleFull"></div>
-        </section>
-
-        <section class="section-block">
-          <h3 id="labelDetails">تفاصيل إضافية</h3>
-          <p id="articleDetails"></p>
-        </section>
-
-        <div class="info-box" id="extraInfo" style="display:none;"></div>
-      </section>
-    </article>
-
-    <aside class="sidebar">
-      <h3 id="sidebarTitle">معلومات المقال</h3>
-
-      <div class="sidebar-row">
-        <div class="sidebar-label" id="labelAuthor">الكاتب</div>
-        <div class="sidebar-value" id="sidebarAuthor">غير محدد</div>
-      </div>
-
-      <div class="sidebar-row">
-        <div class="sidebar-label" id="labelAffiliation">المؤسسة</div>
-        <div class="sidebar-value" id="sidebarAffiliation">غير محددة</div>
-      </div>
-
-      <div class="sidebar-row">
-        <div class="sidebar-label" id="labelDate">التاريخ</div>
-        <div class="sidebar-value" id="sidebarDate">غير محدد</div>
-      </div>
-
-      <div class="sidebar-row">
-        <div class="sidebar-label" id="labelType">النوع</div>
-        <div class="sidebar-value" id="sidebarType">مقال محكم</div>
-      </div>
-
-      <div class="sidebar-row">
-        <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
-        <div class="sidebar-tags">
-          <span class="sidebar-tag" id="tag1">Ofouq</span>
-          <span class="sidebar-tag" id="tag2">مقال محكم</span>
-        </div>
-      </div>
-    </aside>
-  </div>
-</div>
+<div id="appRoot"></div>
 
 <footer class="site-footer" id="footerText">
   © 2025 Ofouq Academy · جميع الحقوق محفوظة
@@ -1069,7 +1022,6 @@
     const menu = document.getElementById("mobileMenu");
     const overlay = document.getElementById("navSheetOverlay");
     const btn = document.getElementById("menu-btn");
-
     if(!menu || !overlay || !btn) return;
 
     const isOpen = menu.classList.contains("show");
@@ -1102,25 +1054,39 @@
     window.location.href = 'search.html?q=' + encodeURIComponent(q);
   }
 
-  function getCurrentLang(){
-    return localStorage.getItem('uiLang') || 'ar';
+  function safeParse(v, fallback = null){
+    try{
+      return JSON.parse(v);
+    }catch{
+      return fallback;
+    }
   }
 
-function getTextByLang(field, lang){
-  if (field == null) return '';
-  if (typeof field === 'string' || typeof field === 'number') return String(field);
-  if (typeof field !== 'object') return '';
+  function getCurrentLang(){
+    return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
+  }
 
-  const value = field[lang] ?? field.ar ?? field.fr ?? field.en ?? '';
-  return (value == null) ? '' : String(value);
-}
+  function getTextByLang(field, lang){
+    if (field == null) return '';
+    if (typeof field === 'string' || typeof field === 'number') return String(field);
+    if (typeof field !== 'object') return '';
+    const value = field[lang] ?? field.ar ?? field.fr ?? field.en ?? '';
+    return value == null ? '' : String(value);
+  }
 
-
+  function escapeHtml(str){
+    return String(str ?? '')
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#039;');
+  }
 
   const uiTexts = {
     ar: {
       dir:'rtl', langAttr:'ar',
-      title:'Ofouq Academy | مقال محكم',
+      pageTitle:'Ofouq Academy | مقال محكم',
       back:'رجوع',
       sectionSummary:'الملخص',
       sectionFull:'المحتوى الكامل',
@@ -1139,11 +1105,16 @@ function getTextByLang(field, lang){
       unknownDate:'غير محدد',
       noTitle:'بدون عنوان',
       typeLabel:'مقال محكم',
-      attachmentInfo:'هناك مرفق لهذا المقال، لكن لا يمكن عرضه مباشرة في هذه الصفحة.'
+      attachmentInfo:'هناك مرفق لهذا المقال، لكن لا يمكن عرضه مباشرة في هذه الصفحة.',
+      noFull:'لا يوجد محتوى كامل لهذا المقال حالياً.',
+      noDetails:'لا توجد تفاصيل إضافية.',
+      notFoundTitle:'المقال غير موجود',
+      notFoundText:'تعذر العثور على المقال المطلوب. ربما تم حذفه أو تغيير المعرف.',
+      backToArticles:'العودة إلى المقالات'
     },
     en: {
       dir:'ltr', langAttr:'en',
-      title:'Ofouq Academy | Scholarly Article',
+      pageTitle:'Ofouq Academy | Scholarly Article',
       back:'Back',
       sectionSummary:'Summary',
       sectionFull:'Full content',
@@ -1162,11 +1133,16 @@ function getTextByLang(field, lang){
       unknownDate:'Not specified',
       noTitle:'Untitled',
       typeLabel:'Scholarly article',
-      attachmentInfo:'This article has an attachment, but it cannot be displayed directly on this page.'
+      attachmentInfo:'This article has an attachment, but it cannot be displayed directly on this page.',
+      noFull:'No full content is available for this article yet.',
+      noDetails:'No additional details.',
+      notFoundTitle:'Article not found',
+      notFoundText:'The requested article could not be found. It may have been deleted or its ID changed.',
+      backToArticles:'Back to articles'
     },
     fr: {
       dir:'ltr', langAttr:'fr',
-      title:'Ofouq Academy | Article scientifique',
+      pageTitle:'Ofouq Academy | Article scientifique',
       back:'Retour',
       sectionSummary:'Résumé',
       sectionFull:'Contenu complet',
@@ -1185,15 +1161,201 @@ function getTextByLang(field, lang){
       unknownDate:'Non spécifiée',
       noTitle:'Sans titre',
       typeLabel:'Article scientifique',
-      attachmentInfo:'Cet article contient une pièce jointe qui ne peut pas être affichée directement sur cette page.'
+      attachmentInfo:'Cet article contient une pièce jointe qui ne peut pas être affichée directement sur cette page.',
+      noFull:'Aucun contenu complet disponible pour cet article.',
+      noDetails:'Aucun détail supplémentaire.',
+      notFoundTitle:'Article introuvable',
+      notFoundText:'Impossible de trouver l’article demandé. Il a peut-être été supprimé ou son identifiant a changé.',
+      backToArticles:'Retour aux articles'
     }
   };
+
+  function getQueryParam(name){
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  function getArticleById(){
+    const rawId = getQueryParam('id');
+    const allData = safeParse(localStorage.getItem('articles'), []);
+    if(!Array.isArray(allData)) return null;
+    return allData.find(i => String(i?.id) === String(rawId)) || null;
+  }
+
+  function buildNotFound(lang){
+    const t = uiTexts[lang] || uiTexts.ar;
+    return `
+      <div class="page-shell">
+        <div class="empty-wrap">
+          <h2>${escapeHtml(t.notFoundTitle)}</h2>
+          <p>${escapeHtml(t.notFoundText)}</p>
+          <button class="btn primary" onclick="window.location.href='articles.html'">${escapeHtml(t.backToArticles)}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function buildPageShell(){
+    return `
+      <div class="page-shell">
+        <section class="hero-article">
+          <div class="hero-top">
+            <div>
+              <div class="article-type-pill" id="articleTypeLabel">مقال محكم</div>
+              <h1 id="articleTitleHero">عنوان المقال</h1>
+              <p class="hero-desc" id="articleShortHero"></p>
+            </div>
+
+            <div class="hero-meta">
+              <div class="hero-meta-row" id="heroAuthor">الكاتب: غير محدد</div>
+              <div class="hero-meta-row" id="heroAffiliation">المؤسسة: غير محددة</div>
+              <div class="hero-meta-row" id="heroDate">التاريخ: غير محدد</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="layout">
+          <article class="article-card">
+            <section class="article-media" id="articleMedia"></section>
+
+            <section class="article-body">
+              <div class="article-meta">
+                <span id="articleAuthor">الكاتب: غير محدد</span>
+                <span id="articleAffiliation">المؤسسة: غير محددة</span>
+                <span id="articleDate">التاريخ: غير محدد</span>
+              </div>
+
+              <div class="divider"></div>
+
+              <section class="section-block">
+                <h3 id="labelSummary">الملخص</h3>
+                <p id="articleShort"></p>
+              </section>
+
+              <section class="section-block">
+                <h3 id="labelFull">المحتوى الكامل</h3>
+                <div id="articleFull" class="content-html"></div>
+              </section>
+
+              <section class="section-block">
+                <h3 id="labelDetails">تفاصيل إضافية</h3>
+                <p id="articleDetails"></p>
+              </section>
+
+              <div class="info-box" id="extraInfo" style="display:none;"></div>
+            </section>
+          </article>
+
+          <aside class="sidebar">
+            <h3 id="sidebarTitle">معلومات المقال</h3>
+
+            <div class="sidebar-row">
+              <div class="sidebar-label" id="labelAuthor">الكاتب</div>
+              <div class="sidebar-value" id="sidebarAuthor">غير محدد</div>
+            </div>
+
+            <div class="sidebar-row">
+              <div class="sidebar-label" id="labelAffiliation">المؤسسة</div>
+              <div class="sidebar-value" id="sidebarAffiliation">غير محددة</div>
+            </div>
+
+            <div class="sidebar-row">
+              <div class="sidebar-label" id="labelDate">التاريخ</div>
+              <div class="sidebar-value" id="sidebarDate">غير محدد</div>
+            </div>
+
+            <div class="sidebar-row">
+              <div class="sidebar-label" id="labelType">النوع</div>
+              <div class="sidebar-value" id="sidebarType">مقال محكم</div>
+            </div>
+
+            <div class="sidebar-row">
+              <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
+              <div class="sidebar-tags">
+                <span class="sidebar-tag" id="tag1">Ofouq</span>
+                <span class="sidebar-tag" id="tag2">مقال محكم</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderMedia(item, lang){
+    const mediaContainer = document.getElementById('articleMedia');
+    const extraInfo = document.getElementById('extraInfo');
+    const t = uiTexts[lang] || uiTexts.ar;
+    if(!mediaContainer) return;
+
+    mediaContainer.style.display = '';
+    mediaContainer.innerHTML = '';
+    if(extraInfo){
+      extraInfo.style.display = 'none';
+      extraInfo.textContent = '';
+    }
+
+    let mediaHtml = '';
+    const f = item?.file || '';
+    const lower = String(f).toLowerCase();
+    const titleForAlt = getTextByLang(item?.title, lang) || t.noTitle;
+
+    if(f){
+      if(lower.endsWith('.mp4') || lower.includes('.mp4?') || lower.endsWith('.webm') || lower.endsWith('.ogg')){
+        mediaHtml = `
+          <div class="media-frame">
+            <video controls playsinline>
+              <source src="${escapeHtml(f)}" type="video/mp4">
+            </video>
+          </div>
+        `;
+      } else if(/^https?:\/\//i.test(f)){
+        mediaHtml = `
+          <div class="media-frame">
+            <iframe src="${escapeHtml(f)}" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+        `;
+      }
+    }
+
+    if(!mediaHtml && item?.image){
+      mediaHtml = `
+        <div class="media-frame">
+          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(titleForAlt)}">
+        </div>
+      `;
+    }
+
+    if(mediaHtml){
+      mediaContainer.innerHTML = mediaHtml;
+    } else {
+      mediaContainer.style.display = 'none';
+      if(f && extraInfo){
+        extraInfo.style.display = 'block';
+        extraInfo.textContent = t.attachmentInfo;
+      }
+    }
+  }
 
   function applyLang(lang){
     const t = uiTexts[lang] || uiTexts.ar;
     document.documentElement.lang = t.langAttr;
     document.documentElement.dir = t.dir;
-    document.getElementById('t-title').textContent = t.title;
+    document.getElementById('t-title').textContent = t.pageTitle;
+    document.getElementById('footerText').textContent = t.footer;
+    document.getElementById('langCurrent').textContent = lang.toUpperCase();
+    const backBtn = document.getElementById('backBtnText');
+    if(backBtn) backBtn.textContent = t.back;
+
+    const appRoot = document.getElementById('appRoot');
+    const item = window.displayItem;
+
+    if(!item){
+      appRoot.innerHTML = buildNotFound(lang);
+      return;
+    }
+
+    appRoot.innerHTML = buildPageShell();
+
     document.getElementById('labelSummary').textContent = t.sectionSummary;
     document.getElementById('labelFull').textContent = t.sectionFull;
     document.getElementById('labelDetails').textContent = t.sectionDetails;
@@ -1205,220 +1367,102 @@ function getTextByLang(field, lang){
     document.getElementById('labelTags').textContent = t.labelTags;
     document.getElementById('tag1').textContent = t.tag1;
     document.getElementById('tag2').textContent = t.tag2;
-    document.getElementById('footerText').textContent = t.footer;
-    document.getElementById('headerBackLabel')?.textContent = t.back;
     document.getElementById('articleTypeLabel').textContent = t.typeLabel;
     document.getElementById('sidebarType').textContent = t.typeLabel;
-    document.getElementById('langCurrent').textContent = lang.toUpperCase();
 
-    document.querySelectorAll('.lang-btn').forEach(btn=>{
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
+    renderContentForLang(lang);
+    renderMedia(item, lang);
   }
 
-function renderContentForLang(lang){
-  const it = window.displayItem;
-  if(!it) return;
+  function renderContentForLang(lang){
+    const it = window.displayItem;
+    if(!it) return;
 
-  const tUI = uiTexts[lang] || uiTexts.ar;
+    const t = uiTexts[lang] || uiTexts.ar;
 
-  const title =
-    getTextByLang(it.title, lang) ||
-    getTextByLang(it.name, lang) ||
-    tUI.noTitle;
+    const title =
+      getTextByLang(it.title, lang) ||
+      getTextByLang(it.name, lang) ||
+      t.noTitle;
 
-  const shortText =
-    getTextByLang(it.short, lang) ||
-    getTextByLang(it.shortContent, lang) ||
-    getTextByLang(it.summary, lang) ||
-    getTextByLang(it.description, lang) ||
-    '';
+    const shortText =
+      getTextByLang(it.short, lang) ||
+      getTextByLang(it.shortContent, lang) ||
+      getTextByLang(it.summary, lang) ||
+      getTextByLang(it.description, lang) ||
+      '';
 
-  const fullText =
-    getTextByLang(it.full, lang) ||
-    getTextByLang(it.fullContent, lang) ||
-    getTextByLang(it.content, lang) ||
-    getTextByLang(it.body, lang) ||
-    getTextByLang(it.text, lang) ||
-    '';
+    const fullText =
+      getTextByLang(it.full, lang) ||
+      getTextByLang(it.fullContent, lang) ||
+      getTextByLang(it.content, lang) ||
+      getTextByLang(it.body, lang) ||
+      getTextByLang(it.text, lang) ||
+      '';
 
-  const detailsText =
-    getTextByLang(it.details, lang) ||
-    getTextByLang(it.notes, lang) ||
-    getTextByLang(it.extra, lang) ||
-    getTextByLang(it.additionalDetails, lang) ||
-    '';
+    const detailsText =
+      getTextByLang(it.details, lang) ||
+      getTextByLang(it.notes, lang) ||
+      getTextByLang(it.extra, lang) ||
+      getTextByLang(it.additionalDetails, lang) ||
+      '';
 
-  const author =
-    getTextByLang(it.author, lang) ||
-    getTextByLang(it.authorName, lang) ||
-    getTextByLang(it.writer, lang) ||
-    tUI.unknownAuthor;
+    const author =
+      getTextByLang(it.author, lang) ||
+      getTextByLang(it.authorName, lang) ||
+      getTextByLang(it.writer, lang) ||
+      t.unknownAuthor;
 
-  const affiliation =
-    getTextByLang(it.affiliation, lang) ||
-    getTextByLang(it.institution, lang) ||
-    getTextByLang(it.organization, lang) ||
-    getTextByLang(it.journal, lang) ||
-    getTextByLang(it.source, lang) ||
-    tUI.unknownAff;
+    const affiliation =
+      getTextByLang(it.affiliation, lang) ||
+      getTextByLang(it.institution, lang) ||
+      getTextByLang(it.organization, lang) ||
+      getTextByLang(it.journal, lang) ||
+      getTextByLang(it.source, lang) ||
+      t.unknownAff;
 
-  const dateValue =
-    getTextByLang(it.date, lang) ||
-    getTextByLang(it.publishDate, lang) ||
-    getTextByLang(it.createdAt, lang) ||
-    getTextByLang(it.publishedAt, lang) ||
-    tUI.unknownDate;
+    const dateValue =
+      getTextByLang(it.date, lang) ||
+      getTextByLang(it.publishDate, lang) ||
+      getTextByLang(it.createdAt, lang) ||
+      getTextByLang(it.publishedAt, lang) ||
+      t.unknownDate;
 
-  document.getElementById('articleTitleHero').textContent = title;
-  document.getElementById('articleShortHero').textContent = shortText;
-  document.getElementById('articleShort').textContent = shortText;
-  document.getElementById('articleFull').textContent = fullText;
-  document.getElementById('articleDetails').textContent = detailsText;
+    document.getElementById('articleTitleHero').textContent = title;
+    document.getElementById('articleShortHero').textContent = shortText;
+    document.getElementById('articleShort').textContent = shortText;
 
-  document.getElementById('heroAuthor').textContent = tUI.labelAuthor + ': ' + author;
-  document.getElementById('heroAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
-  document.getElementById('heroDate').textContent = tUI.labelDate + ': ' + dateValue;
+    const articleFull = document.getElementById('articleFull');
+    articleFull.innerHTML = fullText && fullText.trim() ? fullText : escapeHtml(t.noFull);
 
-  document.getElementById('articleAuthor').textContent = tUI.labelAuthor + ': ' + author;
-  document.getElementById('articleAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
-  document.getElementById('articleDate').textContent = tUI.labelDate + ': ' + dateValue;
+    document.getElementById('articleDetails').textContent = detailsText && detailsText.trim() ? detailsText : t.noDetails;
 
-  document.getElementById('sidebarAuthor').textContent = author;
-  document.getElementById('sidebarAffiliation').textContent = affiliation;
-  document.getElementById('sidebarDate').textContent = dateValue;
+    document.getElementById('heroAuthor').textContent = t.labelAuthor + ': ' + author;
+    document.getElementById('heroAffiliation').textContent = t.labelAffiliation + ': ' + affiliation;
+    document.getElementById('heroDate').textContent = t.labelDate + ': ' + dateValue;
 
-  const extraInfo = document.getElementById('extraInfo');
-  if(extraInfo && extraInfo.style.display !== 'none'){
-    extraInfo.textContent = tUI.attachmentInfo;
+    document.getElementById('articleAuthor').textContent = t.labelAuthor + ': ' + author;
+    document.getElementById('articleAffiliation').textContent = t.labelAffiliation + ': ' + affiliation;
+    document.getElementById('articleDate').textContent = t.labelDate + ': ' + dateValue;
+
+    document.getElementById('sidebarAuthor').textContent = author;
+    document.getElementById('sidebarAffiliation').textContent = affiliation;
+    document.getElementById('sidebarDate').textContent = dateValue;
   }
-
-  const fullSection = document.getElementById('articleFull');
-  const detailsSection = document.getElementById('articleDetails');
-
-  if(!fullText.trim()){
-    fullSection.textContent = lang === 'ar'
-      ? 'لا يوجد محتوى كامل لهذا المقال حالياً.'
-      : lang === 'fr'
-      ? 'Aucun contenu complet disponible pour cet article.'
-      : 'No full content is available for this article yet.';
-  }
-
-  if(!detailsText.trim()){
-    detailsSection.textContent = lang === 'ar'
-      ? 'لا توجد تفاصيل إضافية.'
-      : lang === 'fr'
-      ? 'Aucun détail supplémentaire.'
-      : 'No additional details.';
-  }
-}
-
 
   function switchLang(lang){
     localStorage.setItem('uiLang', lang);
+    localStorage.setItem('lang', lang);
     applyLang(lang);
-    renderContentForLang(lang);
     const menu = document.getElementById('langMenu');
     if(menu) menu.style.display = 'none';
   }
 
-  function getQueryParam(name){
-    const params = new URLSearchParams(window.location.search);
-    return params.get(name);
-  }
-
-  function renderMedia(item){
-    const mediaContainer = document.getElementById('articleMedia');
-    const extraInfo = document.getElementById('extraInfo');
-    if(!mediaContainer) return;
-
-    let mediaHtml = '';
-
-    if(item.file){
-      const f = item.file;
-      const lower = f.toLowerCase();
-
-      if(lower.endsWith('.mp4') || lower.includes('.mp4?')){
-        const videoUrl = f.startsWith('/videos') ? 'http://localhost:3000' + f : f;
-        mediaHtml = `
-          <div class="media-frame">
-            <video controls>
-              <source src="${videoUrl}" type="video/mp4">
-            </video>
-          </div>
-        `;
-      } else if(f.startsWith('http')){
-        mediaHtml = `
-          <div class="media-frame">
-            <iframe src="${f}" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          </div>
-        `;
-      }
-    }
-
-    const currentLang = getCurrentLang();
-    const titleForAlt = getTextByLang(item.title, currentLang) || 'بدون عنوان';
-
-    if(!mediaHtml && item.image){
-      mediaHtml = `
-        <div class="media-frame">
-          <img src="${item.image}" alt="${titleForAlt}">
-        </div>
-      `;
-    }
-
-    if(mediaHtml){
-      mediaContainer.innerHTML = mediaHtml;
-    } else {
-      mediaContainer.style.display = 'none';
-      if(item.file && extraInfo){
-        extraInfo.style.display = 'block';
-      }
-    }
-  }
-const type = 'articles';
-const id = Number(getQueryParam('id'));
-const allData = JSON.parse(localStorage.getItem(type) || '[]');
-const item = allData.find(i => i.id === id);
-window.displayItem = item;
-
-if(!item){
-  document.body.innerHTML = '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
-} else {
-  renderMedia(item);
-}
-
-// DEBUG - Remove after fixing
-console.log('=== DEBUG INFO ===');
-console.log('Query param id:', getQueryParam('id'));
-console.log('All articles data:', JSON.parse(localStorage.getItem('articles') || '[]'));
-console.log('Found item:', window.displayItem);
-console.log('Item keys:', window.displayItem ? Object.keys(window.displayItem) : 'NO ITEM');
-console.log('Item title:', window.displayItem?.title);
-console.log('Item short:', window.displayItem?.short);
-console.log('====================');
-
-window.addEventListener('DOMContentLoaded', () => {
-  const savedLang = getCurrentLang();
-  applyLang(savedLang);
-  if(window.displayItem){
-    renderContentForLang(savedLang);
-  }
-});
-
-
-  if(!item){
-    document.body.innerHTML = '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
-  } else {
-    renderMedia(item);
-  }
+  window.displayItem = getArticleById();
 
   window.addEventListener('DOMContentLoaded', () => {
     const savedLang = getCurrentLang();
     applyLang(savedLang);
-    if(window.displayItem){
-      renderContentForLang(savedLang);
-    }
   });
 </script>
 
