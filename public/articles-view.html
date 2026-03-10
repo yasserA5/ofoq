@@ -1383,19 +1383,7 @@ function esc(str) {
     document.getElementById('labelDate').textContent = t.labelDate;
     document.getElementById('labelType').textContent = t.labelType;
     document.getElementById('labelTags').textContent = t.labelTags;
-const tagsBox = document.getElementById('sidebarTags');
-if (tagsBox) {
-  if (keywords.length) {
-    tagsBox.innerHTML = keywords
-      .map(word => `<span class="sidebar-tag">${escapeHtml(word)}</span>`)
-      .join('');
-  } else {
-    tagsBox.innerHTML = `
-      <span class="sidebar-tag">${escapeHtml(t.tag1)}</span>
-      <span class="sidebar-tag">${escapeHtml(t.tag2)}</span>
-    `;
-  }
-}
+
 
     document.getElementById('articleTypeLabel').textContent = t.typeLabel;
     document.getElementById('sidebarType').textContent = t.typeLabel;
@@ -1446,6 +1434,7 @@ const keywords = rawKeywords
   .map(x => x.trim())
   .filter(Boolean);
 
+
     const author =
       getTextByLang(it.author, lang) ||
       getTextByLang(it.authorName, lang) ||
@@ -1488,6 +1477,20 @@ const keywords = rawKeywords
     document.getElementById('sidebarAffiliation').textContent = affiliation;
     document.getElementById('sidebarDate').textContent = dateValue;
   }
+  const tagsBox = document.getElementById('sidebarTags');
+if (tagsBox) {
+  if (keywords.length) {
+    tagsBox.innerHTML = keywords
+      .map(word => `<span class="sidebar-tag">${escapeHtml(word)}</span>`)
+      .join('');
+  } else {
+    tagsBox.innerHTML = `
+      <span class="sidebar-tag">${escapeHtml(t.tag1)}</span>
+      <span class="sidebar-tag">${escapeHtml(t.tag2)}</span>
+    `;
+  }
+}
+
 
   function switchLang(lang){
     localStorage.setItem('uiLang', lang);
