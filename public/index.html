@@ -942,27 +942,6 @@
 
 
 
-<section id="how-to-start">
-  <h2 data-t="sec_how">كيف تبدأ؟</h2>
-  <div class="features-grid">
-    <div class="feature-box">
-      <h3 data-t="how_step1_title">١. إنشاء حساب</h3>
-      <p data-t="how_step1_text">قم بإنشاء حساب جديد من صفحة التسجيل حتى تتمكن من حفظ الدورات والمقالات التي تهمك ومتابعة تقدمك.</p>
-    </div>
-    <div class="feature-box">
-      <h3 data-t="how_step2_title">٢. اختيار التخصص</h3>
-      <p data-t="how_step2_text">من قائمة أكاديمي اختر التخصص الذي يناسبك ثم استعرض الأبحاث والمقالات والأنشطة المرتبطة به.</p>
-    </div>
-    <div class="feature-box">
-      <h3 data-t="how_step3_title">٣. متابعة المحتوى</h3>
-      <p data-t="how_step3_text">ابدأ بقراءة الأبحاث والمقالات، ثم انتقل إلى البرامج أو الورش المتاحة ضمن نفس الحقل المعرفي.</p>
-    </div>
-    <div class="feature-box">
-      <h3 data-t="how_step4_title">٤. المساهمة العلمية</h3>
-      <p data-t="how_step4_text">بعد التسجيل يمكنك إرسال أبحاثك أو مقالاتك إلى لجنة التحرير لنشرها ضمن أقسام المنصة المختلفة.</p>
-    </div>
-  </div>
-</section>
 
 <section id="research">
   <h2 data-t="sec_research">أحدث الأبحاث</h2>
@@ -1006,12 +985,54 @@
     سيتم عرض البث المباشر هنا عند توفره.
   </p>
 </section>
+<section id="how-to-start">
+  <h2 data-t="sec_how">كيف تبدأ؟</h2>
+  <div class="features-grid">
+    <div class="feature-box">
+      <h3 data-t="how_step1_title">١. إنشاء حساب</h3>
+      <p data-t="how_step1_text">قم بإنشاء حساب جديد من صفحة التسجيل حتى تتمكن من حفظ الدورات والمقالات التي تهمك ومتابعة تقدمك.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="how_step2_title">٢. اختيار التخصص</h3>
+      <p data-t="how_step2_text">من قائمة أكاديمي اختر التخصص الذي يناسبك ثم استعرض الأبحاث والمقالات والأنشطة المرتبطة به.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="how_step3_title">٣. متابعة المحتوى</h3>
+      <p data-t="how_step3_text">ابدأ بقراءة الأبحاث والمقالات، ثم انتقل إلى البرامج أو الورش المتاحة ضمن نفس الحقل المعرفي.</p>
+    </div>
+    <div class="feature-box">
+      <h3 data-t="how_step4_title">٤. المساهمة العلمية</h3>
+      <p data-t="how_step4_text">بعد التسجيل يمكنك إرسال أبحاثك أو مقالاتك إلى لجنة التحرير لنشرها ضمن أقسام المنصة المختلفة.</p>
+    </div>
+  </div>
+</section>
 
 <footer data-t="footer_text">
   © جميع الحقوق محفوظة – منصتك العلمية
 </footer>
 <script type="module" src="/firestore-bridge.js"></script>
 <script>
+function getCurrentLang() {
+  return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
+}
+
+function getByLang(field, lang = getCurrentLang()) {
+  if (field == null) return '';
+  if (typeof field === 'string' || typeof field === 'number') return String(field);
+  if (typeof field !== 'object') return '';
+  return field[lang] || field.ar || field.fr || field.en || '';
+}
+
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+
   async function syncFirestoreToLocal() {
     try {
       // انتظر حتى يجهز bridge (نفس فكرة waitForFS)
@@ -1222,37 +1243,50 @@ function logout(){
 }
 
 
-  function renderContent(storageKey, gridId){
-    const grid=document.getElementById(gridId);
-    const items=JSON.parse(localStorage.getItem(storageKey) || '[]');
-    grid.innerHTML='';
-    if(!items.length){
-      grid.innerHTML=`<div class="empty-state"><p data-t="empty_items">لا توجد عناصر حالياً</p></div>`;
-      return;
-    }
-    items.forEach((item,index)=>{
-      const card=document.createElement('div');
-      card.className='card';
-      const title=item.title || 'بدون عنوان';
-      const author=item.author ? 'بقلم: '+item.author : '';
-      const desc=item.description || item.short || item.details || 'بدون وصف';
-      const img=item.image || item.photo || '';
+function renderContent(storageKey, gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
 
-      card.innerHTML=`
-        ${img ? `<div class="card-img-wrapper"><img src="${img}" alt="${title}" class="card-img"></div>` : ''}
-        <div class="card-body">
-          <h3>${title}</h3>
-          <span class="card-author">${author}</span>
-          <p>${desc}</p>
-        </div>
-        <div class="card-footer">
-          <span>${storageKey}</span>
-          <button class="card-btn" onclick="goToPage('${storageKey}',${index})">عرض المزيد</button>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
+  const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+  const lang = getCurrentLang();
+
+  grid.innerHTML = '';
+
+  if (!items.length) {
+    grid.innerHTML = `<div class="empty-state"><p data-t="emptyitems">لا توجد عناصر بعد</p></div>`;
+    return;
   }
+
+  items.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const title = getByLang(item.title, lang) || 'بدون عنوان';
+    const author = getByLang(item.author, lang) || '';
+    const desc =
+      getByLang(item.description, lang) ||
+      getByLang(item.short, lang) ||
+      getByLang(item.details, lang) ||
+      '';
+    const img = item.image || item.photo || '';
+
+    card.innerHTML = `
+      ${img ? `<div class="card-img-wrapper"><img src="${esc(img)}" alt="${esc(title)}" class="card-img"></div>` : ''}
+      <div class="card-body">
+        <h3>${esc(title)}</h3>
+        <span class="card-author">${author ? 'بقلم: ' + esc(author) : ''}</span>
+        <p>${esc(desc)}</p>
+      </div>
+      <div class="card-footer">
+        <span>${esc(storageKey)}</span>
+        <button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
 
   function goToPage(pageType,index){
     const list=JSON.parse(localStorage.getItem(pageType) || '[]');
@@ -1581,25 +1615,32 @@ function esc(str){
   }[s]));
 }
 
-function collectLatest(){
+function collectLatest() {
   const sources = [
-    { key: "research", label: "بحث" },
-    { key: "articles", label: "مقال" },
-    { key: "files", label: "ملف" },
-    { key: "activities", label: "نشاط" },
-    { key: "editions", label: "إصدار" }
+    { key: 'research', label: 'بحث' },
+    { key: 'articles', label: 'مقال' },
+    { key: 'files', label: 'ملف' },
+    { key: 'activities', label: 'نشاط' },
+    { key: 'editions', label: 'إصدار' }
   ];
 
   const all = [];
+  const lang = getCurrentLang();
+
   sources.forEach(src => {
-    const arr = JSON.parse(localStorage.getItem(src.key) || "[]");
+    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+
     arr.forEach((item, idx) => {
       all.push({
         type: src.label,
         storageKey: src.key,
         index: idx,
-        title: item.title || "بدون عنوان",
-        desc: item.description || item.short || item.details || ""
+        title: getByLang(item.title, lang) || '',
+        desc:
+          getByLang(item.description, lang) ||
+          getByLang(item.short, lang) ||
+          getByLang(item.details, lang) ||
+          ''
       });
     });
   });
