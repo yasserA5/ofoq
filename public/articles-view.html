@@ -2,201 +2,666 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ofouq Academy | مقال محكم</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title id="t-title">Ofouq Academy | مقال محكم</title>
   <link rel="icon" type="image/png" href="logo1222.jpeg">
-
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --accent:#0f9bce;
-      --accent-soft:#e0f2fe;
-      --accent-dark:#0369a1;
-      --bg:#edf2f7;
-      --bg-soft:#f3f4f6;
+      --primary:#009bc4;
+      --primary-dark:#00667f;
+      --primary-soft:#e5f6f9;
+      --nav-bg:#e7f5f8;
+      --text-main:#23424b;
+      --gold:#d4af37;
+
+      --bg:#f5f8fb;
       --card:#ffffff;
-      --card-soft:#f9fafb;
-      --border:#e2e8f0;
+      --border:#e5e7eb;
       --muted:#6b7280;
-      --text:#111827;
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    html,body{width:100%;overflow-x:hidden;}
-    body{
-      font-family:"Tajawal",sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.7;
+      --text:#0f172a;
+      --shadow:0 10px 30px rgba(15,23,42,0.08);
+      --shadow-lg:0 20px 50px rgba(15,23,42,0.12);
     }
 
-    .site-header{
-      position:sticky;
-      top:0;
-      z-index:20;
-      backdrop-filter:blur(10px);
-      background:linear-gradient(90deg,#ffffffee,#e0f2fbee);
-      border-bottom:1px solid rgba(203,213,225,0.9);
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
     }
-    .site-header-inner{
-      max-width:1180px;
-      margin:0 auto;
-      padding:10px 16px;
+
+    html,body{
+      width:100%;
+      overflow-x:hidden;
+    }
+
+    body{
+      font-family:"Tajawal",sans-serif;
+      background:linear-gradient(180deg,#f8fbfd 0%, #eef7fa 100%);
+      color:var(--text);
+      line-height:1.8;
+      direction:rtl;
+    }
+
+    a{
+      color:inherit;
+    }
+
+    header{
+      padding:10px 20px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .brand-logo{
-      width:36px;
-      height:36px;
-      border-radius:999px;
-      background:#ffffff;
-      border:1px solid #d1d5db;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      box-shadow:0 4px 10px rgba(148,163,184,0.6);
-    }
-    .brand-logo img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-    }
-    .brand-text-title{
-      font-size:16px;
-      font-weight:700;
-      color:#0f172a;
-    }
-    .brand-text-sub{
-      font-size:11px;
-      color:var(--muted);
+      background:var(--nav-bg);
+      box-shadow:0 2px 18px rgba(0,0,0,0.07);
+      position:sticky;
+      top:0;
+      z-index:1500;
+      gap:14px;
     }
 
-    .header-right{
+    .logo{
+      flex:0 0 auto;
       display:flex;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .top-back-btn{
-      border-radius:999px;
-      border:1px solid #0f172a20;
-      background:linear-gradient(135deg,#0ea5e9,#22c55e);
-      color:#ffffff;
-      padding:6px 16px;
-      font-size:13px;
       cursor:pointer;
+      justify-content:center;
+    }
+
+    .logo img{
+      width:clamp(60px,12vw,85px);
+      height:auto;
+      transition:transform .2s;
+    }
+
+    .logo img:hover{
+      transform:scale(1.05);
+    }
+
+    nav{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    nav ul{
+      list-style:none;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+    }
+
+    nav li{
+      position:relative;
+    }
+
+    nav a{
+      text-decoration:none;
+      color:var(--text-main);
+      font-size:13px;
+      font-weight:600;
+      padding:4px 2px;
+      transition:.2s;
+    }
+
+    nav a:hover,
+    nav a.active{
+      color:var(--primary);
+    }
+
+    nav a.active::after,
+    nav a:hover::after{
+      content:"";
+      position:absolute;
+      bottom:-2px;
+      inset-inline-start:0;
+      width:100%;
+      height:2px;
+      background:var(--primary);
+      border-radius:999px;
+    }
+
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:8px 0;
+      border-radius:10px;
+      min-width:210px;
+      border:1px solid #e5e7eb;
+      z-index:1000;
+    }
+
+    .dropdown-content a{
+      display:block;
+      padding:8px 16px;
+      color:var(--text-main);
+      white-space:nowrap;
+      font-size:13px;
+    }
+
+    .dropdown-content a:hover{
+      background:#f1fbff;
+      color:var(--primary);
+    }
+
+    .dropdown:hover .dropdown-content{
+      display:block;
+    }
+
+    .nav-search{
+      flex:0 0 170px;
+      position:relative;
+      display:flex;
+      align-items:center;
+    }
+
+    .nav-search input{
+      width:100%;
+      padding:6px 28px 6px 10px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      font-size:11px;
+      outline:none;
+      background:#fff;
+    }
+
+    .nav-search input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 2px rgba(0,155,196,0.18);
+    }
+
+    .nav-search span{
+      position:absolute;
+      left:8px;
+      font-size:13px;
+      color:#9ca3af;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .btn{
+      padding:6px 12px;
+      border-radius:26px;
+      border:2px solid rgba(0,155,196,0.45);
+      background:rgba(0,155,196,0.06);
+      cursor:pointer;
+      font-weight:700;
+      font-size:11px;
+      transition:.2s;
+      color:var(--primary-dark);
+      white-space:nowrap;
+    }
+
+    .btn:hover{
+      background:rgba(0,155,196,0.12);
+    }
+
+    .btn.primary{
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      border:none;
+      box-shadow:0 3px 12px rgba(0,155,196,0.25);
+    }
+
+    .lang-wrapper{
+      position:relative;
+    }
+
+    .lang-toggle{
+      border:none;
+      background:#ffffff;
+      border-radius:999px;
+      padding:6px 12px;
+      font-size:12px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-weight:600;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      border-radius:12px;
+      min-width:130px;
+      border:1px solid #e2e8f0;
+      display:none;
+      z-index:1200;
+      overflow:hidden;
+    }
+
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:10px 14px;
+      text-align:right;
+      font-size:12px;
+      cursor:pointer;
+      font-weight:500;
+    }
+
+    .lang-menu button:hover{
+      background:#f1f5f9;
+      color:var(--primary);
+    }
+
+    .pill-circle{
       display:inline-flex;
       align-items:center;
-      gap:6px;
-      font-weight:700;
-      box-shadow:0 8px 18px rgba(34,197,94,0.35);
-      transition:transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
-    }
-    .top-back-btn:hover{
-      transform:translateY(-1px);
-      box-shadow:0 12px 26px rgba(34,197,94,0.45);
-      filter:brightness(1.03);
-    }
-    .top-back-btn:active{
-      transform:translateY(0);
-      box-shadow:0 6px 14px rgba(34,197,94,0.3);
+      justify-content:center;
+      padding:6px 18px;
+      border-radius:999px;
+      background:var(--gold);
+      color:#111;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
     }
 
-    .lang-switch{
+    .pill-circle::before{
+      content:"●";
+      font-size:9px;
+      margin-left:6px;
+      color:#111;
+    }
+
+    #menu-btn{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:999px;
+      border:none;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 4px 14px rgba(0,155,196,0.4);
+    }
+
+    #menu-btn span{
+      position:absolute;
+      width:22px;
+      height:2px;
+      background:#ffffff;
+      border-radius:999px;
+      transition:0.25s ease;
+      left:50%;
+      transform:translateX(-50%);
+    }
+
+    #menu-btn span:nth-child(1){ top:13px; }
+    #menu-btn span:nth-child(2){ top:20px; }
+    #menu-btn span:nth-child(3){ top:27px; }
+
+    #menu-btn.open span:nth-child(1){
+      top:20px;
+      transform:translateX(-50%) rotate(45deg);
+    }
+
+    #menu-btn.open span:nth-child(2){
+      opacity:0;
+    }
+
+    #menu-btn.open span:nth-child(3){
+      top:20px;
+      transform:translateX(-50%) rotate(-45deg);
+    }
+
+    .nav-sheet-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:1498;
+    }
+
+    .nav-sheet-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .nav-sheet{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      width:100%;
+      max-height:92vh;
+      background:#fff;
+      border-radius:24px 24px 0 0;
+      box-shadow:0 -10px 35px rgba(0,0,0,0.18);
+      padding:12px;
+      overflow-y:auto;
+      transform:translateY(110%);
+      transition:transform .28s ease;
+      z-index:1499;
+    }
+
+    .nav-sheet.show{
+      transform:translateY(0);
+    }
+
+    .nav-sheet-handle{
+      width:54px;
+      height:6px;
+      border-radius:999px;
+      background:#cbd5e1;
+      margin:0 auto 10px;
+    }
+
+    .nav-sheet-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .nav-sheet-brand{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .nav-sheet-brand img{
+      width:44px;
+      height:44px;
+      object-fit:contain;
+      border-radius:14px;
+      background:#fff;
+      padding:4px;
+      box-shadow:0 6px 16px rgba(0,0,0,.06);
+    }
+
+    .nav-sheet-brand strong{
+      display:block;
+      color:#0f172a;
+      font-size:14px;
+    }
+
+    .nav-sheet-brand span{
+      display:block;
+      color:#64748b;
+      font-size:11px;
+    }
+
+    .nav-sheet-close{
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:50%;
+      background:#eef6f8;
+      color:#0f4f65;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .nav-sheet-search{
       display:flex;
       gap:6px;
+      margin-bottom:10px;
+    }
+
+    .nav-sheet-search input{
+      flex:1;
+      border:none;
+      outline:none;
+      background:#fff;
+      border-radius:14px;
+      padding:11px 12px;
+      box-shadow:inset 0 0 0 1px #e2e8f0;
+      font-family:inherit;
+      font-size:14px;
+    }
+
+    .nav-sheet-search button{
+      border:none;
+      min-width:44px;
+      border-radius:14px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      cursor:pointer;
+    }
+
+    .nav-sheet-mini-tools{
+      display:flex;
+      gap:6px;
+      margin-bottom:12px;
+    }
+
+    .sheet-tool{
+      border:none;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#ffffff;
+      box-shadow:inset 0 0 0 1px #e2e8f0;
+      color:#0f4f65;
+      font-weight:800;
+      cursor:pointer;
       font-size:12px;
     }
-    .lang-btn{
-      border-radius:999px;
-      padding:3px 10px;
-      border:1px solid #cbd5f5;
-      background:#ffffff;
-      color:#374151;
-      cursor:pointer;
-      min-width:60px;
+
+    .nav-sheet-section{
+      margin-bottom:12px;
     }
-    .lang-btn.active{
-      background:var(--accent);
-      border-color:var(--accent);
-      color:#ffffff;
+
+    .nav-sheet-section h3{
+      font-size:13px;
+      color:#0f172a;
+      margin-bottom:8px;
+    }
+
+    .nav-sheet-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .sheet-card{
+      text-decoration:none;
+      text-align:center;
+      background:#fff;
+      color:#12313c;
+      border:1px solid #e7edf1;
+      border-radius:16px;
+      padding:14px 8px;
+      font-weight:800;
+      box-shadow:0 8px 22px rgba(15,23,42,.04);
+      font-size:14px;
+      line-height:1.3;
+    }
+
+    .academic-zone{
+      background:linear-gradient(135deg,#fff8df,#fffdf5);
+      border:1px solid rgba(212,175,55,.22);
+      border-radius:20px;
+      padding:10px;
+    }
+
+    .nav-sheet-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+
+    .nav-sheet-pills a{
+      text-decoration:none;
+      color:#5d4700;
+      background:#fff;
+      border:1px solid rgba(212,175,55,.24);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .nav-sheet-footer-links{
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .nav-sheet-footer-links a{
+      flex:1;
+      text-decoration:none;
+      text-align:center;
+      background:#fff;
+      color:#475569;
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      padding:10px 8px;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .nav-sheet-auth{
+      display:flex;
+      gap:8px;
+    }
+
+    .nav-sheet-auth a{
+      flex:1;
+      text-decoration:none;
+      text-align:center;
+      border-radius:16px;
+      padding:12px 10px;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .nav-sheet-auth a:first-child{
+      background:#fff;
+      color:#0f4f65;
+      border:1px solid #dbe5ea;
+    }
+
+    .nav-sheet-auth a:last-child{
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      box-shadow:0 12px 24px rgba(0,155,196,.22);
     }
 
     .page-shell{
-      min-height:100vh;
-      padding:22px 10px 32px;
-    }
-    .layout{
-      max-width:1180px;
+      max-width:1280px;
       margin:0 auto;
-      display:grid;
-      grid-template-columns:minmax(0,3.1fr) minmax(260px,1fr);
-      gap:22px;
+      padding:24px 16px 40px;
     }
-    @media(max-width:900px){
-      .layout{
-        grid-template-columns:1fr;
-      }
+
+    .hero-article{
+      background:linear-gradient(135deg,#f6fbff,var(--primary-soft));
+      border:1px solid #d7edf4;
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:24px;
+      margin-bottom:22px;
+    }
+
+    .hero-top{
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+
+    .article-type-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#dff4fb;
+      color:var(--primary-dark);
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .hero-article h1{
+      font-size:clamp(24px,5vw,38px);
+      line-height:1.5;
+      color:#073b4c;
+      margin-bottom:10px;
+      font-weight:800;
+    }
+
+    .hero-desc{
+      color:#4b5563;
+      font-size:15px;
+      max-width:900px;
+    }
+
+    .hero-meta{
+      min-width:220px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 8px 20px rgba(15,23,42,0.06);
+    }
+
+    .hero-meta-row{
+      font-size:13px;
+      color:#475569;
+      margin-bottom:8px;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 310px;
+      gap:22px;
+      align-items:start;
+    }
+
+    .article-card,
+    .sidebar{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow-lg);
     }
 
     .article-card{
-      background:var(--card);
-      border-radius:20px;
-      border:1px solid var(--border);
-      box-shadow:0 18px 50px rgba(148,163,184,0.35);
       overflow:hidden;
-    }
-    .article-head{
-      padding:16px 18px 10px;
-      border-bottom:1px solid #e5e7eb;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-      background:linear-gradient(135deg,#e0f2fe,#ffffff);
-    }
-    .article-title-main{
-      font-size:21px;
-      font-weight:700;
-      margin-bottom:4px;
-      color:#0f172a;
-    }
-    .article-subline{
-      font-size:12px;
-      color:#6b7280;
-    }
-    .article-head-right{
-      font-size:11px;
-      color:#9ca3af;
-      text-align:left;
     }
 
     .article-media{
-      padding:0 18px 16px;
-      background:#f3f4f6;
+      padding:18px 18px 0;
     }
+
     .media-frame{
       position:relative;
       width:100%;
-      max-width:1120px;
-      margin:0 auto;
-      padding-bottom:56.25%;
-      border-radius:16px;
+      border-radius:18px;
       overflow:hidden;
       background:#000;
-      box-shadow:0 10px 25px rgba(148,163,184,0.55);
+      aspect-ratio:16 / 9;
+      box-shadow:0 10px 25px rgba(15,23,42,0.14);
     }
+
     .article-media video,
     .article-media img,
     .article-media iframe{
@@ -208,181 +673,325 @@
       object-fit:contain;
       background:#000;
     }
-    .article-media iframe{
-      border-radius:16px;
-    }
 
     .article-body{
-      padding:18px 20px 22px;
-      background:var(--card-soft);
+      padding:22px;
     }
-    .article-type-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:3px 9px;
-      border-radius:999px;
-      background:var(--accent-soft);
-      color:var(--accent-dark);
-      font-size:11px;
-      font-weight:700;
-      margin-bottom:8px;
-    }
-    .article-header-main h2{
-      font-size:19px;
-      margin-bottom:5px;
-      color:#111827;
-    }
+
     .article-meta{
-      font-size:12px;
-      color:var(--muted);
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
+      gap:8px 14px;
+      color:#64748b;
+      font-size:13px;
+      margin-bottom:18px;
     }
-    .meta-dot::before{
-      content:"•";
-      margin:0 4px;
-      color:#d1d5db;
-    }
+
     .divider{
       height:1px;
       background:linear-gradient(to right,transparent,#e5e7eb,transparent);
-      margin:16px 0 14px;
+      margin:14px 0 18px;
     }
+
     .section-block{
-      margin-bottom:18px;
+      margin-bottom:22px;
     }
+
     .section-block h3{
-      font-size:14px;
-      margin-bottom:4px;
-      color:#111827;
+      font-size:17px;
+      color:#0f172a;
+      margin-bottom:8px;
     }
+
     .section-block p,
     .section-block div{
-      font-size:14px;
+      font-size:15px;
       color:#374151;
-      line-height:1.9;
+      line-height:2;
       white-space:pre-wrap;
     }
+
     .info-box{
       margin-top:4px;
-      padding:9px 11px;
-      border-radius:10px;
+      padding:12px 14px;
+      border-radius:12px;
       background:#eff6ff;
       border:1px solid #bfdbfe;
-      font-size:12px;
+      font-size:13px;
       color:#1e40af;
     }
 
     .sidebar{
-      background:#ffffff;
-      border-radius:18px;
-      border:1px solid var(--border);
-      padding:16px 16px 18px;
-      box-shadow:0 14px 40px rgba(148,163,184,0.35);
-      font-size:13px;
-      align-self:flex-start;
+      padding:18px;
+      position:sticky;
+      top:92px;
     }
+
     .sidebar h3{
-      font-size:14px;
-      margin-bottom:10px;
+      font-size:16px;
+      margin-bottom:14px;
       color:#0f172a;
     }
+
     .sidebar-row{
-      margin-bottom:10px;
+      margin-bottom:14px;
+      padding-bottom:12px;
+      border-bottom:1px solid #f1f5f9;
     }
+
+    .sidebar-row:last-child{
+      border-bottom:none;
+      margin-bottom:0;
+      padding-bottom:0;
+    }
+
     .sidebar-label{
       font-size:12px;
       color:#6b7280;
-      margin-bottom:2px;
+      margin-bottom:4px;
     }
+
     .sidebar-value{
       color:#111827;
+      font-size:14px;
+      font-weight:600;
+      word-break:break-word;
     }
+
     .sidebar-tags{
       display:flex;
       flex-wrap:wrap;
       gap:6px;
       margin-top:6px;
     }
-    .sidebar-tag{
-      background:var(--accent-soft);
-      color:var(--accent-dark);
-      border-radius:999px;
-      padding:2px 8px;
-      font-size:11px;
-    }
 
-    @media(max-width:640px){
-      .site-header-inner{flex-direction:column;align-items:flex-start;}
-      .page-shell{padding:18px 8px 26px;}
-      .article-body{padding:16px 14px 18px;}
-      .article-head{padding:14px 14px 8px;}
-      .article-title-main{font-size:18px;}
+    .sidebar-tag{
+      background:var(--accent-soft, #e0f2fe);
+      color:var(--accent-dark, #0369a1);
+      border-radius:999px;
+      padding:4px 9px;
+      font-size:11px;
+      font-weight:700;
     }
 
     .site-footer{
-      padding:14px 10px 24px;
-      font-size:11px;
+      padding:18px 10px 28px;
+      font-size:12px;
       color:#6b7280;
       text-align:center;
+    }
+
+    @media(max-width:1100px){
+      .nav-search{display:none;}
+    }
+
+    @media(max-width:980px){
+      nav{display:none;}
+      .actions{display:none;}
+      #menu-btn{
+        display:flex;
+        order:-1;
+      }
+      header{
+        justify-content:space-between;
+      }
+      .logo{
+        margin-inline:auto;
+      }
+      .layout{
+        grid-template-columns:1fr;
+      }
+      .sidebar{
+        position:static;
+      }
+    }
+
+    @media(max-width:700px){
+      .page-shell{
+        padding:16px 12px 32px;
+      }
+      .hero-article{
+        padding:18px;
+        border-radius:20px;
+      }
+      .article-body{
+        padding:18px 14px;
+      }
+      .article-media{
+        padding:14px 14px 0;
+      }
+      .nav-sheet-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:6px;
+      }
+      .sheet-card{
+        padding:12px 6px;
+        font-size:13px;
+      }
+    }
+
+    @media(min-width:981px){
+      .nav-sheet,
+      .nav-sheet-overlay{
+        display:none;
+      }
     }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
-    <div class="brand">
-      <div class="brand-logo">
-    <img src="logo1.png"" alt="Logo">
-      </div>
-      <div>
-        <div class="brand-text-title" id="brandTitle">Ofouq Academy</div>
-        <div class="brand-text-sub" id="brandSubtitle">أكاديمية آفاق للبحث والتدريب</div>
-      </div>
-    </div>
+<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
-    <div class="header-right">
-      <button type="button" class="top-back-btn" id="headerBackBtn" onclick="goBack()">
-        ← <span id="headerBackLabel">رجوع</span>
-      </button>
-      <div class="lang-switch">
-        <button class="lang-btn active" data-lang="ar" onclick="switchLang('ar')">عربي</button>
-        <button class="lang-btn" data-lang="fr" onclick="switchLang('fr')">Français</button>
-        <button class="lang-btn" data-lang="en" onclick="switchLang('en')">English</button>
+<div class="nav-sheet" id="mobileMenu">
+  <div class="nav-sheet-handle"></div>
+
+  <div class="nav-sheet-top">
+    <div class="nav-sheet-brand">
+      <img src="https://raw.githubusercontent.com/yasserA5/ofoq-logos/main/logo1.png" alt="Logo">
+      <div>
+        <strong>أفق</strong>
+        <span>منصة أكاديمية حديثة</span>
       </div>
     </div>
+    <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
+  </div>
+
+  <form class="nav-sheet-search" onsubmit="doSearch(event)">
+    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." />
+    <button type="submit">🔍</button>
+  </form>
+
+  <div class="nav-sheet-mini-tools">
+    <button class="sheet-tool" type="button" onclick="switchLang('ar')">AR</button>
+    <button class="sheet-tool" type="button" onclick="switchLang('en')">EN</button>
+    <button class="sheet-tool" type="button" onclick="switchLang('fr')">FR</button>
+  </div>
+
+  <div class="nav-sheet-section">
+    <h3>اكتشف</h3>
+    <div class="nav-sheet-grid">
+      <a href="index.html" class="sheet-card">الرئيسية</a>
+      <a href="research.html" class="sheet-card">أبحاث محكمة</a>
+      <a href="articles.html" class="sheet-card">مقالات محكمة</a>
+      <a href="files.html" class="sheet-card">ملفات بحثية</a>
+      <a href="articles-foreign.html" class="sheet-card">مقالات أجنبية</a>
+      <a href="general-articles.html" class="sheet-card">مقالات</a>
+      <a href="editions.html" class="sheet-card">إصداراتنا</a>
+      <a href="activities.html" class="sheet-card">أنشطتنا</a>
+      <a href="live.html" class="sheet-card">بث مباشر</a>
+    </div>
+  </div>
+
+  <div class="nav-sheet-section academic-zone">
+    <h3>أكاديمي</h3>
+    <div class="nav-sheet-pills">
+      <a href="special-politics.html">علوم سياسية</a>
+      <a href="special-ir.html">العلاقات الدولية</a>
+      <a href="special-admin-law.html">القانون الإداري</a>
+      <a href="special-const-law.html">القانون الدستوري</a>
+      <a href="special-public-policy.html">السياسات العمومية</a>
+    </div>
+  </div>
+
+  <div class="nav-sheet-footer-links">
+    <a href="rules.html">شروط النشر</a>
+    <a href="contact.html">اتصل بنا</a>
+  </div>
+
+  <div class="nav-sheet-auth">
+    <a href="login.html">تسجيل الدخول</a>
+    <a href="register.html">انضم إلينا</a>
+  </div>
+</div>
+
+<header>
+  <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="logo" onclick="goToHome()">
+    <img src="logo1.png" alt="Logo">
+  </div>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li class="dropdown">
+        <a href="#">أبحاث ودراسات ▾</a>
+        <div class="dropdown-content">
+          <a href="research.html">أبحاث محكمة</a>
+          <a href="articles.html" class="active">مقالات محكمة</a>
+          <a href="files.html">ملفات بحثية</a>
+          <a href="articles-foreign.html">مقالات أجنبية</a>
+        </div>
+      </li>
+      <li><a href="general-articles.html">مقالات</a></li>
+      <li><a href="editions.html">إصداراتنا</a></li>
+      <li><a href="activities.html">أنشطتنا</a></li>
+      <li class="dropdown">
+        <a href="#academic" class="pill-circle">أكاديمي</a>
+        <div class="dropdown-content">
+          <a href="special-politics.html">تخصص علوم سياسية</a>
+          <a href="special-ir.html">تخصص العلاقات الدولية</a>
+          <a href="special-admin-law.html">تخصص القانون الإداري</a>
+          <a href="special-const-law.html">تخصص القانون الدستوري</a>
+          <a href="special-public-policy.html">تخصص السياسات العمومية</a>
+        </div>
+      </li>
+      <li><a href="live.html">بث مباشر</a></li>
+      <li><a href="rules.html">شروط النشر</a></li>
+      <li><a href="contact.html">اتصل بنا</a></li>
+    </ul>
+
+    <form class="nav-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInput" placeholder="ابحث..." />
+      <span>🔍</span>
+    </form>
+  </nav>
+
+  <div class="actions">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
+        <span id="langCurrent">AR</span> ▾
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button type="button" onclick="switchLang('ar')">العربية</button>
+        <button type="button" onclick="switchLang('en')">English</button>
+        <button type="button" onclick="switchLang('fr')">Français</button>
+      </div>
+    </div>
+    <button class="btn" onclick="goBack()">رجوع</button>
+    <button class="btn primary" onclick="window.print()">طباعة</button>
   </div>
 </header>
 
 <div class="page-shell">
-  <div class="layout">
-
-    <article class="article-card">
-
-      <div class="article-head">
-        <div>
-          <div class="article-title-main" id="topTitle">عنوان المقال</div>
-          <div class="article-subline" id="topType">مقال محكم</div>
-        </div>
-        <div class="article-head-right" id="headMeta"></div>
+  <section class="hero-article">
+    <div class="hero-top">
+      <div>
+        <div class="article-type-pill" id="articleTypeLabel">مقال محكم</div>
+        <h1 id="articleTitleHero">عنوان المقال</h1>
+        <p class="hero-desc" id="articleShortHero"></p>
       </div>
 
+      <div class="hero-meta">
+        <div class="hero-meta-row" id="heroAuthor">الكاتب: غير محدد</div>
+        <div class="hero-meta-row" id="heroAffiliation">المؤسسة: غير محددة</div>
+        <div class="hero-meta-row" id="heroDate">التاريخ: غير محدد</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <article class="article-card">
       <section class="article-media" id="articleMedia"></section>
 
       <section class="article-body">
-        <div class="article-type-pill" id="articleTypeLabel">مقال محكم</div>
-
-        <header class="article-header-main">
-          <h2 id="articleTitle">عنوان المقال</h2>
-          <div class="article-meta">
-            <span id="articleAuthor">الكاتب: غير محدد</span>
-            <span class="meta-dot" id="articleAffiliation">المؤسسة: غير محددة</span>
-            <span class="meta-dot" id="articleDate">التاريخ: غير محدد</span>
-          </div>
-        </header>
+        <div class="article-meta">
+          <span id="articleAuthor">الكاتب: غير محدد</span>
+          <span id="articleAffiliation">المؤسسة: غير محددة</span>
+          <span id="articleDate">التاريخ: غير محدد</span>
+        </div>
 
         <div class="divider"></div>
 
@@ -430,13 +1039,12 @@
 
       <div class="sidebar-row">
         <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
-        <div class="sidebar-tags" id="sidebarTags">
+        <div class="sidebar-tags">
           <span class="sidebar-tag" id="tag1">Ofouq</span>
           <span class="sidebar-tag" id="tag2">مقال محكم</span>
         </div>
       </div>
     </aside>
-
   </div>
 </div>
 
@@ -445,287 +1053,284 @@
 </footer>
 
 <script>
-function goBack(){
-  if (document.referrer && document.referrer.indexOf(window.location.host) !== -1){
-    window.history.back();
-  } else {
-    window.location.href = 'articles.html';
+  function goToHome(){
+    window.location.href = 'index.html';
   }
-}
 
-function getCurrentLang(){
-  return localStorage.getItem('uiLang') || 'ar';
-}
-function getTextByLang(field, lang){
-  if (!field) return '';
-  if (typeof field === 'string') return field;
-  return field[lang] || field.ar || field.fr || field.en || '';
-}
-
-async function translateText(text, fromLang, toLang){
-  if(!text || !text.trim()) return '';
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
-  try{
-    const res = await fetch(url);
-    const data = await res.json();
-    return (data && data.responseData && data.responseData.translatedText) || '';
-  }catch(e){
-    console.error('translation error', e);
-    return '';
-  }
-}
-
-async function autoFillTranslations(fieldObj){
-  const result = { ar: fieldObj.ar || '', fr: fieldObj.fr || '', en: fieldObj.en || '' };
-  const langs = ['ar','fr','en'];
-  const sourceLang = langs.find(l => result[l] && result[l].trim());
-  if(!sourceLang) return result;
-  const sourceText = result[sourceLang];
-  for(const target of langs){
-    if(target === sourceLang) continue;
-    if(!result[target] || !result[target].trim()){
-      const tr = await translateText(sourceText, sourceLang, target);
-      if(tr) result[target] = tr;
+  function goBack(){
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1){
+      window.history.back();
+    } else {
+      window.location.href = 'articles.html';
     }
   }
-  return result;
-}
 
-const uiTexts = {
-  ar: {
-    dir: 'rtl', langAttr: 'ar',
-    brandTitle: 'Ofouq Academy',
-    brandSubtitle: 'أكاديمية آفاق للبحث والتدريب',
-    back: 'رجوع',
-    sectionSummary: 'الملخص',
-    sectionFull: 'المحتوى الكامل',
-    sectionDetails: 'تفاصيل إضافية',
-    sidebarTitle: 'معلومات المقال',
-    labelAuthor: 'الكاتب',
-    labelAffiliation: 'المؤسسة',
-    labelDate: 'التاريخ',
-    labelType: 'النوع',
-    labelTags: 'وسوم مقترحة',
-    tag1: 'Ofouq',
-    tag2: 'مقال محكم',
-    footer: '© 2025 Ofouq Academy · جميع الحقوق محفوظة',
-    unknownAuthor: 'غير محدد',
-    unknownAff: 'غير محددة',
-    unknownDate: 'غير محدد',
-    noTitle: 'بدون عنوان',
-    typeLabel: 'مقال محكم'
-  },
-  fr: {
-    dir: 'ltr', langAttr: 'fr',
-    brandTitle: 'Académie Ofouq',
-    brandSubtitle: 'Centre de recherche et de formation',
-    back: 'Retour',
-    sectionSummary: 'Résumé',
-    sectionFull: 'Contenu complet',
-    sectionDetails: 'Détails supplémentaires',
-    sidebarTitle: 'Informations sur l’article',
-    labelAuthor: 'Auteur',
-    labelAffiliation: 'Institution',
-    labelDate: 'Date',
-    labelType: 'Type',
-    labelTags: 'Mots-clés suggérés',
-    tag1: 'Ofouq',
-    tag2: 'Article scientifique',
-    footer: '© 2025 Académie Ofouq · Tous droits réservés',
-    unknownAuthor: 'Non spécifié',
-    unknownAff: 'Non spécifiée',
-    unknownDate: 'Non spécifiée',
-    noTitle: 'Sans titre',
-    typeLabel: 'Article scientifique'
-  },
-  en: {
-    dir: 'ltr', langAttr: 'en',
-    brandTitle: 'Ofouq Academy',
-    brandSubtitle: 'Center for Research and Training',
-    back: 'Back',
-    sectionSummary: 'Summary',
-    sectionFull: 'Full content',
-    sectionDetails: 'Additional details',
-    sidebarTitle: 'Article info',
-    labelAuthor: 'Author',
-    labelAffiliation: 'Affiliation',
-    labelDate: 'Date',
-    labelType: 'Category',
-    labelTags: 'Suggested tags',
-    tag1: 'Ofouq',
-    tag2: 'Scholarly article',
-    footer: '© 2025 Ofouq Academy · All rights reserved',
-    unknownAuthor: 'Not specified',
-    unknownAff: 'Not specified',
-    unknownDate: 'Not specified',
-    noTitle: 'Untitled',
-    typeLabel: 'Scholarly article'
+  function toggleMenu(){
+    const menu = document.getElementById("mobileMenu");
+    const overlay = document.getElementById("navSheetOverlay");
+    const btn = document.getElementById("menu-btn");
+
+    if(!menu || !overlay || !btn) return;
+
+    const isOpen = menu.classList.contains("show");
+    menu.classList.toggle("show", !isOpen);
+    overlay.classList.toggle("show", !isOpen);
+    btn.classList.toggle("open", !isOpen);
+    btn.setAttribute("aria-expanded", String(!isOpen));
+    document.body.style.overflow = !isOpen ? "hidden" : "";
   }
-};
 
-function applyLang(lang){
-  const t = uiTexts[lang] || uiTexts.ar;
-  document.documentElement.lang = t.langAttr;
-  document.documentElement.dir  = t.dir;
+  function toggleLangMenu(){
+    const menu = document.getElementById("langMenu");
+    if(!menu) return;
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
 
-  document.getElementById('brandTitle').textContent    = t.brandTitle;
-  document.getElementById('brandSubtitle').textContent = t.brandSubtitle;
-
-  document.getElementById('labelSummary').textContent = t.sectionSummary;
-  document.getElementById('labelFull').textContent    = t.sectionFull;
-  document.getElementById('labelDetails').textContent = t.sectionDetails;
-
-  document.getElementById('sidebarTitle').textContent     = t.sidebarTitle;
-  document.getElementById('labelAuthor').textContent      = t.labelAuthor;
-  document.getElementById('labelAffiliation').textContent = t.labelAffiliation;
-  document.getElementById('labelDate').textContent        = t.labelDate;
-  document.getElementById('labelType').textContent        = t.labelType;
-  document.getElementById('labelTags').textContent        = t.labelTags;
-  document.getElementById('tag1').textContent             = t.tag1;
-  document.getElementById('tag2').textContent             = t.tag2;
-  document.getElementById('footerText').textContent       = t.footer;
-  document.getElementById('headerBackLabel').textContent  = t.back;
-
-  document.getElementById('articleTypeLabel').textContent = t.typeLabel;
-  document.getElementById('topType').textContent          = t.typeLabel;
-  document.getElementById('sidebarType').textContent      = t.typeLabel;
-
-  document.querySelectorAll('.lang-btn').forEach(btn=>{
-    btn.classList.toggle('active', btn.dataset.lang === lang);
+  document.addEventListener('click', e => {
+    if(!e.target.closest('.lang-wrapper')){
+      const menu = document.getElementById('langMenu');
+      if(menu) menu.style.display = 'none';
+    }
   });
-}
 
-function renderContentForLang(lang){
-  const it = window.displayItem;
-  if(!it) return;
-  const tUI = uiTexts[lang] || uiTexts.ar;
+  function doSearch(e){
+    e.preventDefault();
+    const desktopInput = document.getElementById('navSearchInput');
+    const mobileInput = document.getElementById('navSearchInputMobile');
+    const q = (mobileInput && mobileInput.value.trim()) || (desktopInput && desktopInput.value.trim()) || "";
+    if(!q) return;
+    window.location.href = 'search.html?q=' + encodeURIComponent(q);
+  }
 
-  const title       = getTextByLang(it.title,   lang) || tUI.noTitle;
-  const shortText   = getTextByLang(it.short,   lang) || '';
-  const fullText    = getTextByLang(it.full,    lang) || '';
-  const detailsText = getTextByLang(it.details, lang) || '';
+  function getCurrentLang(){
+    return localStorage.getItem('uiLang') || 'ar';
+  }
 
-  document.getElementById('articleTitle').textContent = title;
-  document.getElementById('topTitle').textContent     = title;
+  function getTextByLang(field, lang){
+    if (!field) return '';
+    if (typeof field === 'string') return field;
+    return field[lang] || field.ar || field.fr || field.en || '';
+  }
 
-  document.getElementById('articleShort').textContent   = shortText;
-  document.getElementById('articleFull').textContent    = fullText;
-  document.getElementById('articleDetails').textContent = detailsText;
+  const uiTexts = {
+    ar: {
+      dir:'rtl', langAttr:'ar',
+      title:'Ofouq Academy | مقال محكم',
+      back:'رجوع',
+      sectionSummary:'الملخص',
+      sectionFull:'المحتوى الكامل',
+      sectionDetails:'تفاصيل إضافية',
+      sidebarTitle:'معلومات المقال',
+      labelAuthor:'الكاتب',
+      labelAffiliation:'المؤسسة',
+      labelDate:'التاريخ',
+      labelType:'النوع',
+      labelTags:'وسوم مقترحة',
+      tag1:'Ofouq',
+      tag2:'مقال محكم',
+      footer:'© 2025 Ofouq Academy · جميع الحقوق محفوظة',
+      unknownAuthor:'غير محدد',
+      unknownAff:'غير محددة',
+      unknownDate:'غير محدد',
+      noTitle:'بدون عنوان',
+      typeLabel:'مقال محكم',
+      attachmentInfo:'هناك مرفق لهذا المقال، لكن لا يمكن عرضه مباشرة في هذه الصفحة.'
+    },
+    en: {
+      dir:'ltr', langAttr:'en',
+      title:'Ofouq Academy | Scholarly Article',
+      back:'Back',
+      sectionSummary:'Summary',
+      sectionFull:'Full content',
+      sectionDetails:'Additional details',
+      sidebarTitle:'Article info',
+      labelAuthor:'Author',
+      labelAffiliation:'Affiliation',
+      labelDate:'Date',
+      labelType:'Category',
+      labelTags:'Suggested tags',
+      tag1:'Ofouq',
+      tag2:'Scholarly article',
+      footer:'© 2025 Ofouq Academy · All rights reserved',
+      unknownAuthor:'Not specified',
+      unknownAff:'Not specified',
+      unknownDate:'Not specified',
+      noTitle:'Untitled',
+      typeLabel:'Scholarly article',
+      attachmentInfo:'This article has an attachment, but it cannot be displayed directly on this page.'
+    },
+    fr: {
+      dir:'ltr', langAttr:'fr',
+      title:'Ofouq Academy | Article scientifique',
+      back:'Retour',
+      sectionSummary:'Résumé',
+      sectionFull:'Contenu complet',
+      sectionDetails:'Détails supplémentaires',
+      sidebarTitle:'Informations sur l’article',
+      labelAuthor:'Auteur',
+      labelAffiliation:'Institution',
+      labelDate:'Date',
+      labelType:'Type',
+      labelTags:'Mots-clés suggérés',
+      tag1:'Ofouq',
+      tag2:'Article scientifique',
+      footer:'© 2025 Académie Ofouq · Tous droits réservés',
+      unknownAuthor:'Non spécifié',
+      unknownAff:'Non spécifiée',
+      unknownDate:'Non spécifiée',
+      noTitle:'Sans titre',
+      typeLabel:'Article scientifique',
+      attachmentInfo:'Cet article contient une pièce jointe qui ne peut pas être affichée directement sur cette page.'
+    }
+  };
 
-  const author      = it.author      || tUI.unknownAuthor;
-  const affiliation = it.affiliation || tUI.unknownAff;
-  const dateValue   = it.date        || tUI.unknownDate;
+  function applyLang(lang){
+    const t = uiTexts[lang] || uiTexts.ar;
+    document.documentElement.lang = t.langAttr;
+    document.documentElement.dir = t.dir;
+    document.getElementById('t-title').textContent = t.title;
+    document.getElementById('labelSummary').textContent = t.sectionSummary;
+    document.getElementById('labelFull').textContent = t.sectionFull;
+    document.getElementById('labelDetails').textContent = t.sectionDetails;
+    document.getElementById('sidebarTitle').textContent = t.sidebarTitle;
+    document.getElementById('labelAuthor').textContent = t.labelAuthor;
+    document.getElementById('labelAffiliation').textContent = t.labelAffiliation;
+    document.getElementById('labelDate').textContent = t.labelDate;
+    document.getElementById('labelType').textContent = t.labelType;
+    document.getElementById('labelTags').textContent = t.labelTags;
+    document.getElementById('tag1').textContent = t.tag1;
+    document.getElementById('tag2').textContent = t.tag2;
+    document.getElementById('footerText').textContent = t.footer;
+    document.getElementById('headerBackLabel')?.textContent = t.back;
+    document.getElementById('articleTypeLabel').textContent = t.typeLabel;
+    document.getElementById('sidebarType').textContent = t.typeLabel;
+    document.getElementById('langCurrent').textContent = lang.toUpperCase();
 
-  document.getElementById('articleAuthor').textContent      = tUI.labelAuthor      + ': ' + author;
-  document.getElementById('articleAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
-  document.getElementById('articleDate').textContent        = tUI.labelDate        + ': ' + dateValue;
+    document.querySelectorAll('.lang-btn').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
 
-  const sbAuthor      = document.getElementById('sidebarAuthor');
-  const sbAffiliation = document.getElementById('sidebarAffiliation');
-  const sbDate        = document.getElementById('sidebarDate');
-  if(sbAuthor)      sbAuthor.textContent      = author;
-  if(sbAffiliation) sbAffiliation.textContent = affiliation;
-  if(sbDate)        sbDate.textContent        = dateValue;
-}
-
-async function switchLang(lang){
-  localStorage.setItem('uiLang', lang);
-  applyLang(lang);
-
-  if(window.displayItem){
+  function renderContentForLang(lang){
     const it = window.displayItem;
-    it.title   = await autoFillTranslations(it.title   || {});
-    it.short   = await autoFillTranslations(it.short   || {});
-    it.full    = await autoFillTranslations(it.full    || {});
-    it.details = await autoFillTranslations(it.details || {});
+    if(!it) return;
+
+    const tUI = uiTexts[lang] || uiTexts.ar;
+    const title = getTextByLang(it.title, lang) || tUI.noTitle;
+    const shortText = getTextByLang(it.short, lang) || '';
+    const fullText = getTextByLang(it.full, lang) || '';
+    const detailsText = getTextByLang(it.details, lang) || '';
+
+    const author = it.author || tUI.unknownAuthor;
+    const affiliation = it.affiliation || tUI.unknownAff;
+    const dateValue = it.date || tUI.unknownDate;
+
+    document.getElementById('articleTitleHero').textContent = title;
+    document.getElementById('articleShortHero').textContent = shortText;
+    document.getElementById('articleShort').textContent = shortText;
+    document.getElementById('articleFull').textContent = fullText;
+    document.getElementById('articleDetails').textContent = detailsText;
+
+    document.getElementById('heroAuthor').textContent = tUI.labelAuthor + ': ' + author;
+    document.getElementById('heroAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
+    document.getElementById('heroDate').textContent = tUI.labelDate + ': ' + dateValue;
+
+    document.getElementById('articleAuthor').textContent = tUI.labelAuthor + ': ' + author;
+    document.getElementById('articleAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
+    document.getElementById('articleDate').textContent = tUI.labelDate + ': ' + dateValue;
+
+    document.getElementById('sidebarAuthor').textContent = author;
+    document.getElementById('sidebarAffiliation').textContent = affiliation;
+    document.getElementById('sidebarDate').textContent = dateValue;
+
+    const extraInfo = document.getElementById('extraInfo');
+    if(extraInfo && extraInfo.style.display !== 'none'){
+      extraInfo.textContent = tUI.attachmentInfo;
+    }
+  }
+
+  function switchLang(lang){
+    localStorage.setItem('uiLang', lang);
+    applyLang(lang);
     renderContentForLang(lang);
-  }
-}
-
-function getQueryParam(name){
-  const params = new URLSearchParams(window.location.search);
-  return params.get(name);
-}
-
-// هذا الملف خاص بالمقالات المحكمة
-const type = 'articles';
-const id   = Number(getQueryParam('id'));
-
-const allData = JSON.parse(localStorage.getItem(type) || '[]');
-const item    = allData.find(i => i.id === id);
-window.displayItem = item;
-
-if(!item){
-  document.body.innerHTML =
-    '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
-}else{
-  const mediaContainer = document.getElementById('articleMedia');
-  const extraInfo      = document.getElementById('extraInfo');
-  let mediaHtml = '';
-
-  if(item.file){
-    const f = item.file;
-    const lower = f.toLowerCase();
-
-    if(lower.endsWith('.mp4') || lower.includes('.mp4?')){
-      const videoUrl = f.startsWith('/videos')
-        ? 'http://localhost:3000' + f
-        : f;
-
-      mediaHtml = `
-        <div class="media-frame">
-          <video controls>
-            <source src="${videoUrl}" type="video/mp4">
-            متصفحك لا يدعم تشغيل الفيديو أو الرابط غير صالح.
-          </video>
-        </div>
-      `;
-    } else if(f.startsWith('http')){
-      mediaHtml = `
-        <div class="media-frame">
-          <iframe src="${f}"></iframe>
-        </div>
-      `;
-    }
+    const menu = document.getElementById('langMenu');
+    if(menu) menu.style.display = 'none';
   }
 
-  const currentLangForAlt = getCurrentLang();
-  const titleForAlt = getTextByLang(item.title, currentLangForAlt) || 'بدون عنوان';
-
-  if(!mediaHtml && item.image){
-    mediaHtml = `
-      <div class="media-frame">
-        <img src="${item.image}" alt="${titleForAlt}">
-      </div>
-    `;
+  function getQueryParam(name){
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
   }
 
-  if(mediaHtml){
-    mediaContainer.innerHTML = mediaHtml;
-  } else {
-    mediaContainer.style.display='none';
+  function renderMedia(item){
+    const mediaContainer = document.getElementById('articleMedia');
+    const extraInfo = document.getElementById('extraInfo');
+    if(!mediaContainer) return;
+
+    let mediaHtml = '';
+
     if(item.file){
-      extraInfo.style.display='block';
-      extraInfo.textContent =
-        'هناك مرفق لهذا المقال، لكن لا يمكن عرضه مباشرة في هذه الصفحة.';
+      const f = item.file;
+      const lower = f.toLowerCase();
+
+      if(lower.endsWith('.mp4') || lower.includes('.mp4?')){
+        const videoUrl = f.startsWith('/videos') ? 'http://localhost:3000' + f : f;
+        mediaHtml = `
+          <div class="media-frame">
+            <video controls>
+              <source src="${videoUrl}" type="video/mp4">
+            </video>
+          </div>
+        `;
+      } else if(f.startsWith('http')){
+        mediaHtml = `
+          <div class="media-frame">
+            <iframe src="${f}" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+        `;
+      }
+    }
+
+    const currentLang = getCurrentLang();
+    const titleForAlt = getTextByLang(item.title, currentLang) || 'بدون عنوان';
+
+    if(!mediaHtml && item.image){
+      mediaHtml = `
+        <div class="media-frame">
+          <img src="${item.image}" alt="${titleForAlt}">
+        </div>
+      `;
+    }
+
+    if(mediaHtml){
+      mediaContainer.innerHTML = mediaHtml;
+    } else {
+      mediaContainer.style.display = 'none';
+      if(item.file && extraInfo){
+        extraInfo.style.display = 'block';
+      }
     }
   }
-}
 
-window.addEventListener('load', async ()=>{
-  if(window.displayItem){
-    const it = window.displayItem;
-    it.title   = await autoFillTranslations(it.title   || {});
-    it.short   = await autoFillTranslations(it.short   || {});
-    it.full    = await autoFillTranslations(it.full    || {});
-    it.details = await autoFillTranslations(it.details || {});
+  const type = 'articles';
+  const id = Number(getQueryParam('id'));
+  const allData = JSON.parse(localStorage.getItem(type) || '[]');
+  const item = allData.find(i => i.id === id);
+  window.displayItem = item;
+
+  if(!item){
+    document.body.innerHTML = '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
+  } else {
+    renderMedia(item);
   }
-  const savedLang = getCurrentLang();
-  applyLang(savedLang);
-  if(window.displayItem){
-    renderContentForLang(savedLang);
-  }
-});
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedLang = getCurrentLang();
+    applyLang(savedLang);
+    if(window.displayItem){
+      renderContentForLang(savedLang);
+    }
+  });
 </script>
 
 </body>

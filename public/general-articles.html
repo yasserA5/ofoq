@@ -383,153 +383,244 @@
       transform:translateX(-50%) rotate(-45deg);
     }
 
+.nav-sheet-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: .25s ease;
+  z-index: 1498;
+}
+.nav-sheet-overlay.show{
+  opacity: 1;
+  pointer-events: auto;
+}
 
-    .backdrop{
-      position:fixed;
-      inset:0;
-      background:var(--bg-overlay);
-      z-index:1900;
-      opacity:0;
-      visibility:hidden;
-      transition:0.25s ease;
-    }
-    .backdrop.active{
-      opacity:1;
-      visibility:visible;
-    }
+.nav-sheet{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-height: 92vh;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 35px rgba(0,0,0,0.18);
+  padding: 12px;
+  overflow-y: auto;
+  transform: translateY(110%);
+  transition: transform .28s ease;
+  z-index: 1499;
+}
+.nav-sheet.show{
+  transform: translateY(0);
+}
 
+.nav-sheet-handle{
+  width:54px;
+  height:6px;
+  border-radius:999px;
+  background:#cbd5e1;
+  margin:0 auto 10px;
+}
 
-    .mobile-menu{
-      display:none;
-      position:fixed;
-      top:0;
-      right:0;
-      width:min(80%,360px);
-      height:100%;
-      background:#fff;
-      box-shadow:-4px 0 18px rgba(0,0,0,0.15);
-      padding:clamp(20px,8vw,30px);
-      z-index:2000;
-      overflow-y:auto;
-      transform:translateX(100%);
-      transition:transform 0.25s ease;
-    }
+.nav-sheet-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:10px;
+}
 
+.nav-sheet-brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.nav-sheet-brand img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+  border-radius:14px;
+  background:#fff;
+  padding:4px;
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
+.nav-sheet-brand strong{
+  display:block;
+  color:#0f172a;
+  font-size:14px;
+}
+.nav-sheet-brand span{
+  display:block;
+  color:#64748b;
+  font-size:11px;
+}
 
-    .mobile-menu.open{transform:translateX(0);}
+.nav-sheet-close{
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:50%;
+  background:#eef6f8;
+  color:#0f4f65;
+  font-size:16px;
+  cursor:pointer;
+}
 
+.nav-sheet-search{
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
+}
+.nav-sheet-search input{
+  flex:1;
+  border:none;
+  outline:none;
+  background:#fff;
+  border-radius:14px;
+  padding:11px 12px;
+  box-shadow:inset 0 0 0 1px #e2e8f0;
+  font-family:inherit;
+  font-size:14px;
+}
+.nav-sheet-search button{
+  border:none;
+  min-width:44px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  cursor:pointer;
+}
 
-    .mobile-menu-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:18px;
-    }
+.nav-sheet-mini-tools{
+  display:flex;
+  gap:6px;
+  margin-bottom:12px;
+}
+.sheet-tool{
+  border:none;
+  padding:8px 10px;
+  border-radius:999px;
+  background:#ffffff;
+  box-shadow:inset 0 0 0 1px #e2e8f0;
+  color:#0f4f65;
+  font-weight:800;
+  cursor:pointer;
+  font-size:12px;
+}
 
+.nav-sheet-section{
+  margin-bottom:12px;
+}
+.nav-sheet-section h3{
+  font-size:13px;
+  color:#0f172a;
+  margin-bottom:8px;
+}
 
-    .mobile-logo{
-      width:52px;
-      height:auto;
-    }
+.nav-sheet-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.sheet-card{
+  text-decoration:none;
+  text-align:center;
+  background:#fff;
+  color:#12313c;
+  border:1px solid #e7edf1;
+  border-radius:16px;
+  padding:14px 8px;
+  font-weight:800;
+  box-shadow:0 8px 22px rgba(15,23,42,.04);
+  font-size:14px;
+  line-height:1.3;
+}
 
+.academic-zone{
+  background:linear-gradient(135deg,#fff8df,#fffdf5);
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:20px;
+  padding:10px;
+}
+.nav-sheet-pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.nav-sheet-pills a{
+  text-decoration:none;
+  color:#5d4700;
+  background:#fff;
+  border:1px solid rgba(212,175,55,.24);
+  border-radius:999px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:800;
+}
 
-    .mobile-close{
-      border:none;
-      background:rgba(248,250,252,0.9);
-      width:36px;
-      height:36px;
-      border-radius:50%;
-      font-size:18px;
-      cursor:pointer;
-      color:var(--primary-dark);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 2px 8px rgba(15,23,42,0.15);
-    }
+.nav-sheet-footer-links{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+.nav-sheet-footer-links a{
+  flex:1;
+  text-decoration:none;
+  text-align:center;
+  background:#fff;
+  color:#475569;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:10px 8px;
+  font-weight:700;
+  font-size:13px;
+}
 
+.nav-sheet-auth{
+  display:flex;
+  gap:8px;
+}
+.nav-sheet-auth a{
+  flex:1;
+  text-decoration:none;
+  text-align:center;
+  border-radius:16px;
+  padding:12px 10px;
+  font-weight:800;
+  font-size:14px;
+}
+.nav-sheet-auth a:first-child{
+  background:#fff;
+  color:#0f4f65;
+  border:1px solid #dbe5ea;
+}
+.nav-sheet-auth a:last-child{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  box-shadow:0 12px 24px rgba(0,155,196,.22);
+}
 
-    .mobile-menu ul{
-      list-style:none;
-      margin-top:10px;
-    }
+@media(min-width:981px){
+  .nav-sheet,
+  .nav-sheet-overlay{
+    display:none;
+  }
+}
 
+@media(max-width:480px){
+  .nav-sheet-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:6px;
+  }
+  .sheet-card{
+    padding:12px 6px;
+    font-size:13px;
+  }
+}
 
-    .mobile-menu ul li{
-      margin-bottom:18px;
-    }
-
-
-    .mobile-menu ul li a{
-      font-size:clamp(18px,5vw,20px);
-      text-decoration:none;
-      color:#222;
-      font-weight:600;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:8px 10px;
-      border-radius:10px;
-      transition:.2s;
-    }
-
-
-    .mobile-menu ul li a:hover{
-      background:#e0f2fe;
-      color:var(--primary-dark);
-    }
-
-
-    .mobile-menu,
-    .mobile-menu *{
-      font-family:"Tajawal",sans-serif !important;
-    }
-
-
-    .mobile-dropdown-toggle{
-      width:100%;
-      background:transparent;
-      border:none;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:16px;
-      color:#0f172a;
-      cursor:pointer;
-      padding:0;
-      font-weight:600;
-    }
-
-
-    .mobile-dropdown-arrow{
-      font-size:11px;
-      color:#6b7280;
-    }
-
-
-    .mobile-submenu{
-      list-style:none;
-      margin-top:8px;
-      margin-right:14px;
-      display:none;
-    }
-
-
-    .mobile-submenu li{
-      margin-bottom:10px;
-    }
-
-
-    .mobile-submenu a{
-      font-size:15px;
-      font-weight:600;
-      padding:6px 10px;
-    }
-
-
-    .mobile-dropdown.open .mobile-submenu{
-      display:block;
-    }
 
 
     .toast-container{
@@ -783,77 +874,68 @@
 
 
 <body>
-<div class="backdrop" id="backdrop" onclick="toggleMenu(false)"></div>
+<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
+<div class="nav-sheet" id="mobileMenu">
+  <div class="nav-sheet-handle"></div>
 
-<div class="mobile-menu" id="mobileMenu">
-  <div class="mobile-menu-header">
-    <img src="logo1.png" class="mobile-logo" alt="Logo">
-    <button class="mobile-close" type="button" onclick="toggleMenu(false)">✕</button>
+  <div class="nav-sheet-top">
+    <div class="nav-sheet-brand">
+      <img src="https://raw.githubusercontent.com/yasserA5/ofoq-logos/main/logo1.png" alt="Logo">
+      <div>
+        <strong data-t="brand_name">أفق</strong>
+        <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
+      </div>
+    </div>
+    <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
   </div>
 
+  <form class="nav-sheet-search" onsubmit="doSearch(event)">
+    <input type="search" id="navSearchInputMobile" data-ph="search_placeholder_long" placeholder="ابحث في المنصة..." />
+    <button type="submit">🔍</button>
+  </form>
 
-  <div style="margin-bottom:20px;">
-    <div class="lang-wrapper">
-      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
-        <span id="langCurrentMobile">AR</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M7 10l5 5 5-5z"></path>
-        </svg>
-      </button>
-      <div class="lang-menu" id="langMenuMobile">
-        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
-        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
-        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
-      </div>
+  <div class="nav-sheet-mini-tools">
+    <button class="sheet-tool" type="button" onclick="setLang('ar')">AR</button>
+    <button class="sheet-tool" type="button" onclick="setLang('en')">EN</button>
+    <button class="sheet-tool" type="button" onclick="setLang('fr')">FR</button>
+  </div>
+
+  <div class="nav-sheet-section">
+    <h3 data-t="mobile_discover">اكتشف</h3>
+    <div class="nav-sheet-grid">
+      <a href="index.html" class="sheet-card" data-t="nav_home">الرئيسية</a>
+      <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
+      <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
+      <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
+      <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
+      <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
+      <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
+      <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
+      <a href="live.html" class="sheet-card" data-t="nav_live">بث مباشر</a>
     </div>
   </div>
 
+  <div class="nav-sheet-section academic-zone">
+    <h3 data-t="nav_academic">أكاديمي</h3>
+    <div class="nav-sheet-pills">
+      <a href="special-politics.html" data-t="sp_politics">علوم سياسية</a>
+      <a href="special-ir.html" data-t="sp_ir">العلاقات الدولية</a>
+      <a href="special-admin-law.html" data-t="sp_admin_law">القانون الإداري</a>
+      <a href="special-const-law.html" data-t="sp_const_law">القانون الدستوري</a>
+      <a href="special-public-policy.html" data-t="sp_public_policy">السياسات العمومية</a>
+    </div>
+  </div>
 
-  <ul>
-    <li><a href="index.html" data-t="nav_home">الرئيسية</a></li>
+  <div class="nav-sheet-footer-links">
+    <a href="rules.html" data-t="nav_rules">شروط النشر</a>
+    <a href="contact.html" data-t="nav_contact">اتصل بنا</a>
+  </div>
 
-
-    <li class="mobile-dropdown">
-      <button type="button" class="mobile-dropdown-toggle">
-        <span data-t="nav_studies">أبحاث ودراسات ▾</span>
-        <span class="mobile-dropdown-arrow">▾</span>
-      </button>
-      <ul class="mobile-submenu">
-        <li><a href="research.html" data-t="nav_research_peer">أبحاث محكمة</a></li>
-        <li><a href="articles.html" data-t="nav_articles_peer">مقالات محكمة</a></li>
-        <li><a href="files.html" data-t="nav_files">ملفات بحثية</a></li>
-        <li><a href="articles-foreign.html" data-t="nav_foreign">مقالات أجنبية</a></li>
-      </ul>
-    </li>
-
-
-    <li><a href="general-articles.html" class="active" data-t="nav_articles">مقالات</a></li>
-    <li><a href="editions.html" data-t="nav_editions">إصداراتنا</a></li>
-    <li><a href="activities.html" data-t="nav_activities">أنشطتنا</a></li>
-
-
-    <li class="mobile-dropdown">
-      <button type="button" class="mobile-dropdown-toggle">
-        <span class="pill-circle" data-t="nav_academic">أكاديمي</span>
-        <span class="mobile-dropdown-arrow">▾</span>
-      </button>
-      <ul class="mobile-submenu">
-        <li><a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a></li>
-        <li><a href="special-ir.html" data-t="sp_ir">تخصص العلاقات الدولية</a></li>
-        <li><a href="special-admin-law.html" data-t="sp_admin_law">تخصص القانون الإداري</a></li>
-        <li><a href="special-const-law.html" data-t="sp_const_law">تخصص القانون الدستوري</a></li>
-        <li><a href="special-public-policy.html" data-t="sp_public_policy">تخصص السياسات العمومية</a></li>
-      </ul>
-    </li>
-
-
-    <li><a href="live.html" data-t="nav_live">بث مباشر</a></li>
-    <li><a href="rules.html" data-t="nav_rules">شروط النشر</a></li>
-    <li><a href="contact.html" data-t="nav_contact">اتصل بنا</a></li>
-    <li id="mobileLogin"><a href="login.html" data-t="nav_login">تسجيل الدخول</a></li>
-    <li id="mobileRegister"><a href="register.html" data-t="nav_join">انضم إلينا</a></li>
-  </ul>
+  <div class="nav-sheet-auth">
+    <a href="login.html" id="mobileLogin" data-t="nav_login">تسجيل الدخول</a>
+    <a href="register.html" id="mobileRegister" data-t="nav_join">انضم إلينا</a>
+  </div>
 </div>
 
 
@@ -958,28 +1040,22 @@
   }
 
 
-  function toggleMenu(force){
-    const menu=document.getElementById("mobileMenu");
-    const backdrop=document.getElementById("backdrop");
-    const btn=document.getElementById("menu-btn");
+function toggleMenu(){
+  const menu = document.getElementById("mobileMenu");
+  const overlay = document.getElementById("navSheetOverlay");
+  const btn = document.getElementById("menu-btn");
 
+  if(!menu || !overlay || !btn) return;
 
-    if (!menu || !backdrop || !btn) return;
+  const isOpen = menu.classList.contains("show");
 
+  menu.classList.toggle("show", !isOpen);
+  overlay.classList.toggle("show", !isOpen);
+  btn.classList.toggle("open", !isOpen);
+  btn.setAttribute("aria-expanded", String(!isOpen));
+  document.body.style.overflow = !isOpen ? "hidden" : "";
+}
 
-    const shouldOpen = typeof force === "boolean"
-      ? force
-      : menu.style.display !== "block";
-
-
-    menu.style.display = shouldOpen ? "block" : "none";
-    menu.classList.toggle("open", shouldOpen);
-    backdrop.classList.toggle("active", shouldOpen);
-
-
-    btn.classList.toggle("open", shouldOpen);
-    btn.setAttribute("aria-expanded", String(shouldOpen));
-  }
 
 
   function doSearch(e){

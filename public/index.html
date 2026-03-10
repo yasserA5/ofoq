@@ -260,7 +260,7 @@
   opacity: 0;
   pointer-events: none;
   transition: .25s ease;
-  z-index: 1998;
+  z-index: 1498;
 }
 .nav-sheet-overlay.show{
   opacity: 1;
@@ -273,45 +273,44 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  max-height: 88vh;
+  max-height: 92vh;  /* ↑ Increased from 88vh */
   background: #fff;
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -10px 35px rgba(0,0,0,0.18);
-  padding: 14px;
+  padding: 12px;  /* ↓ Reduced from 14px */
   overflow-y: auto;
   transform: translateY(110%);
   transition: transform .28s ease;
-  z-index: 1999;
+  z-index: 1499;
 }
 .nav-sheet.show{
   transform: translateY(0);
 }
-
 
 .nav-sheet-handle{
   width:54px;
   height:6px;
   border-radius:999px;
   background:#cbd5e1;
-  margin:0 auto 12px;
+  margin:0 auto 10px;  /* ↓ Reduced margin */
 }
 
 .nav-sheet-top{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-  margin-bottom:12px;
+  gap:8px;  /* ↓ Reduced gap */
+  margin-bottom:10px;  /* ↓ Reduced margin */
 }
 
 .nav-sheet-brand{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;  /* ↓ Reduced gap */
 }
 .nav-sheet-brand img{
-  width:46px;
-  height:46px;
+  width:44px;  /* ↓ Slightly smaller */
+  height:44px;
   object-fit:contain;
   border-radius:14px;
   background:#fff;
@@ -321,44 +320,45 @@
 .nav-sheet-brand strong{
   display:block;
   color:#0f172a;
-  font-size:15px;
+  font-size:14px;  /* ↓ Slightly smaller */
 }
 .nav-sheet-brand span{
   display:block;
   color:#64748b;
-  font-size:12px;
+  font-size:11px;  /* ↓ Slightly smaller */
 }
 
 .nav-sheet-close{
-  width:40px;
-  height:40px;
+  width:38px;  /* ↓ Slightly smaller */
+  height:38px;
   border:none;
   border-radius:50%;
   background:#eef6f8;
   color:#0f4f65;
-  font-size:18px;
+  font-size:16px;  /* ↓ Slightly smaller */
   cursor:pointer;
 }
 
 .nav-sheet-search{
   display:flex;
-  gap:8px;
-  margin-bottom:12px;
+  gap:6px;  /* ↓ Reduced gap */
+  margin-bottom:10px;  /* ↓ Reduced margin */
 }
 .nav-sheet-search input{
   flex:1;
   border:none;
   outline:none;
   background:#fff;
-  border-radius:16px;
-  padding:13px 14px;
+  border-radius:14px;  /* ↓ Smaller radius */
+  padding:11px 12px;  /* ↓ Smaller padding */
   box-shadow:inset 0 0 0 1px #e2e8f0;
   font-family:inherit;
+  font-size:14px;
 }
 .nav-sheet-search button{
   border:none;
-  min-width:48px;
-  border-radius:16px;
+  min-width:44px;  /* ↓ Smaller */
+  border-radius:14px;
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:#fff;
   cursor:pointer;
@@ -366,33 +366,34 @@
 
 .nav-sheet-mini-tools{
   display:flex;
-  gap:8px;
-  margin-bottom:14px;
+  gap:6px;  /* ↓ Reduced gap */
+  margin-bottom:12px;
 }
 .sheet-tool{
   border:none;
-  padding:9px 12px;
+  padding:8px 10px;  /* ↓ Smaller padding */
   border-radius:999px;
   background:#ffffff;
   box-shadow:inset 0 0 0 1px #e2e8f0;
   color:#0f4f65;
   font-weight:800;
   cursor:pointer;
+  font-size:12px;  /* ↓ Added font-size */
 }
 
 .nav-sheet-section{
-  margin-bottom:14px;
+  margin-bottom:12px;  /* ↓ Reduced margin */
 }
 .nav-sheet-section h3{
-  font-size:14px;
+  font-size:13px;  /* ↓ Slightly smaller */
   color:#0f172a;
-  margin-bottom:10px;
+  margin-bottom:8px;  /* ↓ Reduced margin */
 }
 
 .nav-sheet-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
+  gap:8px;  /* ↓ Reduced gap */
 }
 .sheet-card{
   text-decoration:none;
@@ -400,22 +401,24 @@
   background:#fff;
   color:#12313c;
   border:1px solid #e7edf1;
-  border-radius:18px;
-  padding:16px 10px;
+  border-radius:16px;  /* ↓ Slightly smaller */
+  padding:14px 8px;  /* ↓ Smaller padding */
   font-weight:800;
   box-shadow:0 8px 22px rgba(15,23,42,.04);
+  font-size:14px;  /* ↓ Added font-size */
+  line-height:1.3;
 }
 
 .academic-zone{
   background:linear-gradient(135deg,#fff8df,#fffdf5);
   border:1px solid rgba(212,175,55,.22);
-  border-radius:22px;
-  padding:12px;
+  border-radius:20px;  /* ↓ Slightly smaller */
+  padding:10px;  /* ↓ Reduced padding */
 }
 .nav-sheet-pills{
   display:flex;
   flex-wrap:wrap;
-  gap:8px;
+  gap:6px;  /* ↓ Reduced gap */
 }
 .nav-sheet-pills a{
   text-decoration:none;
@@ -423,15 +426,15 @@
   background:#fff;
   border:1px solid rgba(212,175,55,.24);
   border-radius:999px;
-  padding:9px 12px;
-  font-size:13px;
+  padding:8px 10px;  /* ↓ Smaller padding */
+  font-size:12px;  /* ↓ Smaller font */
   font-weight:800;
 }
 
 .nav-sheet-footer-links{
   display:flex;
-  gap:10px;
-  margin-bottom:14px;
+  gap:8px;  /* ↓ Reduced gap */
+  margin-bottom:12px;
 }
 .nav-sheet-footer-links a{
   flex:1;
@@ -440,22 +443,24 @@
   background:#fff;
   color:#475569;
   border:1px solid #e2e8f0;
-  border-radius:16px;
-  padding:12px;
+  border-radius:14px;  /* ↓ Smaller */
+  padding:10px 8px;  /* ↓ Smaller padding */
   font-weight:700;
+  font-size:13px;
 }
 
 .nav-sheet-auth{
   display:flex;
-  gap:10px;
+  gap:8px;  /* ↓ Reduced gap */
 }
 .nav-sheet-auth a{
   flex:1;
   text-decoration:none;
   text-align:center;
-  border-radius:18px;
-  padding:13px 14px;
+  border-radius:16px;  /* ↓ Smaller */
+  padding:12px 10px;  /* ↓ Smaller padding */
   font-weight:800;
+  font-size:14px;
 }
 .nav-sheet-auth a:first-child{
   background:#fff;
@@ -465,13 +470,25 @@
 .nav-sheet-auth a:last-child{
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:#fff;
-  box-shadow:0 12px 24px rgba(0,155,196,.22);
+  box-shadow:0 12px 24px rgba(236,72,153,.22);
 }
 
 @media(min-width:981px){
   .nav-sheet,
   .nav-sheet-overlay{
     display:none;
+  }
+}
+
+/* Mobile optimizations */
+@media(max-width:480px){
+  .nav-sheet-grid {
+    grid-template-columns:repeat(2,1fr);
+    gap:6px;
+  }
+  .sheet-card {
+    padding:12px 6px;
+    font-size:13px;
   }
 }
 
@@ -782,25 +799,24 @@
 
   <div class="nav-sheet-top">
     <div class="nav-sheet-brand">
-      <img src="logo1.png" alt="Logo">
+      <img src="https://raw.githubusercontent.com/yasserA5/ofoq-logos/main/logo1.png" alt="Logo">
       <div>
-        <strong data-t="brand_name">افق المعرفة</strong>
-        <span data-t="brand_tagline">منصة أفق للباحثين</span>
+        <strong data-t="brand_name">أفق</strong>
+        <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
       </div>
     </div>
-
-    <button class="nav-sheet-close" onclick="toggleMenu()">✕</button>
+    <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
   </div>
 
   <form class="nav-sheet-search" onsubmit="doSearch(event)">
-    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." />
+    <input type="search" id="navSearchInputMobile" data-ph="search_placeholder_long" placeholder="ابحث في المنصة..." />
     <button type="submit">🔍</button>
   </form>
 
   <div class="nav-sheet-mini-tools">
-    <button class="sheet-tool" onclick="setLang('ar')">AR</button>
-    <button class="sheet-tool" onclick="setLang('en')">EN</button>
-    <button class="sheet-tool" onclick="setLang('fr')">FR</button>
+    <button class="sheet-tool" type="button" onclick="setLang('ar')">AR</button>
+    <button class="sheet-tool" type="button" onclick="setLang('en')">EN</button>
+    <button class="sheet-tool" type="button" onclick="setLang('fr')">FR</button>
   </div>
 
   <div class="nav-sheet-section">
@@ -810,6 +826,7 @@
       <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
       <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
       <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
+      <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
       <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
       <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
       <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
