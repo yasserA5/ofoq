@@ -1106,11 +1106,16 @@
     return localStorage.getItem('uiLang') || 'ar';
   }
 
-  function getTextByLang(field, lang){
-    if (!field) return '';
-    if (typeof field === 'string') return field;
-    return field[lang] || field.ar || field.fr || field.en || '';
-  }
+function getTextByLang(field, lang){
+  if (field == null) return '';
+  if (typeof field === 'string' || typeof field === 'number') return String(field);
+  if (typeof field !== 'object') return '';
+
+  const value = field[lang] ?? field.ar ?? field.fr ?? field.en ?? '';
+  return (value == null) ? '' : String(value);
+}
+
+
 
   const uiTexts = {
     ar: {
@@ -1211,43 +1216,103 @@
     });
   }
 
-  function renderContentForLang(lang){
-    const it = window.displayItem;
-    if(!it) return;
+function renderContentForLang(lang){
+  const it = window.displayItem;
+  if(!it) return;
 
-    const tUI = uiTexts[lang] || uiTexts.ar;
-    const title = getTextByLang(it.title, lang) || tUI.noTitle;
-    const shortText = getTextByLang(it.short, lang) || '';
-    const fullText = getTextByLang(it.full, lang) || '';
-    const detailsText = getTextByLang(it.details, lang) || '';
+  const tUI = uiTexts[lang] || uiTexts.ar;
 
-    const author = it.author || tUI.unknownAuthor;
-    const affiliation = it.affiliation || tUI.unknownAff;
-    const dateValue = it.date || tUI.unknownDate;
+  const title =
+    getTextByLang(it.title, lang) ||
+    getTextByLang(it.name, lang) ||
+    tUI.noTitle;
 
-    document.getElementById('articleTitleHero').textContent = title;
-    document.getElementById('articleShortHero').textContent = shortText;
-    document.getElementById('articleShort').textContent = shortText;
-    document.getElementById('articleFull').textContent = fullText;
-    document.getElementById('articleDetails').textContent = detailsText;
+  const shortText =
+    getTextByLang(it.short, lang) ||
+    getTextByLang(it.shortContent, lang) ||
+    getTextByLang(it.summary, lang) ||
+    getTextByLang(it.description, lang) ||
+    '';
 
-    document.getElementById('heroAuthor').textContent = tUI.labelAuthor + ': ' + author;
-    document.getElementById('heroAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
-    document.getElementById('heroDate').textContent = tUI.labelDate + ': ' + dateValue;
+  const fullText =
+    getTextByLang(it.full, lang) ||
+    getTextByLang(it.fullContent, lang) ||
+    getTextByLang(it.content, lang) ||
+    getTextByLang(it.body, lang) ||
+    getTextByLang(it.text, lang) ||
+    '';
 
-    document.getElementById('articleAuthor').textContent = tUI.labelAuthor + ': ' + author;
-    document.getElementById('articleAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
-    document.getElementById('articleDate').textContent = tUI.labelDate + ': ' + dateValue;
+  const detailsText =
+    getTextByLang(it.details, lang) ||
+    getTextByLang(it.notes, lang) ||
+    getTextByLang(it.extra, lang) ||
+    getTextByLang(it.additionalDetails, lang) ||
+    '';
 
-    document.getElementById('sidebarAuthor').textContent = author;
-    document.getElementById('sidebarAffiliation').textContent = affiliation;
-    document.getElementById('sidebarDate').textContent = dateValue;
+  const author =
+    getTextByLang(it.author, lang) ||
+    getTextByLang(it.authorName, lang) ||
+    getTextByLang(it.writer, lang) ||
+    tUI.unknownAuthor;
 
-    const extraInfo = document.getElementById('extraInfo');
-    if(extraInfo && extraInfo.style.display !== 'none'){
-      extraInfo.textContent = tUI.attachmentInfo;
-    }
+  const affiliation =
+    getTextByLang(it.affiliation, lang) ||
+    getTextByLang(it.institution, lang) ||
+    getTextByLang(it.organization, lang) ||
+    getTextByLang(it.journal, lang) ||
+    getTextByLang(it.source, lang) ||
+    tUI.unknownAff;
+
+  const dateValue =
+    getTextByLang(it.date, lang) ||
+    getTextByLang(it.publishDate, lang) ||
+    getTextByLang(it.createdAt, lang) ||
+    getTextByLang(it.publishedAt, lang) ||
+    tUI.unknownDate;
+
+  document.getElementById('articleTitleHero').textContent = title;
+  document.getElementById('articleShortHero').textContent = shortText;
+  document.getElementById('articleShort').textContent = shortText;
+  document.getElementById('articleFull').textContent = fullText;
+  document.getElementById('articleDetails').textContent = detailsText;
+
+  document.getElementById('heroAuthor').textContent = tUI.labelAuthor + ': ' + author;
+  document.getElementById('heroAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
+  document.getElementById('heroDate').textContent = tUI.labelDate + ': ' + dateValue;
+
+  document.getElementById('articleAuthor').textContent = tUI.labelAuthor + ': ' + author;
+  document.getElementById('articleAffiliation').textContent = tUI.labelAffiliation + ': ' + affiliation;
+  document.getElementById('articleDate').textContent = tUI.labelDate + ': ' + dateValue;
+
+  document.getElementById('sidebarAuthor').textContent = author;
+  document.getElementById('sidebarAffiliation').textContent = affiliation;
+  document.getElementById('sidebarDate').textContent = dateValue;
+
+  const extraInfo = document.getElementById('extraInfo');
+  if(extraInfo && extraInfo.style.display !== 'none'){
+    extraInfo.textContent = tUI.attachmentInfo;
   }
+
+  const fullSection = document.getElementById('articleFull');
+  const detailsSection = document.getElementById('articleDetails');
+
+  if(!fullText.trim()){
+    fullSection.textContent = lang === 'ar'
+      ? 'لا يوجد محتوى كامل لهذا المقال حالياً.'
+      : lang === 'fr'
+      ? 'Aucun contenu complet disponible pour cet article.'
+      : 'No full content is available for this article yet.';
+  }
+
+  if(!detailsText.trim()){
+    detailsSection.textContent = lang === 'ar'
+      ? 'لا توجد تفاصيل إضافية.'
+      : lang === 'fr'
+      ? 'Aucun détail supplémentaire.'
+      : 'No additional details.';
+  }
+}
+
 
   function switchLang(lang){
     localStorage.setItem('uiLang', lang);
@@ -1312,11 +1377,13 @@
     }
   }
 
-  const type = 'articles';
-  const id = Number(getQueryParam('id'));
-  const allData = JSON.parse(localStorage.getItem(type) || '[]');
-  const item = allData.find(i => i.id === id);
-  window.displayItem = item;
+const type = 'articles';
+const rawId = getQueryParam('id');
+const allData = JSON.parse(localStorage.getItem(type) || '[]');
+
+const item = allData.find(i => String(i.id) === String(rawId));
+window.displayItem = item;
+
 
   if(!item){
     document.body.innerHTML = '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
