@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title id="t-title">Ofouq Academy | مقال محكم</title>
+  <title id="t-title">Ofouq Academy | بحث محكم</title>
   <link rel="icon" type="image/png" href="logo1222.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
@@ -167,6 +167,7 @@
       font-size:11px;
       outline:none;
       background:#fff;
+      font-family:inherit;
     }
 
     .nav-search span{
@@ -193,6 +194,7 @@
       transition:.2s;
       color:var(--primary-dark);
       white-space:nowrap;
+      font-family:inherit;
     }
 
     .btn:hover{
@@ -221,6 +223,7 @@
       gap:6px;
       font-weight:600;
       box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      font-family:inherit;
     }
 
     .lang-menu{
@@ -953,8 +956,8 @@
       <li class="dropdown">
         <a href="#">أبحاث ودراسات ▾</a>
         <div class="dropdown-content">
-          <a href="research.html">أبحاث محكمة</a>
-          <a href="articles.html" class="active">مقالات محكمة</a>
+          <a href="research.html" class="active">أبحاث محكمة</a>
+          <a href="articles.html">مقالات محكمة</a>
           <a href="files.html">ملفات بحثية</a>
           <a href="articles-foreign.html">مقالات أجنبية</a>
         </div>
@@ -995,7 +998,7 @@
       </div>
     </div>
     <button class="btn" onclick="goBack()" id="backBtnText">رجوع</button>
-    <button class="btn primary" onclick="window.print()">طباعة</button>
+    <button class="btn primary" onclick="window.print()" id="printBtnText">طباعة</button>
   </div>
 </header>
 
@@ -1090,24 +1093,24 @@
 
 <script>
   function getCurrentLang() {
-  return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
-}
+    return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
+  }
 
-function getByLang(field, lang = getCurrentLang()) {
-  if (field == null) return '';
-  if (typeof field === 'string' || typeof field === 'number') return String(field);
-  if (typeof field !== 'object') return '';
-  return field[lang] || field.ar || field.fr || field.en || '';
-}
+  function getByLang(field, lang = getCurrentLang()) {
+    if (field == null) return '';
+    if (typeof field === 'string' || typeof field === 'number') return String(field);
+    if (typeof field !== 'object') return '';
+    return field[lang] || field.ar || field.fr || field.en || '';
+  }
 
-function esc(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
+  function esc(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   function goToHome(){
     window.location.href = 'index.html';
@@ -1117,7 +1120,7 @@ function esc(str) {
     if (document.referrer && document.referrer.indexOf(window.location.host) !== -1){
       window.history.back();
     } else {
-window.location.href = 'research.html';
+      window.location.href = 'research.html';
     }
   }
 
@@ -1165,10 +1168,6 @@ window.location.href = 'research.html';
     }
   }
 
-  function getCurrentLang(){
-    return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
-  }
-
   function getTextByLang(field, lang){
     if (field == null) return '';
     if (typeof field === 'string' || typeof field === 'number') return String(field);
@@ -1182,94 +1181,100 @@ window.location.href = 'research.html';
       .replace(/&/g,'&amp;')
       .replace(/</g,'&lt;')
       .replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;')
+      .replace(/\"/g,'&quot;')
       .replace(/'/g,'&#039;');
   }
 
   const uiTexts = {
     ar: {
-      dir:'rtl', langAttr:'ar',
-      pageTitle:'Ofouq Academy | مقال محكم',
+      dir:'rtl',
+      langAttr:'ar',
+      pageTitle:'Ofouq Academy | بحث محكم',
       back:'رجوع',
+      print:'طباعة',
       sectionSummary:'الملخص',
       sectionFull:'المحتوى الكامل',
       sectionDetails:'تفاصيل إضافية',
-      sidebarTitle:'معلومات المقال',
-      labelAuthor:'الكاتب',
+      sidebarTitle:'معلومات البحث',
+      labelAuthor:'الباحث',
       labelAffiliation:'المؤسسة',
       labelDate:'التاريخ',
       labelType:'النوع',
       labelTags:'وسوم مقترحة',
       tag1:'Ofouq',
-      tag2:'مقال محكم',
+      tag2:'بحث محكم',
       footer:'© 2025 Ofouq Academy · جميع الحقوق محفوظة',
       unknownAuthor:'غير محدد',
       unknownAff:'غير محددة',
       unknownDate:'غير محدد',
       noTitle:'بدون عنوان',
-      typeLabel:'مقال محكم',
-      attachmentInfo:'هناك مرفق لهذا المقال، لكن لا يمكن عرضه مباشرة في هذه الصفحة.',
-      noFull:'لا يوجد محتوى كامل لهذا المقال حالياً.',
+      typeLabel:'بحث محكم',
+      attachmentInfo:'هناك مرفق لهذا البحث، لكن لا يمكن عرضه مباشرة في هذه الصفحة.',
+      noFull:'لا يوجد محتوى كامل لهذا البحث حالياً.',
       noDetails:'لا توجد تفاصيل إضافية.',
-      notFoundTitle:'المقال غير موجود',
-      notFoundText:'تعذر العثور على المقال المطلوب. ربما تم حذفه أو تغيير المعرف.',
-      backToArticles:'العودة إلى المقالات'
+      notFoundTitle:'البحث غير موجود',
+      notFoundText:'تعذر العثور على البحث المطلوب. ربما تم حذفه أو تغيير المعرف.',
+      backToArticles:'العودة إلى الأبحاث'
     },
     en: {
-      dir:'ltr', langAttr:'en',
-      pageTitle:'Ofouq Academy | Scholarly Article',
+      dir:'ltr',
+      langAttr:'en',
+      pageTitle:'Ofouq Academy | Research Paper',
       back:'Back',
+      print:'Print',
       sectionSummary:'Summary',
       sectionFull:'Full content',
       sectionDetails:'Additional details',
-      sidebarTitle:'Article info',
+      sidebarTitle:'Research info',
       labelAuthor:'Author',
       labelAffiliation:'Affiliation',
       labelDate:'Date',
       labelType:'Category',
       labelTags:'Suggested tags',
       tag1:'Ofouq',
-      tag2:'Scholarly article',
+      tag2:'Research paper',
       footer:'© 2025 Ofouq Academy · All rights reserved',
       unknownAuthor:'Not specified',
       unknownAff:'Not specified',
       unknownDate:'Not specified',
       noTitle:'Untitled',
-      typeLabel:'Scholarly article',
-      attachmentInfo:'This article has an attachment, but it cannot be displayed directly on this page.',
-      noFull:'No full content is available for this article yet.',
+      typeLabel:'Research paper',
+      attachmentInfo:'This research has an attachment, but it cannot be displayed directly on this page.',
+      noFull:'No full content is available for this research yet.',
       noDetails:'No additional details.',
-      notFoundTitle:'Article not found',
-      notFoundText:'The requested article could not be found. It may have been deleted or its ID changed.',
-      backToArticles:'Back to articles'
+      notFoundTitle:'Research not found',
+      notFoundText:'The requested research could not be found. It may have been deleted or its ID changed.',
+      backToArticles:'Back to research'
     },
     fr: {
-      dir:'ltr', langAttr:'fr',
-      pageTitle:'Ofouq Academy | Article scientifique',
+      dir:'ltr',
+      langAttr:'fr',
+      pageTitle:'Ofouq Academy | Recherche scientifique',
       back:'Retour',
+      print:'Imprimer',
       sectionSummary:'Résumé',
       sectionFull:'Contenu complet',
       sectionDetails:'Détails supplémentaires',
-      sidebarTitle:'Informations sur l’article',
+      sidebarTitle:'Informations sur la recherche',
       labelAuthor:'Auteur',
       labelAffiliation:'Institution',
       labelDate:'Date',
       labelType:'Type',
       labelTags:'Mots-clés suggérés',
       tag1:'Ofouq',
-      tag2:'Article scientifique',
+      tag2:'Recherche scientifique',
       footer:'© 2025 Académie Ofouq · Tous droits réservés',
       unknownAuthor:'Non spécifié',
       unknownAff:'Non spécifiée',
       unknownDate:'Non spécifiée',
       noTitle:'Sans titre',
-      typeLabel:'Article scientifique',
-      attachmentInfo:'Cet article contient une pièce jointe qui ne peut pas être affichée directement sur cette page.',
-      noFull:'Aucun contenu complet disponible pour cet article.',
+      typeLabel:'Recherche scientifique',
+      attachmentInfo:'Cette recherche contient une pièce jointe qui ne peut pas être affichée directement sur cette page.',
+      noFull:'Aucun contenu complet disponible pour cette recherche.',
       noDetails:'Aucun détail supplémentaire.',
-      notFoundTitle:'Article introuvable',
-      notFoundText:'Impossible de trouver l’article demandé. Il a peut-être été supprimé ou son identifiant a changé.',
-      backToArticles:'Retour aux articles'
+      notFoundTitle:'Recherche introuvable',
+      notFoundText:'Impossible de trouver la recherche demandée. Elle a peut-être été supprimée ou son identifiant a changé.',
+      backToArticles:'Retour aux recherches'
     }
   };
 
@@ -1277,13 +1282,12 @@ window.location.href = 'research.html';
     return new URLSearchParams(window.location.search).get(name);
   }
 
-function getResearchById() {
-  const rawId = getQueryParam('id');
-  const allData = safeParse(localStorage.getItem('research'), []);
-  if (!Array.isArray(allData)) return null;
-  return allData.find(i => String(i?.id) === String(rawId)) || null;
-}
-
+  function getResearchById(){
+    const rawId = getQueryParam('id');
+    const allData = safeParse(localStorage.getItem('research'), []);
+    if(!Array.isArray(allData)) return null;
+    return allData.find(i => String(i?.id) === String(rawId)) || null;
+  }
 
   function buildNotFound(lang){
     const t = uiTexts[lang] || uiTexts.ar;
@@ -1292,7 +1296,7 @@ function getResearchById() {
         <div class="empty-wrap">
           <h2>${escapeHtml(t.notFoundTitle)}</h2>
           <p>${escapeHtml(t.notFoundText)}</p>
-          <button class="btn primary"onclick="window.location.href='research.html'">${escapeHtml(t.backToArticles)}</button>
+          <button class="btn primary" onclick="window.location.href='research.html'">${escapeHtml(t.backToArticles)}</button>
         </div>
       </div>
     `;
@@ -1304,13 +1308,13 @@ function getResearchById() {
         <section class="hero-article">
           <div class="hero-top">
             <div>
-              <div class="article-type-pill" id="articleTypeLabel">مقال محكم</div>
-              <h1 id="articleTitleHero">عنوان المقال</h1>
+              <div class="article-type-pill" id="articleTypeLabel">بحث محكم</div>
+              <h1 id="articleTitleHero">عنوان البحث</h1>
               <p class="hero-desc" id="articleShortHero"></p>
             </div>
 
             <div class="hero-meta">
-              <div class="hero-meta-row" id="heroAuthor">الكاتب: غير محدد</div>
+              <div class="hero-meta-row" id="heroAuthor">الباحث: غير محدد</div>
               <div class="hero-meta-row" id="heroAffiliation">المؤسسة: غير محددة</div>
               <div class="hero-meta-row" id="heroDate">التاريخ: غير محدد</div>
             </div>
@@ -1323,7 +1327,7 @@ function getResearchById() {
 
             <section class="article-body">
               <div class="article-meta">
-                <span id="articleAuthor">الكاتب: غير محدد</span>
+                <span id="articleAuthor">الباحث: غير محدد</span>
                 <span id="articleAffiliation">المؤسسة: غير محددة</span>
                 <span id="articleDate">التاريخ: غير محدد</span>
               </div>
@@ -1350,10 +1354,10 @@ function getResearchById() {
           </article>
 
           <aside class="sidebar">
-            <h3 id="sidebarTitle">معلومات المقال</h3>
+            <h3 id="sidebarTitle">معلومات البحث</h3>
 
             <div class="sidebar-row">
-              <div class="sidebar-label" id="labelAuthor">الكاتب</div>
+              <div class="sidebar-label" id="labelAuthor">الباحث</div>
               <div class="sidebar-value" id="sidebarAuthor">غير محدد</div>
             </div>
 
@@ -1369,14 +1373,13 @@ function getResearchById() {
 
             <div class="sidebar-row">
               <div class="sidebar-label" id="labelType">النوع</div>
-              <div class="sidebar-value" id="sidebarType">مقال محكم</div>
+              <div class="sidebar-value" id="sidebarType">بحث محكم</div>
             </div>
 
-    <div class="sidebar-row">
-  <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
-  <div class="sidebar-tags" id="sidebarTags"></div>
-</div>
-
+            <div class="sidebar-row">
+              <div class="sidebar-label" id="labelTags">وسوم مقترحة</div>
+              <div class="sidebar-tags" id="sidebarTags"></div>
+            </div>
           </aside>
         </div>
       </div>
@@ -1438,44 +1441,6 @@ function getResearchById() {
     }
   }
 
-  function applyLang(lang){
-    const t = uiTexts[lang] || uiTexts.ar;
-    document.documentElement.lang = t.langAttr;
-    document.documentElement.dir = t.dir;
-    document.getElementById('t-title').textContent = t.pageTitle;
-    document.getElementById('footerText').textContent = t.footer;
-    document.getElementById('langCurrent').textContent = lang.toUpperCase();
-    const backBtn = document.getElementById('backBtnText');
-    if(backBtn) backBtn.textContent = t.back;
-
-    const appRoot = document.getElementById('appRoot');
-    const item = window.displayItem;
-
-    if(!item){
-      appRoot.innerHTML = buildNotFound(lang);
-      return;
-    }
-
-    appRoot.innerHTML = buildPageShell();
-
-    document.getElementById('labelSummary').textContent = t.sectionSummary;
-    document.getElementById('labelFull').textContent = t.sectionFull;
-    document.getElementById('labelDetails').textContent = t.sectionDetails;
-    document.getElementById('sidebarTitle').textContent = t.sidebarTitle;
-    document.getElementById('labelAuthor').textContent = t.labelAuthor;
-    document.getElementById('labelAffiliation').textContent = t.labelAffiliation;
-    document.getElementById('labelDate').textContent = t.labelDate;
-    document.getElementById('labelType').textContent = t.labelType;
-    document.getElementById('labelTags').textContent = t.labelTags;
-
-
-    document.getElementById('articleTypeLabel').textContent = t.typeLabel;
-    document.getElementById('sidebarType').textContent = t.typeLabel;
-
-    renderContentForLang(lang);
-    renderMedia(item, lang);
-  }
-
   function renderContentForLang(lang){
     const it = window.displayItem;
     if(!it) return;
@@ -1508,16 +1473,18 @@ function getResearchById() {
       getTextByLang(it.extra, lang) ||
       getTextByLang(it.additionalDetails, lang) ||
       '';
-const rawKeywords =
-  getTextByLang(it.details, lang) ||
-  getTextByLang(it.details, 'ar') ||
-  '';
 
-const keywords = rawKeywords
-  .split(/[\n،,;|]+/)
-  .map(x => x.trim())
-  .filter(Boolean);
+    const rawKeywords =
+      getTextByLang(it.keywords, lang) ||
+      getTextByLang(it.tags, lang) ||
+      getTextByLang(it.details, lang) ||
+      getTextByLang(it.details, 'ar') ||
+      '';
 
+    const keywords = rawKeywords
+      .split(/[\n،,;|]+/)
+      .map(x => x.trim())
+      .filter(Boolean);
 
     const author =
       getTextByLang(it.author, lang) ||
@@ -1560,21 +1527,60 @@ const keywords = rawKeywords
     document.getElementById('sidebarAuthor').textContent = author;
     document.getElementById('sidebarAffiliation').textContent = affiliation;
     document.getElementById('sidebarDate').textContent = dateValue;
-  }
-  const tagsBox = document.getElementById('sidebarTags');
-if (tagsBox) {
-  if (keywords.length) {
-    tagsBox.innerHTML = keywords
-      .map(word => `<span class="sidebar-tag">${escapeHtml(word)}</span>`)
-      .join('');
-  } else {
-    tagsBox.innerHTML = `
-      <span class="sidebar-tag">${escapeHtml(t.tag1)}</span>
-      <span class="sidebar-tag">${escapeHtml(t.tag2)}</span>
-    `;
-  }
-}
 
+    const tagsBox = document.getElementById('sidebarTags');
+    if (tagsBox) {
+      if (keywords.length) {
+        tagsBox.innerHTML = keywords
+          .map(word => `<span class="sidebar-tag">${escapeHtml(word)}</span>`)
+          .join('');
+      } else {
+        tagsBox.innerHTML = `
+          <span class="sidebar-tag">${escapeHtml(t.tag1)}</span>
+          <span class="sidebar-tag">${escapeHtml(t.tag2)}</span>
+        `;
+      }
+    }
+  }
+
+  function applyLang(lang){
+    const t = uiTexts[lang] || uiTexts.ar;
+    document.documentElement.lang = t.langAttr;
+    document.documentElement.dir = t.dir;
+    document.getElementById('t-title').textContent = t.pageTitle;
+    document.getElementById('langCurrent').textContent = lang.toUpperCase();
+
+    const backBtn = document.getElementById('backBtnText');
+    if(backBtn) backBtn.textContent = t.back;
+
+    const printBtn = document.getElementById('printBtnText');
+    if(printBtn) printBtn.textContent = t.print;
+
+    const appRoot = document.getElementById('appRoot');
+    const item = window.displayItem;
+
+    if(!item){
+      appRoot.innerHTML = buildNotFound(lang);
+      return;
+    }
+
+    appRoot.innerHTML = buildPageShell();
+
+    document.getElementById('labelSummary').textContent = t.sectionSummary;
+    document.getElementById('labelFull').textContent = t.sectionFull;
+    document.getElementById('labelDetails').textContent = t.sectionDetails;
+    document.getElementById('sidebarTitle').textContent = t.sidebarTitle;
+    document.getElementById('labelAuthor').textContent = t.labelAuthor;
+    document.getElementById('labelAffiliation').textContent = t.labelAffiliation;
+    document.getElementById('labelDate').textContent = t.labelDate;
+    document.getElementById('labelType').textContent = t.labelType;
+    document.getElementById('labelTags').textContent = t.labelTags;
+    document.getElementById('articleTypeLabel').textContent = t.typeLabel;
+    document.getElementById('sidebarType').textContent = t.typeLabel;
+
+    renderContentForLang(lang);
+    renderMedia(item, lang);
+  }
 
   function switchLang(lang){
     localStorage.setItem('uiLang', lang);
@@ -1584,7 +1590,7 @@ if (tagsBox) {
     if(menu) menu.style.display = 'none';
   }
 
-window.displayItem = getResearchById();
+  window.displayItem = getResearchById();
 
   window.addEventListener('DOMContentLoaded', () => {
     const savedLang = getCurrentLang();
