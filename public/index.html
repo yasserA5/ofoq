@@ -951,6 +951,14 @@
     </div>
   </div>
 </section>
+<section id="articles">
+  <h2 data-t="secarticles">أحدث المقالات</h2>
+  <div class="grid" id="articlesGrid">
+    <div class="empty-state">
+      <p data-t="emptyitems">لا توجد عناصر بعد</p>
+    </div>
+  </div>
+</section>
 
 <section id="editions">
   <h2 data-t="sec_editions">إصداراتنا</h2>
@@ -1636,15 +1644,17 @@ function renderContent(storageKey, gridId) {
     });
   }
 
-  window.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('DOMContentLoaded', () => {
   renderLatestResearchAndArticles('researchGrid');
-    renderContent('editions','editionsGrid');
-    renderContent('activities','activitiesGrid');
-    renderContent('training','academicGrid');
-    updateHeader();
-    setLang(currentLang);
-    initMobileDropdowns();
-  });
+  renderContent('articles', 'articlesGrid');
+  renderContent('editions', 'editionsGrid');
+  renderContent('activities', 'activitiesGrid');
+  renderContent('training', 'academicGrid');
+  updateHeader();
+  setLang(currentLang);
+  initMobileDropdowns();
+});
+
 
   // ===== Moving ticker (auto) =====
 let tickerIndex = 0;
