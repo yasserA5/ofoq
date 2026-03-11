@@ -890,7 +890,6 @@ img, video {
   </style>
 </head>
 <body>
-
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
 <div class="nav-sheet" id="mobileMenu">
@@ -900,60 +899,63 @@ img, video {
     <div class="nav-sheet-brand">
       <img src="logo1.png" alt="Logo">
       <div>
-        <strong>أفق</strong>
-        <span>منصة أكاديمية حديثة</span>
+        <strong data-t="brand_name">أفق</strong>
+        <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
       </div>
     </div>
     <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
   </div>
 
   <form class="nav-sheet-search" onsubmit="doSearch(event)">
-    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." />
+    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
     <button type="submit">🔍</button>
   </form>
 
   <div class="nav-sheet-mini-tools">
-    <button class="sheet-tool" type="button" onclick="switchLang('ar')">AR</button>
-    <button class="sheet-tool" type="button" onclick="switchLang('en')">EN</button>
-    <button class="sheet-tool" type="button" onclick="switchLang('fr')">FR</button>
+    <button class="sheet-tool" type="button" onclick="setLang('ar')">AR</button>
+    <button class="sheet-tool" type="button" onclick="setLang('en')">EN</button>
+    <button class="sheet-tool" type="button" onclick="setLang('fr')">FR</button>
   </div>
 
   <div class="nav-sheet-section">
-    <h3>اكتشف</h3>
+    <h3 data-t="mobile_discover">اكتشف</h3>
     <div class="nav-sheet-grid">
-      <a href="index.html" class="sheet-card">الرئيسية</a>
-      <a href="research.html" class="sheet-card">أبحاث محكمة</a>
-      <a href="articles.html" class="sheet-card">مقالات محكمة</a>
-      <a href="files.html" class="sheet-card">ملفات بحثية</a>
-      <a href="articles-foreign.html" class="sheet-card">مقالات أجنبية</a>
-      <a href="general-articles.html" class="sheet-card">مقالات</a>
-      <a href="editions.html" class="sheet-card">إصداراتنا</a>
-      <a href="activities.html" class="sheet-card">أنشطتنا</a>
-      <a href="live.html" class="sheet-card">بث مباشر</a>
+      <a href="index.html" class="sheet-card" data-t="nav_home">الرئيسية</a>
+      <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
+      <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
+      <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
+      <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
+      <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
+      <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
+      <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
+      <a href="live.html" class="sheet-card" data-t="nav_live">بث مباشر</a>
+      <a href="editorial-board.html" class="sheet-card" data-t="nav_board">هيئة التحرير</a>
     </div>
   </div>
 
   <div class="nav-sheet-section academic-zone">
-    <h3>أكاديمي</h3>
+    <h3 data-t="nav_academic">أكاديمي</h3>
     <div class="nav-sheet-pills">
-      <a href="special-politics.html">علوم سياسية</a>
-      <a href="special-ir.html">العلاقات الدولية</a>
-      <a href="special-admin-law.html">القانون الإداري</a>
-      <a href="special-const-law.html">القانون الدستوري</a>
-      <a href="special-public-policy.html">السياسات العمومية</a>
+      <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+      <a href="special-ir.html" data-t="sp_ir">العلاقات الدولية</a>
+      <a href="special-admin-law.html" data-t="sp_admin_law">القانون الإداري</a>
+      <a href="special-const-law.html" data-t="sp_const_law">القانون الدستوري</a>
+      <a href="special-public-policy.html" data-t="sp_public_policy">السياسات العمومية</a>
     </div>
   </div>
 
   <div class="nav-sheet-footer-links">
-    <a href="rules.html">شروط النشر</a>
-    <a href="contact.html">اتصل بنا</a>
+    <a href="rules.html" data-t="nav_rules">شروط النشر</a>
+    <a href="contact.html" data-t="nav_contact">اتصل بنا</a>
+    <a href="editorial-board.html" data-t="nav_board">هيئة التحرير</a>
   </div>
 
   <div class="nav-sheet-auth">
-    <a href="login.html">تسجيل الدخول</a>
-    <a href="register.html">انضم إلينا</a>
+    <a href="login.html" id="mobileLogin" data-t="nav_login">تسجيل الدخول</a>
+    <a href="register.html" id="mobileRegister" data-t="nav_join">انضم إلينا</a>
   </div>
 </div>
+
 
 <header>
   <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
@@ -963,42 +965,43 @@ img, video {
   <div class="logo" onclick="goToHome()">
     <img src="logo1.png" alt="Logo">
   </div>
+<nav>
+  <ul>
+    <li><a href="index.html" id="navHome">الرئيسية</a></li>
+    <li class="dropdown">
+      <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
+      <div class="dropdown-content">
+        <a href="research.html" id="navResearch">أبحاث محكمة</a>
+        <a href="articles.html" id="navArticles">مقالات محكمة</a>
+        <a href="files.html" id="navFiles">ملفات بحثية</a>
+        <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
+      </div>
+    </li>
+    <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
+    <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
+    <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
+    <li class="dropdown">
+      <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
+      <div class="dropdown-content">
+        <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
+        <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
+        <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
+        <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
+        <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
+      </div>
+    </li>
+    <li><a href="live.html" id="navLive">بث مباشر</a></li>
+    <li><a href="rules.html" id="navRules">شروط النشر</a></li>
+    <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
+    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+  </ul>
 
-  <nav>
-    <ul>
-      <li><a href="index.html">الرئيسية</a></li>
-      <li class="dropdown">
-        <a href="#">أبحاث ودراسات ▾</a>
-        <div class="dropdown-content">
-          <a href="research.html" class="active">أبحاث محكمة</a>
-          <a href="articles.html">مقالات محكمة</a>
-          <a href="files.html">ملفات بحثية</a>
-          <a href="articles-foreign.html">مقالات أجنبية</a>
-        </div>
-      </li>
-      <li><a href="general-articles.html">مقالات</a></li>
-      <li><a href="editions.html">إصداراتنا</a></li>
-      <li><a href="activities.html">أنشطتنا</a></li>
-      <li class="dropdown">
-        <a href="#academic" class="pill-circle">أكاديمي</a>
-        <div class="dropdown-content">
-          <a href="special-politics.html">تخصص علوم سياسية</a>
-          <a href="special-ir.html">تخصص العلاقات الدولية</a>
-          <a href="special-admin-law.html">تخصص القانون الإداري</a>
-          <a href="special-const-law.html">تخصص القانون الدستوري</a>
-          <a href="special-public-policy.html">تخصص السياسات العمومية</a>
-        </div>
-      </li>
-      <li><a href="live.html">بث مباشر</a></li>
-      <li><a href="rules.html">شروط النشر</a></li>
-      <li><a href="contact.html">اتصل بنا</a></li>
-    </ul>
+  <form class="nav-search" onsubmit="doSearch(event)">
+    <input type="search" id="navSearchInput" placeholder="ابحث..." />
+    <span>🔍</span>
+  </form>
+</nav>
 
-    <form class="nav-search" onsubmit="doSearch(event)">
-      <input type="search" id="navSearchInput" placeholder="ابحث..." />
-      <span>🔍</span>
-    </form>
-  </nav>
 
   <div class="actions">
     <div class="lang-wrapper">

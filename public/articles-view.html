@@ -274,283 +274,286 @@
       color:#111;
     }
 
-    #menu-btn{
-      display:none;
-      width:42px;
-      height:42px;
-      border-radius:999px;
-      border:none;
-      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-      cursor:pointer;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      overflow:hidden;
-      box-shadow:0 4px 14px rgba(0,155,196,0.4);
-    }
+  #menu-btn{
+  display:none;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:none;
+  background:rgba(0,155,196,0.22);
+  color:var(--primary-dark);
+  font-size:20px;
+  cursor:pointer;
+  align-items:center;
+  justify-content:center;
+}
 
-    #menu-btn span{
-      position:absolute;
-      width:22px;
-      height:2px;
-      background:#ffffff;
-      border-radius:999px;
-      transition:0.25s ease;
-      left:50%;
-      transform:translateX(-50%);
-    }
+.nav-sheet-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s ease;
+  z-index:1498;
+}
 
-    #menu-btn span:nth-child(1){ top:13px; }
-    #menu-btn span:nth-child(2){ top:20px; }
-    #menu-btn span:nth-child(3){ top:27px; }
+.nav-sheet-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
 
-    #menu-btn.open span:nth-child(1){
-      top:20px;
-      transform:translateX(-50%) rotate(45deg);
-    }
+.nav-sheet{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  max-height:92vh;
+  background:#fff;
+  border-radius:24px 24px 0 0;
+  box-shadow:0 -10px 35px rgba(0,0,0,0.18);
+  padding:12px;
+  overflow-y:auto;
+  transform:translateY(110%);
+  transition:transform .28s ease;
+  z-index:1499;
+}
 
-    #menu-btn.open span:nth-child(2){ opacity:0; }
+.nav-sheet.show{
+  transform:translateY(0);
+}
 
-    #menu-btn.open span:nth-child(3){
-      top:20px;
-      transform:translateX(-50%) rotate(-45deg);
-    }
+.nav-sheet-handle{
+  width:54px;
+  height:6px;
+  border-radius:999px;
+  background:#cbd5e1;
+  margin:0 auto 10px;
+}
 
-    .nav-sheet-overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.45);
-      opacity:0;
-      pointer-events:none;
-      transition:.25s ease;
-      z-index:1498;
-    }
+.nav-sheet-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:10px;
+}
 
-    .nav-sheet-overlay.show{
-      opacity:1;
-      pointer-events:auto;
-    }
+.nav-sheet-brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
 
-    .nav-sheet{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      width:100%;
-      max-height:92vh;
-      background:#fff;
-      border-radius:24px 24px 0 0;
-      box-shadow:0 -10px 35px rgba(0,0,0,0.18);
-      padding:12px;
-      overflow-y:auto;
-      transform:translateY(110%);
-      transition:transform .28s ease;
-      z-index:1499;
-    }
+.nav-sheet-brand img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+  border-radius:14px;
+  background:#fff;
+  padding:4px;
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
 
-    .nav-sheet.show{
-      transform:translateY(0);
-    }
+.nav-sheet-brand strong{
+  display:block;
+  color:#0f172a;
+  font-size:14px;
+}
 
-    .nav-sheet-handle{
-      width:54px;
-      height:6px;
-      border-radius:999px;
-      background:#cbd5e1;
-      margin:0 auto 10px;
-    }
+.nav-sheet-brand span{
+  display:block;
+  color:#64748b;
+  font-size:11px;
+}
 
-    .nav-sheet-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      margin-bottom:10px;
-    }
+.nav-sheet-close{
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:50%;
+  background:#eef6f8;
+  color:#0f4f65;
+  font-size:16px;
+  cursor:pointer;
+}
 
-    .nav-sheet-brand{
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
+.nav-sheet-search{
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
+}
 
-    .nav-sheet-brand img{
-      width:44px;
-      height:44px;
-      object-fit:contain;
-      border-radius:14px;
-      background:#fff;
-      padding:4px;
-      box-shadow:0 6px 16px rgba(0,0,0,.06);
-    }
+.nav-sheet-search input{
+  flex:1;
+  border:none;
+  outline:none;
+  background:#fff;
+  border-radius:14px;
+  padding:11px 12px;
+  box-shadow:inset 0 0 0 1px #e2e8f0;
+  font-family:inherit;
+  font-size:14px;
+}
 
-    .nav-sheet-brand strong{
-      display:block;
-      color:#0f172a;
-      font-size:14px;
-    }
+.nav-sheet-search button{
+  border:none;
+  min-width:44px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  cursor:pointer;
+}
 
-    .nav-sheet-brand span{
-      display:block;
-      color:#64748b;
-      font-size:11px;
-    }
+.nav-sheet-mini-tools{
+  display:flex;
+  gap:6px;
+  margin-bottom:12px;
+}
 
-    .nav-sheet-close{
-      width:38px;
-      height:38px;
-      border:none;
-      border-radius:50%;
-      background:#eef6f8;
-      color:#0f4f65;
-      font-size:16px;
-      cursor:pointer;
-    }
+.sheet-tool{
+  border:none;
+  padding:8px 10px;
+  border-radius:999px;
+  background:#ffffff;
+  box-shadow:inset 0 0 0 1px #e2e8f0;
+  color:#0f4f65;
+  font-weight:800;
+  cursor:pointer;
+  font-size:12px;
+}
 
-    .nav-sheet-search{
-      display:flex;
-      gap:6px;
-      margin-bottom:10px;
-    }
+.nav-sheet-section{
+  margin-bottom:12px;
+}
 
-    .nav-sheet-search input{
-      flex:1;
-      border:none;
-      outline:none;
-      background:#fff;
-      border-radius:14px;
-      padding:11px 12px;
-      box-shadow:inset 0 0 0 1px #e2e8f0;
-      font-family:inherit;
-      font-size:14px;
-    }
+.nav-sheet-section h3{
+  font-size:13px;
+  color:#0f172a;
+  margin-bottom:8px;
+}
 
-    .nav-sheet-search button{
-      border:none;
-      min-width:44px;
-      border-radius:14px;
-      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-      color:#fff;
-      cursor:pointer;
-    }
+.nav-sheet-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
 
-    .nav-sheet-mini-tools{
-      display:flex;
-      gap:6px;
-      margin-bottom:12px;
-    }
+.sheet-card{
+  text-decoration:none;
+  text-align:center;
+  background:#fff;
+  color:#12313c;
+  border:1px solid #e7edf1;
+  border-radius:16px;
+  padding:14px 8px;
+  font-weight:800;
+  box-shadow:0 8px 22px rgba(15,23,42,.04);
+  font-size:14px;
+  line-height:1.3;
+}
 
-    .sheet-tool{
-      border:none;
-      padding:8px 10px;
-      border-radius:999px;
-      background:#ffffff;
-      box-shadow:inset 0 0 0 1px #e2e8f0;
-      color:#0f4f65;
-      font-weight:800;
-      cursor:pointer;
-      font-size:12px;
-    }
+.academic-zone{
+  background:linear-gradient(135deg,#fff8df,#fffdf5);
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:20px;
+  padding:10px;
+}
 
-    .nav-sheet-section{
-      margin-bottom:12px;
-    }
+.nav-sheet-pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
 
-    .nav-sheet-section h3{
-      font-size:13px;
-      color:#0f172a;
-      margin-bottom:8px;
-    }
+.nav-sheet-pills a{
+  text-decoration:none;
+  color:#5d4700;
+  background:#fff;
+  border:1px solid rgba(212,175,55,.24);
+  border-radius:999px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:800;
+}
 
-    .nav-sheet-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:8px;
-    }
+.nav-sheet-footer-links{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
 
-    .sheet-card{
-      text-decoration:none;
-      text-align:center;
-      background:#fff;
-      color:#12313c;
-      border:1px solid #e7edf1;
-      border-radius:16px;
-      padding:14px 8px;
-      font-weight:800;
-      box-shadow:0 8px 22px rgba(15,23,42,.04);
-      font-size:14px;
-      line-height:1.3;
-    }
+.nav-sheet-footer-links a{
+  flex:1;
+  text-decoration:none;
+  text-align:center;
+  background:#fff;
+  color:#475569;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:10px 8px;
+  font-weight:700;
+  font-size:13px;
+}
 
-    .academic-zone{
-      background:linear-gradient(135deg,#fff8df,#fffdf5);
-      border:1px solid rgba(212,175,55,.22);
-      border-radius:20px;
-      padding:10px;
-    }
+.nav-sheet-auth{
+  display:flex;
+  gap:8px;
+}
 
-    .nav-sheet-pills{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-    }
+.nav-sheet-auth a{
+  flex:1;
+  text-decoration:none;
+  text-align:center;
+  border-radius:16px;
+  padding:12px 10px;
+  font-weight:800;
+  font-size:14px;
+}
 
-    .nav-sheet-pills a{
-      text-decoration:none;
-      color:#5d4700;
-      background:#fff;
-      border:1px solid rgba(212,175,55,.24);
-      border-radius:999px;
-      padding:8px 10px;
-      font-size:12px;
-      font-weight:800;
-    }
+.nav-sheet-auth a:first-child{
+  background:#fff;
+  color:#0f4f65;
+  border:1px solid #dbe5ea;
+}
 
-    .nav-sheet-footer-links{
-      display:flex;
-      gap:8px;
-      margin-bottom:12px;
-    }
+.nav-sheet-auth a:last-child{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  box-shadow:0 12px 24px rgba(0,155,196,.22);
+}
 
-    .nav-sheet-footer-links a{
-      flex:1;
-      text-decoration:none;
-      text-align:center;
-      background:#fff;
-      color:#475569;
-      border:1px solid #e2e8f0;
-      border-radius:14px;
-      padding:10px 8px;
-      font-weight:700;
-      font-size:13px;
-    }
+@media(max-width:980px){
+  nav{display:none;}
+  .actions{display:none;}
+  #menu-btn{
+    display:flex;
+    order:-1;
+  }
+  header{justify-content:center;}
+  .logo{margin-inline:auto;}
+}
 
-    .nav-sheet-auth{
-      display:flex;
-      gap:8px;
-    }
+@media(max-width:480px){
+  .nav-sheet-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:6px;
+  }
 
-    .nav-sheet-auth a{
-      flex:1;
-      text-decoration:none;
-      text-align:center;
-      border-radius:16px;
-      padding:12px 10px;
-      font-weight:800;
-      font-size:14px;
-    }
+  .sheet-card{
+    padding:12px 6px;
+    font-size:13px;
+  }
+}
 
-    .nav-sheet-auth a:first-child{
-      background:#fff;
-      color:#0f4f65;
-      border:1px solid #dbe5ea;
-    }
+@media(min-width:981px){
+  .nav-sheet,
+  .nav-sheet-overlay{
+    display:none;
+  }
+}
 
-    .nav-sheet-auth a:last-child{
-      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-      color:#fff;
-      box-shadow:0 12px 24px rgba(0,155,196,.22);
-    }
 
     .page-shell{
       max-width:1280px;
@@ -873,7 +876,6 @@
   </style>
 </head>
 <body>
-
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
 <div class="nav-sheet" id="mobileMenu">
@@ -883,60 +885,63 @@
     <div class="nav-sheet-brand">
       <img src="logo1.png" alt="Logo">
       <div>
-        <strong>أفق</strong>
-        <span>منصة أكاديمية حديثة</span>
+        <strong data-t="brand_name">أفق</strong>
+        <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
       </div>
     </div>
     <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
   </div>
 
   <form class="nav-sheet-search" onsubmit="doSearch(event)">
-    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." />
+    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
     <button type="submit">🔍</button>
   </form>
 
   <div class="nav-sheet-mini-tools">
-    <button class="sheet-tool" type="button" onclick="switchLang('ar')">AR</button>
-    <button class="sheet-tool" type="button" onclick="switchLang('en')">EN</button>
-    <button class="sheet-tool" type="button" onclick="switchLang('fr')">FR</button>
+    <button class="sheet-tool" type="button" onclick="setLang('ar')">AR</button>
+    <button class="sheet-tool" type="button" onclick="setLang('en')">EN</button>
+    <button class="sheet-tool" type="button" onclick="setLang('fr')">FR</button>
   </div>
 
   <div class="nav-sheet-section">
-    <h3>اكتشف</h3>
+    <h3 data-t="mobile_discover">اكتشف</h3>
     <div class="nav-sheet-grid">
-      <a href="index.html" class="sheet-card">الرئيسية</a>
-      <a href="research.html" class="sheet-card">أبحاث محكمة</a>
-      <a href="articles.html" class="sheet-card">مقالات محكمة</a>
-      <a href="files.html" class="sheet-card">ملفات بحثية</a>
-      <a href="articles-foreign.html" class="sheet-card">مقالات أجنبية</a>
-      <a href="general-articles.html" class="sheet-card">مقالات</a>
-      <a href="editions.html" class="sheet-card">إصداراتنا</a>
-      <a href="activities.html" class="sheet-card">أنشطتنا</a>
-      <a href="live.html" class="sheet-card">بث مباشر</a>
+      <a href="index.html" class="sheet-card" data-t="nav_home">الرئيسية</a>
+      <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
+      <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
+      <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
+      <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
+      <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
+      <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
+      <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
+      <a href="live.html" class="sheet-card" data-t="nav_live">بث مباشر</a>
+      <a href="editorial-board.html" class="sheet-card" data-t="nav_board">هيئة التحرير</a>
     </div>
   </div>
 
   <div class="nav-sheet-section academic-zone">
-    <h3>أكاديمي</h3>
+    <h3 data-t="nav_academic">أكاديمي</h3>
     <div class="nav-sheet-pills">
-      <a href="special-politics.html">علوم سياسية</a>
-      <a href="special-ir.html">العلاقات الدولية</a>
-      <a href="special-admin-law.html">القانون الإداري</a>
-      <a href="special-const-law.html">القانون الدستوري</a>
-      <a href="special-public-policy.html">السياسات العمومية</a>
+      <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+      <a href="special-ir.html" data-t="sp_ir">العلاقات الدولية</a>
+      <a href="special-admin-law.html" data-t="sp_admin_law">القانون الإداري</a>
+      <a href="special-const-law.html" data-t="sp_const_law">القانون الدستوري</a>
+      <a href="special-public-policy.html" data-t="sp_public_policy">السياسات العمومية</a>
     </div>
   </div>
 
   <div class="nav-sheet-footer-links">
-    <a href="rules.html">شروط النشر</a>
-    <a href="contact.html">اتصل بنا</a>
+    <a href="rules.html" data-t="nav_rules">شروط النشر</a>
+    <a href="contact.html" data-t="nav_contact">اتصل بنا</a>
+    <a href="editorial-board.html" data-t="nav_board">هيئة التحرير</a>
   </div>
 
   <div class="nav-sheet-auth">
-    <a href="login.html">تسجيل الدخول</a>
-    <a href="register.html">انضم إلينا</a>
+    <a href="login.html" id="mobileLogin" data-t="nav_login">تسجيل الدخول</a>
+    <a href="register.html" id="mobileRegister" data-t="nav_join">انضم إلينا</a>
   </div>
 </div>
+
 
 <header>
   <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
@@ -947,41 +952,43 @@
     <img src="logo1.png" alt="Logo">
   </div>
 
-  <nav>
-    <ul>
-      <li><a href="index.html">الرئيسية</a></li>
-      <li class="dropdown">
-        <a href="#">أبحاث ودراسات ▾</a>
-        <div class="dropdown-content">
-          <a href="research.html">أبحاث محكمة</a>
-          <a href="articles.html" class="active">مقالات محكمة</a>
-          <a href="files.html">ملفات بحثية</a>
-          <a href="articles-foreign.html">مقالات أجنبية</a>
-        </div>
-      </li>
-      <li><a href="general-articles.html">مقالات</a></li>
-      <li><a href="editions.html">إصداراتنا</a></li>
-      <li><a href="activities.html">أنشطتنا</a></li>
-      <li class="dropdown">
-        <a href="#academic" class="pill-circle">أكاديمي</a>
-        <div class="dropdown-content">
-          <a href="special-politics.html">تخصص علوم سياسية</a>
-          <a href="special-ir.html">تخصص العلاقات الدولية</a>
-          <a href="special-admin-law.html">تخصص القانون الإداري</a>
-          <a href="special-const-law.html">تخصص القانون الدستوري</a>
-          <a href="special-public-policy.html">تخصص السياسات العمومية</a>
-        </div>
-      </li>
-      <li><a href="live.html">بث مباشر</a></li>
-      <li><a href="rules.html">شروط النشر</a></li>
-      <li><a href="contact.html">اتصل بنا</a></li>
-    </ul>
+<nav>
+  <ul>
+    <li><a href="index.html" id="navHome">الرئيسية</a></li>
+    <li class="dropdown">
+      <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
+      <div class="dropdown-content">
+        <a href="research.html" id="navResearch">أبحاث محكمة</a>
+        <a href="articles.html" id="navArticles">مقالات محكمة</a>
+        <a href="files.html" id="navFiles">ملفات بحثية</a>
+        <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
+      </div>
+    </li>
+    <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
+    <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
+    <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
+    <li class="dropdown">
+      <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
+      <div class="dropdown-content">
+        <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
+        <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
+        <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
+        <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
+        <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
+      </div>
+    </li>
+    <li><a href="live.html" id="navLive">بث مباشر</a></li>
+    <li><a href="rules.html" id="navRules">شروط النشر</a></li>
+    <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
+    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+  </ul>
 
-    <form class="nav-search" onsubmit="doSearch(event)">
-      <input type="search" id="navSearchInput" placeholder="ابحث..." />
-      <span>🔍</span>
-    </form>
-  </nav>
+  <form class="nav-search" onsubmit="doSearch(event)">
+    <input type="search" id="navSearchInput" placeholder="ابحث..." />
+    <span>🔍</span>
+  </form>
+</nav>
+
 
   <div class="actions">
     <div class="lang-wrapper">

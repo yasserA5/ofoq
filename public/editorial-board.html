@@ -1,115 +1,1406 @@
-<section class="board-section">
-  <div class="section-head">
-    <span class="mini-badge">هيئة التحرير</span>
-    <h2>المدير</h2>
-    <p>الهيئة العلمية والتحريرية لمنصة أفق أكاديمي.</p>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title id="t-title">Ofouq Academy | هيئة التحرير</title>
+  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#009bc4;
+      --primary-dark:#00667f;
+      --primary-soft:#e5f6f9;
+      --nav-bg:#e7f5f8;
+      --text-main:#23424b;
+      --gold:#d4af37;
+      --bg:#f5f8fb;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --muted:#6b7280;
+      --text:#0f172a;
+      --shadow:0 10px 30px rgba(15,23,42,0.08);
+      --shadow-lg:0 20px 50px rgba(15,23,42,0.12);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html,body{
+      width:100%;
+      overflow-x:hidden;
+    }
+
+    body{
+      font-family:"Tajawal",sans-serif;
+      background:linear-gradient(180deg,#f8fbfd 0%, #eef7fa 100%);
+      color:var(--text);
+      line-height:1.9;
+      direction:rtl;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+
+    header{
+      padding:10px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:var(--nav-bg);
+      box-shadow:0 2px 18px rgba(0,0,0,0.07);
+      position:sticky;
+      top:0;
+      z-index:1500;
+      gap:14px;
+    }
+
+    .logo{
+      flex:0 0 auto;
+      display:flex;
+      cursor:pointer;
+      justify-content:center;
+    }
+
+    .logo img{
+      width:clamp(60px,12vw,85px);
+      height:auto;
+      transition:transform .2s;
+    }
+
+    .logo img:hover{
+      transform:scale(1.05);
+    }
+
+    nav{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    nav ul{
+      list-style:none;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+    }
+
+    nav li{ position:relative; }
+
+    nav a{
+      text-decoration:none;
+      color:var(--text-main);
+      font-size:13px;
+      font-weight:600;
+      padding:4px 2px;
+      transition:.2s;
+      position:relative;
+    }
+
+    nav a:hover,
+    nav a.active{
+      color:var(--primary);
+    }
+
+    nav a.active::after,
+    nav a:hover::after{
+      content:"";
+      position:absolute;
+      bottom:-2px;
+      inset-inline-start:0;
+      width:100%;
+      height:2px;
+      background:var(--primary);
+      border-radius:999px;
+    }
+
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:8px 0;
+      border-radius:10px;
+      min-width:210px;
+      border:1px solid #e5e7eb;
+      z-index:1000;
+    }
+
+    .dropdown-content a{
+      display:block;
+      padding:8px 16px;
+      color:var(--text-main);
+      white-space:nowrap;
+      font-size:13px;
+    }
+
+    .dropdown-content a:hover{
+      background:#f1fbff;
+      color:var(--primary);
+    }
+
+    .dropdown:hover .dropdown-content{
+      display:block;
+    }
+
+    .nav-search{
+      flex:0 0 170px;
+      position:relative;
+      display:flex;
+      align-items:center;
+    }
+
+    .nav-search input{
+      width:100%;
+      padding:6px 28px 6px 10px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      font-size:11px;
+      outline:none;
+      background:#fff;
+      font-family:inherit;
+    }
+
+    .nav-search span{
+      position:absolute;
+      left:8px;
+      font-size:13px;
+      color:#9ca3af;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .btn{
+      padding:6px 12px;
+      border-radius:26px;
+      border:2px solid rgba(0,155,196,0.45);
+      background:rgba(0,155,196,0.06);
+      cursor:pointer;
+      font-weight:700;
+      font-size:11px;
+      transition:.2s;
+      color:var(--primary-dark);
+      white-space:nowrap;
+      font-family:inherit;
+    }
+
+    .btn:hover{
+      background:rgba(0,155,196,0.12);
+    }
+
+    .btn.primary{
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      border:none;
+      box-shadow:0 3px 12px rgba(0,155,196,0.25);
+    }
+
+    .lang-wrapper{ position:relative; }
+
+    .lang-toggle{
+      border:none;
+      background:#ffffff;
+      border-radius:999px;
+      padding:6px 12px;
+      font-size:12px;
+      cursor:pointer;
+      color:var(--primary-dark);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-weight:600;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      font-family:inherit;
+    }
+
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      border-radius:12px;
+      min-width:130px;
+      border:1px solid #e2e8f0;
+      display:none;
+      z-index:1200;
+      overflow:hidden;
+    }
+
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:10px 14px;
+      text-align:right;
+      font-size:12px;
+      cursor:pointer;
+      font-weight:500;
+      font-family:inherit;
+    }
+
+    .lang-menu button:hover{
+      background:#f1f5f9;
+      color:var(--primary);
+    }
+
+    .pill-circle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 18px;
+      border-radius:999px;
+      background:var(--gold);
+      color:#111;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
+    }
+
+    .pill-circle::before{
+      content:"●";
+      font-size:9px;
+      margin-left:6px;
+      color:#111;
+    }
+
+    #menu-btn{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:999px;
+      border:none;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 4px 14px rgba(0,155,196,0.4);
+    }
+
+    #menu-btn span{
+      position:absolute;
+      width:22px;
+      height:2px;
+      background:#ffffff;
+      border-radius:999px;
+      transition:0.25s ease;
+      left:50%;
+      transform:translateX(-50%);
+    }
+
+    #menu-btn span:nth-child(1){ top:13px; }
+    #menu-btn span:nth-child(2){ top:20px; }
+    #menu-btn span:nth-child(3){ top:27px; }
+
+    #menu-btn.open span:nth-child(1){
+      top:20px;
+      transform:translateX(-50%) rotate(45deg);
+    }
+
+    #menu-btn.open span:nth-child(2){ opacity:0; }
+
+    #menu-btn.open span:nth-child(3){
+      top:20px;
+      transform:translateX(-50%) rotate(-45deg);
+    }
+
+    .nav-sheet-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:1498;
+    }
+
+    .nav-sheet-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .nav-sheet{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      width:100%;
+      max-height:92vh;
+      background:#fff;
+      border-radius:24px 24px 0 0;
+      box-shadow:0 -10px 35px rgba(0,0,0,0.18);
+      padding:12px;
+      overflow-y:auto;
+      transform:translateY(110%);
+      transition:transform .28s ease;
+      z-index:1499;
+    }
+
+    .nav-sheet.show{
+      transform:translateY(0);
+    }
+
+    .nav-sheet-handle{
+      width:54px;
+      height:6px;
+      border-radius:999px;
+      background:#cbd5e1;
+      margin:0 auto 10px;
+    }
+
+    .nav-sheet-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .nav-sheet-brand{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .nav-sheet-brand img{
+      width:44px;
+      height:44px;
+      object-fit:contain;
+      border-radius:14px;
+      background:#fff;
+      padding:4px;
+      box-shadow:0 6px 16px rgba(0,0,0,.06);
+    }
+
+    .nav-sheet-brand strong{
+      display:block;
+      color:#0f172a;
+      font-size:14px;
+    }
+
+    .nav-sheet-brand span{
+      display:block;
+      color:#64748b;
+      font-size:11px;
+    }
+
+    .nav-sheet-close{
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:50%;
+      background:#eef6f8;
+      color:#0f4f65;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .nav-sheet-search{
+      display:flex;
+      gap:6px;
+      margin-bottom:10px;
+    }
+
+    .nav-sheet-search input{
+      flex:1;
+      border:none;
+      outline:none;
+      background:#fff;
+      border-radius:14px;
+      padding:11px 12px;
+      box-shadow:inset 0 0 0 1px #e2e8f0;
+      font-family:inherit;
+      font-size:14px;
+    }
+
+    .nav-sheet-search button{
+      border:none;
+      min-width:44px;
+      border-radius:14px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      cursor:pointer;
+    }
+
+    .nav-sheet-mini-tools{
+      display:flex;
+      gap:6px;
+      margin-bottom:12px;
+    }
+
+    .sheet-tool{
+      border:none;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#ffffff;
+      box-shadow:inset 0 0 0 1px #e2e8f0;
+      color:#0f4f65;
+      font-weight:800;
+      cursor:pointer;
+      font-size:12px;
+    }
+
+    .nav-sheet-section{
+      margin-bottom:12px;
+    }
+
+    .nav-sheet-section h3{
+      font-size:13px;
+      color:#0f172a;
+      margin-bottom:8px;
+    }
+
+    .nav-sheet-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .sheet-card{
+      text-decoration:none;
+      text-align:center;
+      background:#fff;
+      color:#12313c;
+      border:1px solid #e7edf1;
+      border-radius:16px;
+      padding:14px 8px;
+      font-weight:800;
+      box-shadow:0 8px 22px rgba(15,23,42,.04);
+      font-size:14px;
+      line-height:1.3;
+    }
+
+    .academic-zone{
+      background:linear-gradient(135deg,#fff8df,#fffdf5);
+      border:1px solid rgba(212,175,55,.22);
+      border-radius:20px;
+      padding:10px;
+    }
+
+    .nav-sheet-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+
+    .nav-sheet-pills a{
+      text-decoration:none;
+      color:#5d4700;
+      background:#fff;
+      border:1px solid rgba(212,175,55,.24);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .nav-sheet-footer-links{
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .nav-sheet-footer-links a{
+      flex:1;
+      text-decoration:none;
+      text-align:center;
+      background:#fff;
+      color:#475569;
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      padding:10px 8px;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .nav-sheet-auth{
+      display:flex;
+      gap:8px;
+    }
+
+    .nav-sheet-auth a{
+      flex:1;
+      text-decoration:none;
+      text-align:center;
+      border-radius:16px;
+      padding:12px 10px;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .nav-sheet-auth a:first-child{
+      background:#fff;
+      color:#0f4f65;
+      border:1px solid #dbe5ea;
+    }
+
+    .nav-sheet-auth a:last-child{
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      box-shadow:0 12px 24px rgba(0,155,196,.22);
+    }
+
+    .page-shell{
+      max-width:1280px;
+      margin:0 auto;
+      padding:24px 16px 40px;
+    }
+
+    .hero-board{
+      background:linear-gradient(135deg,#f6fbff,var(--primary-soft));
+      border:1px solid #d7edf4;
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:24px;
+      margin-bottom:22px;
+    }
+
+    .board-type-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#dff4fb;
+      color:var(--primary-dark);
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .hero-board h1{
+      font-size:clamp(24px,5vw,38px);
+      line-height:1.5;
+      color:#073b4c;
+      margin-bottom:10px;
+      font-weight:800;
+    }
+
+    .hero-desc{
+      color:#4b5563;
+      font-size:15px;
+      max-width:900px;
+    }
+
+    .board-section{
+      margin-bottom:26px;
+    }
+
+    .section-head{
+      margin-bottom:16px;
+    }
+
+    .section-head h2{
+      font-size:24px;
+      color:#0f172a;
+      margin-bottom:6px;
+    }
+
+    .section-head p{
+      color:#64748b;
+      font-size:15px;
+    }
+
+    .leader-card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow-lg);
+      padding:24px;
+      display:flex;
+      gap:18px;
+      align-items:center;
+    }
+
+    .members-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+    }
+
+    .member-card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      padding:20px;
+      transition:.2s ease;
+    }
+
+    .member-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 20px 40px rgba(15,23,42,0.12);
+    }
+
+    .member-avatar{
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      font-weight:800;
+      font-size:18px;
+      margin-bottom:14px;
+      flex:0 0 auto;
+    }
+
+    .leader-card .member-avatar{
+      margin-bottom:0;
+    }
+
+    .member-content h3,
+    .member-card h3{
+      color:#0f172a;
+      font-size:20px;
+      margin-bottom:6px;
+      line-height:1.6;
+    }
+
+    .member-role{
+      display:inline-block;
+      background:#fff8df;
+      color:#7a5a00;
+      border:1px solid rgba(212,175,55,.35);
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .member-card p,
+    .member-content p{
+      color:#334155;
+      font-size:15px;
+      margin-bottom:8px;
+      line-height:1.9;
+    }
+
+    .member-meta{
+      color:#64748b;
+      font-size:14px;
+      line-height:1.8;
+    }
+
+    .note-box{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      font-size:14px;
+      color:#1e40af;
+    }
+
+    @media(max-width:1100px){
+      .nav-search{display:none;}
+    }
+
+    @media(max-width:980px){
+      nav{display:none;}
+      .actions{display:none;}
+      #menu-btn{
+        display:flex;
+        order:-1;
+      }
+      header{
+        justify-content:space-between;
+      }
+      .logo{
+        margin-inline:auto;
+      }
+    }
+
+    @media(max-width:700px){
+      .page-shell{
+        padding:16px 12px 32px;
+      }
+
+      .hero-board{
+        padding:18px;
+        border-radius:20px;
+      }
+
+      .leader-card{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .nav-sheet-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:6px;
+      }
+
+      .sheet-card{
+        padding:12px 6px;
+        font-size:13px;
+      }
+    }
+
+    @media(min-width:981px){
+      .nav-sheet,
+      .nav-sheet-overlay{
+        display:none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
+
+<div class="nav-sheet" id="mobileMenu">
+  <div class="nav-sheet-handle"></div>
+
+  <div class="nav-sheet-top">
+    <div class="nav-sheet-brand">
+      <img src="logo1.png" alt="Logo">
+      <div>
+        <strong id="mobileBrandTitle">أفق</strong>
+        <span id="mobileBrandSub">منصة أكاديمية حديثة</span>
+      </div>
+    </div>
+    <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
   </div>
 
-  <div class="leader-card">
-    <div class="member-avatar">KR</div>
-    <div class="member-content">
-      <h3>كريم رصمي</h3>
-      <div class="member-role">المدير</div>
-      <p>دكتوراه في القانون العام و العلوم السياسية</p>
-      <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
+  <form class="nav-sheet-search" onsubmit="doSearch(event)">
+    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." />
+    <button type="submit">🔍</button>
+  </form>
+
+  <div class="nav-sheet-mini-tools">
+    <button class="sheet-tool" type="button" onclick="switchLang('ar')">AR</button>
+    <button class="sheet-tool" type="button" onclick="switchLang('en')">EN</button>
+    <button class="sheet-tool" type="button" onclick="switchLang('fr')">FR</button>
+  </div>
+
+  <div class="nav-sheet-section">
+    <h3 id="mobileDiscoverTitle">اكتشف</h3>
+    <div class="nav-sheet-grid">
+      <a href="index.html" class="sheet-card" id="mHome">الرئيسية</a>
+      <a href="research.html" class="sheet-card" id="mResearch">أبحاث محكمة</a>
+      <a href="articles.html" class="sheet-card" id="mArticles">مقالات محكمة</a>
+      <a href="files.html" class="sheet-card" id="mFiles">ملفات بحثية</a>
+      <a href="articles-foreign.html" class="sheet-card" id="mForeign">مقالات أجنبية</a>
+      <a href="general-articles.html" class="sheet-card" id="mGeneral">مقالات</a>
+      <a href="editions.html" class="sheet-card" id="mEditions">إصداراتنا</a>
+      <a href="activities.html" class="sheet-card" id="mActivities">أنشطتنا</a>
+      <a href="editorial-board.html" class="sheet-card" id="mBoard">هيئة التحرير</a>
+      <a href="live.html" class="sheet-card" id="mLive">بث مباشر</a>
     </div>
   </div>
-</section>
 
-<section class="board-section">
-  <div class="section-head">
-    <span class="mini-badge">Editorial Board</span>
-    <h2>أعضاء التحرير</h2>
-    <p>أعضاء الهيئة كما وردوا في الملف المرفق.</p>
+  <div class="nav-sheet-section academic-zone">
+    <h3 id="mobileAcademicTitle">أكاديمي</h3>
+    <div class="nav-sheet-pills">
+      <a href="special-politics.html" id="mPol">علوم سياسية</a>
+      <a href="special-ir.html" id="mIr">العلاقات الدولية</a>
+      <a href="special-admin-law.html" id="mAdmin">القانون الإداري</a>
+      <a href="special-const-law.html" id="mConst">القانون الدستوري</a>
+      <a href="special-public-policy.html" id="mPolicy">السياسات العمومية</a>
+    </div>
   </div>
 
-  <div class="members-grid">
-    <article class="member-card">
-      <div class="member-avatar">AF</div>
-      <h3>عبد العلي الفياللي</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>أستاذ القانون العام</p>
-      <div class="member-meta">الكلية متعددة التخصصات الراشيدية - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">AA</div>
-      <h3>عبد العزيز اقاللوش</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>أستاذ القانون العام</p>
-      <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">MQ</div>
-      <h3>المصطفى قريشي</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>أستاذ القانون العام</p>
-      <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">EB</div>
-      <h3>الهام بخوشي</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>أستاذ القانون العام</p>
-      <div class="member-meta">الكلية متعددة التخصصات الراشيدية - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">RM</div>
-      <h3>رقية محمود مهدي المغربي</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>دكتوراه في القانون العام</p>
-      <div class="member-meta">ليبيا</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">ZH</div>
-      <h3>زكرياء حلوي</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>دكتوراه في القانون العام</p>
-      <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">WN</div>
-      <h3>وفاء الناجي</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>دكتوراه في العلوم القانونية و السياسية</p>
-      <div class="member-meta">كلية العلوم القانونية السويسي - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">MM</div>
-      <h3>محمد مرعي بن عبد المنعم</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>دكتوراه في إدارة الأعمال</p>
-      <div class="member-meta">سوريا</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">HB</div>
-      <h3>الحسين بزات</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>دكتوراه في الطب</p>
-      <div class="member-meta">جامعة محمد الأول بوجدة - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">BA</div>
-      <h3>بنعيسى اشتاتو</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>مختص في القانون العام الداخلي و إنتاج القواعد القانونية</p>
-      <div class="member-meta">جامعة محمد الأول بوجدة - المغرب</div>
-    </article>
-
-    <article class="member-card">
-      <div class="member-avatar">AF</div>
-      <h3>عبد الاله الفتاحي</h3>
-      <div class="member-role">عضو هيئة التحرير</div>
-      <p>دكتوراه في القانون العام و العلوم السياسية</p>
-      <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
-    </article>
+  <div class="nav-sheet-footer-links">
+    <a href="rules.html" id="mRules">شروط النشر</a>
+    <a href="contact.html" id="mContact">اتصل بنا</a>
   </div>
-</section>
+
+  <div class="nav-sheet-auth">
+    <a href="login.html" id="mLogin">تسجيل الدخول</a>
+    <a href="register.html" id="mJoin">انضم إلينا</a>
+  </div>
+</div>
+
+<header>
+  <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="logo" onclick="goToHome()">
+    <img src="logo1.png" alt="Logo">
+  </div>
+
+  <nav>
+  <ul>
+    <li><a href="index.html" id="navHome">الرئيسية</a></li>
+    <li class="dropdown">
+      <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
+      <div class="dropdown-content">
+        <a href="research.html" id="navResearch">أبحاث محكمة</a>
+        <a href="articles.html" id="navArticles">مقالات محكمة</a>
+        <a href="files.html" id="navFiles">ملفات بحثية</a>
+        <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
+      </div>
+    </li>
+    <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
+    <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
+    <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
+    <li class="dropdown">
+      <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
+      <div class="dropdown-content">
+        <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
+        <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
+        <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
+        <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
+        <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
+      </div>
+    </li>
+    <li><a href="live.html" id="navLive">بث مباشر</a></li>
+    <li><a href="rules.html" id="navRules">شروط النشر</a></li>
+    <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
+    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+  </ul>
+
+  <form class="nav-search" onsubmit="doSearch(event)">
+    <input type="search" id="navSearchInput" placeholder="ابحث..." />
+    <span>🔍</span>
+  </form>
+</nav>
+
+
+  <div class="actions">
+    <div class="lang-wrapper">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
+        <span id="langCurrent">AR</span> ▾
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button type="button" onclick="switchLang('ar')">العربية</button>
+        <button type="button" onclick="switchLang('en')">English</button>
+        <button type="button" onclick="switchLang('fr')">Français</button>
+      </div>
+    </div>
+    <button class="btn" onclick="goBack()" id="backBtnText">رجوع</button>
+    <button class="btn primary" onclick="window.print()" id="printBtnText">طباعة</button>
+  </div>
+</header>
+
+<div class="page-shell">
+  <section class="hero-board">
+    <div class="board-type-pill" id="heroPill">هيئة التحرير</div>
+    <h1 id="heroTitle">هيئة التحرير</h1>
+    <p class="hero-desc" id="heroDesc">تعرف على المدير وأعضاء هيئة التحرير المشرفين على العمل العلمي والتحريري داخل منصة أفق أكاديمي.</p>
+  </section>
+
+  <section class="board-section">
+    <div class="section-head">
+      <h2 id="directorSectionTitle">المدير</h2>
+      <p id="directorSectionDesc">الإشراف العلمي والتحريري العام للمنصة.</p>
+    </div>
+
+    <div class="leader-card">
+      <div class="member-avatar">KR</div>
+      <div class="member-content">
+        <h3>كريم رصمي</h3>
+        <div class="member-role" id="directorRole">المدير</div>
+        <p>دكتوراه في القانون العام و العلوم السياسية</p>
+        <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="board-section">
+    <div class="section-head">
+      <h2 id="membersSectionTitle">أعضاء التحرير</h2>
+      <p id="membersSectionDesc">الأسماء والصفات العلمية والمؤسسات كما وردت في الملف المرفق.</p>
+    </div>
+
+    <div class="members-grid">
+      <article class="member-card">
+        <div class="member-avatar">AF</div>
+        <h3>عبد العلي الفياللي</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>أستاذ القانون العام</p>
+        <div class="member-meta">الكلية متعددة التخصصات الراشيدية - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">AA</div>
+        <h3>عبد العزيز اقاللوش</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>أستاذ القانون العام</p>
+        <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">MQ</div>
+        <h3>المصطفى قريشي</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>أستاذ القانون العام</p>
+        <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">EB</div>
+        <h3>الهام بخوشي</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>أستاذ القانون العام</p>
+        <div class="member-meta">الكلية متعددة التخصصات الراشيدية - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">RM</div>
+        <h3>رقية محمود مهدي المغربي</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>دكتوراه في القانون العام</p>
+        <div class="member-meta">ليبيا</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">ZH</div>
+        <h3>زكرياء حلوي</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>دكتوراه في القانون العام</p>
+        <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">WN</div>
+        <h3>وفاء الناجي</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>دكتوراه في العلوم القانونية و السياسية</p>
+        <div class="member-meta">كلية العلوم القانونية السويسي - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">MM</div>
+        <h3>محمد مرعي بن عبد المنعم</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>دكتوراه في إدارة الأعمال</p>
+        <div class="member-meta">سوريا</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">HB</div>
+        <h3>الحسين بزات</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>دكتوراه في الطب</p>
+        <div class="member-meta">جامعة محمد الأول بوجدة - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">BA</div>
+        <h3>بنعيسى اشتاتو</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>مختص في القانون العام الداخلي و إنتاج القواعد القانونية</p>
+        <div class="member-meta">جامعة محمد الأول بوجدة - المغرب</div>
+      </article>
+
+      <article class="member-card">
+        <div class="member-avatar">AF</div>
+        <h3>عبد الاله الفتاحي</h3>
+        <div class="member-role member-role-text">عضو هيئة التحرير</div>
+        <p>دكتوراه في القانون العام و العلوم السياسية</p>
+        <div class="member-meta">الكلية متعددة التخصصات الناظور - المغرب</div>
+      </article>
+    </div>
+
+   
+  </section>
+</div>
+
+<footer style="
+  margin-top: clamp(30px,8vw,40px);
+  padding: clamp(28px,8vw,42px) clamp(18px,5vw,30px);
+  background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
+  color: #ffffff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 -8px 24px rgba(0,155,196,0.18);
+">
+  <div style="
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:4px;
+    background:linear-gradient(90deg, transparent, #d4af37, transparent);
+  "></div>
+
+  <div style="max-width: 1000px; margin: 0 auto; position: relative; z-index: 1;">
+    <div style="
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap:10px 16px;
+      margin-bottom:14px;
+      font-size:clamp(15px,4vw,18px);
+      line-height:1.8;
+    ">
+      <a href="https://ofouqacademie.com" style="
+        color:#ffd86b;
+        text-decoration:none;
+        font-weight:800;
+      ">Ofouq Academie</a>
+
+      <span>© 2026</span>
+
+      <span>by</span>
+
+      <a href="https://github.com/yasserA5" style="
+        color:#ffffff;
+        text-decoration:none;
+        font-weight:700;
+      ">Karim Rasmi</a>
+    </div>
+
+    <div style="
+      margin-bottom:14px;
+      font-size:clamp(13px,3.5vw,15px);
+      color:rgba(255,255,255,0.92);
+      line-height:1.9;
+    ">
+      جميع الحقوق محفوظة – منصتك العلمية<br>
+      مرخص بموجب
+      <a
+        href="https://creativecommons.org/licenses/by-nc/4.0/"
+        rel="license"
+        target="_blank"
+        style="color:#ffe08a; text-decoration:none; font-weight:700;"
+      >
+        Creative Commons Attribution-NonCommercial 4.0 International
+      </a>
+    </div>
+
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      margin-bottom:12px;
+    ">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width:20px;height:20px;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width:20px;height:20px;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width:20px;height:20px;">
+    </div>
+
+    <div style="
+      font-size:12px;
+      color:rgba(255,255,255,0.75);
+      line-height:1.7;
+    ">
+      إلا إذا ذُكر خلاف ذلك | Except where otherwise noted
+    </div>
+  </div>
+</footer>
+
+<script>
+  function goToHome(){
+    window.location.href = 'index.html';
+  }
+
+  function goBack(){
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1){
+      window.history.back();
+    } else {
+      window.location.href = 'index.html';
+    }
+  }
+
+  function toggleMenu(){
+    const menu = document.getElementById("mobileMenu");
+    const overlay = document.getElementById("navSheetOverlay");
+    const btn = document.getElementById("menu-btn");
+    if(!menu || !overlay || !btn) return;
+
+    const isOpen = menu.classList.contains("show");
+    menu.classList.toggle("show", !isOpen);
+    overlay.classList.toggle("show", !isOpen);
+    btn.classList.toggle("open", !isOpen);
+    btn.setAttribute("aria-expanded", String(!isOpen));
+    document.body.style.overflow = !isOpen ? "hidden" : "";
+  }
+
+  function toggleLangMenu(){
+    const menu = document.getElementById("langMenu");
+    if(!menu) return;
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
+
+  document.addEventListener('click', e => {
+    if(!e.target.closest('.lang-wrapper')){
+      const menu = document.getElementById('langMenu');
+      if(menu) menu.style.display = 'none';
+    }
+  });
+
+  function doSearch(e){
+    e.preventDefault();
+    const desktopInput = document.getElementById('navSearchInput');
+    const mobileInput = document.getElementById('navSearchInputMobile');
+    const q = (mobileInput && mobileInput.value.trim()) || (desktopInput && desktopInput.value.trim()) || "";
+    if(!q) return;
+    window.location.href = 'search.html?q=' + encodeURIComponent(q);
+  }
+
+  const uiTexts = {
+    ar: {
+      dir:'rtl',
+      langAttr:'ar',
+      pageTitle:'Ofouq Academy | هيئة التحرير',
+      back:'رجوع',
+      print:'طباعة',
+      heroPill:'هيئة التحرير',
+      heroTitle:'هيئة التحرير',
+      heroDesc:'تعرف على المدير وأعضاء هيئة التحرير المشرفين على العمل العلمي والتحريري داخل منصة أفق أكاديمي.',
+      directorTitle:'المدير',
+      directorDesc:'الإشراف العلمي والتحريري العام للمنصة.',
+      directorRole:'المدير',
+      membersTitle:'أعضاء التحرير',
+      membersDesc:'الأسماء والصفات العلمية والمؤسسات كما وردت في الملف المرفق.',
+      memberRole:'عضو هيئة التحرير',
+      note:'تم إدراج أسماء الهيئة استناداً إلى الملف المرفق، مع تنسيقها بصيغة مناسبة للعرض داخل الموقع.',
+      mobileBrandTitle:'أفق',
+      mobileBrandSub:'منصة أكاديمية حديثة',
+      discover:'اكتشف',
+      academic:'أكاديمي',
+      home:'الرئيسية',
+      research:'أبحاث محكمة',
+      articles:'مقالات محكمة',
+      files:'ملفات بحثية',
+      foreign:'مقالات أجنبية',
+      general:'مقالات',
+      editions:'إصداراتنا',
+      activities:'أنشطتنا',
+      board:'هيئة التحرير',
+      live:'بث مباشر',
+      rules:'شروط النشر',
+      contact:'اتصل بنا',
+      login:'تسجيل الدخول',
+      join:'انضم إلينا',
+      navResearchStudies:'أبحاث ودراسات ▾',
+      navAcademic:'أكاديمي',
+      pol:'علوم سياسية',
+      ir:'العلاقات الدولية',
+      admin:'القانون الإداري',
+      cons:'القانون الدستوري',
+      policy:'السياسات العمومية',
+      navPol:'تخصص علوم سياسية',
+      navIr:'تخصص العلاقات الدولية',
+      navAdmin:'تخصص القانون الإداري',
+      navConst:'تخصص القانون الدستوري',
+      navPolicy:'تخصص السياسات العمومية'
+    },
+    en: {
+      dir:'ltr',
+      langAttr:'en',
+      pageTitle:'Ofouq Academy | Editorial Board',
+      back:'Back',
+      print:'Print',
+      heroPill:'Editorial Board',
+      heroTitle:'Editorial Board',
+      heroDesc:'Meet the director and editorial board members overseeing the academic and editorial work of Ofouq Academy.',
+      directorTitle:'Director',
+      directorDesc:'General academic and editorial supervision of the platform.',
+      directorRole:'Director',
+      membersTitle:'Editorial Members',
+      membersDesc:'Names, academic profiles, and affiliations as listed in the attached file.',
+      memberRole:'Editorial Board Member',
+      note:'The board names were inserted based on the attached file and formatted for website presentation.',
+      mobileBrandTitle:'Ofouq',
+      mobileBrandSub:'A modern academic platform',
+      discover:'Discover',
+      academic:'Academic',
+      home:'Home',
+      research:'Peer-reviewed research',
+      articles:'Peer-reviewed articles',
+      files:'Research files',
+      foreign:'Foreign articles',
+      general:'Articles',
+      editions:'Our editions',
+      activities:'Activities',
+      board:'Editorial board',
+      live:'Live',
+      rules:'Publishing rules',
+      contact:'Contact',
+      login:'Login',
+      join:'Join us',
+      navResearchStudies:'Research & Studies ▾',
+      navAcademic:'Academic',
+      pol:'Political Science',
+      ir:'International Relations',
+      admin:'Administrative Law',
+      cons:'Constitutional Law',
+      policy:'Public Policy',
+      navPol:'Political Science specialization',
+      navIr:'International Relations specialization',
+      navAdmin:'Administrative Law specialization',
+      navConst:'Constitutional Law specialization',
+      navPolicy:'Public Policy specialization'
+    },
+    fr: {
+      dir:'ltr',
+      langAttr:'fr',
+      pageTitle:'Ofouq Academy | Comité éditorial',
+      back:'Retour',
+      print:'Imprimer',
+      heroPill:'Comité éditorial',
+      heroTitle:'Comité éditorial',
+      heroDesc:'Découvrez le directeur et les membres du comité éditorial qui supervisent le travail scientifique et éditorial de la plateforme Ofouq Academy.',
+      directorTitle:'Directeur',
+      directorDesc:'Supervision scientifique et éditoriale générale de la plateforme.',
+      directorRole:'Directeur',
+      membersTitle:'Membres du comité',
+      membersDesc:'Noms, profils académiques et affiliations tels qu’ils figurent dans le fichier joint.',
+      memberRole:'Membre du comité éditorial',
+      note:'Les noms du comité ont été intégrés à partir du fichier joint et formatés pour un affichage web.',
+      mobileBrandTitle:'Ofouq',
+      mobileBrandSub:'Une plateforme académique moderne',
+      discover:'Découvrir',
+      academic:'Académique',
+      home:'Accueil',
+      research:'Recherches évaluées',
+      articles:'Articles évalués',
+      files:'Fichiers de recherche',
+      foreign:'Articles étrangers',
+      general:'Articles',
+      editions:'Nos éditions',
+      activities:'Activités',
+      board:'Comité éditorial',
+      live:'Direct',
+      rules:'Conditions de publication',
+      contact:'Contact',
+      login:'Connexion',
+      join:'Rejoignez-nous',
+      navResearchStudies:'Recherches et études ▾',
+      navAcademic:'Académique',
+      pol:'Science politique',
+      ir:'Relations internationales',
+      admin:'Droit administratif',
+      cons:'Droit constitutionnel',
+      policy:'Politiques publiques',
+      navPol:'Spécialité science politique',
+      navIr:'Spécialité relations internationales',
+      navAdmin:'Spécialité droit administratif',
+      navConst:'Spécialité droit constitutionnel',
+      navPolicy:'Spécialité politiques publiques'
+    }
+  };
+
+  function setText(id, value){
+    const el = document.getElementById(id);
+    if(el) el.textContent = value;
+  }
+
+  function switchLang(lang){
+    localStorage.setItem('uiLang', lang);
+    localStorage.setItem('lang', lang);
+    applyLang(lang);
+    const menu = document.getElementById('langMenu');
+    if(menu) menu.style.display = 'none';
+  }
+
+  function getCurrentLang(){
+    return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
+  }
+
+  function applyLang(lang){
+    const t = uiTexts[lang] || uiTexts.ar;
+    document.documentElement.lang = t.langAttr;
+    document.documentElement.dir = t.dir;
+    document.getElementById('t-title').textContent = t.pageTitle;
+    setText('langCurrent', lang.toUpperCase());
+    setText('backBtnText', t.back);
+    setText('printBtnText', t.print);
+
+    setText('heroPill', t.heroPill);
+    setText('heroTitle', t.heroTitle);
+    setText('heroDesc', t.heroDesc);
+    setText('directorSectionTitle', t.directorTitle);
+    setText('directorSectionDesc', t.directorDesc);
+    setText('directorRole', t.directorRole);
+    setText('membersSectionTitle', t.membersTitle);
+    setText('membersSectionDesc', t.membersDesc);
+    setText('noteBox', t.note);
+
+    document.querySelectorAll('.member-role-text').forEach(el => {
+      el.textContent = t.memberRole;
+    });
+
+    setText('mobileBrandTitle', t.mobileBrandTitle);
+    setText('mobileBrandSub', t.mobileBrandSub);
+    setText('mobileDiscoverTitle', t.discover);
+    setText('mobileAcademicTitle', t.academic);
+
+    setText('mHome', t.home);
+    setText('mResearch', t.research);
+    setText('mArticles', t.articles);
+    setText('mFiles', t.files);
+    setText('mForeign', t.foreign);
+    setText('mGeneral', t.general);
+    setText('mEditions', t.editions);
+    setText('mActivities', t.activities);
+    setText('mBoard', t.board);
+    setText('mLive', t.live);
+    setText('mRules', t.rules);
+    setText('mContact', t.contact);
+    setText('mLogin', t.login);
+    setText('mJoin', t.join);
+    setText('mPol', t.pol);
+    setText('mIr', t.ir);
+    setText('mAdmin', t.admin);
+    setText('mConst', t.cons);
+    setText('mPolicy', t.policy);
+
+    setText('navHome', t.home);
+    setText('navResearchStudies', t.navResearchStudies);
+    setText('navResearch', t.research);
+    setText('navArticles', t.articles);
+    setText('navFiles', t.files);
+    setText('navForeign', t.foreign);
+    setText('navGeneral', t.general);
+    setText('navEditions', t.editions);
+    setText('navActivities', t.activities);
+    setText('navBoard', t.board);
+    setText('navAcademic', t.navAcademic);
+    setText('navPol', t.navPol);
+    setText('navIr', t.navIr);
+    setText('navAdmin', t.navAdmin);
+    setText('navConst', t.navConst);
+    setText('navPolicy', t.navPolicy);
+    setText('navLive', t.live);
+    setText('navRules', t.rules);
+    setText('navContact', t.contact);
+
+    const desktopSearch = document.getElementById('navSearchInput');
+    const mobileSearch = document.getElementById('navSearchInputMobile');
+
+    if(lang === 'ar'){
+      if(desktopSearch) desktopSearch.placeholder = 'ابحث...';
+      if(mobileSearch) mobileSearch.placeholder = 'ابحث في المنصة...';
+    } else if(lang === 'en'){
+      if(desktopSearch) desktopSearch.placeholder = 'Search...';
+      if(mobileSearch) mobileSearch.placeholder = 'Search the platform...';
+    } else {
+      if(desktopSearch) desktopSearch.placeholder = 'Rechercher...';
+      if(mobileSearch) mobileSearch.placeholder = 'Rechercher sur la plateforme...';
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    applyLang(getCurrentLang());
+  });
+</script>
+
+</body>
+</html>
