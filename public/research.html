@@ -913,8 +913,91 @@
 </section>
 
 
-<footer data-t="footer_text">
-  © جميع الحقوق محفوظة – منصتك العلمية
+<footer data-t="footer_text" style="
+  margin-top: clamp(30px,8vw,40px);
+  padding: clamp(28px,8vw,42px) clamp(18px,5vw,30px);
+  background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
+  color: #ffffff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 -8px 24px rgba(0,155,196,0.18);
+">
+  <div style="
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:4px;
+    background:linear-gradient(90deg, transparent, #d4af37, transparent);
+  "></div>
+
+  <div style="max-width: 1000px; margin: 0 auto; position: relative; z-index: 1;">
+    <div style="
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap:10px 16px;
+      margin-bottom:14px;
+      font-size:clamp(15px,4vw,18px);
+      line-height:1.8;
+    ">
+      <a href="https://ofouqacademie.com" style="
+        color:#ffd86b;
+        text-decoration:none;
+        font-weight:800;
+      ">Ofouq Academie</a>
+
+      <span>© 2026</span>
+
+      <span>by</span>
+
+      <a href="https://github.com/yasserA5" style="
+        color:#ffffff;
+        text-decoration:none;
+        font-weight:700;
+      ">Karim Rasmi</a>
+    </div>
+
+    <div style="
+      margin-bottom:14px;
+      font-size:clamp(13px,3.5vw,15px);
+      color:rgba(255,255,255,0.92);
+      line-height:1.9;
+    ">
+      جميع الحقوق محفوظة – منصتك العلمية<br>
+      مرخص بموجب
+      <a
+        href="https://creativecommons.org/licenses/by-nc/4.0/"
+        rel="license"
+        target="_blank"
+        style="color:#ffe08a; text-decoration:none; font-weight:700;"
+      >
+        Creative Commons Attribution-NonCommercial 4.0 International
+      </a>
+    </div>
+
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      margin-bottom:12px;
+    ">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width:20px;height:20px;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width:20px;height:20px;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width:20px;height:20px;">
+    </div>
+
+    <div style="
+      font-size:12px;
+      color:rgba(255,255,255,0.75);
+      line-height:1.7;
+    ">
+      إلا إذا ذُكر خلاف ذلك | Except where otherwise noted
+    </div>
+  </div>
 </footer>
 
 <script type="module" src="/firestore-bridge.js"></script>
@@ -1109,7 +1192,7 @@ function logout(){
         nav_articles_peer:"مقالات محكمة",nav_files:"ملفات بحثية",nav_foreign:"مقالات أجنبية",nav_articles:"مقالات",
         nav_editions:"إصداراتنا",nav_activities:"أنشطتنا",nav_academic:"أكاديمي",nav_live:"بث مباشر",nav_rules:"شروط النشر",
         nav_contact:"اتصل بنا",nav_login:"تسجيل الدخول",nav_join:"انضم إلينا",hero_title_research:"أبحاث محكمة",
-        hero_sub_research:"اضغط على البحث لعرض المحتوى الكامل. يجب تسجيل الدخول أولاً.",sec_research_list:"الأبحاث",
+hero_sub_research:"اضغط على البحث لعرض المحتوى الكامل.",
         footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",logout:"تسجيل الخروج",
         toast_logout_success:"تم تسجيل الخروج بنجاح",toast_open_research:"جاري فتح البحث...",
         toast_login_required:"يجب تسجيل الدخول لعرض المحتوى",no_research:"لا توجد أبحاث حالياً",
@@ -1122,7 +1205,7 @@ function logout(){
         nav_activities:"Activities",nav_academic:"Academic",nav_live:"Live",nav_rules:"Submission Rules",
         nav_contact:"Contact us",nav_login:"Login",nav_join:"Join us",
         hero_title_research:"Peer-reviewed research",
-        hero_sub_research:"Tap on a research card to view full content. You must log in first.",
+hero_sub_research:"Tap on a research card to view full content.",
         sec_research_list:"Research",footer_text:"© All rights reserved – Your Academic Platform",
         logout:"Logout",toast_logout_success:"Logged out successfully",toast_open_research:"Opening research...",
         toast_login_required:"You must log in to view the content",no_research:"No research items yet",
@@ -1135,7 +1218,7 @@ function logout(){
         nav_live:"Direct",nav_rules:"Conditions de publication",nav_contact:"Contactez-nous",
         nav_login:"Connexion",nav_join:"Rejoignez-nous",
         hero_title_research:"Recherches évaluées",
-        hero_sub_research:"Cliquez sur une carte de recherche pour voir le contenu complet. Vous devez d'abord vous connecter.",
+hero_sub_research:"Cliquez sur une carte de recherche pour voir le contenu complet.",
         sec_research_list:"Recherches",footer_text:"© Tous droits réservés – Votre plateforme scientifique",
         logout:"Déconnexion",toast_logout_success:"Déconnexion réussie",toast_open_research:"Ouverture de la recherche...",
         toast_login_required:"Vous devez vous connecter pour voir le contenu",no_research:"Aucune recherche pour le moment",
@@ -1252,25 +1335,10 @@ function logout(){
     });
   }
 
+function handleProtectedResearch(id){
+  if (id) window.location.href = 'research-view.html?id=' + encodeURIComponent(id);
+}
 
-  function handleProtectedResearch(id) {
-    if (!user || !user.username) {
-      showToast(t('toast_login_required'), 'error');
-      if (id) {
-        localStorage.setItem('pendingResearchId', String(id));
-      }
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 800);
-      return;
-    }
-    if (id) {
-      showToast(t('toast_open_research'), 'info');
-      setTimeout(() => {
-        window.location.href = 'research-view.html?id=' + encodeURIComponent(id);
-      }, 500);
-    }
-  }
 
 
   document.addEventListener('click', (e) => {

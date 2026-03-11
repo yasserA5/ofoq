@@ -986,8 +986,78 @@
   <div class="grid" id="upcomingStreams"></div>
 </section>
 
-<footer data-t="footer_text">
-  © جميع الحقوق محفوظة – منصتك العلمية
+<footer data-t="footer_text" style="
+  background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #000000 100%);
+  padding: clamp(30px, 8vw, 50px) clamp(25px, 6vw, 45px);
+  text-align: center;
+  color: #f9fafb;
+  font-size: clamp(14px, 3vw, 16px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 -8px 40px rgba(236,72,153,0.15);
+  border-top: 1px solid rgba(255,255,255,0.08);
+">
+  <!-- Pink decorative wave -->
+  <div style="
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; background: linear-gradient(90deg, transparent, #ec4899, #f472b6, transparent);
+    filter: blur(1px);
+  "></div>
+  
+  <div style="
+    max-width: 1100px; margin: 0 auto;
+    position: relative; z-index: 2;
+  ">
+    <!-- Main attribution row -->
+    <div style="
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 16px 24px; margin-bottom: 20px; font-weight: 700;
+      opacity: 0.95;
+    ">
+      <a href="https://ofouqacademie.com" style="
+        background: linear-gradient(135deg, #ec4899, #f472b6);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none; font-weight: 900; font-size: 1.15em;
+      ">Ofouq Academie</a>
+      
+      <span style="font-size: 1em;">© 2026 by</span>
+      
+      <a href="https://github.com/yasserA5" style="
+        color: #facc15; text-decoration: none; font-weight: 800;
+        text-shadow: 0 0 8px rgba(250,204,21,0.5);
+      ">Karim Rasmi</a>
+      
+      <span>– جميع الحقوق محفوظة – منصتك العلمية</span>
+    </div>
+    
+    <!-- CC License Card (live-style) -->
+    <div style="
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 12px; padding: 18px 28px;
+      background: rgba(255,255,255,0.06); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      transition: all 0.3s ease; cursor: pointer;
+      max-width: 700px; margin: 0 auto 16px;
+    " onclick="window.open('https://creativecommons.org/licenses/by-nc/4.0/', '_blank')">
+      <span style="
+        color: #e6f3ff; font-weight: 700; font-size: 1.05em;
+      ">Creative Commons Attribution-NonCommercial 4.0 International</span>
+      
+      <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width: 22px; height: 22px; opacity: 0.95;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width: 22px; height: 22px; opacity: 0.95;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width: 22px; height: 22px; opacity: 0.95;">
+    </div>
+    
+    <!-- Bilingual note -->
+    <p style="
+      margin: 0; opacity: 0.7; font-size: 0.88em;
+      font-style: italic; line-height: 1.5;
+    ">
+      إلا إذا ذُكر خلاف ذلك | Except where otherwise noted.
+    </p>
+  </div>
 </footer>
 
 <script>

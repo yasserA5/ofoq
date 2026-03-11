@@ -1015,9 +1015,68 @@
   </div>
 </section>
 
-<footer data-t="footer_text">
-  © جميع الحقوق محفوظة – منصتك العلمية
+<footer data-t="footer_text" style="
+  background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
+  padding: clamp(24px, 6vw, 40px) clamp(20px, 5vw, 40px);
+  text-align: center;
+  color: #e6f3ff;
+  font-size: clamp(13px, 2.5vw, 15px);
+  box-shadow: 0 -4px 20px rgba(13,107,140,0.3);
+  position: relative;
+  overflow: hidden;
+">
+  <div style="
+    max-width: 1200px; margin: 0 auto;
+    position: relative; z-index: 2;
+  ">
+    <!-- CC License Elegant -->
+    <div style="
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 12px 20px; margin-bottom: 12px; font-weight: 600;
+    ">
+      <a href="https://ofouqacademie.com" style="
+        color: var(--gold, #d4af37); text-decoration: none; font-weight: 800; font-size: 1.1em;
+      ">Ofouq Academie</a>
+      
+      <span>© 2026 by</span>
+      <a href="https://github.com/yasserA5" style="
+        color: #ffd700; text-decoration: none; font-weight: 700;
+      ">Karim Rasmi</a>
+      
+      <span style="font-size: 0.95em;">– جميع الحقوق محفوظة – منصتك العلمية</span>
+    </div>
+    
+    <!-- License Link + Icons -->
+    <div style="
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 12px 20px;
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
+      max-width: 600px; margin: 0 auto;
+    ">
+      <a href="https://creativecommons.org/licenses/by-nc/4.0/" style="
+        color: #e6f3ff; text-decoration: none; font-weight: 600;
+        display: flex; align-items: center; gap: 6px;
+      ">
+        Creative Commons Attribution-NonCommercial 4.0 International
+        <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width: 18px; height: 18px; opacity: 0.9;">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width: 18px; height: 18px; opacity: 0.9;">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width: 18px; height: 18px; opacity: 0.9;">
+      </a>
+    </div>
+    
+    <small style="margin-top: 14px; opacity: 0.8; font-size: 0.9em;">
+      إلا إذا ذُكر خلاف ذلك | Except where otherwise noted.
+    </small>
+  </div>
+  
+  <!-- Decorative gold line -->
+  <div style="
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; background: linear-gradient(90deg, transparent, var(--gold, #d4af37), transparent);
+  "></div>
 </footer>
+
 <script type="module" src="/firestore-bridge.js"></script>
 <script>
 function getCurrentLang() {

@@ -1018,9 +1018,93 @@
   </section>
 </div>
 
-<footer data-t="footer_text">
-  © جميع الحقوق محفوظة – منصتك العلمية
+<footer data-t="footer_text" style="
+  margin-top: clamp(30px,8vw,40px);
+  padding: clamp(28px,8vw,42px) clamp(18px,5vw,30px);
+  background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
+  color: #ffffff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 -8px 24px rgba(0,155,196,0.18);
+">
+  <div style="
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:4px;
+    background:linear-gradient(90deg, transparent, #d4af37, transparent);
+  "></div>
+
+  <div style="max-width: 1000px; margin: 0 auto; position: relative; z-index: 1;">
+    <div style="
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap:10px 16px;
+      margin-bottom:14px;
+      font-size:clamp(15px,4vw,18px);
+      line-height:1.8;
+    ">
+      <a href="https://ofouqacademie.com" style="
+        color:#ffd86b;
+        text-decoration:none;
+        font-weight:800;
+      ">Ofouq Academie</a>
+
+      <span>© 2026</span>
+
+      <span>by</span>
+
+      <a href="https://github.com/yasserA5" style="
+        color:#ffffff;
+        text-decoration:none;
+        font-weight:700;
+      ">Karim Rasmi</a>
+    </div>
+
+    <div style="
+      margin-bottom:14px;
+      font-size:clamp(13px,3.5vw,15px);
+      color:rgba(255,255,255,0.92);
+      line-height:1.9;
+    ">
+      جميع الحقوق محفوظة – منصتك العلمية<br>
+      مرخص بموجب
+      <a
+        href="https://creativecommons.org/licenses/by-nc/4.0/"
+        rel="license"
+        target="_blank"
+        style="color:#ffe08a; text-decoration:none; font-weight:700;"
+      >
+        Creative Commons Attribution-NonCommercial 4.0 International
+      </a>
+    </div>
+
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      margin-bottom:12px;
+    ">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width:20px;height:20px;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width:20px;height:20px;">
+      <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width:20px;height:20px;">
+    </div>
+
+    <div style="
+      font-size:12px;
+      color:rgba(255,255,255,0.75);
+      line-height:1.7;
+    ">
+      إلا إذا ذُكر خلاف ذلك | Except where otherwise noted
+    </div>
+  </div>
 </footer>
+
 
 <script>
   function goToHome(){window.location.href='index.html';}
@@ -1166,7 +1250,7 @@ function toggleMenu(){
       form.reset();
     }catch(err){
       console.error('EmailJS error',err);
-      showToast(t('contact_error') || 'حدث خطأ أثناء الإرسال، حاول مرة أخرى أو راسل: majalatofoq@gmail.com','error');
+      showToast(t('contact_error') || 'حدث خطأ أثناء الإرسال، حاول مرة أخرى أو راسل: ofouqacademie@gmail.com','error');
     }finally{
       submitBtn.disabled=false;
       btnText.style.display='inline';
@@ -1293,7 +1377,7 @@ function logout(){
       contact_btn_sending:"⏳ جاري الإرسال",
       contact_err_form:"الرجاء تصحيح الأخطاء الموجودة في النموذج",
       contact_success:"تم إرسال رسالتك بنجاح! سنرد عليك قريبًا.",
-      contact_error:"حدث خطأ أثناء الإرسال، حاول مرة أخرى أو راسل: majalatofoq@gmail.com",
+      contact_error:"حدث خطأ أثناء الإرسال، حاول مرة أخرى أو راسل: ofouqacademie@gmail.com",
       err_name:"الرجاء إدخال الاسم.",
       err_email:"الرجاء إدخال بريد إلكتروني صحيح.",
       err_subject:"الرجاء كتابة موضوع الرسالة.",
@@ -1345,7 +1429,7 @@ function logout(){
       contact_btn_sending:"⏳ Sending...",
       contact_err_form:"Please fix the errors in the form.",
       contact_success:"Your message has been sent successfully. We will reply soon.",
-      contact_error:"An error occurred while sending. Please try again or email: majalatofoq@gmail.com",
+      contact_error:"An error occurred while sending. Please try again or email: ofouqacademie@gmail.com",
       err_name:"Please enter your name.",
       err_email:"Please enter a valid email address.",
       err_subject:"Please enter a subject.",
@@ -1397,7 +1481,7 @@ function logout(){
       contact_btn_sending:"⏳ Envoi...",
       contact_err_form:"Veuillez corriger les erreurs dans le formulaire.",
       contact_success:"Votre message a été envoyé avec succès. Nous vous répondrons prochainement.",
-      contact_error:"Une erreur s'est produite lors de l'envoi. Réessayez ou écrivez à : majalatofoq@gmail.com",
+      contact_error:"Une erreur s'est produite lors de l'envoi. Réessayez ou écrivez à : ofouqacademie@gmail.com",
       err_name:"Veuillez saisir votre nom.",
       err_email:"Veuillez saisir une adresse e-mail valide.",
       err_subject:"Veuillez saisir un objet.",
