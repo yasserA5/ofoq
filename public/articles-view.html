@@ -274,18 +274,49 @@
       color:#111;
     }
 
-  #menu-btn{
+#menu-btn{
   display:none;
-  width:40px;
-  height:40px;
-  border-radius:50%;
+  width:42px;
+  height:42px;
+  border-radius:999px;
   border:none;
-  background:rgba(0,155,196,0.22);
-  color:var(--primary-dark);
-  font-size:20px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   cursor:pointer;
   align-items:center;
   justify-content:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,155,196,0.4);
+  flex:0 0 42px;
+}
+
+#menu-btn span{
+  position:absolute;
+  width:22px;
+  height:2px;
+  background:#ffffff;
+  border-radius:999px;
+  transition:0.25s ease;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+#menu-btn span:nth-child(1){ top:13px; }
+#menu-btn span:nth-child(2){ top:20px; }
+#menu-btn span:nth-child(3){ top:27px; }
+
+#menu-btn.open span:nth-child(1){
+  top:20px;
+  transform:translateX(-50%) rotate(45deg);
+}
+
+#menu-btn.open span:nth-child(2){
+  opacity:0;
+}
+
+#menu-btn.open span:nth-child(3){
+  top:20px;
+  transform:translateX(-50%) rotate(-45deg);
 }
 
 .nav-sheet-overlay{
@@ -482,6 +513,7 @@
   display:flex;
   gap:8px;
   margin-bottom:12px;
+  flex-wrap:wrap;
 }
 
 .nav-sheet-footer-links a{
@@ -527,12 +559,19 @@
 @media(max-width:980px){
   nav{display:none;}
   .actions{display:none;}
+
   #menu-btn{
     display:flex;
     order:-1;
   }
-  header{justify-content:center;}
-  .logo{margin-inline:auto;}
+
+  header{
+    justify-content:space-between;
+  }
+
+  .logo{
+    margin-inline:auto;
+  }
 }
 
 @media(max-width:480px){
@@ -553,7 +592,6 @@
     display:none;
   }
 }
-
 
     .page-shell{
       max-width:1280px;
@@ -942,7 +980,6 @@
   </div>
 </div>
 
-
 <header>
   <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
     <span></span><span></span><span></span>
@@ -952,43 +989,41 @@
     <img src="logo1.png" alt="Logo">
   </div>
 
-<nav>
-  <ul>
-    <li><a href="index.html" id="navHome">الرئيسية</a></li>
-    <li class="dropdown">
-      <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
-      <div class="dropdown-content">
-        <a href="research.html" id="navResearch">أبحاث محكمة</a>
-        <a href="articles.html" id="navArticles">مقالات محكمة</a>
-        <a href="files.html" id="navFiles">ملفات بحثية</a>
-        <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
-      </div>
-    </li>
-    <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
-    <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
-    <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
-    <li class="dropdown">
-      <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
-      <div class="dropdown-content">
-        <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
-        <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
-        <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
-        <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
-        <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
-      </div>
-    </li>
-    <li><a href="live.html" id="navLive">بث مباشر</a></li>
-    <li><a href="rules.html" id="navRules">شروط النشر</a></li>
-    <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
-  </ul>
+  <nav>
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li class="dropdown">
+        <a href="#">أبحاث ودراسات ▾</a>
+        <div class="dropdown-content">
+          <a href="research.html">أبحاث محكمة</a>
+          <a href="articles.html" class="active">مقالات محكمة</a>
+          <a href="files.html">ملفات بحثية</a>
+          <a href="articles-foreign.html">مقالات أجنبية</a>
+        </div>
+      </li>
+      <li><a href="general-articles.html">مقالات</a></li>
+      <li><a href="editions.html">إصداراتنا</a></li>
+      <li><a href="activities.html">أنشطتنا</a></li>
+      <li class="dropdown">
+        <a href="#academic" class="pill-circle">أكاديمي</a>
+        <div class="dropdown-content">
+          <a href="special-politics.html">تخصص علوم سياسية</a>
+          <a href="special-ir.html">تخصص العلاقات الدولية</a>
+          <a href="special-admin-law.html">تخصص القانون الإداري</a>
+          <a href="special-const-law.html">تخصص القانون الدستوري</a>
+          <a href="special-public-policy.html">تخصص السياسات العمومية</a>
+        </div>
+      </li>
+      <li><a href="live.html">بث مباشر</a></li>
+      <li><a href="rules.html">شروط النشر</a></li>
+      <li><a href="contact.html">اتصل بنا</a></li>
+    </ul>
 
-  <form class="nav-search" onsubmit="doSearch(event)">
-    <input type="search" id="navSearchInput" placeholder="ابحث..." />
-    <span>🔍</span>
-  </form>
-</nav>
-
+    <form class="nav-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInput" placeholder="ابحث..." />
+      <span>🔍</span>
+    </form>
+  </nav>
 
   <div class="actions">
     <div class="lang-wrapper">
