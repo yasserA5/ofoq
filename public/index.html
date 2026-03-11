@@ -1041,143 +1041,56 @@ function esc(str) {
 }
 
 
-  async function syncFirestoreToLocal() {
-    try {
-      // انتظر حتى يجهز bridge (نفس فكرة waitForFS)
-      const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
-        const t0 = Date.now();
-        (function tick() {
-          if (window.fs && window.fs.getDocs) return resolve();
-          if (Date.now() - t0 > timeoutMs) return reject(new Error('fs not ready'));
-          setTimeout(tick, 50);
-        })();
-      });
+async function syncFirestoreToLocal() {
+  try {
+    const waitForFS = (timeoutMs = 7000) => new Promise((resolve, reject) => {
+      const t0 = Date.now();
 
-      await waitForFS();
-
-      const { db, collection, query, orderBy, getDocs } = window.fs;
-      const sections = ['research', 'editions', 'activities'];
-
-      for (const key of sections) {
-        const q = query(collection(db, key), orderBy('id', 'desc'));
-        const snap = await getDocs(q);
-        const data = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
-        localStorage.setItem(key, JSON.stringify(data));
-        renderContent(key, key + 'Grid');   // دالة موجودة في index.html
+      function tick() {
+        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) {
+          return resolve();
+        }
+        if (Date.now() - t0 > timeoutMs) {
+          return reject(new Error('fs not ready'));
+        }
+        setTimeout(tick, 80);
       }
-function renderLatestResearchAndArticles(gridId = 'researchGrid') {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
 
-  const lang = getCurrentLang();
-  const research = JSON.parse(localStorage.getItem('research') || '[]');
-  const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+      tick();
+    });
 
-  const all = [
-    ...research.map((item, index) => ({
-      ...item,
-      _type: 'research',
-      _index: index
-    })),
-    ...articles.map((item, index) => ({
-      ...item,
-      _type: 'articles',
-      _index: index
-    }))
-  ].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+    await waitForFS();
 
-  grid.innerHTML = '';
+    const { db, collection, query, orderBy, getDocs } = window.fs;
+    const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
-  if (!all.length) {
-    grid.innerHTML = `<div class="empty-state"><p data-t="emptyitems">لا توجد عناصر بعد</p></div>`;
-    return;
+    for (const key of sections) {
+      const q = query(collection(db, key), orderBy('id', 'desc'));
+      const snap = await getDocs(q);
+      const data = snap.docs.map(doc => ({
+        docId: doc.id,
+        ...doc.data()
+      }));
+      localStorage.setItem(key, JSON.stringify(data));
+      console.log('synced', key, data.length);
+    }
+
+    renderContent('research', 'researchGrid');
+    renderContent('articles', 'articlesGrid');
+    renderContent('editions', 'editionsGrid');
+    renderContent('activities', 'activitiesGrid');
+    renderContent('training', 'academicGrid');
+    renderTicker();
+    updateStats();
+  } catch (error) {
+    console.error('Sync error:', error);
   }
-
-  all.slice(0, 8).forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    const title = getByLang(item.title, lang) || '';
-    const author = getByLang(item.author, lang) || '';
-    const desc =
-      getByLang(item.description, lang) ||
-      getByLang(item.short, lang) ||
-      getByLang(item.details, lang) ||
-      '';
-
-    const img = item.image || item.photo || '';
-    const typeLabel = item._type === 'research'
-      ? (lang === 'en' ? 'Research' : lang === 'fr' ? 'Recherche' : 'بحث')
-      : (lang === 'en' ? 'Article' : lang === 'fr' ? 'Article' : 'مقال');
-
-    card.innerHTML = `
-      ${img ? `<div class="card-img-wrapper"><img src="${esc(img)}" alt="${esc(title)}" class="card-img"></div>` : ''}
-      <div class="card-body">
-        <h3>${esc(title)}</h3>
-        ${author ? `<span class="card-author">${esc(author)}</span>` : ''}
-        <p>${esc(desc)}</p>
-      </div>
-      <div class="card-footer">
-        <span>${esc(typeLabel)}</span>
-        <button class="card-btn" onclick="goToPage('${item._type}', ${item._index})">
-          ${lang === 'en' ? 'Read more' : lang === 'fr' ? 'Lire plus' : 'اقرأ المزيد'}
-        </button>
-      </div>
-    `;
-
-    grid.appendChild(card);
-  });
 }
 
-      updateStats(); // موجودة في index.html
-      console.log('Synced Firestore → localStorage');
-    } catch (e) {
-      console.error('Sync error', e);
-    }
-  }
-
-  window.addEventListener('load', syncFirestoreToLocal);
+window.addEventListener('load', syncFirestoreToLocal);
 </script>
 <script>
 
-  async function syncFirestoreToLocal() {
-    try {
-      const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
-        const t0 = Date.now();
-        function tick() {
-          if (window.fs && window.fs.getDocs) return resolve();
-          if (Date.now() - t0 > timeoutMs) return reject(new Error('fs not ready'));
-          setTimeout(tick, 50);
-        }
-        tick();
-      });
-
-      await waitForFS();
-
-      const { db, collection, query, orderBy, getDocs } = window.fs;
-      const sections = ['research', 'editions', 'activities'];
-
-      for (const key of sections) {
-        const q = query(collection(db, key), orderBy('id', 'desc'));
-        const snap = await getDocs(q);
-        const data = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
-        localStorage.setItem(key, JSON.stringify(data));
-        renderContent(key, key + 'Grid');
-      }
-
-      updateStats();
-      console.log('Synced Firestore to localStorage');
-    } catch (e) {
-      console.error('Sync error', e);
-    }
-  }
-
-  window.addEventListener('load', syncFirestoreToLocal);
-</script>
-
-
-<script>
-  
 
   function goToHome(){window.location.href='index.html';}
 
@@ -1645,7 +1558,7 @@ function renderContent(storageKey, gridId) {
   }
 
 window.addEventListener('DOMContentLoaded', () => {
-  renderLatestResearchAndArticles('researchGrid');
+  renderContent('research', 'researchGrid');
   renderContent('articles', 'articlesGrid');
   renderContent('editions', 'editionsGrid');
   renderContent('activities', 'activitiesGrid');
@@ -1654,6 +1567,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setLang(currentLang);
   initMobileDropdowns();
 });
+
 
 
   // ===== Moving ticker (auto) =====
