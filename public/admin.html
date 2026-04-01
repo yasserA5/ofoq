@@ -1334,25 +1334,21 @@ function renderList(key){
 
     const wrap = document.createElement("div");
     wrap.className = "item";
-    wrap.innerHTML = `
-<div class="item-actions">
-  <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')">
-    <i class="ri-edit-box-line"></i>
-  </button>
-  <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')">
-    <i class="ri-delete-bin-line"></i>
-  </button>
-</div>
-      ${imgHtml}
-      <div class="item-body">
-        <div class="item-title">${esc(title)}</div>
-        <div class="item-desc">${esc(desc || "—")}</div>
-        <div class="item-meta">
-          <span>${esc(author)}</span>
-          <span>${esc(dateLabel)}</span>
-        </div>
-      </div>
-    `;
+wrap.innerHTML = `
+  <div class="item-actions">
+    <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')">تعديل</button>
+    <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')">حذف</button>
+  </div>
+  ${imgHtml}
+  <div class="item-body">
+    <div class="item-title">${esc(title)}</div>
+    <div class="item-desc">${esc(desc || "—")}</div>
+    <div class="item-meta">
+      <span>${esc(author)}</span>
+      <span>${esc(dateLabel)}</span>
+    </div>
+  </div>
+`;
     list.appendChild(wrap);
   });
 }
