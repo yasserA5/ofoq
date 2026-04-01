@@ -493,29 +493,47 @@
       gap:8px;
       flex-wrap:wrap;
     }
-    .item-actions{
-      position:absolute;
-      top:8px;
-      left:8px;
-      display:flex;
-      gap:6px;
-      z-index:2;
-    }
-    .mini{
-      border:0;
-      border-radius:999px;
-      padding:6px 8px;
-      cursor:pointer;
-      font-size:11px;
-      font-weight:900;
-      background: rgba(15,23,42,.92);
-      color:#e5e7eb;
-      border:1px solid rgba(148,163,184,.35);
-      transition: transform .1s ease, background var(--t), border-color var(--t);
-    }
-    .mini:hover{ transform: translateY(-1px); border-color: rgba(56,189,248,.45); }
-    .mini.danger{ color:#fecaca; border-color: rgba(239,68,68,.35); }
-    .mini.danger:hover{ border-color: rgba(239,68,68,.6); }
+.item-actions{
+  position:absolute;
+  top:10px;
+  left:10px;
+  display:flex;
+  gap:8px;
+  z-index:10;
+}
+
+.mini{
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  cursor:pointer;
+  background: rgba(2,6,23,.92);
+  color:#ffffff;
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.mini i{
+  font-size:18px;
+  line-height:1;
+}
+
+.mini:hover{
+  transform: translateY(-1px) scale(1.04);
+  border-color: rgba(56,189,248,.7);
+  background: rgba(15,23,42,1);
+}
+
+.mini.danger{
+  color:#fecaca;
+  border-color: rgba(239,68,68,.45);
+}
 
     .empty{
       padding:24px 10px;
@@ -1317,10 +1335,14 @@ function renderList(key){
     const wrap = document.createElement("div");
     wrap.className = "item";
     wrap.innerHTML = `
-      <div class="item-actions">
-        <!-- التغيير الوحيد: استخدم item.docId بدل item.id -->
-        <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
-      </div>
+<div class="item-actions">
+  <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')">
+    <i class="ri-edit-box-line"></i>
+  </button>
+  <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')">
+    <i class="ri-delete-bin-line"></i>
+  </button>
+</div>
       ${imgHtml}
       <div class="item-body">
         <div class="item-title">${esc(title)}</div>
