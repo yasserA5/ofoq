@@ -1015,7 +1015,6 @@ img, video {
       </div>
     </div>
     <button class="btn" onclick="goBack()" id="backBtnText">رجوع</button>
-    <button class="btn primary" onclick="window.print()" id="printBtnText">طباعة</button>
   </div>
 </header>
 
@@ -1107,7 +1106,7 @@ img, video {
     </div>
   </div>
 </footer>
-
+<script type="module" src="firestore-bridge.js"></script>
 <script>
   document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
@@ -1335,12 +1334,51 @@ document.addEventListener('keydown', function(e) {
     return new URLSearchParams(window.location.search).get(name);
   }
 
-  function getResearchById(){
-    const rawId = getQueryParam('id');
-    const allData = safeParse(localStorage.getItem('research'), []);
-    if(!Array.isArray(allData)) return null;
-    return allData.find(i => String(i?.id) === String(rawId)) || null;
+async function getResearchById() {
+  const rawId = getQueryParam('id');
+  if (!rawId) return null;
+
+  const allData = safeParse(localStorage.getItem('research'), []);
+  if (Array.isArray(allData)) {
+    const localItem = allData.find(i => String(i?.id) === String(rawId));
+    if (localItem) return localItem;
   }
+
+  try {
+    if (
+      !window.fs ||
+      !window.fs.db ||
+      !window.fs.collection ||
+      !window.fs.getDocs ||
+      !window.fs.query ||
+      !window.fs.where
+    ) {
+      return null;
+    }
+
+    const col = window.fs.collection(window.fs.db, 'research');
+    const q = window.fs.query(col, window.fs.where('id', '==', rawId));
+    const snap = await window.fs.getDocs(q);
+
+    if (!snap.empty) {
+      const docSnap = snap.docs[0];
+      const item = { docId: docSnap.id, ...docSnap.data() };
+
+      const updated = Array.isArray(allData) ? allData : [];
+      const index = updated.findIndex(x => String(x?.id) === String(item.id));
+
+      if (index >= 0) updated[index] = item;
+      else updated.unshift(item);
+
+      localStorage.setItem('research', JSON.stringify(updated));
+      return item;
+    }
+  } catch (err) {
+    console.error('Firestore fetch failed:', err);
+  }
+
+  return null;
+}
 
   function buildNotFound(lang){
     const t = uiTexts[lang] || uiTexts.ar;
@@ -1645,10 +1683,11 @@ document.addEventListener('keydown', function(e) {
 
   window.displayItem = getResearchById();
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const savedLang = getCurrentLang();
-    applyLang(savedLang);
-  });
+window.addEventListener('DOMContentLoaded', async () => {
+  const savedLang = getCurrentLang();
+  window.displayItem = await getResearchById();
+  applyLang(savedLang);
+});
 </script>
 
 </body>
