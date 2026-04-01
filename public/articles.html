@@ -903,8 +903,7 @@
 
 <div class="hero">
   <h1 data-t="hero_title_articles_peer">مقالات محكمة</h1>
-  <p data-t="hero_sub_articles_peer">اضغط على المقال لعرض المحتوى الكامل. يجب تسجيل الدخول أولاً.</p>
-</div>
+<p data-t="hero_sub_articles_peer">اضغط على المقال لعرض المحتوى الكامل.</p></div>
 
 
 <section>
@@ -960,24 +959,42 @@
       ">Karim Rasmi</a>
     </div>
 
-    <div style="
-      margin-bottom:14px;
-      font-size:clamp(13px,3.5vw,15px);
-      color:rgba(255,255,255,0.92);
-      line-height:1.9;
-    ">
-      جميع الحقوق محفوظة – منصتك العلمية<br>
-      مرخص بموجب
-      <a
-        href="https://creativecommons.org/licenses/by-nc/4.0/"
-        rel="license"
-        target="_blank"
-        style="color:#ffe08a; text-decoration:none; font-weight:700;"
-      >
-        Creative Commons Attribution-NonCommercial 4.0 International
-      </a>
-    </div>
+<div style="
+  margin-bottom:14px;
+  font-size:clamp(13px,3.5vw,15px);
+  color:rgba(255,255,255,0.92);
+  line-height:1.9;
+">
+  جميع الحقوق محفوظة – منصتك العلمية<br>
 
+  <div style="
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-top:10px;
+    padding:6px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.16);
+    font-weight:800;
+    font-size:clamp(12px,3vw,14px);
+  ">
+    <span style="color:#ffe08a;">ISSN / ردمد:</span>
+    <span>3119-6691</span>
+  </div>
+
+  <br>
+  مرخص بموجب
+  <a
+    href="https://creativecommons.org/licenses/by-nc/4.0/"
+    rel="license"
+    target="_blank"
+    style="color:#ffe08a; text-decoration:none; font-weight:700;"
+  >
+    Creative Commons Attribution-NonCommercial 4.0 International
+  </a>
+</div>
     <div style="
       display:flex;
       align-items:center;
@@ -1069,8 +1086,7 @@ async function syncArticlesFromFirestore() {
       nav_login:"تسجيل الدخول",
       nav_join:"انضم إلينا",
       hero_title_articles_peer:"مقالات محكمة",
-      hero_sub_articles_peer:"اضغط على المقال لعرض المحتوى الكامل. يجب تسجيل الدخول أولاً.",
-      sec_articles_peer_list:"المقالات المحكمة",
+hero_sub_articles_peer:"اضغط على المقال لعرض المحتوى الكامل.",      sec_articles_peer_list:"المقالات المحكمة",
       footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
       logout:"تسجيل الخروج",
       toast_logout_success:"تم تسجيل الخروج بنجاح",
@@ -1105,8 +1121,7 @@ async function syncArticlesFromFirestore() {
       nav_login:"Login",
       nav_join:"Join us",
       hero_title_articles_peer:"Peer-reviewed articles",
-      hero_sub_articles_peer:"Tap on an article card to view full content. You must log in first.",
-      sec_articles_peer_list:"Scholarly articles",
+hero_sub_articles_peer:"Tap on an article card to view full content.",      sec_articles_peer_list:"Scholarly articles",
       footer_text:"© All rights reserved – Your Academic Platform",
       logout:"Logout",
       toast_logout_success:"Logged out successfully",
@@ -1141,8 +1156,7 @@ async function syncArticlesFromFirestore() {
       nav_login:"Connexion",
       nav_join:"Rejoignez-nous",
       hero_title_articles_peer:"Articles scientifiques évalués",
-      hero_sub_articles_peer:"Cliquez sur une carte d'article pour voir le contenu complet. Vous devez d'abord vous connecter.",
-      sec_articles_peer_list:"Articles scientifiques",
+hero_sub_articles_peer:"Cliquez sur une carte d'article pour voir le contenu complet.",      sec_articles_peer_list:"Articles scientifiques",
       footer_text:"© Tous droits réservés – Votre plateforme scientifique",
       logout:"Déconnexion",
       toast_logout_success:"Déconnexion réussie",

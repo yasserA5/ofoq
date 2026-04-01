@@ -680,8 +680,8 @@ const db = {};
 SECTIONS.forEach(s => db[s.key] = safeParse(localStorage.getItem(s.key), []));
 
 let currentSectionKey = "research";
-let editing = { key: null, id: null };
-
+let editing = { key: null, id: null, originalId: null };
+let draftMode = false;
 /* ========= أدوات صغيرة ========= */
 function safeParse(v, fallback){
   try { const x = JSON.parse(v); return Array.isArray(x) ? x : fallback; }
@@ -796,19 +796,29 @@ function buildFormHTML(key){
           <textarea id="${key}-short-ar" placeholder="وصف مختصر..."></textarea>
         </div>
 
-        <div class="row">
-          <label>رابط البث (YouTube / Vimeo ...)</label>
-          <input type="url" id="${key}-live-link" placeholder="https://..." />
-        </div>
+<div class="row">
+  <label>رابط البث أو الاجتماع (اختياري)</label>
+  <input type="url" id="${key}-live-link" placeholder="https://..." />
+</div>
 
-        <div class="actions">
-          <button class="btn btn-small btn-green" type="button" onclick="saveItem('${key}')">
-            <i class="ri-check-line"></i> حفظ
-          </button>
-          <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
-            <i class="ri-refresh-line"></i> تفريغ
-          </button>
-        </div>
+<div class="row">
+  <label>PDF من الكمبيوتر (اختياري)</label>
+  <input type="file" id="${key}-live-pdf" accept=".pdf,application/pdf" />
+</div>
+
+<div class="actions">
+  <button class="btn btn-ghost btn-small" type="button" onclick="saveDraft('${key}')">
+    <i class="ri-draft-line"></i> حفظ كمسودة
+  </button>
+
+  <button class="btn btn-small btn-green" id="${key}-publish-btn" type="button" onclick="publishItem('${key}')">
+    <i class="ri-upload-cloud-line"></i> نشر
+  </button>
+
+  <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
+    <i class="ri-refresh-line"></i> تفريغ
+  </button>
+</div>
 
         <div class="preview" id="${key}-preview"></div>
       </div>
@@ -821,73 +831,30 @@ function buildFormHTML(key){
 
       <div class="grid-2">
         <div>
-          <div class="row">
-            <label>العنوان (عربي)</label>
-            <input type="text" id="${key}-title-ar" placeholder="العنوان بالعربية" />
-          </div>
-          <div class="row">
-            <label>العنوان (Français)</label>
-            <input type="text" id="${key}-title-fr" placeholder="Titre en français" />
-          </div>
-          <div class="row">
-            <label>العنوان (English)</label>
-            <input type="text" id="${key}-title-en" placeholder="Title in English" />
-          </div>
+<div class="row">
+  <label>العنوان</label>
+  <input type="text" id="${key}-title-ar" placeholder="العنوان بالعربية" />
+</div>
 
-          <div class="row">
-            <label>الكاتب/الباحث (عربي)</label>
-            <input type="text" id="${key}-author-ar" placeholder="اسم الكاتب بالعربية" />
-          </div>
-          <div class="row">
-            <label>الكاتب/الباحث (Français)</label>
-            <input type="text" id="${key}-author-fr" placeholder="Ex: Dr. Nom Prénom" />
-          </div>
-          <div class="row">
-            <label>الكاتب/الباحث (English)</label>
-            <input type="text" id="${key}-author-en" placeholder="e.g. Dr. John Doe" />
-          </div>
+<div class="row">
+  <label>الكاتب/الباحث</label>
+  <input type="text" id="${key}-author-ar" placeholder="اسم الكاتب بالعربية" />
+</div>
 
-          <div class="row">
-            <label>الانتماء/المؤسسة (عربي) (اختياري)</label>
-            <input type="text" id="${key}-aff-ar" placeholder="مثال: جامعة..." />
-          </div>
-          <div class="row">
-            <label>Institution (Français) (Optionnel)</label>
-            <input type="text" id="${key}-aff-fr" placeholder="Ex: Université X" />
-          </div>
-          <div class="row">
-            <label>Institution (English) (Optional)</label>
-            <input type="text" id="${key}-aff-en" placeholder="e.g. University X" />
-          </div>
+<div class="row">
+  <label>الانتماء/المؤسسة (اختياري)</label>
+  <input type="text" id="${key}-aff-ar" placeholder="مثال: جامعة..." />
+</div>
 
-          <div class="row">
-            <label>تاريخ النشر (عربي) (اختياري)</label>
-            <input type="text" id="${key}-date-ar" placeholder="مثال: 2026" />
-          </div>
-          <div class="row">
-            <label>Date (Français) (Optionnel)</label>
-            <input type="text" id="${key}-date-fr" placeholder="Ex: Mars 2026" />
-          </div>
-          <div class="row">
-            <label>Date (English) (Optional)</label>
-            <input type="text" id="${key}-date-en" placeholder="e.g. March 2026" />
-          </div>
-        </div>
+<div class="row">
+  <label>تاريخ النشر (اختياري)</label>
+  <input type="text" id="${key}-date-ar" placeholder="مثال: أبريل 2026" />
+</div>
 
-        <div>
-          <div class="row">
-            <label>ملخص (عربي)</label>
-            <textarea id="${key}-short-ar" placeholder="ملخص..."></textarea>
-          </div>
-          <div class="row">
-            <label>Résumé (Français)</label>
-            <textarea id="${key}-short-fr" placeholder="Résumé..."></textarea>
-          </div>
-          <div class="row">
-            <label>Summary (English)</label>
-            <textarea id="${key}-short-en" placeholder="Summary..."></textarea>
-          </div>
-
+<div class="row">
+  <label>ملخص</label>
+  <textarea id="${key}-short-ar" placeholder="ملخص..."></textarea>
+</div>
           <div class="row">
             <label>المحتوى الكامل (عربي)</label>
             <div class="toolbar">
@@ -904,31 +871,22 @@ function buildFormHTML(key){
           </div>
 
           <div class="row">
-            <label>Contenu complet (Français)</label>
-            <textarea id="${key}-full-fr" placeholder="Texte complet..."></textarea>
-          </div>
-
-          <div class="row">
-            <label>Full content (English)</label>
-            <textarea id="${key}-full-en" placeholder="Full text..."></textarea>
-          </div>
-
-          <div class="row">
             <label>تفاصيل/كلمات مفتاحية (عربي)</label>
             <textarea id="${key}-details-ar" placeholder="تفاصيل إضافية..."></textarea>
           </div>
-          <div class="row">
-            <label>Détails (Français)</label>
-            <textarea id="${key}-details-fr" placeholder="Détails..."></textarea>
-          </div>
-          <div class="row">
-            <label>Details (English)</label>
-            <textarea id="${key}-details-en" placeholder="Details..."></textarea>
-          </div>
+
 
           <div class="row">
             <label>ملف/رابط خارجي (PDF / رابط / ...)</label>
-            <input type="url" id="${key}-file-url" placeholder="https://..." />
+          <div class="row">
+  <label>رابط خارجي (اختياري)</label>
+  <input type="url" id="${key}-file-url" placeholder="https://..." />
+</div>
+
+<div class="row">
+  <label>PDF من الكمبيوتر (اختياري)</label>
+  <input type="file" id="${key}-pdf-file" accept=".pdf,application/pdf" />
+</div>
           </div>
 
           <div class="row">
@@ -1181,6 +1139,44 @@ async function saveItem(key){
   alert("تم الحفظ بنجاح ✅");
 }
 
+function fillFormFromItem(key, item){
+  const cfg = SECTIONS.find(s => s.key === key);
+  if (!item || !cfg) return;
+
+  if (cfg.isLive){
+    if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar") || "";
+    if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar") || "";
+    if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
+
+    const p = el(`${key}-preview`);
+    if (p) p.innerHTML = item.file ? `<div>الرابط الحالي: <a href="${item.file}" target="_blank">${item.file}</a></div>` : "";
+    return;
+  }
+
+  ["ar","fr","en"].forEach(lang => {
+    if (el(`${key}-title-${lang}`)) el(`${key}-title-${lang}`).value = getByLang(item.title, lang) || "";
+    if (el(`${key}-author-${lang}`)) el(`${key}-author-${lang}`).value = getByLang(item.author, lang) || "";
+    if (el(`${key}-aff-${lang}`)) el(`${key}-aff-${lang}`).value = getByLang(item.affiliation, lang) || "";
+    if (el(`${key}-date-${lang}`)) el(`${key}-date-${lang}`).value = getByLang(item.date, lang) || "";
+    if (el(`${key}-short-${lang}`)) el(`${key}-short-${lang}`).value = getByLang(item.short, lang) || "";
+    if (el(`${key}-details-${lang}`)) el(`${key}-details-${lang}`).value = getByLang(item.details, lang) || "";
+    if (lang !== "ar" && el(`${key}-full-${lang}`)) el(`${key}-full-${lang}`).value = getByLang(item.full, lang) || "";
+  });
+
+  const arEditor = el(`${key}-full-ar-editor`);
+  if (arEditor) arEditor.innerHTML = getByLang(item.full, "ar") || "";
+
+  const fileUrl = el(`${key}-file-url`);
+  if (fileUrl) fileUrl.value = item.file || "";
+
+  const p = el(`${key}-preview`);
+  if (p) {
+    p.innerHTML = `
+      ${item.image ? `<div>الصورة الحالية:</div><img src="${item.image}" alt="preview" />` : ""}
+      ${item.file ? `<div style="margin-top:8px;">الملف/الرابط الحالي: <a href="${item.file}" target="_blank">${item.file}</a></div>` : ""}
+    `;
+  }
+}
 /* ========= تحويل ملف لصورة base64 ========= */
 function fileToDataURL(file){
   return new Promise((resolve, reject)=>{
@@ -1204,32 +1200,21 @@ function upsertLocal(key, obj){
 
 /* ========= upsert Firestore (FIXED: no where/query/addDoc) ========= */
 async function upsertFirestore(collectionKey, obj){
-  const col = window.fs.collection(window.fs.db, collectionKey);
+  if (!window.fs.doc) throw new Error("doc غير موجودة في window.fs");
+  if (!window.fs.setDoc) throw new Error("setDoc غير موجودة في window.fs");
 
-  // نحاول update إن كانت دوال updateDoc موجودة
-  if (window.fs.updateDoc && window.fs.doc){
-    try{
-      const docId = String(obj.id);
-      const docRef = window.fs.doc(window.fs.db, collectionKey, docId);
-      await window.fs.updateDoc(docRef, obj);
-      return;
-    }catch(e){
-      // لو الوثيقة غير موجودة أو فشل التحديث، سنسقط إلى addDoc
-      console.warn("updateDoc failed, fallback to addDoc", e);
-    }
-  }
+  const docId = String(obj.id);
+  const docRef = window.fs.doc(window.fs.db, collectionKey, docId);
 
-  if (!window.fs.addDoc) throw new Error("addDoc غير موجودة في window.fs");
+  await window.fs.setDoc(docRef, obj, { merge: true });
 
-  const ref = await window.fs.addDoc(col, obj);
-  obj.docId = ref?.id || null;
+  obj.docId = docId;
 
-  // خزّن docId محليًا إن رجع
-  const idx = (db[collectionKey] || []).findIndex(x => x.id === obj.id);
-  if (idx >= 0 && obj.docId) db[collectionKey][idx].docId = obj.docId;
+  const idx = (db[collectionKey] || []).findIndex(x => String(x.id) === String(obj.id));
+  if (idx >= 0) db[collectionKey][idx].docId = docId;
+
   localStorage.setItem(collectionKey, JSON.stringify(db[collectionKey] || []));
 }
-
 
 /* ========= حذف (FIXED: delete by docId = id) ========= */
 async function deleteItem(sectionKey, docId) {
@@ -1333,7 +1318,6 @@ function renderList(key){
     wrap.className = "item";
     wrap.innerHTML = `
       <div class="item-actions">
-        <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')"><i class="ri-edit-box-line"></i></button>
         <!-- التغيير الوحيد: استخدم item.docId بدل item.id -->
         <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
       </div>
@@ -1351,6 +1335,112 @@ function renderList(key){
   });
 }
 
+function loadForEdit(key, id){
+  const item = (db[key] || []).find(x => String(x.id) === String(id));
+  if (!item) return alert("العنصر غير موجود.");
+
+  editing = { key, id, originalId: id };
+  draftMode = true;
+
+  fillFormFromItem(key, item);
+
+  const publishBtn = el(`${key}-publish-btn`);
+  if (publishBtn) {
+    publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر التعديلات';
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function collectDraftData(key){
+  const cfg = SECTIONS.find(s => s.key === key);
+  if (!cfg) return null;
+
+  let obj = {
+    id: editing.key === key && editing.id ? editing.id : uid(),
+    title: { ar:"", fr:"", en:"" },
+    short: { ar:"", fr:"", en:"" },
+    full:  { ar:"", fr:"", en:"" },
+    details:{ ar:"", fr:"", en:"" },
+    author:{ ar:"", fr:"", en:"" },
+    affiliation:{ ar:"", fr:"", en:"" },
+    date:{ ar:"", fr:"", en:"" },
+    image: "",
+    file: ""
+  };
+
+  if (cfg.isLive){
+    obj.title.ar = el(`${key}-title-ar`)?.value.trim() || "";
+    obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
+    obj.file = el(`${key}-live-link`)?.value.trim() || "";
+    return obj;
+  }
+
+  obj.title = {
+    ar: el(`${key}-title-ar`)?.value.trim() || "",
+    fr: el(`${key}-title-fr`)?.value.trim() || "",
+    en: el(`${key}-title-en`)?.value.trim() || ""
+  };
+
+  obj.short = {
+    ar: el(`${key}-short-ar`)?.value.trim() || "",
+    fr: el(`${key}-short-fr`)?.value.trim() || "",
+    en: el(`${key}-short-en`)?.value.trim() || ""
+  };
+
+  obj.full = {
+    ar: (el(`${key}-full-ar-editor`)?.innerHTML || "").trim(),
+    fr: el(`${key}-full-fr`)?.value.trim() || "",
+    en: el(`${key}-full-en`)?.value.trim() || ""
+  };
+
+  obj.details = {
+    ar: el(`${key}-details-ar`)?.value.trim() || "",
+    fr: el(`${key}-details-fr`)?.value.trim() || "",
+    en: el(`${key}-details-en`)?.value.trim() || ""
+  };
+
+  obj.author = {
+    ar: el(`${key}-author-ar`)?.value.trim() || "",
+    fr: el(`${key}-author-fr`)?.value.trim() || "",
+    en: el(`${key}-author-en`)?.value.trim() || ""
+  };
+
+  obj.affiliation = {
+    ar: el(`${key}-aff-ar`)?.value.trim() || "",
+    fr: el(`${key}-aff-fr`)?.value.trim() || "",
+    en: el(`${key}-aff-en`)?.value.trim() || ""
+  };
+
+  obj.date = {
+    ar: el(`${key}-date-ar`)?.value.trim() || "",
+    fr: el(`${key}-date-fr`)?.value.trim() || "",
+    en: el(`${key}-date-en`)?.value.trim() || ""
+  };
+
+  obj.file = el(`${key}-file-url`)?.value.trim() || "";
+
+  return obj;
+}
+
+function saveDraft(key){
+  const draft = collectDraftData(key);
+  if (!draft) return;
+
+  sessionStorage.setItem(`draft-${key}-${draft.id}`, JSON.stringify(draft));
+  draftMode = true;
+  alert("تم حفظ المسودة. لن يظهر التعديل في الموقع حتى تضغط نشر.");
+}
+
+async function publishItem(key){
+  await saveItem(key);
+  draftMode = false;
+
+  const publishBtn = el(`${key}-publish-btn`);
+  if (publishBtn) {
+    publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر';
+  }
+}
 /* ========= مزامنة من Firestore → localStorage لكل الأقسام ========= */
 async function reloadFromFirestore(allSections = true){
   if (!requireFs()) return;
@@ -1454,6 +1544,10 @@ window.resetForm = resetForm;
 window.loadForEdit = loadForEdit;
 window.deleteItem = deleteItem;
 window.formatCmd = formatCmd;
+
+window.saveDraft = saveDraft;
+window.publishItem = publishItem;
+window.fillFormFromItem = fillFormFromItem;
 /* ===========================
    Part 3 Patch (Updates)
    - Delete Firestore by docId

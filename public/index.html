@@ -815,6 +815,35 @@
   .ticker-item{min-width:240px;max-width:240px;}
 }
 
+.issn-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:#ffffff;
+  border:1px solid #d7edf4;
+  color:#0d6b8c;
+  font-size:13px;
+  font-weight:800;
+  box-shadow:0 6px 18px rgba(13,107,140,0.08);
+}
+
+.issn-badge::before{
+  content:"ISSN";
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:3px 8px;
+  border-radius:999px;
+  background:rgba(13,107,140,0.10);
+  color:#0d6b8c;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.3px;
+}
+
   </style>
 </head>
 <body>
@@ -954,7 +983,7 @@
       
       بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات.
     </p>
-
+<div class="issn-badge">3119-6691</div>
     <div class="hero-actions">
       <button class="btn primary" onclick="location.href='register.html'" data-t="hero_cta_primary">ابدأ رحلتك البحثية الآن</button>
       <button class="btn" onclick="document.getElementById('research').scrollIntoView({behavior:'smooth'})" data-t="hero_cta_secondary">استكشف المحتوى العلمي</button>
@@ -1070,7 +1099,25 @@
       
       <span style="font-size: 0.95em;">– جميع الحقوق محفوظة – منصتك العلمية</span>
     </div>
-    
+    <div style="
+  margin-bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+">
+  <span style="color:#ffd700; font-weight:800;">ISSN:</span>
+  <span>3119-6691</span>
+</div>
+
     <!-- License Link + Icons -->
     <div style="
       display: flex; align-items: center; justify-content: center;

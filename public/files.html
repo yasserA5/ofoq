@@ -901,8 +901,11 @@
 
 <div class="hero">
   <h1 data-t="hero_title_files">ملفات بحثية</h1>
-  <p data-t="hero_sub_files">اضغط على الملف لعرض المحتوى الكامل. قد يتطلب بعض الملفات تسجيل الدخول.</p>
+  <p data-t="hero_sub_files">اضغط على الملف لعرض المحتوى الكامل..</p>
+  <div class="issn-badge">3119-6691</div>
 </div>
+
+
 
 
 <section>
@@ -941,6 +944,27 @@
       font-size:clamp(15px,4vw,18px);
       line-height:1.8;
     ">
+    <div style="
+  margin: 0 auto 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: 100%;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: clamp(12px, 3vw, 14px);
+  text-align: center;
+">
+  <span style="color:#ffd86b; font-weight:900;">ISSN:</span>
+  <span>3119-6691</span>
+</div>
+
       <a href="https://ofouqacademie.com" style="
         color:#ffd86b;
         text-decoration:none;
@@ -1107,8 +1131,7 @@ let user = JSON.parse(
       nav_login:"تسجيل الدخول",
       nav_join:"انضم إلينا",
       hero_title_files:"ملفات بحثية",
-      hero_sub_files:"اضغط على الملف لعرض المحتوى الكامل. قد يتطلب بعض الملفات تسجيل الدخول.",
-      sec_files_list:"الملفات البحثية",
+  hero_sub_files: "اضغط على الملف لعرض المحتوى الكامل مباشرة.",      sec_files_list:"الملفات البحثية",
       footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
       logout:"تسجيل الخروج",
       toast_logout_success:"تم تسجيل الخروج بنجاح",
@@ -1144,7 +1167,7 @@ let user = JSON.parse(
       nav_login:"Login",
       nav_join:"Join us",
       hero_title_files:"Research files",
-      hero_sub_files:"Tap on a file card to open it. Some files may require login.",
+  hero_sub_files: "Tap on a file card to open the full content directly.",
       sec_files_list:"Research files",
       footer_text:"© All rights reserved – Your Academic Platform",
       logout:"Logout",
@@ -1181,7 +1204,7 @@ let user = JSON.parse(
       nav_login:"Connexion",
       nav_join:"Rejoignez-nous",
       hero_title_files:"Dossiers de recherche",
-      hero_sub_files:"Cliquez sur une carte de fichier pour l’ouvrir. Certains fichiers peuvent nécessiter une connexion.",
+  hero_sub_files: "Cliquez sur une carte pour ouvrir directement le contenu complet.",
       sec_files_list:"Dossiers de recherche",
       footer_text:"© Tous droits réservés – Votre plateforme scientifique",
       logout:"Déconnexion",
@@ -1390,24 +1413,14 @@ function logout(){
   }
 
 
-  function handleProtectedFile(id) {
-    if (!user || !user.username) {
-      showToast(t('toast_login_required'), 'warning');
-      if (id) {
-        localStorage.setItem('pendingFileId', String(id));
-      }
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 800);
-      return;
-    }
-    if (id) {
-      showToast(t('toast_open_file'), 'info');
-      setTimeout(() => {
-        window.location.href = 'files-view.html?id=' + encodeURIComponent(id);
-      }, 500);
-    }
-  }
+function handleProtectedFile(id) {
+  if (!id) return;
+  showToast(t('toast_open_file'), 'info');
+  setTimeout(() => {
+    window.location.href = 'files-view.html?id=' + encodeURIComponent(id);
+  }, 300);
+}
+
 
 
   document.addEventListener('click', (e) => {
