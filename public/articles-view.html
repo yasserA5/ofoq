@@ -1237,18 +1237,22 @@ function esc(str) {
     return new URLSearchParams(window.location.search).get(name);
   }
 async function getArticleById() {
-  const rawId = getQueryParam('id');
+  const rawId = (getQueryParam('id') || '').trim();
   if (!rawId) return null;
 
   const allData = safeParse(localStorage.getItem('articles'), []);
   if (Array.isArray(allData)) {
-    const localItem = allData.find(i => String(i?.id) === String(rawId));
+    const localItem = allData.find(i =>
+      String(i?.id || '').trim() === rawId ||
+      String(i?.docId || '').trim() === rawId
+    );
     if (localItem) return localItem;
   }
 
   try {
     const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
       const start = Date.now();
+
       function check() {
         if (
           window.fs &&
@@ -1256,7 +1260,9 @@ async function getArticleById() {
           window.fs.collection &&
           window.fs.getDocs &&
           window.fs.query &&
-          window.fs.where
+          window.fs.where &&
+          window.fs.doc &&
+          window.fs.getDoc
         ) {
           resolve();
           return;
@@ -1269,10 +1275,9 @@ async function getArticleById() {
 
         setTimeout(check, 50);
       }
+
       check();
     });
-
-
 
     await waitForFS();
 
@@ -1285,7 +1290,30 @@ async function getArticleById() {
       const item = { docId: docSnap.id, ...docSnap.data() };
 
       const updated = Array.isArray(allData) ? allData : [];
-      const index = updated.findIndex(x => String(x?.id) === String(item.id));
+      const index = updated.findIndex(x =>
+        String(x?.id || '').trim() === String(item.id || '').trim() ||
+        String(x?.docId || '').trim() === String(item.docId || '').trim()
+      );
+
+      if (index >= 0) updated[index] = item;
+      else updated.unshift(item);
+
+      localStorage.setItem('articles', JSON.stringify(updated));
+      return item;
+    }
+
+    const ref = window.fs.doc(window.fs.db, 'articles', rawId);
+    const directSnap = await window.fs.getDoc(ref);
+
+    if (directSnap.exists()) {
+      const item = { docId: directSnap.id, ...directSnap.data() };
+
+      const updated = Array.isArray(allData) ? allData : [];
+      const index = updated.findIndex(x =>
+        String(x?.id || '').trim() === String(item.id || '').trim() ||
+        String(x?.docId || '').trim() === String(item.docId || '').trim()
+      );
+
       if (index >= 0) updated[index] = item;
       else updated.unshift(item);
 
@@ -1298,6 +1326,10 @@ async function getArticleById() {
 
   return null;
 }
+
+
+
+
 
   function buildNotFound(lang){
     const t = uiTexts[lang] || uiTexts.ar;
