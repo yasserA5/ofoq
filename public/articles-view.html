@@ -1236,7 +1236,6 @@ function esc(str) {
   function getQueryParam(name){
     return new URLSearchParams(window.location.search).get(name);
   }
-
 async function getArticleById() {
   const rawId = getQueryParam('id');
   if (!rawId) return null;
@@ -1258,12 +1257,22 @@ async function getArticleById() {
           window.fs.getDocs &&
           window.fs.query &&
           window.fs.where
-        ) return resolve();
-        if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
+        ) {
+          resolve();
+          return;
+        }
+
+        if (Date.now() - start > timeoutMs) {
+          reject(new Error('Firestore not ready'));
+          return;
+        }
+
         setTimeout(check, 50);
       }
       check();
     });
+
+
 
     await waitForFS();
 
@@ -1514,15 +1523,14 @@ async function getArticleById() {
       getTextByLang(it.additionalDetails, lang) ||
       '';
 const rawKeywords =
-  getTextByLang(it.details, lang) ||
-  getTextByLang(it.details, 'ar') ||
+  getTextByLang(it.keywords, lang) ||
+  getTextByLang(it.tags, lang) ||
   '';
 
 const keywords = rawKeywords
   .split(/[\n،,;|]+/)
   .map(x => x.trim())
   .filter(Boolean);
-
 
     const author =
       getTextByLang(it.author, lang) ||
@@ -1588,6 +1596,8 @@ if (tagsBox) {
     const menu = document.getElementById('langMenu');
     if(menu) menu.style.display = 'none';
   }
+
+window.displayItem = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
