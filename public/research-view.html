@@ -1107,6 +1107,7 @@ img, video {
   </div>
 </footer>
 <script type="module" src="firestore-bridge.js"></script>
+<script src="view-loader.js"></script>
 <script>
   document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
@@ -1334,29 +1335,22 @@ document.addEventListener('keydown', function(e) {
     return new URLSearchParams(window.location.search).get(name);
   }
 
-async function getResearchById() {
+async function getArticleById() {
   const rawId = getQueryParam('id');
   if (!rawId) return null;
 
-  const allData = safeParse(localStorage.getItem('research'), []);
+  const allData = safeParse(localStorage.getItem('articles'), []);
   if (Array.isArray(allData)) {
     const localItem = allData.find(i => String(i?.id) === String(rawId));
     if (localItem) return localItem;
   }
 
   try {
-    if (
-      !window.fs ||
-      !window.fs.db ||
-      !window.fs.collection ||
-      !window.fs.getDocs ||
-      !window.fs.query ||
-      !window.fs.where
-    ) {
+    if (!window.fs || !window.fs.db || !window.fs.collection || !window.fs.getDocs || !window.fs.query || !window.fs.where) {
       return null;
     }
 
-    const col = window.fs.collection(window.fs.db, 'research');
+    const col = window.fs.collection(window.fs.db, 'articles');
     const q = window.fs.query(col, window.fs.where('id', '==', rawId));
     const snap = await window.fs.getDocs(q);
 
@@ -1366,11 +1360,10 @@ async function getResearchById() {
 
       const updated = Array.isArray(allData) ? allData : [];
       const index = updated.findIndex(x => String(x?.id) === String(item.id));
-
       if (index >= 0) updated[index] = item;
       else updated.unshift(item);
 
-      localStorage.setItem('research', JSON.stringify(updated));
+      localStorage.setItem('articles', JSON.stringify(updated));
       return item;
     }
   } catch (err) {
@@ -1681,11 +1674,11 @@ async function getResearchById() {
     if(menu) menu.style.display = 'none';
   }
 
-  window.displayItem = getResearchById();
+window.displayItem = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
-  window.displayItem = await getResearchById();
+  window.displayItem = await getArticleById();
   applyLang(savedLang);
 });
 </script>

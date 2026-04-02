@@ -1046,7 +1046,8 @@
 <footer class="site-footer" id="footerText">
   © 2025 Ofouq Academy · جميع الحقوق محفوظة
 </footer>
-
+<script type="module" src="firestore-bridge.js"></script>
+<script src="view-loader.js"></script>
 <script>
   function getCurrentLang() {
   return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
@@ -1236,12 +1237,58 @@ function esc(str) {
     return new URLSearchParams(window.location.search).get(name);
   }
 
-  function getArticleById(){
-    const rawId = getQueryParam('id');
-    const allData = safeParse(localStorage.getItem('articles'), []);
-    if(!Array.isArray(allData)) return null;
-    return allData.find(i => String(i?.id) === String(rawId)) || null;
+async function getArticleById() {
+  const rawId = getQueryParam('id');
+  if (!rawId) return null;
+
+  const allData = safeParse(localStorage.getItem('articles'), []);
+  if (Array.isArray(allData)) {
+    const localItem = allData.find(i => String(i?.id) === String(rawId));
+    if (localItem) return localItem;
   }
+
+  try {
+    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
+      const start = Date.now();
+      function check() {
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.where
+        ) return resolve();
+        if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
+        setTimeout(check, 50);
+      }
+      check();
+    });
+
+    await waitForFS();
+
+    const col = window.fs.collection(window.fs.db, 'articles');
+    const q = window.fs.query(col, window.fs.where('id', '==', rawId));
+    const snap = await window.fs.getDocs(q);
+
+    if (!snap.empty) {
+      const docSnap = snap.docs[0];
+      const item = { docId: docSnap.id, ...docSnap.data() };
+
+      const updated = Array.isArray(allData) ? allData : [];
+      const index = updated.findIndex(x => String(x?.id) === String(item.id));
+      if (index >= 0) updated[index] = item;
+      else updated.unshift(item);
+
+      localStorage.setItem('articles', JSON.stringify(updated));
+      return item;
+    }
+  } catch (err) {
+    console.error('Firestore fetch failed:', err);
+  }
+
+  return null;
+}
 
   function buildNotFound(lang){
     const t = uiTexts[lang] || uiTexts.ar;
@@ -1542,12 +1589,11 @@ if (tagsBox) {
     if(menu) menu.style.display = 'none';
   }
 
-  window.displayItem = getArticleById();
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const savedLang = getCurrentLang();
-    applyLang(savedLang);
-  });
+window.addEventListener('DOMContentLoaded', async () => {
+  const savedLang = getCurrentLang();
+  window.displayItem = await getArticleById();
+  applyLang(savedLang);
+});
 </script>
 
 </body>
