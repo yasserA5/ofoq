@@ -1236,19 +1236,45 @@ function esc(str) {
   function getQueryParam(name){
     return new URLSearchParams(window.location.search).get(name);
   }
+
 async function getArticleById() {
   const rawId = (getQueryParam('id') || '').trim();
   if (!rawId) return null;
 
-  const allData = safeParse(localStorage.getItem('articles'), []);
-  if (Array.isArray(allData)) {
-    const localItem = allData.find(i =>
-      String(i?.id || '').trim() === rawId ||
-      String(i?.docId || '').trim() === rawId
-    );
-    if (localItem) return localItem;
+  const sectionKeys = [
+    'articles',
+    'research',
+    'files',
+    'general-articles',
+    'foreign-articles',
+    'special-politics',
+    'special-ir',
+    'special-admin-law',
+    'special-const-law',
+    'special-public-policy',
+    'editions',
+    'activities',
+    'talks',
+    'training',
+    'live'
+  ];
+
+  // 1) Search localStorage first across all sections
+  for (const key of sectionKeys) {
+    const allData = safeParse(localStorage.getItem(key), []);
+    if (Array.isArray(allData)) {
+      const localItem = allData.find(i =>
+        String(i?.id || '').trim() === rawId ||
+        String(i?.docId || '').trim() === rawId
+      );
+      if (localItem) {
+        localItem.__sectionKey = key;
+        return localItem;
+      }
+    }
   }
 
+  // 2) Then search Firestore across all sections
   try {
     const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
       const start = Date.now();
@@ -1281,44 +1307,50 @@ async function getArticleById() {
 
     await waitForFS();
 
-    const col = window.fs.collection(window.fs.db, 'articles');
-    const q = window.fs.query(col, window.fs.where('id', '==', rawId));
-    const snap = await window.fs.getDocs(q);
+    for (const key of sectionKeys) {
+      // Try by custom field id
+      const col = window.fs.collection(window.fs.db, key);
+      const q = window.fs.query(col, window.fs.where('id', '==', rawId));
+      const snap = await window.fs.getDocs(q);
 
-    if (!snap.empty) {
-      const docSnap = snap.docs[0];
-      const item = { docId: docSnap.id, ...docSnap.data() };
+      if (!snap.empty) {
+        const docSnap = snap.docs[0];
+        const item = { docId: docSnap.id, __sectionKey: key, ...docSnap.data() };
 
-      const updated = Array.isArray(allData) ? allData : [];
-      const index = updated.findIndex(x =>
-        String(x?.id || '').trim() === String(item.id || '').trim() ||
-        String(x?.docId || '').trim() === String(item.docId || '').trim()
-      );
+        const updated = safeParse(localStorage.getItem(key), []);
+        const arr = Array.isArray(updated) ? updated : [];
+        const index = arr.findIndex(x =>
+          String(x?.id || '').trim() === String(item.id || '').trim() ||
+          String(x?.docId || '').trim() === String(item.docId || '').trim()
+        );
 
-      if (index >= 0) updated[index] = item;
-      else updated.unshift(item);
+        if (index >= 0) arr[index] = item;
+        else arr.unshift(item);
 
-      localStorage.setItem('articles', JSON.stringify(updated));
-      return item;
-    }
+        localStorage.setItem(key, JSON.stringify(arr));
+        return item;
+      }
 
-    const ref = window.fs.doc(window.fs.db, 'articles', rawId);
-    const directSnap = await window.fs.getDoc(ref);
+      // Try by document ID directly
+      const ref = window.fs.doc(window.fs.db, key, rawId);
+      const docSnap = await window.fs.getDoc(ref);
 
-    if (directSnap.exists()) {
-      const item = { docId: directSnap.id, ...directSnap.data() };
+      if (docSnap.exists()) {
+        const item = { docId: docSnap.id, __sectionKey: key, ...docSnap.data() };
 
-      const updated = Array.isArray(allData) ? allData : [];
-      const index = updated.findIndex(x =>
-        String(x?.id || '').trim() === String(item.id || '').trim() ||
-        String(x?.docId || '').trim() === String(item.docId || '').trim()
-      );
+        const updated = safeParse(localStorage.getItem(key), []);
+        const arr = Array.isArray(updated) ? updated : [];
+        const index = arr.findIndex(x =>
+          String(x?.id || '').trim() === String(item.id || '').trim() ||
+          String(x?.docId || '').trim() === String(item.docId || '').trim()
+        );
 
-      if (index >= 0) updated[index] = item;
-      else updated.unshift(item);
+        if (index >= 0) arr[index] = item;
+        else arr.unshift(item);
 
-      localStorage.setItem('articles', JSON.stringify(updated));
-      return item;
+        localStorage.setItem(key, JSON.stringify(arr));
+        return item;
+      }
     }
   } catch (err) {
     console.error('Firestore fetch failed:', err);

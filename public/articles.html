@@ -1468,8 +1468,6 @@ document.addEventListener('click', (e) => {
   if (!id && !docId) return;
   handleProtectedArticle(id, docId);
 });
-
-
 window.addEventListener('DOMContentLoaded', async () => {
   initMobileDropdowns();
   await syncArticlesFromFirestore();
