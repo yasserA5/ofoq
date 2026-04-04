@@ -1259,26 +1259,20 @@ async function getArticleById() {
     'live'
   ];
 
-  // 1) Search localStorage first across all sections
   for (const key of sectionKeys) {
-    const allData = safeParse(localStorage.getItem(key), []);
-    if (Array.isArray(allData)) {
-      const localItem = allData.find(i =>
+    const localData = safeParse(localStorage.getItem(key), []);
+    if (Array.isArray(localData)) {
+      const found = localData.find(i =>
         String(i?.id || '').trim() === rawId ||
         String(i?.docId || '').trim() === rawId
       );
-      if (localItem) {
-        localItem.__sectionKey = key;
-        return localItem;
-      }
+      if (found) return found;
     }
   }
 
-  // 2) Then search Firestore across all sections
   try {
     const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
       const start = Date.now();
-
       function check() {
         if (
           window.fs &&
@@ -1293,62 +1287,57 @@ async function getArticleById() {
           resolve();
           return;
         }
-
         if (Date.now() - start > timeoutMs) {
           reject(new Error('Firestore not ready'));
           return;
         }
-
         setTimeout(check, 50);
       }
-
       check();
     });
 
     await waitForFS();
 
     for (const key of sectionKeys) {
-      // Try by custom field id
       const col = window.fs.collection(window.fs.db, key);
       const q = window.fs.query(col, window.fs.where('id', '==', rawId));
       const snap = await window.fs.getDocs(q);
 
       if (!snap.empty) {
         const docSnap = snap.docs[0];
-        const item = { docId: docSnap.id, __sectionKey: key, ...docSnap.data() };
+        const item = { docId: docSnap.id, ...docSnap.data() };
 
-        const updated = safeParse(localStorage.getItem(key), []);
-        const arr = Array.isArray(updated) ? updated : [];
-        const index = arr.findIndex(x =>
+        const arr = safeParse(localStorage.getItem(key), []);
+        const updated = Array.isArray(arr) ? arr : [];
+        const index = updated.findIndex(x =>
           String(x?.id || '').trim() === String(item.id || '').trim() ||
           String(x?.docId || '').trim() === String(item.docId || '').trim()
         );
 
-        if (index >= 0) arr[index] = item;
-        else arr.unshift(item);
+        if (index >= 0) updated[index] = item;
+        else updated.unshift(item);
 
-        localStorage.setItem(key, JSON.stringify(arr));
+        localStorage.setItem(key, JSON.stringify(updated));
         return item;
       }
 
-      // Try by document ID directly
       const ref = window.fs.doc(window.fs.db, key, rawId);
       const docSnap = await window.fs.getDoc(ref);
 
       if (docSnap.exists()) {
-        const item = { docId: docSnap.id, __sectionKey: key, ...docSnap.data() };
+        const item = { docId: docSnap.id, ...docSnap.data() };
 
-        const updated = safeParse(localStorage.getItem(key), []);
-        const arr = Array.isArray(updated) ? updated : [];
-        const index = arr.findIndex(x =>
+        const arr = safeParse(localStorage.getItem(key), []);
+        const updated = Array.isArray(arr) ? arr : [];
+        const index = updated.findIndex(x =>
           String(x?.id || '').trim() === String(item.id || '').trim() ||
           String(x?.docId || '').trim() === String(item.docId || '').trim()
         );
 
-        if (index >= 0) arr[index] = item;
-        else arr.unshift(item);
+        if (index >= 0) updated[index] = item;
+        else updated.unshift(item);
 
-        localStorage.setItem(key, JSON.stringify(arr));
+        localStorage.setItem(key, JSON.stringify(updated));
         return item;
       }
     }
