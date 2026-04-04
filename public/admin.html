@@ -1206,66 +1206,90 @@ function fileToDataURL(file){
 }
 
 /* ========= upsert localStorage ========= */
-function upsertLocal(key, obj){
-  const arr = db[key] || (db[key] = []);
-  const idx = arr.findIndex(x=>x.id === obj.id);
-  if (idx >= 0) arr[idx] = obj;
-  else arr.unshift(obj);
+function getContentCache(){
+  return safeParse(localStorage.getItem('content_cache'), []);
+}
 
-  localStorage.setItem(key, JSON.stringify(arr));
+function setContentCache(items){
+  localStorage.setItem('content_cache', JSON.stringify(items));
+}
+
+function rebuildDbFromCache(){
+  const all = getContentCache();
+
+  SECTIONS.forEach(s => {
+    db[s.key] = all.filter(item => item.section === s.key);
+  });
+}
+
+function upsertLocal(key, obj){
+  const all = getContentCache();
+  const normalized = { ...obj, section: key };
+  const idx = all.findIndex(x => String(x.id) === String(normalized.id));
+
+  if (idx >= 0) all[idx] = normalized;
+  else all.unshift(normalized);
+
+  setContentCache(all);
+  rebuildDbFromCache();
   editing = { key: null, id: null };
 }
 
-/* ========= upsert Firestore (FIXED: no where/query/addDoc) ========= */
-async function upsertFirestore(collectionKey, obj){
-  if (!window.fs.doc) throw new Error("doc غير موجودة في window.fs");
-  if (!window.fs.setDoc) throw new Error("setDoc غير موجودة في window.fs");
+async function upsertFirestore(sectionKey, obj) {
+  if (!window.fs?.doc || !window.fs?.setDoc) {
+    throw new Error('Firestore bridge not ready');
+  }
 
-  const docId = String(obj.id);
-  const docRef = window.fs.doc(window.fs.db, collectionKey, docId);
+  const now = Date.now();
+  const docId = String(obj.id || uid());
 
+  obj.id = docId;
+  obj.docId = docId;
+  obj.section = sectionKey;
+  obj.updatedAt = now;
+  if (!obj.createdAt) obj.createdAt = now;
+  if (!obj.status) obj.status = 'published';
+
+  const docRef = window.fs.doc(window.fs.db, 'content', docId);
   await window.fs.setDoc(docRef, obj, { merge: true });
 
-  obj.docId = docId;
-
-  const idx = (db[collectionKey] || []).findIndex(x => String(x.id) === String(obj.id));
-  if (idx >= 0) db[collectionKey][idx].docId = docId;
-
-  localStorage.setItem(collectionKey, JSON.stringify(db[collectionKey] || []));
+  return obj;
 }
 
 /* ========= حذف (FIXED: delete by docId = id) ========= */
-async function deleteItem(sectionKey, docId) {
-  const arr = db[sectionKey] || [];
-  const idx = arr.findIndex(it => it.docId === docId || it.id === docId);
-  if (idx === -1) return;
+async function deleteItem(sectionKey, id){
+  const ok = confirm('سيتم حذف العنصر من localStorage و Firestore. هل أنت متأكد؟');
+  if (!ok) return;
 
-  const item = arr[idx];
+  const all = safeParse(localStorage.getItem('content_cache'), []);
+  const item = all.find(x =>
+    String(x.id) === String(id) || String(x.docId) === String(id)
+  );
 
-  // 1) حذف من Firestore
-  try {
-    if (window.fs && item.docId) {
-      const { db: fsdb, doc, deleteDoc } = window.fs;
-      const ref = doc(fsdb, sectionKey, item.docId);
-      await deleteDoc(ref);
-      console.log('✅ Deleted from Firestore:', sectionKey, item.docId);
-    }
-  } catch (e) {
-    console.error('❌ Firestore delete error', e);
-  }
+  const filtered = all.filter(x =>
+    String(x.id) !== String(id) && String(x.docId) !== String(id)
+  );
 
-  // 2) حذف من الذاكرة المحلية
-  arr.splice(idx, 1);
-  db[sectionKey] = arr;
+  localStorage.setItem('content_cache', JSON.stringify(filtered));
 
-  // 3) (اختياري) حفظ نسخة محدثة في localStorage للوحة التحكم
-  localStorage.setItem(sectionKey, JSON.stringify(arr));
+  SECTIONS.forEach(s => {
+    db[s.key] = filtered.filter(entry => entry.section === s.key);
+  });
 
-  // 4) تحديث الواجهة والإحصاءات
   renderList(sectionKey);
-  updateStats();
-}
 
+  if (!requireFs()) return;
+
+  try {
+    const docId = item?.docId || item?.id || id;
+    await window.fs.deleteDoc(
+      window.fs.doc(window.fs.db, 'content', String(docId))
+    );
+  } catch (e) {
+    console.error('Firestore delete error:', e);
+    alert('تعذر حذف العنصر من Firestore');
+  }
+}
 
 /* ========= تفريغ الفورم ========= */
 function resetForm(key){
@@ -1463,32 +1487,35 @@ async function publishItem(key){
 async function reloadFromFirestore(allSections = true){
   if (!requireFs()) return;
 
-  const keys = allSections ? SECTIONS.map(s => s.key) : [currentSectionKey];
+  try {
+    const col = window.fs.collection(window.fs.db, 'content');
+    const snap = await window.fs.getDocs(col);
 
-  for (const key of keys){
-    try{
-      const col = window.fs.collection(window.fs.db, key);
-      const snap = await window.fs.getDocs(col);
-
-      const arr = [];
-      snap.forEach(docSnap => {
-        const data = docSnap.data() || {};
-        // docId هنا هو نفس Document ID (قد يكون = id إذا طبقنا upsert الجديد)
-        arr.push({ docId: docSnap.id, ...data });
+    const all = [];
+    snap.forEach(docSnap => {
+      all.push({
+        docId: docSnap.id,
+        ...docSnap.data()
       });
+    });
 
-      // ترتيب محلي: الأحدث أولاً حسب id
-      arr.sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
+    all.sort((a, b) =>
+      Number(b.updatedAt || b.createdAt || b.id || 0) -
+      Number(a.updatedAt || a.createdAt || a.id || 0)
+    );
 
-      db[key] = arr;
-      localStorage.setItem(key, JSON.stringify(arr));
-    }catch(e){
-      console.error("Firestore load error", key, e);
-    }
+    localStorage.setItem('content_cache', JSON.stringify(all));
+
+    SECTIONS.forEach(s => {
+      db[s.key] = all.filter(item => item.section === s.key);
+    });
+
+    renderList(currentSectionKey);
+    alert('تم تحميل المحتوى من Firestore');
+  } catch (e) {
+    console.error('Firestore load error:', e);
+    alert('تعذر تحميل المحتوى من Firestore');
   }
-
-  renderList(currentSectionKey);
-  alert(allSections ? "تمت مزامنة كل الأقسام من Firestore." : "تم تحديث القسم الحالي من Firestore.");
 }
 
 /* ========= تصدير JSON ========= */
@@ -1508,16 +1535,19 @@ function exportJSON(){
 
 /* ========= مسح localStorage (فقط) ========= */
 function clearLocalStorage(){
-  const ok = confirm("سيتم حذف بيانات الأقسام من localStorage فقط. هل أنت متأكد؟");
+  const ok = confirm('سيتم حذف الكاش المحلي فقط. هل أنت متأكد؟');
   if (!ok) return;
-  SECTIONS.forEach(s=>{
-    localStorage.removeItem(s.key);
-    db[s.key] = [];
-  });
-  showSection("research");
-  alert("تم مسح localStorage.");
-}
 
+  localStorage.removeItem('content_cache');
+
+  SECTIONS.forEach(s => {
+    db[s.key] = [];
+    localStorage.removeItem(s.key);
+  });
+
+  showSection(currentSectionKey);
+  alert('تم حذف الكاش المحلي');
+}
 /* ========= بعد الدخول ========= */
 async function initAfterLogin(){
   buildMenu();
@@ -1574,37 +1604,6 @@ window.fillFormFromItem = fillFormFromItem;
 =========================== */
 
 /* 1) Override deleteItem: local + Firestore (docId first) */
-window.deleteItem = async function(key, id){
-  const ok = confirm("هل تريد حذف هذا العنصر؟ (سيُحذف من localStorage و Firestore)");
-  if (!ok) return;
-
-  const item = (db[key] || []).find(x => x.id === id);
-
-  // Local delete
-  db[key] = (db[key] || []).filter(x => x.id !== id);
-  localStorage.setItem(key, JSON.stringify(db[key]));
-  renderList(key);
-
-  // Firestore delete
-  if (!requireFs()) return;
-
-  try{
-    if (item?.docId){
-      await window.fs.deleteDoc(window.fs.doc(window.fs.db, key, item.docId));
-      return;
-    }
-    const col = window.fs.collection(window.fs.db, key);
-    const q = window.fs.query(col, window.fs.where("id","==", id));
-    const snap = await window.fs.getDocs(q);
-    if (!snap.empty){
-      const docId = snap.docs[0].id;
-      await window.fs.deleteDoc(window.fs.doc(window.fs.db, key, docId));
-    }
-  }catch(e){
-    console.error(e);
-    alert("تم الحذف محليًا، لكن تعذر الحذف من Firestore (قواعد/اتصال).");
-  }
-};
 
 /* 2) Translation helpers (optional but enabled) */
 async function translateText(text, fromLang, toLang){
