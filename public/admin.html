@@ -1045,9 +1045,11 @@ async function saveItem(key){
   };
 
   if (isLive){
-    const titleAr = el(`${key}-title-ar`)?.value.trim();
-    const shortAr = el(`${key}-short-ar`)?.value.trim();
-    const link = el(`${key}-live-link`)?.value.trim();
+const titleAr = el(`${key}-title-ar`)?.value.trim() || '';
+const titleFr = el(`${key}-title-fr`)?.value.trim() || '';
+const titleEn = el(`${key}-title-en`)?.value.trim() || '';
+
+if (!titleAr) return alert('أدخل العنوان بالعربية أولاً');
 
     if (!titleAr) return alert("اكتب عنوان البث (عربي).");
     if (!link) return alert("ضع رابط البث.");
@@ -1060,15 +1062,14 @@ async function saveItem(key){
     const titleFr = el(`${key}-title-fr`)?.value.trim();
     const titleEn = el(`${key}-title-en`)?.value.trim();
 
-    if (!titleAr || !titleFr || !titleEn) return alert("الرجاء إدخال العنوان بالعربية + الفرنسية + الإنجليزية.");
-
+if (!titleAr) return alert('أدخل العنوان بالعربية أولاً');
     obj.title = { ar:titleAr, fr:titleFr, en:titleEn };
 
-    obj.short = {
-      ar: el(`${key}-short-ar`)?.value.trim() || "",
-      fr: el(`${key}-short-fr`)?.value.trim() || "",
-      en: el(`${key}-short-en`)?.value.trim() || ""
-    };
+obj.short = {
+  ar: el(`${key}-short-ar`)?.value.trim() || '',
+  fr: el(`${key}-short-fr`)?.value.trim() || '',
+  en: el(`${key}-short-en`)?.value.trim() || ''
+};
 
     obj.full = {
       ar: (el(`${key}-full-ar-editor`)?.innerHTML || "").trim(),

@@ -1049,18 +1049,16 @@ async function syncArticlesFromFirestore() {
 
     await waitForFS();
 
-    const col = window.fs.collection(window.fs.db, 'articles');
+    const col = window.fs.collection(window.fs.db, 'content');
     const snap = await window.fs.getDocs(col);
 
     const arr = [];
     snap.forEach(docSnap => {
-      arr.push({
-        docId: docSnap.id,
-        ...docSnap.data()
-      });
+      const item = { docId: docSnap.id, ...docSnap.data() };
+      if (item.section === 'articles') arr.push(item);
     });
 
-    arr.sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+    arr.sort((a, b) => Number(b.updatedAt || b.createdAt || b.id || 0) - Number(a.updatedAt || a.createdAt || a.id || 0));
     localStorage.setItem('articles', JSON.stringify(arr));
   } catch (error) {
     console.error('Articles sync failed:', error);
@@ -1418,8 +1416,8 @@ function doSearch(e){
     articlesData.forEach((item) => {
       const card = document.createElement("article");
       card.className = "card";
-      if (item.id != null) card.dataset.id = item.id;
-
+if (item.id != null) card.dataset.id = item.id;
+if (item.docId != null) card.dataset.docId = item.docId;
 
       const title = getTextByLang(item.title) || 'بدون عنوان';
       const authorName = getTextByLang(item.author);
