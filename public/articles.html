@@ -1494,7 +1494,7 @@ function handleProtectedArticle(id, docId) {
   window.location.href = `articles-view.html?id=${encodeURIComponent(finalId)}`;
 }
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', e => {
   const card = e.target.closest('.card');
   if (!card) return;
 
