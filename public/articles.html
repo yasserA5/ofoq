@@ -1051,17 +1051,22 @@ async function syncArticlesFromFirestore() {
 
     const all = [];
 
-    // 1) New unified collection
     try {
       const contentCol = window.fs.collection(window.fs.db, 'content');
       const contentSnap = await window.fs.getDocs(contentCol);
 
       contentSnap.forEach(docSnap => {
-        const item = { docId: docSnap.id, ...docSnap.data() };
+        const data = docSnap.data() || {};
+        const item = {
+          docId: docSnap.id,
+          ...data,
+          section: data.section || 'articles'
+        };
 
         if (
           item.section === 'articles' ||
-          (!item.section && (item.title || item.short || item.full))
+          item.type === 'article' ||
+          item.category === 'articles'
         ) {
           all.push(item);
         }
@@ -1070,34 +1075,31 @@ async function syncArticlesFromFirestore() {
       console.error('Content collection load failed:', e);
     }
 
-    // 2) Old articles collection fallback
     try {
       const oldCol = window.fs.collection(window.fs.db, 'articles');
       const oldSnap = await window.fs.getDocs(oldCol);
 
       oldSnap.forEach(docSnap => {
-        const item = { docId: docSnap.id, ...docSnap.data() };
+        const data = docSnap.data() || {};
+        const item = {
+          docId: docSnap.id,
+          ...data,
+          section: data.section || 'articles'
+        };
 
         const exists = all.some(x =>
           String(x.docId) === String(item.docId) ||
-          String(x.id) === String(item.id)
+          (x.id != null && item.id != null && String(x.id) === String(item.id))
         );
 
-        if (!exists) {
-          all.push({ ...item, section: item.section || 'articles' });
-        }
+        if (!exists) all.push(item);
       });
     } catch (e) {
       console.error('Old articles collection load failed:', e);
     }
 
-    all.sort((a, b) =>
-      Number(b.updatedAt || b.createdAt || b.id || 0) -
-      Number(a.updatedAt || a.createdAt || a.id || 0)
-    );
-
     localStorage.setItem('articles', JSON.stringify(all));
-    console.log('Articles synced:', all.length, all);
+    console.log('SYNCED ARTICLES', all);
   } catch (error) {
     console.error('Articles sync failed:', error);
   }
@@ -1435,7 +1437,7 @@ function doSearch(e){
 
   function renderArticlesPeer(){
     if (!articlesPeerGrid) return;
-
+console.log('ARTICLE ITEM', item);
 
     const articlesData = JSON.parse(localStorage.getItem('articles') || '[]');
 
@@ -1454,8 +1456,8 @@ function doSearch(e){
     articlesData.forEach((item) => {
       const card = document.createElement("article");
       card.className = "card";
-if (item.id != null) card.dataset.id = item.id;
 if (item.docId != null) card.dataset.docId = item.docId;
+if (item.id != null) card.dataset.id = item.id
 
       const title = getTextByLang(item.title) || 'بدون عنوان';
       const authorName = getTextByLang(item.author);
@@ -1489,8 +1491,11 @@ if (item.docId != null) card.dataset.docId = item.docId;
 
 
 function handleProtectedArticle(id, docId) {
-  const finalId = docId || id;
-  if (!finalId) return;
+  const finalId = docId;
+  if (!finalId) {
+    console.error('Missing docId for article:', { id, docId });
+    return;
+  }
   window.location.href = `articles-view.html?id=${encodeURIComponent(finalId)}`;
 }
 

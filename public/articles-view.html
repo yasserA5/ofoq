@@ -213,35 +213,34 @@
     return null;
   }
 
-  async function loadArticle() {
-    if (!id) {
-      setError('No article id in the link.');
-      return;
-    }
-
-    const cached = loadFromCache(id);
-    if (cached) {
-      renderArticle(cached);
-      return;
-    }
-
-    try {
-      await waitForFS();
-
-      const article = await findArticle(id);
-
-      if (!article) {
-        setError('No article found.');
-        return;
-      }
-
-      renderArticle(article);
-    } catch (e) {
-      console.error(e);
-      setError('No article found.');
-    }
+async function loadArticle() {
+  if (!id) {
+    setError('No article id in the link.');
+    return;
   }
 
+  try {
+    await waitForFS();
+
+    let article = await loadByDocId('content', id);
+    if (!article) article = await loadByDocId('articles', id);
+
+    if (!article) {
+      const cached = loadFromCache(id);
+      if (cached) article = cached;
+    }
+
+    if (!article) {
+      setError('No article found.');
+      return;
+    }
+
+    renderArticle(article);
+  } catch (e) {
+    console.error(e);
+    setError('No article found.');
+  }
+}
   loadArticle();
 </script>
 </body>
