@@ -70,178 +70,224 @@
 
 <script type="module" src="firestore-bridge.js"></script>
 <script>
-  const lang = (localStorage.getItem('lang') || 'ar').toLowerCase();
-  const params = new URLSearchParams(location.search);
-  const id = params.get('id');
+  function getStoredUser() {
+    try {
+      return JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || 'null');
+    } catch {
+      return null;
+    }
+  }
 
-  const byLang = (field) => {
-    if (!field) return '';
-    if (typeof field === 'string') return field;
-    return field[lang] || field.ar || field.fr || field.en || '';
+  let user = getStoredUser();
+  let currentLang = localStorage.getItem('lang') || 'ar';
+
+  const translations = {
+    ar: {
+      title: 'المقالات المحكمة',
+      noarticlespeer: 'لا توجد مقالات بعد',
+      byauthor: 'بقلم',
+      sourcelabel: 'المصدر',
+      peerbadge: 'مقال محكم',
+      unknowndate: 'غير محدد'
+    },
+    en: {
+      title: 'Peer-reviewed articles',
+      noarticlespeer: 'No articles yet',
+      byauthor: 'By',
+      sourcelabel: 'Source',
+      peerbadge: 'Peer-reviewed',
+      unknowndate: 'Unspecified'
+    },
+    fr: {
+      title: 'Articles évalués',
+      noarticlespeer: 'Aucun article pour le moment',
+      byauthor: 'Par',
+      sourcelabel: 'Source',
+      peerbadge: 'Évalué',
+      unknowndate: 'Non précisé'
+    }
   };
 
-  function setError(msg) {
-    const state = document.getElementById('state');
-    state.className = 'error';
-    state.textContent = msg;
+  function t(key) {
+    return (translations[currentLang] || translations.ar)[key] || key;
   }
 
-  function setMeta(article) {
-    const parts = [];
-    const date = byLang(article.date);
-    const author = byLang(article.author);
-    if (date) parts.push(date);
-    if (author) parts.push(author);
-    if (article.section) parts.push(article.section);
-
-    document.getElementById('meta').textContent = parts.join(' • ');
-    document.title = byLang(article.title) || 'Article';
-    document.getElementById('pageTitle').textContent = document.title;
+  function getTextByLang(field, lang = currentLang) {
+    if (!field) return '';
+    if (typeof field === 'string') return field;
+    return field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
   }
 
-  function renderArticle(article) {
-    setMeta(article);
-
-    const title = byLang(article.title);
-    const short = byLang(article.short || article.summary || article.shortContent || '');
-    const full = byLang(article.full || article.content || article.details || article.description || '');
-
-    document.getElementById('title').textContent = title || 'Untitled';
-    document.getElementById('excerpt').textContent = short;
-    document.getElementById('body').innerHTML = full || '<p>No content available.</p>';
-
-    const cover = document.getElementById('cover');
-    if (article.image) {
-      cover.src = article.image;
-      cover.hidden = false;
-    } else {
-      cover.hidden = true;
-    }
-
-    const fileBox = document.getElementById('fileBox');
-    if (article.file) {
-      fileBox.hidden = false;
-      fileBox.innerHTML = `<strong>Attachment:</strong> <a href="${article.file}" target="_blank" rel="noopener">Open file</a>`;
-    } else {
-      fileBox.hidden = true;
-      fileBox.innerHTML = '';
-    }
-
-    document.getElementById('state').hidden = true;
-    document.getElementById('article').hidden = false;
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
+    const titleEl = document.getElementById('t-title');
+    if (titleEl) titleEl.textContent = t('title');
+    renderArticlesPeer();
   }
 
   async function waitForFS(timeoutMs = 8000) {
     return new Promise((resolve, reject) => {
       const start = Date.now();
       function check() {
-        if (
-          window.fs &&
-          window.fs.db &&
-          window.fs.doc &&
-          window.fs.getDoc &&
-          window.fs.getDocs &&
-          window.fs.collection &&
-          window.fs.query &&
-          window.fs.where
-        ) return resolve();
-
-        if (Date.now() - start > timeoutMs) {
-          return reject(new Error('Firestore bridge not ready'));
-        }
+        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) return resolve();
+        if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
         setTimeout(check, 60);
       }
       check();
     });
   }
 
-  function loadFromCache(anyId) {
-    const stores = ['content_cache', 'articles'];
-    for (const key of stores) {
+  async function syncArticlesFromFirestore() {
+    try {
+      await waitForFS();
+
+      const all = [];
+
       try {
-        const cached = JSON.parse(localStorage.getItem(key) || '[]');
-        const found = cached.find(x =>
-          String(x.docId) === String(anyId) ||
-          String(x.id) === String(anyId)
-        );
-        if (found) return found;
-      } catch (e) {}
-    }
-    return null;
-  }
+        const contentCol = window.fs.collection(window.fs.db, 'content');
+        const contentSnap = await window.fs.getDocs(contentCol);
 
-  async function loadByDocId(collectionName, anyId) {
-    const ref = window.fs.doc(window.fs.db, collectionName, String(anyId));
-    const snap = await window.fs.getDoc(ref);
+        contentSnap.forEach(docSnap => {
+          const data = docSnap.data() || {};
+          const item = {
+            docId: docSnap.id,
+            ...data
+          };
 
-    if (snap && typeof snap.exists === 'function' && snap.exists()) {
-      return { docId: snap.id, ...snap.data() };
-    }
-    return null;
-  }
+          const looksLikeArticle =
+            item.section === 'articles' ||
+            item.type === 'article' ||
+            item.category === 'articles' ||
+            !!item.title;
 
-  async function loadByFieldId(collectionName, rawId) {
-    const col = window.fs.collection(window.fs.db, collectionName);
-    const tries = [rawId];
-    const asNumber = Number(rawId);
-    if (!Number.isNaN(asNumber)) tries.push(asNumber);
-
-    for (const value of tries) {
-      const q = window.fs.query(col, window.fs.where('id', '==', value));
-      const snap = await window.fs.getDocs(q);
-
-      if (snap && !snap.empty) {
-        const docSnap = snap.docs[0];
-        return { docId: docSnap.id, ...docSnap.data() };
+          if (looksLikeArticle) {
+            all.push(item);
+          }
+        });
+      } catch (e) {
+        console.error('Content collection load failed:', e);
       }
-    }
 
-    return null;
+      try {
+        const oldCol = window.fs.collection(window.fs.db, 'articles');
+        const oldSnap = await window.fs.getDocs(oldCol);
+
+        oldSnap.forEach(docSnap => {
+          const data = docSnap.data() || {};
+          const item = {
+            docId: docSnap.id,
+            ...data,
+            section: data.section || 'articles'
+          };
+
+          const exists = all.some(x =>
+            String(x.docId) === String(item.docId) ||
+            (x.id != null && item.id != null && String(x.id) === String(item.id))
+          );
+
+          if (!exists) all.push(item);
+        });
+      } catch (e) {
+        console.error('Old articles collection load failed:', e);
+      }
+
+      all.sort((a, b) =>
+        Number(b.updatedAt || b.createdAt || b.id || 0) -
+        Number(a.updatedAt || a.createdAt || a.id || 0)
+      );
+
+      localStorage.setItem('articles', JSON.stringify(all));
+      console.log('SYNCED ARTICLES:', all);
+      renderArticlesPeer();
+    } catch (error) {
+      console.error('Articles sync failed:', error);
+      renderArticlesPeer();
+    }
   }
 
-  async function findArticle(anyId) {
-    const collections = ['content', 'articles'];
+  const articlesPeerGrid = document.getElementById('articlesPeerGrid');
 
-    for (const name of collections) {
-      let article = await loadByDocId(name, anyId);
-      if (article) return article;
+  function renderArticlesPeer() {
+    if (!articlesPeerGrid) return;
 
-      article = await loadByFieldId(name, anyId);
-      if (article) return article;
+    let articlesData = [];
+    try {
+      articlesData = JSON.parse(localStorage.getItem('articles') || '[]');
+    } catch (e) {
+      articlesData = [];
     }
 
-    return null;
-  }
+    articlesPeerGrid.innerHTML = '';
 
-async function loadArticle() {
-  if (!id) {
-    setError('No article id in the link.');
-    return;
-  }
-
-  try {
-    await waitForFS();
-
-    let article = await loadByDocId('content', id);
-    if (!article) article = await loadByDocId('articles', id);
-
-    if (!article) {
-      const cached = loadFromCache(id);
-      if (cached) article = cached;
-    }
-
-    if (!article) {
-      setError('No article found.');
+    if (!Array.isArray(articlesData) || articlesData.length === 0) {
+      articlesPeerGrid.innerHTML = `<div class="empty-state">${t('noarticlespeer')}</div>`;
       return;
     }
 
-    renderArticle(article);
-  } catch (e) {
-    console.error(e);
-    setError('No article found.');
+    articlesData.forEach(item => {
+      const card = document.createElement('article');
+      card.className = 'card';
+
+      if (item.id != null) card.dataset.id = item.id;
+      if (item.docId != null) card.dataset.docId = item.docId;
+
+      const title = getTextByLang(item.title) || 'Untitled';
+      const authorName = getTextByLang(item.author);
+      const date = getTextByLang(item.date) || t('unknowndate');
+      const source = getTextByLang(item.journal || item.source);
+      const img = item.image || '';
+      const descRaw =
+        getTextByLang(item.shortContent) ||
+        getTextByLang(item.short) ||
+        getTextByLang(item.summary) ||
+        getTextByLang(item.description) ||
+        '';
+      const desc = descRaw.length > 220 ? descRaw.slice(0, 220) + '...' : descRaw;
+      const authorPart = authorName ? `${t('byauthor')} ${authorName}` : '';
+      const meta = [authorPart, date].filter(Boolean).join(' • ');
+
+      card.innerHTML = `
+        ${img ? `<div class="card-img-wrapper"><img src="${img}" class="card-img" alt="${title}" loading="lazy"></div>` : ''}
+        <div class="card-body">
+          <h3>${title}</h3>
+          <div class="meta">${meta}</div>
+          ${source ? `<div class="source">${t('sourcelabel')}: ${source}</div>` : ''}
+          <p>${desc}</p>
+        </div>
+        <div class="card-footer">
+          <span>${t('peerbadge')}</span>
+        </div>
+      `;
+
+      articlesPeerGrid.appendChild(card);
+    });
   }
-}
-  loadArticle();
+
+  function handleProtectedArticle(id, docId) {
+    const finalId = docId || id;
+    if (!finalId) return;
+    window.location.href = `articles-view.html?id=${encodeURIComponent(finalId)}`;
+  }
+
+  document.addEventListener('click', e => {
+    const card = e.target.closest('.card');
+    if (!card) return;
+
+    const id = card.dataset.id;
+    const docId = card.dataset.docId;
+
+    if (!id && !docId) return;
+    handleProtectedArticle(id, docId);
+  });
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    renderArticlesPeer();
+    await syncArticlesFromFirestore();
+    setLang(currentLang);
+  });
 </script>
 </body>
 </html>
