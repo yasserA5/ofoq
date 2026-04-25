@@ -41,7 +41,7 @@
         <img src="logo1222.jpeg" alt="Ofouq Academy">
         <div>
           <strong>Ofouq Academie</strong><br>
-          <span id="brandSub">Scientific platform</span>
+          <span>Scientific platform</span>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
@@ -53,6 +53,7 @@
 
   <main>
     <div id="state" class="loading">Loading article...</div>
+
     <article id="article" class="hero" hidden>
       <img id="cover" class="cover" alt="cover" hidden>
       <div class="content">
@@ -79,29 +80,32 @@
       return field[lang] || field.ar || field.fr || field.en || '';
     };
 
-    function setError(msg){
-      document.getElementById('state').className = 'error';
-      document.getElementById('state').textContent = msg;
+    function setError(msg) {
+      const state = document.getElementById('state');
+      state.className = 'error';
+      state.textContent = msg;
     }
 
-    function setMeta(article){
+    function setMeta(article) {
       const parts = [];
-      if (article.section) parts.push(article.section);
       const date = byLang(article.date);
-      if (date) parts.push(date);
       const author = byLang(article.author);
+      if (date) parts.push(date);
       if (author) parts.push(author);
+      if (article.section) parts.push(article.section);
+
       document.getElementById('meta').textContent = parts.join(' • ');
       document.title = byLang(article.title) || 'Article';
       document.getElementById('pageTitle').textContent = document.title;
     }
 
-    function renderArticle(article){
+    function renderArticle(article) {
+      setMeta(article);
+
       const title = byLang(article.title);
       const short = byLang(article.short || article.summary || '');
       const full = byLang(article.full || article.content || article.details || '');
 
-      setMeta(article);
       document.getElementById('title').textContent = title || 'Untitled';
       document.getElementById('excerpt').textContent = short;
       document.getElementById('body').innerHTML = full || '<p>No content available.</p>';
@@ -122,40 +126,81 @@
       document.getElementById('article').hidden = false;
     }
 
-    async function waitForFS(timeoutMs = 8000){
+    async function waitForFS(timeoutMs = 8000) {
       return new Promise((resolve, reject) => {
         const start = Date.now();
-        function check(){
-          if (window.fs && window.fs.db && window.fs.doc && window.fs.getDoc) return resolve();
-          if (Date.now() - start > timeoutMs) return reject(new Error('Firestore bridge not ready'));
+        function check() {
+          if (window.fs && window.fs.db && window.fs.doc && window.fs.getDoc && window.fs.getDocs && window.fs.collection && window.fs.query && window.fs.where) {
+            return resolve();
+          }
+          if (Date.now() - start > timeoutMs) {
+            return reject(new Error('Firestore bridge not ready'));
+          }
           setTimeout(check, 60);
         }
         check();
       });
     }
 
-    async function loadArticle(){
-      if (!id) return setError('No article id in the link.');
+    async function loadFromFirestoreByDocId(docId) {
+      const ref = window.fs.doc(window.fs.db, 'content', String(docId));
+      const snap = await window.fs.getDoc(ref);
+      if (snap && typeof snap.exists === 'function' && snap.exists()) {
+        return { docId: snap.id, ...snap.data() };
+      }
+      return null;
+    }
 
+    async function loadFromFirestoreByInternalId(internalId) {
+      const col = window.fs.collection(window.fs.db, 'content');
+      const q = window.fs.query(col, window.fs.where('id', '==', String(internalId)));
+      const snap = await window.fs.getDocs(q);
+
+      if (snap && !snap.empty) {
+        const docSnap = snap.docs[0];
+        return { docId: docSnap.id, ...docSnap.data() };
+      }
+      return null;
+    }
+
+    function loadFromCache(anyId) {
       try {
         const cached = JSON.parse(localStorage.getItem('content_cache') || '[]');
-        const fromCache = cached.find(x => String(x.id) === String(id) || String(x.docId) === String(id));
-        if (fromCache) {
-          renderArticle(fromCache);
-          return;
-        }
-      } catch(e) {}
+        return cached.find(x =>
+          String(x.docId) === String(anyId) ||
+          String(x.id) === String(anyId)
+        ) || null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function loadArticle() {
+      if (!id) {
+        setError('No article id in the link.');
+        return;
+      }
+
+      const cached = loadFromCache(id);
+      if (cached) {
+        renderArticle(cached);
+        return;
+      }
 
       try {
         await waitForFS();
-        const ref = window.fs.doc(window.fs.db, 'content', String(id));
-        const snap = await window.fs.getDoc(ref);
 
-        if (!snap.exists()) {
-          return setError('No article found.');
+        let article = await loadFromFirestoreByDocId(id);
+
+        if (!article) {
+          article = await loadFromFirestoreByInternalId(id);
         }
 
-        const article = { docId: snap.id, ...snap.data() };
+        if (!article) {
+          setError('No article found.');
+          return;
+        }
+
         renderArticle(article);
       } catch (e) {
         console.error(e);

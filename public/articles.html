@@ -1049,13 +1049,13 @@ async function syncArticlesFromFirestore() {
 
     await waitForFS();
 
-    const col = window.fs.collection(window.fs.db, 'content');
+const col = window.fs.collection(window.fs.db, 'content');
     const snap = await window.fs.getDocs(col);
 
     const arr = [];
     snap.forEach(docSnap => {
       const item = { docId: docSnap.id, ...docSnap.data() };
-      if (item.section === 'articles') arr.push(item);
+if (item.section === 'articles') arr.push(item);
     });
 
     arr.sort((a, b) => Number(b.updatedAt || b.createdAt || b.id || 0) - Number(a.updatedAt || a.createdAt || a.id || 0));
