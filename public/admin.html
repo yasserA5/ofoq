@@ -1385,7 +1385,8 @@ async function recoverData(){
 el("loginForm").addEventListener("submit", e => {
   e.preventDefault();
   login();
-});    el("logoutBtn").addEventListener("click", logout);
+});
+    el("logoutBtn").addEventListener("click", logout);
     el("reloadBtn").addEventListener("click", reloadFromFirestore);
     el("recoverBtn").addEventListener("click", recoverData);
     el("exportBtn").addEventListener("click", exportJSON);
