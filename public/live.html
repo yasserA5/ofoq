@@ -1,59 +1,68 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>البث المباشر - Ofouq Academy</titltle>
 
-  /png" href="logo1222.jpegeg">
-  //fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" " />
-  //cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  /png" href="logo1222.jpeg">
+  //fonts.googleapis.com">
+  //fonts.gstatic.com" crossorigigin>
+  //fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheetet">
+  //cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
   <style>
     :root{
-      --accent:#f472b6;
-      --accent2:#38bdf8;
       --bg1:#0f172a;
-      --bg2:#1e293b;
-      --card: rgba(30,41,59,.78);
+      --bg2:#111827;
+      --card:rgba(15,23,42,.82);
+      --card-2:rgba(30,41,59,.88);
       --text:#e5e7eb;
-      --muted:#cbd5e1;
-      --soft:#94a3b8;
-      --border: rgba(148,163,184,.20);
-      --shadow: 0 22px 60px rgba(2,6,23,.40);
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.18);
+      --pink:#f472b6;
+      --blue:#38bdf8;
+      --shadow:0 22px 60px rgba(2,6,23,.42);
+      --r:28px;
     }
 
     *{ box-sizing:border-box; }
-    html,body{ margin:0; padding:0; width:100%; overflow-x:hidden; }
+
+    html,body{
+      margin:0;
+      padding:0;
+      width:100%;
+      overflow-x:hidden;
+    }
 
     body{
       font-family:"Tajawal",sans-serif;
       color:var(--text);
-      background:
-        radial-gradient(circle at top right, rgba(244,114,182,.12), transparent 28%),
-        radial-gradient(circle at top left, rgba(56,189,248,.10), transparent 30%),
-        linear-gradient(180deg, #0f172a 0%, #111827 100%);
       min-height:100vh;
+      background:
+        radial-gradient(circle at top right, rgba(244,114,182,.10), transparent 24%),
+        radial-gradient(circle at top left, rgba(56,189,248,.08), transparent 26%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
     }
 
-    a{ color:inherit; text-decoration:none; }
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
 
-    .wrap{
-      width:min(1200px, calc(100% - 28px));
+    .container{
+      width:min(1180px, calc(100% - 24px));
       margin:0 auto;
-    }
-
-    .hero{
-      padding:26px 0 16px;
+      padding:24px 0 40px;
     }
 
     .topbar{
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      gap:12px;
+      justify-content:space-between;
+      gap:14px;
       flex-wrap:wrap;
-      margin-bottom:20px;
+      margin-bottom:18px;
     }
 
     .brand{
@@ -63,11 +72,11 @@
     }
 
     .brand img{
-      width:52px;
-      height:52px;
+      width:54px;
+      height:54px;
       object-fit:cover;
       border-radius:16px;
-      box-shadow: var(--shadow);
+      box-shadow:var(--shadow);
     }
 
     .brand h1{
@@ -77,101 +86,157 @@
     }
 
     .brand p{
-      margin:2px 0 0;
+      margin:4px 0 0;
       font-size:13px;
-      color:var(--soft);
+      color:var(--muted);
     }
 
-    .home-link{
+    .back-btn{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:10px 14px;
+      padding:10px 16px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(15,23,42,.55);
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(15,23,42,.55);
       color:#fff;
-      font-weight:700;
+      font-weight:800;
     }
 
-    .hero-card{
-      background: linear-gradient(135deg, rgba(30,41,59,.82), rgba(15,23,42,.90));
-      border:1px solid rgba(148,163,184,.16);
+    .hero{
+      background:linear-gradient(135deg, rgba(30,41,59,.84), rgba(15,23,42,.92));
+      border:1px solid var(--line);
       border-radius:36px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
+      box-shadow:var(--shadow);
       padding:16px;
+      overflow:hidden;
     }
 
-    .player-shell{
-      background:#000;
-      border-radius:28px;
-      overflow:hidden;
-      min-height:300px;
-      aspect-ratio:16/9;
+    .player-wrap{
       width:100%;
+      aspect-ratio:16/9;
+      min-height:280px;
+      background:#000;
+      border-radius:24px;
+      overflow:hidden;
       border:1px solid rgba(255,255,255,.06);
     }
 
-    .player-shell iframe{
+    .player-wrap iframe{
       width:100%;
       height:100%;
-      display:block;
       border:0;
+      display:block;
       background:#000;
     }
 
-    .player-empty{
+    .empty{
       width:100%;
       height:100%;
-      min-height:300px;
+      min-height:280px;
       display:flex;
       align-items:center;
       justify-content:center;
       flex-direction:column;
       gap:10px;
-      color:#cbd5e1;
-      text-align:center;
-      padding:24px;
-    }
-
-    .live-info{
-      margin-top:18px;
-      background: linear-gradient(135deg, rgba(51,65,85,.88), rgba(30,41,59,.88));
-      border:1px solid rgba(148,163,184,.15);
-      border-radius:28px;
       padding:22px;
+      text-align:center;
+      color:#dbe4f0;
+      background:linear-gradient(180deg, rgba(2,6,23,.78), rgba(15,23,42,.92));
     }
 
-    .live-title{
+    .empty i{
+      font-size:44px;
+      color:var(--pink);
+    }
+
+    .info{
+      margin-top:18px;
+      padding:22px;
+      border-radius:24px;
+      border:1px solid var(--line);
+      background:linear-gradient(135deg, rgba(51,65,85,.9), rgba(30,41,59,.9));
+    }
+
+    .live-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(131,24,67,.35);
+      color:#ffd4e8;
+      border:1px solid rgba(244,114,182,.22);
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:12px;
+    }
+
+    .title{
       margin:0 0 10px;
-      font-size:24px;
+      font-size:26px;
       color:#fff;
+      line-height:1.4;
     }
 
-    .live-desc{
+    .desc{
       margin:0;
-      font-size:18px;
       color:#dbe4f0;
       line-height:1.9;
+      font-size:17px;
     }
 
-    .status-bar{
+    .meta{
+      margin-top:16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .meta a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      background:rgba(8,47,73,.35);
+      color:#d7f1ff;
+      border:1px solid rgba(56,189,248,.24);
+    }
+
+    .status{
       margin-top:14px;
+      min-height:22px;
       text-align:center;
       color:#93c5fd;
       font-size:14px;
-      min-height:22px;
     }
 
-    @media (max-width: 900px){
-      .live-title{ font-size:21px; }
-      .live-desc{ font-size:16px; }
+    .note{
+      margin-top:24px;
+      padding:16px 18px;
+      border-radius:20px;
+      background:rgba(15,23,42,.55);
+      border:1px solid var(--line);
+      color:#cbd5e1;
+      font-size:14px;
+      line-height:1.8;
+    }
+
+    @media (max-width:900px){
+      .title{ font-size:22px; }
+      .desc{ font-size:16px; }
+      .container{ width:min(100%, calc(100% - 18px)); }
+      .hero{ border-radius:28px; }
+      .player-wrap{ border-radius:18px; }
+      .info{ border-radius:18px; padding:18px; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap hero">
+  <div class="container">
     <div class="topbar">
       <div class="brand">
         <img src="logo1222.jpeg" alt="Ofouq Academy">
@@ -181,27 +246,43 @@
         </div>
       </div>
 
-      <a class="home-link" href="index.html">
+      <a href="index.html" class="back-btn">
         <i class="ri-arrow-right-line"></i>
         العودة إلى الرئيسية
       </a>
     </div>
 
-    <div class="hero-card">
-      <div id="livePlayer" class="player-shell">
-        <div class="player-empty">
-          <i class="ri-live-line" style="font-size:42px;color:#f472b6;"></i>
+    <section class="hero">
+      <div id="livePlayer" class="player-wrap">
+        <div class="empty">
+          <i class="ri-live-line"></i>
           <div>جارٍ تحميل البث المباشر...</div>
         </div>
       </div>
 
-      <div class="live-info">
-        <h2 id="liveTitle" class="live-title">البث المباشر</h2>
-        <p id="liveDesc" class="live-desc">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
+      <div class="info">
+        <div class="live-badge">
+          <i class="ri-broadcast-line"></i>
+          مباشر الآن
+        </div>
+
+        <h2 id="liveTitle" class="title">البث المباشر</h2>
+        <p id="liveDesc" class="desc">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
+
+        <div class="meta">
+          <a id="youtubeBtn" href="#" target="_blank" rel="noopener" style="display:none;">
+            <i class="ri-youtube-fill"></i>
+            فتح على يوتيوب
+          </a>
+        </div>
+
+        <div id="statusBar" class="status"></div>
       </div>
 
-      <div id="statusBar" class="status-bar"></div>
-    </div>
+      <div class="note">
+        استخدم في لوحة التحكم رابط YouTube فقط، مثل رابط watch أو youtu.be أو embed، وسيتم تحويله تلقائياً إلى مشغل مناسب داخل الصفحة. [web:160]
+      </div>
+    </section>
   </div>
 
   <script type="module">
@@ -212,79 +293,88 @@
     const titleEl = document.getElementById("liveTitle");
     const descEl = document.getElementById("liveDesc");
     const statusBar = document.getElementById("statusBar");
+    const youtubeBtn = document.getElementById("youtubeBtn");
 
-    function escapeHtml(value){
-      return String(value ?? "").replace(/[&<>"']/g, m => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-      }[m]));
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, function(m){
+        return {
+          "&":"&amp;",
+          "<":"&lt;",
+          ">":"&gt;",
+          '"':"&quot;",
+          "'":"&#039;"
+        }[m];
+      });
     }
 
-    function getText(field){
+    function getText(field) {
       if (!field) return "";
       if (typeof field === "string") return field;
       return field.ar || field.fr || field.en || "";
     }
 
-    function youtubeEmbedUrl(url) {
+    function extractYouTubeId(url) {
       if (!url) return "";
+      const clean = String(url).trim();
 
-      url = url.trim();
+      try {
+        if (clean.includes("youtube.com/watch")) {
+          const u = new URL(clean);
+          return u.searchParams.get("v") || "";
+        }
 
-      if (url.includes("youtube.com/watch?v=")) {
-        const u = new URL(url);
-        const id = u.searchParams.get("v");
-        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0&playsinline=1` : "";
-      }
+        if (clean.includes("youtu.be/")) {
+          return clean.split("youtu.be/")[1]?.split(/[?&/]/)[0] || "";
+        }
 
-      if (url.includes("youtu.be/")) {
-        const id = url.split("youtu.be/")[1]?.split("?")[0];
-        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0&playsinline=1` : "";
-      }
+        if (clean.includes("youtube.com/embed/")) {
+          return clean.split("youtube.com/embed/")[1]?.split(/[?&/]/)[0] || "";
+        }
 
-      if (url.includes("youtube.com/embed/")) {
-        return url.includes("?")
-          ? `${url}&autoplay=1&mute=1&rel=0&playsinline=1`
-          : `${url}?autoplay=1&mute=1&rel=0&playsinline=1`;
-      }
-
-      if (url.includes("/shorts/")) {
-        const id = url.split("/shorts/")[1]?.split("?")[0];
-        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0&playsinline=1` : "";
+        if (clean.includes("youtube.com/shorts/")) {
+          return clean.split("youtube.com/shorts/")[1]?.split(/[?&/]/)[0] || "";
+        }
+      } catch (e) {
+        return "";
       }
 
       return "";
     }
 
-    function renderEmpty(message){
-      playerBox.innerHTML = `
-        <div class="player-empty">
-          <i class="ri-live-line" style="font-size:42px;color:#f472b6;"></i>
-          <div>${escapeHtml(message)}</div>
-        </div>
-      `;
+    function buildEmbedUrl(url) {
+      const id = extractYouTubeId(url);
+      if (!id) return "";
+      return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&rel=0&playsinline=1";
     }
 
-    function renderPlayer(url) {
-      const embedUrl = youtubeEmbedUrl(url);
+    function renderEmpty(message) {
+      playerBox.innerHTML =
+        '<div class="empty">' +
+          '<i class="ri-live-line"></i>' +
+          '<div>' + escapeHtml(message) + '</div>' +
+        '</div>';
+    }
+
+    function renderPlayer(sourceUrl) {
+      const embedUrl = buildEmbedUrl(sourceUrl);
 
       if (!embedUrl) {
-        renderEmpty("رابط البث غير صالح. ضع رابط YouTube صحيح من لوحة التحكم.");
-        statusBar.textContent = "يجب إدخال رابط YouTube فقط.";
+        renderEmpty("رابط البث غير صالح. أدخل رابط YouTube صحيح من لوحة التحكم.");
+        statusBar.textContent = "الرابط الحالي ليس رابط YouTube صالحاً.";
+        youtubeBtn.style.display = "none";
         return;
       }
 
-      playerBox.innerHTML = `
-        <iframe
-          src="${embedUrl}"
-          title="YouTube Live Player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-        </iframe>
-      `;
+      playerBox.innerHTML =
+        '<iframe ' +
+          'src="' + embedUrl + '" ' +
+          'title="YouTube Live Player" ' +
+          'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
+          'allowfullscreen>' +
+        '</iframe>';
+
+      youtubeBtn.href = sourceUrl;
+      youtubeBtn.style.display = "inline-flex";
     }
 
     async function loadLivePage() {
@@ -293,7 +383,7 @@
       const snap = await getDocs(collection(db, "content"));
       const liveItems = [];
 
-      snap.forEach(docSnap => {
+      snap.forEach(function(docSnap) {
         const data = docSnap.data();
         if (data.section === "live") {
           liveItems.push({
@@ -303,29 +393,39 @@
         }
       });
 
-      liveItems.sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+      liveItems.sort(function(a, b) {
+        return Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0);
+      });
 
       if (!liveItems.length) {
         titleEl.textContent = "لا يوجد بث مباشر";
         descEl.textContent = "سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.";
         renderEmpty("لا يوجد بث مباشر الآن");
         statusBar.textContent = "لم يتم العثور على أي عنصر في قسم البث المباشر.";
+        youtubeBtn.style.display = "none";
         return;
       }
 
       const current = liveItems[0];
-      titleEl.textContent = getText(current.title) || "بث مباشر";
-      descEl.textContent = getText(current.short) || " ";
+      const title = getText(current.title) || "بث مباشر";
+      const desc = getText(current.short) || " ";
+
+      titleEl.textContent = title;
+      descEl.textContent = desc;
+
       renderPlayer(current.file || "");
-      statusBar.textContent = "تم تحميل البث المباشر بنجاح.";
+      if (buildEmbedUrl(current.file || "")) {
+        statusBar.textContent = "تم تحميل البث المباشر بنجاح.";
+      }
     }
 
-    loadLivePage().catch(error => {
+    loadLivePage().catch(function(error) {
       console.error("Live page error:", error);
       titleEl.textContent = "تعذر تحميل البث";
       descEl.textContent = "حدث خطأ أثناء قراءة بيانات البث المباشر.";
       renderEmpty("تعذر تحميل مشغل البث المباشر");
       statusBar.textContent = "حدث خطأ أثناء الاتصال بـ Firestore.";
+      youtubeBtn.style.display = "none";
     });
   </script>
 </body>
