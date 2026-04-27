@@ -2,8 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title id="t-title">البث المباشر</title>
   <link rel="icon" type="image/png" href="logo1222.jpeg">
@@ -30,7 +29,6 @@
       direction:rtl;
     }
 
-    /* HEADER (موحّد مع الصفحات الأخرى) */
     header{
       padding:10px 20px;
       display:flex;
@@ -251,294 +249,75 @@
       margin-left:6px;
       color:#111;
     }
-    .mobile-dropdown-toggle .pill-circle::before{
-      content:"";
+
+    #menu-btn{
       display:none;
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      border:none;
+      background:rgba(0,155,196,0.22);
+      color:var(--primary-dark);
+      font-size:20px;
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
     }
-#menu-btn{
-  display:none;
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  border:none;
-  background:rgba(0,155,196,0.22);
-  color:var(--primary-dark);
-  font-size:20px;
-  cursor:pointer;
-  align-items:center;
-  justify-content:center;
-}
 
-.nav-sheet-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.45);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s ease;
-  z-index:1498;
-}
+    .nav-sheet-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:1498;
+    }
+    .nav-sheet-overlay.show{opacity:1;pointer-events:auto;}
 
-.nav-sheet-overlay.show{
-  opacity:1;
-  pointer-events:auto;
-}
+    .nav-sheet{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      width:100%;
+      max-height:92vh;
+      background:#fff;
+      border-radius:24px 24px 0 0;
+      box-shadow:0 -10px 35px rgba(0,0,0,0.18);
+      padding:12px;
+      overflow-y:auto;
+      transform:translateY(110%);
+      transition:transform .28s ease;
+      z-index:1499;
+    }
+    .nav-sheet.show{transform:translateY(0);}
+    .nav-sheet-handle{width:54px;height:6px;border-radius:999px;background:#cbd5e1;margin:0 auto 10px;}
+    .nav-sheet-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+    .nav-sheet-brand{display:flex;align-items:center;gap:8px;}
+    .nav-sheet-brand img{width:44px;height:44px;object-fit:contain;border-radius:14px;background:#fff;padding:4px;box-shadow:0 6px 16px rgba(0,0,0,.06);}
+    .nav-sheet-brand strong{display:block;color:#0f172a;font-size:14px;}
+    .nav-sheet-brand span{display:block;color:#64748b;font-size:11px;}
+    .nav-sheet-close{width:38px;height:38px;border:none;border-radius:50%;background:#eef6f8;color:#0f4f65;font-size:16px;cursor:pointer;}
+    .nav-sheet-search{display:flex;gap:6px;margin-bottom:10px;}
+    .nav-sheet-search input{flex:1;border:none;outline:none;background:#fff;border-radius:14px;padding:11px 12px;box-shadow:inset 0 0 0 1px #e2e8f0;font-family:inherit;font-size:14px;}
+    .nav-sheet-search button{border:none;min-width:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;cursor:pointer;}
+    .nav-sheet-mini-tools{display:flex;gap:6px;margin-bottom:12px;}
+    .sheet-tool{border:none;padding:8px 10px;border-radius:999px;background:#ffffff;box-shadow:inset 0 0 0 1px #e2e8f0;color:#0f4f65;font-weight:800;cursor:pointer;font-size:12px;}
+    .nav-sheet-section{margin-bottom:12px;}
+    .nav-sheet-section h3{font-size:13px;color:#0f172a;margin-bottom:8px;}
+    .nav-sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+    .sheet-card{text-decoration:none;text-align:center;background:#fff;color:#12313c;border:1px solid #e7edf1;border-radius:16px;padding:14px 8px;font-weight:800;box-shadow:0 8px 22px rgba(15,23,42,.04);font-size:14px;line-height:1.3;}
+    .academic-zone{background:linear-gradient(135deg,#fff8df,#fffdf5);border:1px solid rgba(212,175,55,.22);border-radius:20px;padding:10px;}
+    .nav-sheet-pills{display:flex;flex-wrap:wrap;gap:6px;}
+    .nav-sheet-pills a{text-decoration:none;color:#5d4700;background:#fff;border:1px solid rgba(212,175,55,.24);border-radius:999px;padding:8px 10px;font-size:12px;font-weight:800;}
+    .nav-sheet-footer-links{display:flex;gap:8px;margin-bottom:12px;}
+    .nav-sheet-footer-links a{flex:1;text-decoration:none;text-align:center;background:#fff;color:#475569;border:1px solid #e2e8f0;border-radius:14px;padding:10px 8px;font-weight:700;font-size:13px;}
+    .nav-sheet-auth{display:flex;gap:8px;}
+    .nav-sheet-auth a{flex:1;text-decoration:none;text-align:center;border-radius:16px;padding:12px 10px;font-weight:800;font-size:14px;}
+    .nav-sheet-auth a:first-child{background:#fff;color:#0f4f65;border:1px solid #dbe5ea;}
+    .nav-sheet-auth a:last-child{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 12px 24px rgba(0,155,196,.22);}
 
-.nav-sheet{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  width:100%;
-  max-height:92vh;
-  background:#fff;
-  border-radius:24px 24px 0 0;
-  box-shadow:0 -10px 35px rgba(0,0,0,0.18);
-  padding:12px;
-  overflow-y:auto;
-  transform:translateY(110%);
-  transition:transform .28s ease;
-  z-index:1499;
-}
-
-.nav-sheet.show{
-  transform:translateY(0);
-}
-
-.nav-sheet-handle{
-  width:54px;
-  height:6px;
-  border-radius:999px;
-  background:#cbd5e1;
-  margin:0 auto 10px;
-}
-
-.nav-sheet-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-bottom:10px;
-}
-
-.nav-sheet-brand{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.nav-sheet-brand img{
-  width:44px;
-  height:44px;
-  object-fit:contain;
-  border-radius:14px;
-  background:#fff;
-  padding:4px;
-  box-shadow:0 6px 16px rgba(0,0,0,.06);
-}
-
-.nav-sheet-brand strong{
-  display:block;
-  color:#0f172a;
-  font-size:14px;
-}
-
-.nav-sheet-brand span{
-  display:block;
-  color:#64748b;
-  font-size:11px;
-}
-
-.nav-sheet-close{
-  width:38px;
-  height:38px;
-  border:none;
-  border-radius:50%;
-  background:#eef6f8;
-  color:#0f4f65;
-  font-size:16px;
-  cursor:pointer;
-}
-
-.nav-sheet-search{
-  display:flex;
-  gap:6px;
-  margin-bottom:10px;
-}
-
-.nav-sheet-search input{
-  flex:1;
-  border:none;
-  outline:none;
-  background:#fff;
-  border-radius:14px;
-  padding:11px 12px;
-  box-shadow:inset 0 0 0 1px #e2e8f0;
-  font-family:inherit;
-  font-size:14px;
-}
-
-.nav-sheet-search button{
-  border:none;
-  min-width:44px;
-  border-radius:14px;
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;
-  cursor:pointer;
-}
-
-.nav-sheet-mini-tools{
-  display:flex;
-  gap:6px;
-  margin-bottom:12px;
-}
-
-.sheet-tool{
-  border:none;
-  padding:8px 10px;
-  border-radius:999px;
-  background:#ffffff;
-  box-shadow:inset 0 0 0 1px #e2e8f0;
-  color:#0f4f65;
-  font-weight:800;
-  cursor:pointer;
-  font-size:12px;
-}
-
-.nav-sheet-section{
-  margin-bottom:12px;
-}
-
-.nav-sheet-section h3{
-  font-size:13px;
-  color:#0f172a;
-  margin-bottom:8px;
-}
-
-.nav-sheet-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;
-}
-
-.sheet-card{
-  text-decoration:none;
-  text-align:center;
-  background:#fff;
-  color:#12313c;
-  border:1px solid #e7edf1;
-  border-radius:16px;
-  padding:14px 8px;
-  font-weight:800;
-  box-shadow:0 8px 22px rgba(15,23,42,.04);
-  font-size:14px;
-  line-height:1.3;
-}
-
-.academic-zone{
-  background:linear-gradient(135deg,#fff8df,#fffdf5);
-  border:1px solid rgba(212,175,55,.22);
-  border-radius:20px;
-  padding:10px;
-}
-
-.nav-sheet-pills{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-.nav-sheet-pills a{
-  text-decoration:none;
-  color:#5d4700;
-  background:#fff;
-  border:1px solid rgba(212,175,55,.24);
-  border-radius:999px;
-  padding:8px 10px;
-  font-size:12px;
-  font-weight:800;
-}
-
-.nav-sheet-footer-links{
-  display:flex;
-  gap:8px;
-  margin-bottom:12px;
-}
-
-.nav-sheet-footer-links a{
-  flex:1;
-  text-decoration:none;
-  text-align:center;
-  background:#fff;
-  color:#475569;
-  border:1px solid #e2e8f0;
-  border-radius:14px;
-  padding:10px 8px;
-  font-weight:700;
-  font-size:13px;
-}
-
-.nav-sheet-auth{
-  display:flex;
-  gap:8px;
-}
-
-.nav-sheet-auth a{
-  flex:1;
-  text-decoration:none;
-  text-align:center;
-  border-radius:16px;
-  padding:12px 10px;
-  font-weight:800;
-  font-size:14px;
-}
-
-.nav-sheet-auth a:first-child{
-  background:#fff;
-  color:#0f4f65;
-  border:1px solid #dbe5ea;
-}
-
-.nav-sheet-auth a:last-child{
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;
-  box-shadow:0 12px 24px rgba(0,155,196,.22);
-}
-
-@media(max-width:980px){
-  nav{display:none;}
-  .actions{display:none;}
-  #menu-btn{
-    display:flex;
-    order:-1;
-  }
-  header{justify-content:center;}
-  .logo{margin-inline:auto;}
-}
-
-@media(max-width:480px){
-  .nav-sheet-grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:6px;
-  }
-
-  .sheet-card{
-    padding:12px 6px;
-    font-size:13px;
-  }
-}
-
-@media(min-width:981px){
-  .nav-sheet,
-  .nav-sheet-overlay{
-    display:none;
-  }
-}
-
-
-
-    
-    /* HERO LIVE */
     .hero{
       padding:clamp(80px,20vw,120px) clamp(25px,8vw,40px);
       text-align:center;
@@ -558,13 +337,7 @@
       box-shadow:0 8px 25px rgba(254,243,199,0.4);
       animation:pulse 2s infinite;
     }
-    .live-dot{
-      width:16px;
-      height:16px;
-      background:#ef4444;
-      border-radius:50%;
-      animation:blink 1.5s infinite;
-    }
+    .live-dot{width:16px;height:16px;background:#ef4444;border-radius:50%;animation:blink 1.5s infinite;}
     .hero h1{
       font-size:clamp(28px,10vw,48px);
       font-weight:800;
@@ -574,18 +347,9 @@
       background-clip:text;
       margin-bottom:clamp(15px,5vw,25px);
     }
-    .hero p{
-      font-size:clamp(16px,4.5vw,20px);
-      max-width:700px;
-      margin:0 auto 30px;
-      opacity:0.9;
-    }
+    .hero p{font-size:clamp(16px,4.5vw,20px);max-width:700px;margin:0 auto 30px;opacity:0.9;}
 
-    .live-container{
-      max-width:1200px;
-      margin:0 auto;
-      padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);
-    }
+    .live-container{max-width:1200px;margin:0 auto;padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);}
     .live-video{
       position:relative;
       background:#000;
@@ -595,13 +359,7 @@
       margin-bottom:clamp(30px,8vw,40px);
       min-height:clamp(300px,70vw,600px);
     }
-    .live-video iframe,
-    .live-video video{
-      width:100%;
-      height:100%;
-      border:none;
-      display:block;
-    }
+    .live-video iframe,.live-video video{width:100%;height:100%;border:none;display:block;}
     .live-overlay{
       position:absolute;
       inset:0;
@@ -618,32 +376,29 @@
       transition:background 0.3s;
     }
     .live-overlay:hover{background:rgba(0,0,0,0.95);}
-    .live-overlay h3{
-      font-size:clamp(20px,6vw,32px);
-      margin-bottom:15px;
-      animation:glow 2s infinite;
-    }
+    .live-overlay h3{font-size:clamp(20px,6vw,32px);margin-bottom:15px;animation:glow 2s infinite;}
 
-    section{
-      padding:clamp(40px,12vw,60px) clamp(25px,8vw,40px);
-      background:rgba(255,255,255,0.03);
-      backdrop-filter:blur(10px);
+    .live-meta{
+      max-width:1200px;
+      margin:0 auto;
+      padding:0 clamp(20px,8vw,40px) clamp(20px,8vw,10px);
     }
-    section h2{
-      font-size:clamp(24px,7vw,36px);
-      margin-bottom:clamp(25px,8vw,35px);
-      text-align:center;
-      background:linear-gradient(135deg,#ec4899,#f472b6);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
+    .live-meta-card{
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.15);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 18px 40px rgba(0,0,0,0.25);
     }
+    .live-meta-card h2{font-size:clamp(20px,5vw,32px);margin-bottom:10px;color:#fff;}
+    .live-meta-card p{color:rgba(249,250,251,0.88);font-size:clamp(15px,4vw,18px);margin-bottom:10px;}
+    .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+    .meta-pill{padding:8px 14px;border-radius:999px;background:rgba(236,72,153,0.18);color:#fbcfe8;font-size:13px;font-weight:700;border:1px solid rgba(244,114,182,0.25);}
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(clamp(280px,42vw,340px),1fr));
-      gap:clamp(20px,6vw,30px);
-    }
+    section{padding:clamp(40px,12vw,60px) clamp(25px,8vw,40px);background:rgba(255,255,255,0.03);backdrop-filter:blur(10px);}
+    section h2{font-size:clamp(24px,7vw,36px);margin-bottom:clamp(25px,8vw,35px);text-align:center;background:linear-gradient(135deg,#ec4899,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(280px,42vw,340px),1fr));gap:clamp(20px,6vw,30px);}
     .card{
       padding:clamp(20px,6vw,28px);
       border-radius:20px;
@@ -654,45 +409,11 @@
       position:relative;
       overflow:hidden;
     }
-    .card::before{
-      content:'';
-      position:absolute;
-      top:0;
-      left:0;
-      right:0;
-      height:4px;
-      background:linear-gradient(90deg,#ec4899,#f472b6);
-    }
-    .card:hover{
-      transform:translateY(-8px);
-      background:rgba(255,255,255,0.16);
-      box-shadow:0 20px 40px rgba(0,0,0,0.35);
-    }
-
-    .card-time{
-      font-size:clamp(14px,4vw,16px);
-      color:#ec4899;
-      font-weight:700;
-      background:rgba(236,72,153,0.22);
-      padding:6px 14px;
-      border-radius:20px;
-      display:inline-block;
-      margin-bottom:15px;
-    }
-    .card h3{
-      font-size:clamp(18px,5vw,24px);
-      margin-bottom:12px;
-      color:#f9fafb;
-      font-weight:700;
-      line-height:1.3;
-    }
-    .card p{
-      font-size:clamp(15px,4vw,17px);
-      color:rgba(249,250,251,0.9);
-      line-height:1.7;
-      margin-bottom:20px;
-    }
-
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#ec4899,#f472b6);}
+    .card:hover{transform:translateY(-8px);background:rgba(255,255,255,0.16);box-shadow:0 20px 40px rgba(0,0,0,0.35);}
+    .card-time{font-size:clamp(14px,4vw,16px);color:#ec4899;font-weight:700;background:rgba(236,72,153,0.22);padding:6px 14px;border-radius:20px;display:inline-block;margin-bottom:15px;}
+    .card h3{font-size:clamp(18px,5vw,24px);margin-bottom:12px;color:#f9fafb;font-weight:700;line-height:1.3;}
+    .card p{font-size:clamp(15px,4vw,17px);color:rgba(249,250,251,0.9);line-height:1.7;margin-bottom:20px;}
     .card-btn{
       display:inline-flex;
       align-items:center;
@@ -711,751 +432,644 @@
       width:100%;
       justify-content:center;
     }
-    .card-btn:hover{
-      background:linear-gradient(135deg,#db2777,#be185d);
-      transform:translateY(-3px);
-      box-shadow:0 10px 30px rgba(236,72,153,0.55);
-    }
+    .card-btn:hover{background:linear-gradient(135deg,#db2777,#be185d);transform:translateY(-3px);box-shadow:0 10px 30px rgba(236,72,153,0.55);}
 
-    .empty-state{
-      text-align:center;
-      padding:clamp(80px,25vw,120px);
-      color:rgba(249,250,251,0.75);
-      grid-column:1/-1;
-    }
-    .empty-state h3{
-      font-size:clamp(22px,7vw,32px);
-      margin-bottom:15px;
-      color:#f9fafb;
-    }
+    .empty-state{text-align:center;padding:clamp(80px,25vw,120px);color:rgba(249,250,251,0.75);grid-column:1/-1;}
+    .empty-state h3{font-size:clamp(22px,7vw,32px);margin-bottom:15px;color:#f9fafb;}
 
-    footer{
-      margin-top:clamp(30px,8vw,40px);
-      padding:clamp(25px,8vw,35px);
-      background:#000000;
-      color:#f9fafb;
-      text-align:center;
-      font-size:clamp(15px,4vw,18px);
-    }
-
-    .toast-container{
-      position:fixed;
-      top:20px;
-      left:20px;
-      z-index:5000;
-    }
-    .toast{
-      background:rgba(255,255,255,0.97);
-      padding:clamp(12px,3vw,16px) clamp(16px,4vw,20px);
-      border-radius:12px;
-      margin-bottom:10px;
-      box-shadow:0 8px 25px rgba(0,0,0,0.35);
-      display:flex;
+    .issn-badge{
+      display:inline-flex;
       align-items:center;
-      gap:12px;
-      animation:slideIn 0.3s ease-in-out;
-      max-width:90vw;
-      color:#111827;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:0 auto 24px;
+      padding:10px 16px;
+      max-width:100%;
+      border-radius:999px;
+      background:rgba(255,255,255,0.10);
+      border:1px solid rgba(255,255,255,0.18);
+      color:#f9fafb;
+      font-size:clamp(12px,3vw,14px);
+      font-weight:800;
+      box-shadow:0 8px 22px rgba(0,0,0,0.22);
+      text-align:center;
     }
+    .issn-badge::before{
+      content:"ISSN";
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:4px 9px;
+      border-radius:999px;
+      background:rgba(236,72,153,0.18);
+      color:#f9a8d4;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.3px;
+    }
+
+    .toast-container{position:fixed;top:20px;left:20px;z-index:5000;}
+    .toast{background:rgba(255,255,255,0.97);padding:clamp(12px,3vw,16px) clamp(16px,4vw,20px);border-radius:12px;margin-bottom:10px;box-shadow:0 8px 25px rgba(0,0,0,0.35);display:flex;align-items:center;gap:12px;animation:slideIn 0.3s ease-in-out;max-width:90vw;color:#111827;}
     .toast.success{border-right:4px solid #22c55e;}
     .toast.info{border-right:4px solid #ec4899;}
+    .toast.error{border-right:4px solid #ef4444;}
     .toast-icon{font-size:clamp(18px,5vw,20px);}
-    .toast-message{
-      font-weight:500;
-      font-size:clamp(14px,3.5vw,16px);
-    }
-    @keyframes pulse{
-      0%,100%{opacity:1;}
-      50%{opacity:0.7;}
-    }
-    @keyframes blink{
-      0%,50%{opacity:1;}
-      51%,100%{opacity:0;}
-    }
-    @keyframes glow{
-      0%,100%{text-shadow:0 0 10px rgba(236,72,153,0.5);}
-      50%{text-shadow:0 0 20px rgba(236,72,153,0.8),0 0 30px rgba(236,72,153,0.4);}
-    }
-    @keyframes slideIn{
-      from{transform:translateX(-100%);opacity:0;}
-      to{transform:translateX(0);opacity:1;}
-    }
-    @keyframes slideOut{
-      from{transform:translateX(0);opacity:1;}
-      to{transform:translateX(-100%);opacity:0;}
-    }
+    .toast-message{font-weight:500;font-size:clamp(14px,3.5vw,16px);}
+
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.7;}}
+    @keyframes blink{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+    @keyframes glow{0%,100%{text-shadow:0 0 10px rgba(236,72,153,0.5);}50%{text-shadow:0 0 20px rgba(236,72,153,0.8),0 0 30px rgba(236,72,153,0.4);}}
+    @keyframes slideIn{from{transform:translateX(-100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    @keyframes slideOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(-100%);opacity:0;}}
     .toast.removing{animation:slideOut 0.3s ease-in-out;}
 
-    @media(max-width:1100px){
-      .nav-search{display:none;}
-    }
+    @media(max-width:1100px){.nav-search{display:none;}}
     @media(max-width:980px){
       nav{display:none;}
       .actions{display:none;}
-      #menu-btn{
-        display:flex;
-        order:-1;
-      }
-      header{
-        justify-content:space-between;
-      }
+      #menu-btn{display:flex;order:-1;}
+      header{justify-content:space-between;}
       .logo{margin-inline:auto;}
-      .toast-container{
-        left:50%;
-        transform:translateX(-50%);
-        width:90%;
-      }
-
+      .toast-container{left:50%;transform:translateX(-50%);width:90%;}
     }
     @media(max-width:768px){
       header{padding:15px 20px;}
       .hero{padding:clamp(60px,18vw,90px) 20px;}
       .live-container{padding:40px 20px;}
       section{padding:50px 20px;}
-      .grid{
-        grid-template-columns:1fr;
-        gap:20px;
-      }
+      .grid{grid-template-columns:1fr;gap:20px;}
     }
     @media(max-width:480px){
       header{padding:12px 15px;}
       .logo img{width:65px;}
       .hero{padding:50px 15px;}
       .live-container{padding:30px 12px;}
+      .nav-sheet-grid{grid-template-columns:repeat(2,1fr);gap:6px;}
+      .sheet-card{padding:12px 6px;font-size:13px;}
     }
-
-    .issn-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  flex-wrap:wrap;
-  margin:0 auto 24px;
-  padding:10px 16px;
-  max-width:100%;
-  border-radius:999px;
-  background:rgba(255,255,255,0.10);
-  border:1px solid rgba(255,255,255,0.18);
-  color:#f9fafb;
-  font-size:clamp(12px,3vw,14px);
-  font-weight:800;
-  box-shadow:0 8px 22px rgba(0,0,0,0.22);
-  text-align:center;
-}
-
-.issn-badge::before{
-  content:"ISSN";
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:4px 9px;
-  border-radius:999px;
-  background:rgba(236,72,153,0.18);
-  color:#f9a8d4;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.3px;
-}
-
+    @media(min-width:981px){.nav-sheet,.nav-sheet-overlay{display:none;}}
   </style>
 </head>
-
 <body>
-<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
+  <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
-<div class="nav-sheet" id="mobileMenu">
-  <div class="nav-sheet-handle"></div>
+  <div class="nav-sheet" id="mobileMenu">
+    <div class="nav-sheet-handle"></div>
+    <div class="nav-sheet-top">
+      <div class="nav-sheet-brand">
+        <img src="logo1.png" alt="Logo">
+        <div>
+          <strong data-t="brand_name">أفق</strong>
+          <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
+        </div>
+      </div>
+      <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
+    </div>
 
-  <div class="nav-sheet-top">
-    <div class="nav-sheet-brand">
+    <form class="nav-sheet-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
+      <button type="submit">🔍</button>
+    </form>
+
+    <div class="nav-sheet-mini-tools">
+      <button class="sheet-tool" type="button" data-lang-trigger="ar">AR</button>
+      <button class="sheet-tool" type="button" data-lang-trigger="en">EN</button>
+      <button class="sheet-tool" type="button" data-lang-trigger="fr">FR</button>
+    </div>
+
+    <div class="nav-sheet-section">
+      <h3 data-t="mobile_discover">اكتشف</h3>
+      <div class="nav-sheet-grid">
+        <a href="index.html" class="sheet-card" data-t="nav_home">الرئيسية</a>
+        <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
+        <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
+        <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
+        <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
+        <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
+        <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
+        <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
+        <a href="live.html" class="sheet-card" data-t="nav_live">بث مباشر</a>
+        <a href="editorial-board.html" class="sheet-card" data-t="nav_board">هيئة التحرير</a>
+      </div>
+    </div>
+
+    <div class="nav-sheet-section academic-zone">
+      <h3 data-t="nav_academic">أكاديمي</h3>
+      <div class="nav-sheet-pills">
+        <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+        <a href="special-ir.html" data-t="sp_ir">العلاقات الدولية</a>
+        <a href="special-admin-law.html" data-t="sp_admin_law">القانون الإداري</a>
+        <a href="special-const-law.html" data-t="sp_const_law">القانون الدستوري</a>
+        <a href="special-public-policy.html" data-t="sp_public_policy">السياسات العمومية</a>
+      </div>
+    </div>
+
+    <div class="nav-sheet-footer-links">
+      <a href="rules.html" data-t="nav_rules">شروط النشر</a>
+      <a href="contact.html" data-t="nav_contact">اتصل بنا</a>
+      <a href="editorial-board.html" data-t="nav_board">هيئة التحرير</a>
+    </div>
+
+    <div class="nav-sheet-auth">
+      <a href="login.html" id="mobileLogin" data-t="nav_login">تسجيل الدخول</a>
+      <a href="register.html" id="mobileRegister" data-t="nav_join">انضم إلينا</a>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <header>
+    <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+
+    <div class="logo" onclick="goToHome()">
       <img src="logo1.png" alt="Logo">
-      <div>
-        <strong data-t="brand_name">أفق</strong>
-        <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
-      </div>
     </div>
-    <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
-  </div>
 
-  <form class="nav-sheet-search" onsubmit="doSearch(event)">
-    <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
-    <button type="submit">🔍</button>
-  </form>
-
-  <div class="nav-sheet-mini-tools">
-    <button class="sheet-tool" type="button" onclick="setLang('ar')">AR</button>
-    <button class="sheet-tool" type="button" onclick="setLang('en')">EN</button>
-    <button class="sheet-tool" type="button" onclick="setLang('fr')">FR</button>
-  </div>
-
-  <div class="nav-sheet-section">
-    <h3 data-t="mobile_discover">اكتشف</h3>
-    <div class="nav-sheet-grid">
-      <a href="index.html" class="sheet-card" data-t="nav_home">الرئيسية</a>
-      <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
-      <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
-      <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
-      <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
-      <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
-      <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
-      <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
-      <a href="live.html" class="sheet-card" data-t="nav_live">بث مباشر</a>
-      <a href="editorial-board.html" class="sheet-card" data-t="nav_board">هيئة التحرير</a>
-    </div>
-  </div>
-
-  <div class="nav-sheet-section academic-zone">
-    <h3 data-t="nav_academic">أكاديمي</h3>
-    <div class="nav-sheet-pills">
-      <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
-      <a href="special-ir.html" data-t="sp_ir">العلاقات الدولية</a>
-      <a href="special-admin-law.html" data-t="sp_admin_law">القانون الإداري</a>
-      <a href="special-const-law.html" data-t="sp_const_law">القانون الدستوري</a>
-      <a href="special-public-policy.html" data-t="sp_public_policy">السياسات العمومية</a>
-    </div>
-  </div>
-
-  <div class="nav-sheet-footer-links">
-    <a href="rules.html" data-t="nav_rules">شروط النشر</a>
-    <a href="contact.html" data-t="nav_contact">اتصل بنا</a>
-    <a href="editorial-board.html" data-t="nav_board">هيئة التحرير</a>
-  </div>
-
-  <div class="nav-sheet-auth">
-    <a href="login.html" id="mobileLogin" data-t="nav_login">تسجيل الدخول</a>
-    <a href="register.html" id="mobileRegister" data-t="nav_join">انضم إلينا</a>
-  </div>
-</div>
-<div class="toast-container" id="toastContainer"></div>
-
-<header>
-  <button
-    id="menu-btn"
-    type="button"
-    onclick="toggleMenu()"
-    aria-label="Toggle navigation menu"
-    aria-expanded="false"
-  >
-    <span></span><span></span><span></span>
-  </button>
-
-  <div class="logo" onclick="goToHome()">
-    <img src="logo1.png"" alt="Logo">
-  </div>
-<nav>
-  <ul>
-    <li><a href="index.html" id="navHome">الرئيسية</a></li>
-    <li class="dropdown">
-      <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
-      <div class="dropdown-content">
-        <a href="research.html" id="navResearch">أبحاث محكمة</a>
-        <a href="articles.html" id="navArticles">مقالات محكمة</a>
-        <a href="files.html" id="navFiles">ملفات بحثية</a>
-        <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
-      </div>
-    </li>
-    <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
-    <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
-    <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
-    <li class="dropdown">
-      <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
-      <div class="dropdown-content">
-        <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
-        <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
-        <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
-        <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
-        <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
-      </div>
-    </li>
-    <li><a href="live.html" id="navLive">بث مباشر</a></li>
-    <li><a href="rules.html" id="navRules">شروط النشر</a></li>
-    <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
-  </ul>
-
-  <form class="nav-search" onsubmit="doSearch(event)">
-    <input type="search" id="navSearchInput" placeholder="ابحث..." />
-    <span>🔍</span>
-  </form>
-</nav>
-
-
-  <div class="actions" id="headerActions">
-    <div class="lang-wrapper">
-      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
-        <span id="langCurrent">AR</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M7 10l5 5 5-5z"></path>
-        </svg>
-      </button>
-      <div class="lang-menu" id="langMenu">
-        <button type="button" data-lang="ar" onclick="setLang('ar')" title="العربية">العربية</button>
-        <button type="button" data-lang="en" onclick="setLang('en')" title="English">English</button>
-        <button type="button" data-lang="fr" onclick="setLang('fr')" title="Français">Français</button>
-      </div>
-    </div>
-    <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
-    <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
-  </div>
-</header>
-
-<div class="hero">
-  <div class="live-status">
-    <div class="live-dot"></div>
-    <span data-t="hero_live_badge">🔴 البث المباشر الآن</span>
-  </div>
-  <h1 data-t="hero_title_live">البث الحي</h1>
-  <p data-t="hero_sub_live">تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة</p>
-  <div class="issn-badge">3119-6691</div>
-</div>
-
-
-<div class="live-container">
-  <div class="live-video" id="liveVideo"></div>
-</div>
-
-<section>
-  <h2 data-t="sec_live_next">البث القادم</h2>
-  <div class="grid" id="upcomingStreams"></div>
-</section>
-
-<footer data-t="footer_text" style="
-  background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #000000 100%);
-  padding: clamp(30px, 8vw, 50px) clamp(25px, 6vw, 45px);
-  text-align: center;
-  color: #f9fafb;
-  font-size: clamp(14px, 3vw, 16px);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 -8px 40px rgba(236,72,153,0.15);
-  border-top: 1px solid rgba(255,255,255,0.08);
-">
-  <!-- Pink decorative wave -->
-  <div style="
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 4px; background: linear-gradient(90deg, transparent, #ec4899, #f472b6, transparent);
-    filter: blur(1px);
-  "></div>
-  
-  <div style="
-    max-width: 1100px; margin: 0 auto;
-    position: relative; z-index: 2;
-  ">
-    <!-- Main attribution row -->
-    <div style="
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-      gap: 16px 24px; margin-bottom: 20px; font-weight: 700;
-      opacity: 0.95;
-    ">
-    <div style="
-  margin: 0 auto 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  max-width: 100%;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: #f9fafb;
-  font-weight: 800;
-  font-size: clamp(12px, 3vw, 14px);
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-">
-  <span style="color:#f9a8d4; font-weight:900;">ISSN:</span>
-  <span>3119-6691</span>
-</div>
-
-      <a href="https://ofouqacademie.com" style="
-        background: linear-gradient(135deg, #ec4899, #f472b6);
-        -webkit-background-clip: text; background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-decoration: none; font-weight: 900; font-size: 1.15em;
-      ">Ofouq Academie</a>
-      
-      <span style="font-size: 1em;">© 2026 by</span>
-      
-      <a href="https://github.com/yasserA5" style="
-        color: #facc15; text-decoration: none; font-weight: 800;
-        text-shadow: 0 0 8px rgba(250,204,21,0.5);
-      ">Karim Rasmi</a>
-      
-      <span>– جميع الحقوق محفوظة – منصتك العلمية</span>
-    </div>
-    
-    <!-- CC License Card (live-style) -->
-    <div style="
-      display: inline-flex; align-items: center; justify-content: center;
-      gap: 12px; padding: 18px 28px;
-      background: rgba(255,255,255,0.06); backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      transition: all 0.3s ease; cursor: pointer;
-      max-width: 700px; margin: 0 auto 16px;
-    " onclick="window.open('https://creativecommons.org/licenses/by-nc/4.0/', '_blank')">
-      <span style="
-        color: #e6f3ff; font-weight: 700; font-size: 1.05em;
-      ">Creative Commons Attribution-NonCommercial 4.0 International</span>
-      
-      <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width: 22px; height: 22px; opacity: 0.95;">
-      <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width: 22px; height: 22px; opacity: 0.95;">
-      <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width: 22px; height: 22px; opacity: 0.95;">
-    </div>
-    
-    <!-- Bilingual note -->
-    <p style="
-      margin: 0; opacity: 0.7; font-size: 0.88em;
-      font-style: italic; line-height: 1.5;
-    ">
-      إلا إذا ذُكر خلاف ذلك | Except where otherwise noted.
-    </p>
-  </div>
-</footer>
-
-<script>
-  function goToHome(){window.location.href='index.html';}
-
-function toggleMenu(){
-  const menu = document.getElementById("mobileMenu");
-  const overlay = document.getElementById("navSheetOverlay");
-  const btn = document.getElementById("menu-btn");
-
-  if(!menu || !overlay || !btn) return;
-
-  const isOpen = menu.classList.contains("show");
-
-  menu.classList.toggle("show", !isOpen);
-  overlay.classList.toggle("show", !isOpen);
-  document.body.style.overflow = isOpen ? "" : "hidden";
-
-  btn.classList.toggle("open", !isOpen);
-  btn.setAttribute("aria-expanded", String(!isOpen));
-}
-
-function doSearch(e){
-  e.preventDefault();
-  const desktopInput = document.getElementById("navSearchInput");
-  const mobileInput = document.getElementById("navSearchInputMobile");
-  const q = (mobileInput && mobileInput.value.trim()) || (desktopInput && desktopInput.value.trim()) || "";
-  if(!q) return;
-  window.location.href='search.html?q=' + encodeURIComponent(q);
-}
-
-
-  function toggleLangMenu(){
-    const desktopMenu=document.getElementById("langMenu");
-    const mobileMenu=document.getElementById("langMenuMobile");
-    const toggles=document.querySelectorAll('.lang-toggle');
-
-    const mobileVisible = document.getElementById("mobileMenu").style.display === "block";
-    const menu = mobileVisible ? mobileMenu : desktopMenu;
-
-    if(!menu) return;
-    const isOpen = menu.style.display==="block";
-    menu.style.display = isOpen ? "none" : "block";
-
-    toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
-  }
-
-  document.addEventListener('click',e=>{
-    if(!e.target.closest('.lang-wrapper')){
-      const m1=document.getElementById('langMenu');
-      const m2=document.getElementById('langMenuMobile');
-      if(m1) m1.style.display='none';
-      if(m2) m2.style.display='none';
-      document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
-    }
-  });
-
-  function showToast(message,type='info'){
-    const container=document.getElementById('toastContainer');
-    if(!container)return;
-    const toast=document.createElement('div');
-    toast.className=`toast ${type}`;
-    const icons={success:'✅',info:'ℹ️'};
-    toast.innerHTML=`
-      <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
-      <span class="toast-message">${message}</span>
-    `;
-    container.appendChild(toast);
-    setTimeout(()=>{
-      toast.classList.add('removing');
-      setTimeout(()=>toast.remove(),300);
-    },4000);
-  }
-
-let user = JSON.parse(
-  localStorage.getItem("user") ||
-  sessionStorage.getItem("user") ||
-  "null"
-);
-
-  const headerActions=document.getElementById("headerActions");
-  const mobileLogin=document.getElementById("mobileLogin");
-  const mobileRegister=document.getElementById("mobileRegister");
-
-function updateHeader(){
-  const headerActions = document.getElementById("headerActions");
-  const mobileLogin = document.getElementById("mobileLogin");
-  const mobileRegister = document.getElementById("mobileRegister");
-
-  if(user && user.loggedIn){
-    const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
-
-    if (headerActions) {
-      headerActions.innerHTML = `
-        <div class="lang-wrapper">
-          <button class="lang-toggle" onclick="toggleLangMenu()">
-            <span id="langCurrent">AR</span>
-          </button>
-          <div class="lang-menu" id="langMenu">
-            <button onclick="setLang('ar')">العربية</button>
-            <button onclick="setLang('en')">English</button>
-            <button onclick="setLang('fr')">Français</button>
+    <nav>
+      <ul>
+        <li><a href="index.html" id="navHome">الرئيسية</a></li>
+        <li class="dropdown">
+          <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
+          <div class="dropdown-content">
+            <a href="research.html" id="navResearch">أبحاث محكمة</a>
+            <a href="articles.html" id="navArticles">مقالات محكمة</a>
+            <a href="files.html" id="navFiles">ملفات بحثية</a>
+            <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
           </div>
-        </div>
-        <span style="margin-right:8px;font-size:12px;">${displayName}</span>
-        <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
-      `;
-    }
-
-    if (mobileLogin) {
-      mobileLogin.innerHTML = `<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
-    }
-
-    if (mobileRegister) {
-      mobileRegister.style.display = "none";
-    }
-  } else {
-    if (headerActions) {
-      headerActions.innerHTML = `
-        <div class="lang-wrapper">
-          <button class="lang-toggle" onclick="toggleLangMenu()">
-            <span id="langCurrent">AR</span>
-          </button>
-          <div class="lang-menu" id="langMenu">
-            <button onclick="setLang('ar')">العربية</button>
-            <button onclick="setLang('en')">English</button>
-            <button onclick="setLang('fr')">Français</button>
+        </li>
+        <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
+        <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
+        <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
+        <li class="dropdown">
+          <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
+          <div class="dropdown-content">
+            <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
+            <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
+            <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
+            <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
+            <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
           </div>
+        </li>
+        <li><a href="live.html" class="active" id="navLive">بث مباشر</a></li>
+        <li><a href="rules.html" id="navRules">شروط النشر</a></li>
+        <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
+        <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
+      </ul>
+
+      <form class="nav-search" onsubmit="doSearch(event)">
+        <input type="search" id="navSearchInput" placeholder="ابحث..." />
+        <span>🔍</span>
+      </form>
+    </nav>
+
+    <div class="actions" id="headerActions">
+      <div class="lang-wrapper">
+        <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+          <span id="langCurrent">AR</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"></path></svg>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <button type="button" data-lang-trigger="ar" title="العربية">العربية</button>
+          <button type="button" data-lang-trigger="en" title="English">English</button>
+          <button type="button" data-lang-trigger="fr" title="Français">Français</button>
         </div>
-        <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="navlogin">تسجيل الدخول</button>
-        <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="navjoin">انضم إلينا</button>
-      `;
+      </div>
+      <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+      <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="live-status">
+      <div class="live-dot"></div>
+      <span id="liveStatusText" data-t="hero_live_badge">🔴 البث المباشر الآن</span>
+    </div>
+    <h1 data-t="hero_title_live">البث الحي</h1>
+    <p data-t="hero_sub_live">تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة</p>
+    <div class="issn-badge">3119-6691</div>
+  </div>
+
+  <div class="live-container">
+    <div class="live-video" id="liveVideo"></div>
+  </div>
+
+  <div class="live-meta">
+    <div class="live-meta-card">
+      <h2 id="liveTitle">البث المباشر</h2>
+      <p id="liveDescription">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
+      <div class="meta-row">
+        <span class="meta-pill" id="liveDatePill">📅 —</span>
+        <span class="meta-pill" id="liveTypePill">🎥 مباشر</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2 data-t="sec_live_next">البث القادم</h2>
+    <div class="grid" id="upcomingStreams"></div>
+  </section>
+
+  <footer style="background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #000000 100%);padding: clamp(30px, 8vw, 50px) clamp(25px, 6vw, 45px);text-align: center;color: #f9fafb;font-size: clamp(14px, 3vw, 16px);position: relative;overflow: hidden;box-shadow: 0 -8px 40px rgba(236,72,153,0.15);border-top: 1px solid rgba(255,255,255,0.08);">
+    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg, transparent, #ec4899, #f472b6, transparent);filter:blur(1px);"></div>
+    <div style="max-width:1100px;margin:0 auto;position:relative;z-index:2;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px 24px;margin-bottom:20px;font-weight:700;opacity:0.95;">
+        <div style="margin:0 auto 18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;max-width:100%;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:#f9fafb;font-weight:800;font-size:clamp(12px, 3vw, 14px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.28);">
+          <span style="color:#f9a8d4;font-weight:900;">ISSN:</span>
+          <span>3119-6691</span>
+        </div>
+        <a href="https://ofouqacademie.com" style="background:linear-gradient(135deg, #ec4899, #f472b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;font-weight:900;font-size:1.15em;">Ofouq Academie</a>
+        <span style="font-size:1em;">© 2026 by</span>
+        <a href="https://github.com/yasserA5" style="color:#facc15;text-decoration:none;font-weight:800;text-shadow:0 0 8px rgba(250,204,21,0.5);">Karim Rasmi</a>
+        <span>– جميع الحقوق محفوظة – منصتك العلمية</span>
+      </div>
+      <div style="display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:18px 28px;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:25px;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:all 0.3s ease;cursor:pointer;max-width:700px;margin:0 auto 16px;" onclick="window.open('https://creativecommons.org/licenses/by-nc/4.0/', '_blank')">
+        <span style="color:#e6f3ff;font-weight:700;font-size:1.05em;">Creative Commons Attribution-NonCommercial 4.0 International</span>
+        <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width:22px;height:22px;opacity:0.95;">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width:22px;height:22px;opacity:0.95;">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width:22px;height:22px;opacity:0.95;">
+      </div>
+      <p style="margin:0;opacity:0.7;font-size:0.88em;font-style:italic;line-height:1.5;">إلا إذا ذُكر خلاف ذلك | Except where otherwise noted.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { db } from "./firebase-init.js";
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+    const liveVideo = document.getElementById("liveVideo");
+    const upcomingStreams = document.getElementById("upcomingStreams");
+    const liveTitle = document.getElementById("liveTitle");
+    const liveDescription = document.getElementById("liveDescription");
+    const liveDatePill = document.getElementById("liveDatePill");
+    const liveTypePill = document.getElementById("liveTypePill");
+    const liveStatusText = document.getElementById("liveStatusText");
+
+    let user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null");
+    let currentLang = localStorage.getItem("lang") || "ar";
+    let liveData = [];
+
+    const translations = {
+      ar:{
+        title:"البث المباشر",
+        brand_name:"أفق",
+        brand_tagline:"منصة أكاديمية حديثة",
+        mobile_discover:"اكتشف",
+        nav_home:"الرئيسية",
+        nav_research_peer:"أبحاث محكمة",
+        nav_articles_peer:"مقالات محكمة",
+        nav_files:"ملفات بحثية",
+        nav_foreign:"مقالات أجنبية",
+        nav_articles:"مقالات",
+        nav_editions:"إصداراتنا",
+        nav_activities:"أنشطتنا",
+        nav_board:"هيئة التحرير",
+        nav_academic:"أكاديمي",
+        nav_live:"بث مباشر",
+        nav_rules:"شروط النشر",
+        nav_contact:"اتصل بنا",
+        nav_login:"تسجيل الدخول",
+        nav_join:"انضم إلينا",
+        hero_live_badge:"🔴 البث المباشر الآن",
+        hero_title_live:"البث الحي",
+        hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة",
+        sec_live_next:"البث القادم",
+        logout:"تسجيل الخروج",
+        toast_logout_success:"تم تسجيل الخروج بنجاح",
+        toast_open_live:"جاري فتح البث...",
+        no_live:"لا توجد بثوث مباشرة حالياً",
+        no_live_sub:"ستظهر هنا البثوث القادمة بمجرد إضافتها من لوحة التحكم.",
+        remind_saved:"تم حفظ تذكير البث",
+        current_live_title:"البث المباشر",
+        current_live_desc:"سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.",
+        stream_date_label:"📅",
+        stream_live_label:"🎥 مباشر",
+        stream_upcoming_label:"📡 قادم",
+        open_stream:"فتح البث",
+        open_external:"سيفتح في نافذة جديدة",
+        load_error:"تعذر تحميل البث المباشر.",
+        sp_politics:"تخصص علوم سياسية",
+        sp_ir:"تخصص العلاقات الدولية",
+        sp_admin_law:"القانون الإداري",
+        sp_const_law:"القانون الدستوري",
+        sp_public_policy:"السياسات العمومية"
+      },
+      en:{
+        title:"Live Stream",
+        brand_name:"Ofouq",
+        brand_tagline:"A modern academic platform",
+        mobile_discover:"Discover",
+        nav_home:"Home",
+        nav_research_peer:"Peer-reviewed research",
+        nav_articles_peer:"Peer-reviewed articles",
+        nav_files:"Research files",
+        nav_foreign:"Foreign articles",
+        nav_articles:"Articles",
+        nav_editions:"Our publications",
+        nav_activities:"Activities",
+        nav_board:"Editorial board",
+        nav_academic:"Academic",
+        nav_live:"Live",
+        nav_rules:"Submission Rules",
+        nav_contact:"Contact us",
+        nav_login:"Login",
+        nav_join:"Join us",
+        hero_live_badge:"🔴 Live now",
+        hero_title_live:"Live Stream",
+        hero_sub_live:"Follow our live events, seminars and scientific talks.",
+        sec_live_next:"Upcoming Live",
+        logout:"Logout",
+        toast_logout_success:"Logged out successfully",
+        toast_open_live:"Opening live stream...",
+        no_live:"No live streams currently",
+        no_live_sub:"Upcoming streams will appear here once added from the dashboard.",
+        remind_saved:"Stream reminder saved",
+        current_live_title:"Current live stream",
+        current_live_desc:"The current live stream description will appear here once added from the dashboard.",
+        stream_date_label:"📅",
+        stream_live_label:"🎥 Live",
+        stream_upcoming_label:"📡 Upcoming",
+        open_stream:"Open stream",
+        open_external:"Opens in a new tab",
+        load_error:"Unable to load live streams.",
+        sp_politics:"Political Science",
+        sp_ir:"International Relations",
+        sp_admin_law:"Administrative Law",
+        sp_const_law:"Constitutional Law",
+        sp_public_policy:"Public Policy"
+      },
+      fr:{
+        title:"Diffusion en direct",
+        brand_name:"Ofouq",
+        brand_tagline:"Une plateforme académique moderne",
+        mobile_discover:"Découvrir",
+        nav_home:"Accueil",
+        nav_research_peer:"Recherches évaluées",
+        nav_articles_peer:"Articles évalués",
+        nav_files:"Dossiers de recherche",
+        nav_foreign:"Articles étrangers",
+        nav_articles:"Articles",
+        nav_editions:"Nos publications",
+        nav_activities:"Activités",
+        nav_board:"Comité éditorial",
+        nav_academic:"Académique",
+        nav_live:"Direct",
+        nav_rules:"Conditions de publication",
+        nav_contact:"Contactez-nous",
+        nav_login:"Connexion",
+        nav_join:"Rejoignez-nous",
+        hero_live_badge:"🔴 Direct en cours",
+        hero_title_live:"Diffusion en direct",
+        hero_sub_live:"Suivez en direct nos événements, séminaires et conférences scientifiques.",
+        sec_live_next:"Prochains directs",
+        logout:"Déconnexion",
+        toast_logout_success:"Déconnexion réussie",
+        toast_open_live:"Ouverture du direct...",
+        no_live:"Aucun direct pour le moment",
+        no_live_sub:"Les prochains directs apparaîtront ici une fois ajoutés depuis le tableau de bord.",
+        remind_saved:"Rappel du direct enregistré",
+        current_live_title:"Direct actuel",
+        current_live_desc:"La description du direct actuel apparaîtra ici une fois ajoutée depuis le tableau de bord.",
+        stream_date_label:"📅",
+        stream_live_label:"🎥 En direct",
+        stream_upcoming_label:"📡 À venir",
+        open_stream:"Ouvrir le direct",
+        open_external:"S'ouvre dans un nouvel onglet",
+        load_error:"Impossible de charger les directs.",
+        sp_politics:"Science politique",
+        sp_ir:"Relations internationales",
+        sp_admin_law:"Droit administratif",
+        sp_const_law:"Droit constitutionnel",
+        sp_public_policy:"Politiques publiques"
+      }
+    };
+
+    function t(key){
+      const dict = translations[currentLang] || translations.ar;
+      return dict[key] || translations.ar[key] || "";
     }
 
-    if (mobileLogin) {
-      mobileLogin.innerHTML = `<a href="login.html" data-t="navlogin">تسجيل الدخول</a>`;
+    function getByLang(field, lang = "ar"){
+      if (!field) return "";
+      if (typeof field === "string") return field;
+      return field[lang] || field.ar || field.fr || field.en || "";
     }
 
-    if (mobileRegister) {
-      mobileRegister.style.display = "";
-      mobileRegister.innerHTML = `<a href="register.html" data-t="navjoin">انضم إلينا</a>`;
+    function escapeHtml(value){
+      return String(value ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
     }
-  }
-}
 
-
-function logout(){
-  localStorage.removeItem("user");
-  sessionStorage.removeItem("user");
-  user = null;
-  location.reload();
-}
-
-
-  const liveVideo=document.getElementById("liveVideo");
-  const upcomingStreams=document.getElementById("upcomingStreams");
-
-  const translations={
-    ar:{
-      title:"البث المباشر",
-      nav_home:"الرئيسية",
-      nav_studies:"أبحاث ودراسات ▾",
-      nav_research_peer:"أبحاث محكمة",
-      nav_articles_peer:"مقالات محكمة",
-      nav_files:"ملفات بحثية",
-      nav_foreign:"مقالات أجنبية",
-      nav_articles:"مقالات",
-      nav_editions:"إصداراتنا",
-      nav_activities:"أنشطتنا",
-      nav_academic:"أكاديمي",
-      nav_live:"بث مباشر",
-      nav_rules:"شروط النشر",
-      nav_contact:"اتصل بنا",
-      nav_login:"تسجيل الدخول",
-      nav_join:"انضم إلينا",
-      hero_live_badge:"🔴 البث المباشر الآن",
-      hero_title_live:"البث الحي",
-      hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة",
-      sec_live_next:"البث القادم",
-      footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
-      logout:"تسجيل الخروج",
-      toast_logout_success:"تم تسجيل الخروج بنجاح",
-      toast_open_live:"جاري فتح البث...",
-      no_live:"لا توجد بثوث مباشرة حالياً",
-      remind_saved:"تم حفظ تذكير البث",
-      sp_politics:"تخصص علوم سياسية",
-      sp_ir:"تخصص العلاقات الدولية",
-      sp_admin_law:"تخصص القانون الإداري",
-      sp_const_law:"تخصص القانون الدستوري",
-      sp_public_policy:"تخصص السياسات العمومية"
-    },
-    en:{
-      title:"Live Stream",
-      nav_home:"Home",
-      nav_studies:"Research & Studies ▾",
-      nav_research_peer:"Peer-reviewed research",
-      nav_articles_peer:"Peer-reviewed articles",
-      nav_files:"Research files",
-      nav_foreign:"Foreign Articles",
-      nav_articles:"Articles",
-      nav_editions:"Our Publications",
-      nav_activities:"Activities",
-      nav_academic:"Academic",
-      nav_live:"Live",
-      nav_rules:"Submission Rules",
-      nav_contact:"Contact us",
-      nav_login:"Login",
-      nav_join:"Join us",
-      hero_live_badge:"🔴 Live now",
-      hero_title_live:"Live Stream",
-      hero_sub_live:"Follow our live events, seminars and scientific talks.",
-      sec_live_next:"Upcoming Live",
-      footer_text:"© All rights reserved – Your Academic Platform",
-      logout:"Logout",
-      toast_logout_success:"Logged out successfully",
-      toast_open_live:"Opening live stream...",
-      no_live:"No live streams currently",
-      no_live_sub:"Upcoming streams will appear here once added from the dashboard.",
-      remind_saved:"Stream reminder saved",
-      sp_politics:"Political Science",
-      sp_ir:"International Relations",
-      sp_admin_law:"Administrative Law",
-      sp_const_law:"Constitutional Law",
-      sp_public_policy:"Public Policy"
-    },
-    fr:{
-      title:"Diffusion en direct",
-      nav_home:"Accueil",
-      nav_studies:"Recherches et études ▾",
-      nav_research_peer:"Recherches évaluées",
-      nav_articles_peer:"Articles évalués",
-      nav_files:"Dossiers de recherche",
-      nav_foreign:"Articles étrangers",
-      nav_articles:"Articles",
-      nav_editions:"Nos publications",
-      nav_activities:"Activités",
-      nav_academic:"Académique",
-      nav_live:"Direct",
-      nav_rules:"Conditions de publication",
-      nav_contact:"Contactez-nous",
-      nav_login:"Connexion",
-      nav_join:"Rejoignez-nous",
-      hero_live_badge:"🔴 Direct en cours",
-      hero_title_live:"Diffusion en direct",
-      hero_sub_live:"Suivez en direct nos événements, séminaires et conférences scientifiques.",
-      sec_live_next:"Prochains directs",
-      footer_text:"© Tous droits réservés – Votre plateforme scientifique",
-      logout:"Déconnexion",
-      toast_logout_success:"Déconnexion réussie",
-      toast_open_live:"Ouverture du direct...",
-      no_live:"Aucun direct pour le moment",
-      no_live_sub:"Les prochains directs apparaîtront ici une fois ajoutés depuis le tableau de bord.",
-      remind_saved:"Rappel du direct enregistré",
-      sp_politics:"Science politique",
-      sp_ir:"Relations internationales",
-      sp_admin_law:"Droit administratif",
-      sp_const_law:"Droit constitutionnel",
-      sp_public_policy:"Politiques publiques"
+    function showToast(message, type='info'){
+      const container = document.getElementById('toastContainer');
+      if(!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      const icons = {success:'✅', info:'ℹ️', error:'⚠️'};
+      toast.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ️'}</span><span class="toast-message">${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      setTimeout(()=>{
+        toast.classList.add('removing');
+        setTimeout(()=>toast.remove(),300);
+      }, 3500);
     }
-  };
 
-  let currentLang=localStorage.getItem('lang') || 'ar';
+    function goToHome(){ window.location.href='index.html'; }
+    window.goToHome = goToHome;
 
-  function t(key){
-    const dict=translations[currentLang] || translations.ar;
-    return dict[key] || '';
-  }
+    function toggleMenu(){
+      const menu = document.getElementById("mobileMenu");
+      const overlay = document.getElementById("navSheetOverlay");
+      const btn = document.getElementById("menu-btn");
+      if(!menu || !overlay || !btn) return;
+      const isOpen = menu.classList.contains("show");
+      menu.classList.toggle("show", !isOpen);
+      overlay.classList.toggle("show", !isOpen);
+      document.body.style.overflow = isOpen ? "" : "hidden";
+      btn.setAttribute("aria-expanded", String(!isOpen));
+    }
+    window.toggleMenu = toggleMenu;
 
-  function setLang(lang){
-    currentLang=lang;
-    localStorage.setItem('lang',lang);
-    const dict=translations[lang] || translations.ar;
+    function doSearch(e){
+      e.preventDefault();
+      const desktopInput = document.getElementById("navSearchInput");
+      const mobileInput = document.getElementById("navSearchInputMobile");
+      const q = (mobileInput && mobileInput.value.trim()) || (desktopInput && desktopInput.value.trim()) || "";
+      if(!q) return;
+      window.location.href = 'search.html?q=' + encodeURIComponent(q);
+    }
+    window.doSearch = doSearch;
 
-    document.documentElement.lang=lang;
-    document.documentElement.dir=(lang==='en'||lang==='fr')?'ltr':'rtl';
+    function toggleLangMenu(){
+      const menu = document.getElementById("langMenu");
+      const toggles = document.querySelectorAll('.lang-toggle');
+      if(!menu) return;
+      const isOpen = menu.style.display === "block";
+      menu.style.display = isOpen ? "none" : "block";
+      toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
+    }
+    window.toggleLangMenu = toggleLangMenu;
 
-    const titleEl=document.getElementById('t-title');
-    if(titleEl && dict.title) titleEl.textContent=dict.title;
-
-    const langCurrent=document.getElementById('langCurrent');
-    const langCurrentMobile=document.getElementById('langCurrentMobile');
-    if(langCurrent) langCurrent.textContent=lang.toUpperCase();
-    if(langCurrentMobile) langCurrentMobile.textContent=lang.toUpperCase();
-
-    document.querySelectorAll('[data-t]').forEach(el=>{
-      const key=el.getAttribute('data-t');
-      if(dict[key]) el.textContent=dict[key];
+    document.addEventListener('click', e => {
+      if(!e.target.closest('.lang-wrapper')){
+        const menu = document.getElementById('langMenu');
+        if(menu) menu.style.display='none';
+        document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+      }
     });
 
-    const m1=document.getElementById('langMenu');
-    const m2=document.getElementById('langMenuMobile');
-    if(m1) m1.style.display='none';
-    if(m2) m2.style.display='none';
-    document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+    function updateHeader(){
+      const headerActions = document.getElementById("headerActions");
+      const mobileLogin = document.getElementById("mobileLogin");
+      const mobileRegister = document.getElementById("mobileRegister");
+      if(user && user.loggedIn){
+        const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
+        if(headerActions){
+          headerActions.innerHTML = `
+            <div class="lang-wrapper">
+              <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false">
+                <span id="langCurrent">${currentLang.toUpperCase()}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"></path></svg>
+              </button>
+              <div class="lang-menu" id="langMenu">
+                <button type="button" data-lang-trigger="ar">العربية</button>
+                <button type="button" data-lang-trigger="en">English</button>
+                <button type="button" data-lang-trigger="fr">Français</button>
+              </div>
+            </div>
+            <span style="margin-right:8px;font-size:12px;color:#6b7280;">${escapeHtml(displayName)}</span>
+            <button class="btn" type="button" id="logoutDesktopBtn">${t('logout')}</button>
+          `;
+        }
+        if(mobileLogin){ mobileLogin.textContent = t('logout'); mobileLogin.href = '#'; mobileLogin.onclick = (e)=>{ e.preventDefault(); logout(); }; }
+        if(mobileRegister){ mobileRegister.style.display = 'none'; }
+      } else {
+        if(headerActions){
+          headerActions.innerHTML = `
+            <div class="lang-wrapper">
+              <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false">
+                <span id="langCurrent">${currentLang.toUpperCase()}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"></path></svg>
+              </button>
+              <div class="lang-menu" id="langMenu">
+                <button type="button" data-lang-trigger="ar">العربية</button>
+                <button type="button" data-lang-trigger="en">English</button>
+                <button type="button" data-lang-trigger="fr">Français</button>
+              </div>
+            </div>
+            <button class="btn" onclick="location.href='login.html'" data-t="nav_login">${t('nav_login')}</button>
+            <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">${t('nav_join')}</button>
+          `;
+        }
+        if(mobileLogin){ mobileLogin.textContent = t('nav_login'); mobileLogin.href = 'login.html'; mobileLogin.onclick = null; }
+        if(mobileRegister){ mobileRegister.style.display = ''; mobileRegister.textContent = t('nav_join'); mobileRegister.href = 'register.html'; }
+      }
+      bindLangTriggers();
+      const logoutBtn = document.getElementById('logoutDesktopBtn');
+      if(logoutBtn) logoutBtn.addEventListener('click', logout);
+    }
 
-    renderLive();
-  }
+    function logout(){
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
+      user = null;
+      showToast(t('toast_logout_success'),'success');
+      setTimeout(()=>location.reload(), 500);
+    }
+    window.logout = logout;
 
-  function universalEmbed(url){
-    if(!url) return null;
-    if(url.includes('youtube.com/watch?v=') || url.includes('youtu.be/') || url.includes('youtube.com/live/')){
-      const videoId=url.match(/(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([^&\n?#]+)/)?.[1];
-      if(videoId){
-        return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&rel=0&modestbranding=1&playsinline=1`;
+    function bindLangTriggers(){
+      document.querySelectorAll('[data-lang-trigger]').forEach(btn => {
+        btn.onclick = () => setLang(btn.getAttribute('data-lang-trigger'));
+      });
+    }
+
+    function normalizeLiveItem(docSnap){
+      const raw = docSnap.data() || {};
+      return {
+        id: docSnap.id,
+        section: raw.section || '',
+        status: raw.status || 'published',
+        titleObj: raw.title || {},
+        shortObj: raw.short || {},
+        dateObj: raw.date || {},
+        detailsObj: raw.details || {},
+        file: raw.file || raw.link || '',
+        image: raw.image || '',
+        createdAt: Number(raw.createdAt || 0),
+        updatedAt: Number(raw.updatedAt || raw.createdAt || 0)
+      };
+    }
+
+    function isProbablyUpcoming(item){
+      return String(item.status || '').toLowerCase() === 'scheduled';
+    }
+
+    function universalEmbed(url){
+      if(!url) return '';
+      const clean = String(url).trim();
+      if(!clean) return '';
+
+      if (/youtube\.com\/watch\?v=([^&]+)/i.test(clean)) {
+        const id = clean.match(/youtube\.com\/watch\?v=([^&]+)/i)?.[1];
+        return id ? `https://www.youtube.com/embed/${id}?rel=0` : '';
+      }
+      if (/youtu\.be\/([^?&/]+)/i.test(clean)) {
+        const id = clean.match(/youtu\.be\/([^?&/]+)/i)?.[1];
+        return id ? `https://www.youtube.com/embed/${id}?rel=0` : '';
+      }
+      if (/facebook\.com/i.test(clean)) {
+        const encoded = encodeURIComponent(clean);
+        return `https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&width=1280`;
+      }
+      if (/vimeo\.com\/(\d+)/i.test(clean)) {
+        const id = clean.match(/vimeo\.com\/(\d+)/i)?.[1];
+        return id ? `https://player.vimeo.com/video/${id}` : '';
+      }
+      if (/^https:\/\/player\./i.test(clean) || /embed/i.test(clean)) return clean;
+      return '';
+    }
+
+    async function loadLiveFromFirestore(){
+      try{
+        const snap = await getDocs(collection(db, 'content'));
+        const items = [];
+        snap.forEach(docSnap => {
+          const item = normalizeLiveItem(docSnap);
+          if(item.section === 'live') items.push(item);
+        });
+
+        items.sort((a,b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+        liveData = items;
+        renderLive();
+      } catch(err){
+        console.error('Live Firestore load error:', err);
+        liveVideo.innerHTML = `<div class="live-overlay"><h3>⚠️ ${escapeHtml(t('load_error'))}</h3><p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(err?.message || 'Firestore error')}</p></div>`;
+        upcomingStreams.innerHTML = `<div class="empty-state"><h3>${escapeHtml(t('load_error'))}</h3><p>${escapeHtml(err?.message || 'Firestore error')}</p></div>`;
+        liveTitle.textContent = t('current_live_title');
+        liveDescription.textContent = t('current_live_desc');
+        liveDatePill.textContent = `${t('stream_date_label')} —`;
+        liveTypePill.textContent = t('stream_live_label');
+        showToast(t('load_error'), 'error');
       }
     }
-    if(url.includes('vimeo.com/')){
-      const videoId=url.match(/vimeo\.com\/(?:video\/)?(\d+)/)?.[1];
-      if(videoId) return `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&title=0&byline=0&portrait=0`;
-    }
-    if(url.includes('twitch.tv/')){
-      const channel=url.match(/twitch\.tv\/([^\/\?]+)/)?.[1];
-      if(channel) return `https://player.twitch.tv/?channel=${channel}&parent=${window.location.hostname}&autoplay=true&muted=false`;
-    }
-    if(url.includes('facebook.com/') && (url.includes('/videos/') || url.includes('/watch/'))){
-      return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&width=556&height=315&appId=&autoplay=1`;
-    }
-    if(url.includes('embed') || url.includes('/player/') || url.match(/\/(live|stream|player)\/[^\/]+$/)){
-      return url;
-    }
-    if(url.match(/\.(mp4|webm|ogg|m3u8)$/i)){
-      return null;
-    }
-    return null;
-  }
 
-  const liveData=JSON.parse(localStorage.getItem('live') || '[]');
+    function renderCurrentLive(item){
+      const title = getByLang(item.titleObj, currentLang) || getByLang(item.titleObj, 'ar') || t('current_live_title');
+      const desc = getByLang(item.shortObj, currentLang) || getByLang(item.detailsObj, currentLang) || getByLang(item.shortObj, 'ar') || t('current_live_desc');
+      const dateLabel = getByLang(item.dateObj, currentLang) || getByLang(item.dateObj, 'ar') || '—';
+      const embedUrl = universalEmbed(item.file);
 
-  function renderLive(){
-    if(!liveVideo || !upcomingStreams) return;
-
-    liveVideo.innerHTML='';
-    upcomingStreams.innerHTML='';
-
-    if(liveData.length>0){
-      const currentLive=liveData.find(item=>item.isLive) || liveData[0];
-      const embedUrl=universalEmbed(currentLive.file);
+      liveTitle.textContent = title;
+      liveDescription.textContent = desc;
+      liveDatePill.textContent = `${t('stream_date_label')} ${dateLabel}`;
+      liveTypePill.textContent = isProbablyUpcoming(item) ? t('stream_upcoming_label') : t('stream_live_label');
+      liveStatusText.textContent = isProbablyUpcoming(item) ? t('stream_upcoming_label') : t('hero_live_badge');
 
       if(embedUrl){
-        liveVideo.innerHTML=`
+        liveVideo.innerHTML = `
           <iframe
             src="${embedUrl}"
-            title="${currentLive.title || t('hero_title_live')}"
+            title="${escapeHtml(title)}"
             width="100%"
             height="100%"
             frameborder="0"
@@ -1465,87 +1079,107 @@ function logout(){
             loading="lazy">
           </iframe>
         `;
-        showToast(`${t('toast_open_live') || ''} ${currentLive.title || ''}`.trim(),'info');
-      }else if(currentLive.file && currentLive.file.match(/\.(mp4|webm|ogg|m3u8)$/i)){
-        liveVideo.innerHTML=`
-          <video controls autoplay loop playsinline style="width:100%;height:100%;object-fit:cover;">
-            <source src="${currentLive.file}" type="video/mp4">
+      } else if(item.file && item.file.match(/\.(mp4|webm|ogg|m3u8)$/i)){
+        liveVideo.innerHTML = `
+          <video controls autoplay playsinline style="width:100%;height:100%;object-fit:cover;">
+            <source src="${item.file}" type="video/mp4">
             متصفحك لا يدعم تشغيل الفيديو.
           </video>
         `;
-      }else{
-        liveVideo.innerHTML=`
-          <div class="live-overlay" onclick="window.open('${currentLive.file}','_blank')">
-            <h3>🔗 ${t('toast_open_live') || 'اضغط لفتح البث'}</h3>
-            <p style="font-size:clamp(16px,4vw,20px);">${currentLive.title || ''}</p>
-            <small style="opacity:0.8;">سيفتح في نافذة جديدة</small>
+      } else if(item.file){
+        const safeUrl = item.file.replace(/'/g, '%27');
+        liveVideo.innerHTML = `
+          <div class="live-overlay" id="externalLiveOverlay">
+            <h3>🔗 ${escapeHtml(t('open_stream'))}</h3>
+            <p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(title)}</p>
+            <small style="opacity:0.8;">${escapeHtml(t('open_external'))}</small>
           </div>
         `;
+        const overlay = document.getElementById('externalLiveOverlay');
+        if(overlay) overlay.addEventListener('click', ()=>window.open(safeUrl, '_blank', 'noopener'));
+      } else {
+        liveVideo.innerHTML = `<div class="live-overlay"><h3>🎥 ${escapeHtml(t('no_live'))}</h3><p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(t('no_live_sub'))}</p></div>`;
+      }
+    }
+
+    function renderUpcoming(items){
+      upcomingStreams.innerHTML = '';
+      if(!items.length){
+        upcomingStreams.innerHTML = `<div class="empty-state"><h3>${escapeHtml(t('no_live'))}</h3><p>${escapeHtml(t('no_live_sub'))}</p></div>`;
+        return;
       }
 
-      if(liveData.length===1){
-        upcomingStreams.innerHTML=`
-          <div class="empty-state">
-            <h3>${t('no_live')}</h3>
-            <p>${t('no_live_sub')}</p>
-          </div>
+      items.forEach(item => {
+        const title = getByLang(item.titleObj, currentLang) || getByLang(item.titleObj, 'ar') || t('current_live_title');
+        const desc = getByLang(item.shortObj, currentLang) || getByLang(item.detailsObj, currentLang) || getByLang(item.shortObj, 'ar') || t('current_live_desc');
+        const dateLabel = getByLang(item.dateObj, currentLang) || getByLang(item.dateObj, 'ar') || '—';
+        const href = item.file || '#';
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-time">📺 ${escapeHtml(dateLabel)}</div>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(desc)}</p>
+          <a class="card-btn" href="${href}" target="_blank" rel="noopener">
+            <span>${escapeHtml(t('open_stream'))}</span>
+            <span>🔔</span>
+          </a>
         `;
-      }else{
-        liveData.slice(1).forEach(item=>{
-          const card=document.createElement('div');
-          card.className='card';
-          const time=item.date || new Date(Date.now()+ (Math.random()*7*24*60*60*1000)).toLocaleString(currentLang==='en'?'en-US':'ar-EG');
-          card.innerHTML=`
-            <div class="card-time">📺 ${time}</div>
-            <h3>${item.title || 'بث مباشر قادم'}</h3>
-            <p>${item.short || 'سيتم تحديث التفاصيل قريباً'}</p>
-            <button class="card-btn" type="button" onclick="remindStream('${item.id}')">
-              <span data-t="btn_remind">تذكير لاحقاً</span>
-              <span>🔔</span>
-            </button>
-          `;
-          upcomingStreams.appendChild(card);
-        });
-      }
-    }else{
-      liveVideo.innerHTML=`
-        <div class="live-overlay">
-          <h3>🎥 ${t('no_live')}</h3>
-          <p style="font-size:clamp(16px,4vw,20px);">${t('no_live_sub')}</p>
-        </div>
-      `;
-      upcomingStreams.innerHTML=`
-        <div class="empty-state">
-          <h3>${t('no_live')}</h3>
-          <p>${t('no_live_sub')}</p>
-        </div>
-      `;
-    }
-  }
-
-  function remindStream(id){
-    const stream=liveData.find(item=>item.id==id);
-    if(stream){
-      showToast(`🔔 ${t('remind_saved')} "${stream.title || ''}"`,'success');
-    }
-  }
-
-  function initMobileDropdowns(){
-    document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const parent=btn.closest('.mobile-dropdown');
-        if(parent) parent.classList.toggle('open');
+        upcomingStreams.appendChild(card);
       });
+    }
+
+    function renderLive(){
+      if(!liveData.length){
+        liveVideo.innerHTML = `<div class="live-overlay"><h3>🎥 ${escapeHtml(t('no_live'))}</h3><p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(t('no_live_sub'))}</p></div>`;
+        liveTitle.textContent = t('current_live_title');
+        liveDescription.textContent = t('current_live_desc');
+        liveDatePill.textContent = `${t('stream_date_label')} —`;
+        liveTypePill.textContent = t('stream_live_label');
+        liveStatusText.textContent = t('hero_live_badge');
+        renderUpcoming([]);
+        return;
+      }
+
+      const currentLive = liveData[0];
+      const upcoming = liveData.slice(1);
+      renderCurrentLive(currentLive);
+      renderUpcoming(upcoming);
+    }
+
+    function setLang(lang){
+      currentLang = lang;
+      localStorage.setItem('lang', lang);
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
+      document.getElementById('t-title').textContent = t('title');
+
+      const currentLabel = document.getElementById('langCurrent');
+      if(currentLabel) currentLabel.textContent = lang.toUpperCase();
+
+      document.querySelectorAll('[data-t]').forEach(el => {
+        const key = el.dataset.t;
+        const value = t(key);
+        if(value) el.textContent = value;
+      });
+
+      document.querySelectorAll('[data-ph]').forEach(el => {
+        const key = el.dataset.ph;
+        const value = t(key);
+        if(value) el.setAttribute('placeholder', value);
+      });
+
+      updateHeader();
+      renderLive();
+    }
+    window.setLang = setLang;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      bindLangTriggers();
+      updateHeader();
+      setLang(currentLang);
+      await loadLiveFromFirestore();
     });
-  }
-
-  window.addEventListener('DOMContentLoaded',()=>{
-    updateHeader();
-    setLang(currentLang);
-    renderLive();
-    initMobileDropdowns();
-  });
-</script>
-
+  </script>
 </body>
 </html>
