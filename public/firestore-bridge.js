@@ -9,4 +9,13 @@ onAuthStateChanged(auth, (user) => {
 import { collection, addDoc, getDocs, query, orderBy, deleteDoc, doc }
   from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-window.fs = { db, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc };
+window.fs = {
+  db,
+  collection,
+  getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
+  query,
+  orderBy
+};
