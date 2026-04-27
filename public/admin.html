@@ -556,28 +556,28 @@
   </style>
 </head>
 <body>
-  <div id="lock" class="lock">
-    <div class="lock-card">
-      <h2 class="lock-title"><i class="ri-shield-user-line"></i> تسجيل دخول الإدارة</h2>
-      <p class="lock-desc">أدخل كود الإدارة وكلمة المرور لفتح لوحة التحكم.</p>
+<div id="lock" class="lock">
+  <form class="lock-card" id="loginForm">
+    <h2 class="lock-title"><i class="ri-shield-user-line"></i> تسجيل دخول الإدارة</h2>
+    <p class="lock-desc">أدخل كود الإدارة وكلمة المرور لفتح لوحة التحكم.</p>
 
-      <div class="in">
-        <i class="ri-user-3-line"></i>
-        <input id="adminCode" type="text" placeholder="كود الإدارة" autocomplete="off" />
-      </div>
-
-      <div class="in">
-        <i class="ri-lock-password-line"></i>
-        <input id="adminPass" type="password" placeholder="كلمة المرور" autocomplete="off" />
-      </div>
-
-      <button class="btn btn-primary" id="loginBtn" type="button">
-        دخول <i class="ri-arrow-left-line"></i>
-      </button>
-
-      <div id="loginErr" class="err">بيانات الدخول غير صحيحة.</div>
+    <div class="in">
+      <i class="ri-user-3-line"></i>
+      <input id="adminCode" type="text" placeholder="كود الإدارة" autocomplete="off" />
     </div>
-  </div>
+
+    <div class="in">
+      <i class="ri-lock-password-line"></i>
+      <input id="adminPass" type="password" placeholder="كلمة المرور" autocomplete="off" />
+    </div>
+
+    <button class="btn btn-primary" id="loginBtn" type="submit">
+      دخول <i class="ri-arrow-left-line"></i>
+    </button>
+
+    <div id="loginErr" class="err">بيانات الدخول غير صحيحة.</div>
+  </form>
+</div>
 
   <div class="app" id="app">
     <aside class="sidebar">
@@ -1382,18 +1382,30 @@ async function recoverData(){
       await recoverData();
     }
 
-    el("loginBtn").addEventListener("click", login);
-    el("logoutBtn").addEventListener("click", logout);
+el("loginForm").addEventListener("submit", e => {
+  e.preventDefault();
+  login();
+});    el("logoutBtn").addEventListener("click", logout);
     el("reloadBtn").addEventListener("click", reloadFromFirestore);
     el("recoverBtn").addEventListener("click", recoverData);
     el("exportBtn").addEventListener("click", exportJSON);
     el("clearBtn").addEventListener("click", clearLocalStorageOnly);
 
-    document.addEventListener("keydown", e => {
-      if (e.key === "Enter" && el("lock").style.display !== "none" && !e.shiftKey) {
-        login();
-      }
-    });
+document.addEventListener("keydown", e => {
+  const lock = el("lock");
+  const codeInput = el("adminCode");
+  const passInput = el("adminPass");
+  const lockVisible = lock && getComputedStyle(lock).display !== "none";
+
+  const isLoginField =
+    document.activeElement === codeInput ||
+    document.activeElement === passInput;
+
+  if (e.key === "Enter" && lockVisible && isLoginField && !e.shiftKey) {
+    e.preventDefault();
+    login();
+  }
+});
 
     window.addEventListener("load", () => {
       rebuildDbFromCache();
