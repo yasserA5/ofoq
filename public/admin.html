@@ -669,137 +669,165 @@
 </body>
 </html>
 <script>
-/* ========= إعدادات الدخول (كما طلبت) ========= */
 const ADMIN_CODE = "admin";
 const ADMIN_PASS = "ofouqaca12";
 
-/* ========= الأقسام ========= */
 const SECTIONS = [
-  { key: "research",               title: "الأبحاث المحكمة",                 icon: "ri-file-text-line",      allowFile: true },
-  { key: "articles",               title: "المقالات العلمية",                icon: "ri-file-paper-line",     allowFile: true },
-  { key: "files",                  title: "الملفات البحثية",                 icon: "ri-folder-3-line",       allowFile: true },
-  { key: "general-articles",       title: "مقالات عامة",                     icon: "ri-newspaper-line",      allowFile: true },
-  { key: "foreign-articles",       title: "مقالات أجنبية",                   icon: "ri-article-line",        allowFile: true },
-
-  { key: "special-politics",       title: "تخصص: العلوم السياسية",            icon: "ri-government-line",     allowFile: true },
-  { key: "special-ir",             title: "تخصص: العلاقات الدولية",           icon: "ri-global-line",         allowFile: true },
-  { key: "special-admin-law",      title: "تخصص: القانون الإداري",            icon: "ri-briefcase-4-line",    allowFile: true },
-  { key: "special-const-law",      title: "تخصص: القانون الدستوري",           icon: "ri-balance-line",        allowFile: true },
-  { key: "special-public-policy",  title: "تخصص: السياسات العامة",            icon: "ri-community-line",      allowFile: true },
-
-  { key: "editions",               title: "الإصدارات",                       icon: "ri-book-open-line",      allowFile: true },
-  { key: "activities",             title: "الأنشطة",                         icon: "ri-calendar-2-line",      allowFile: true },
-  { key: "talks",                  title: "الندوات/الحوارات",                icon: "ri-voiceprint-line",     allowFile: true },
-  { key: "training",               title: "التكوين/الدورات",                 icon: "ri-train-line",          allowFile: true },
-  { key: "live",                   title: "البث المباشر",                    icon: "ri-live-line",           allowFile: false, isLive: true },
+  { key: "research", title: "الأبحاث المحكمة", icon: "ri-file-text-line", allowFile: true },
+  { key: "articles", title: "المقالات العلمية", icon: "ri-file-paper-line", allowFile: true },
+  { key: "files", title: "الملفات البحثية", icon: "ri-folder-3-line", allowFile: true },
+  { key: "general-articles", title: "مقالات عامة", icon: "ri-newspaper-line", allowFile: true },
+  { key: "foreign-articles", title: "مقالات أجنبية", icon: "ri-article-line", allowFile: true },
+  { key: "special-politics", title: "تخصص: العلوم السياسية", icon: "ri-government-line", allowFile: true },
+  { key: "special-ir", title: "تخصص: العلاقات الدولية", icon: "ri-global-line", allowFile: true },
+  { key: "special-admin-law", title: "تخصص: القانون الإداري", icon: "ri-briefcase-4-line", allowFile: true },
+  { key: "special-const-law", title: "تخصص: القانون الدستوري", icon: "ri-balance-line", allowFile: true },
+  { key: "special-public-policy", title: "تخصص: السياسات العامة", icon: "ri-community-line", allowFile: true },
+  { key: "editions", title: "الإصدارات", icon: "ri-book-open-line", allowFile: true },
+  { key: "activities", title: "الأنشطة", icon: "ri-calendar-2-line", allowFile: true },
+  { key: "talks", title: "الندوات/الحوارات", icon: "ri-voiceprint-line", allowFile: true },
+  { key: "training", title: "التكوين/الدورات", icon: "ri-train-line", allowFile: true },
+  { key: "live", title: "البث المباشر", icon: "ri-live-line", allowFile: true, isLive: true }
 ];
 
 const db = {};
-SECTIONS.forEach(s => db[s.key] = safeParse(localStorage.getItem(s.key), []));
+SECTIONS.forEach(s => db[s.key] = []);
 
 let currentSectionKey = "research";
 let editing = { key: null, id: null, originalId: null };
 let draftMode = false;
-/* ========= أدوات صغيرة ========= */
-function safeParse(v, fallback){
-  try { const x = JSON.parse(v); return Array.isArray(x) ? x : fallback; }
-  catch { return fallback; }
-}
-function uid(){ return Date.now() + Math.floor(Math.random() * 999); }
-function el(id){ return document.getElementById(id); }
-function esc(s){ return String(s ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
 
-function getByLang(field, lang="ar"){
+function safeParse(v, fallback) {
+  try {
+    const x = JSON.parse(v);
+    return Array.isArray(x) ? x : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function uid() {
+  return Date.now() + Math.floor(Math.random() * 999);
+}
+
+function el(id) {
+  return document.getElementById(id);
+}
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#039;"
+  }[m]));
+}
+
+function getByLang(field, lang = "ar") {
   if (!field) return "";
   if (typeof field === "string") return field;
   return field[lang] || field.ar || field.fr || field.en || "";
 }
 
-function setAppVisible(){
+function setAppVisible() {
   el("lock").classList.add("hidden");
-  setTimeout(()=>{ el("lock").style.display = "none"; }, 220);
+  setTimeout(() => { el("lock").style.display = "none"; }, 220);
   const app = el("app");
   app.style.display = "grid";
-  requestAnimationFrame(()=> app.classList.add("visible"));
+  requestAnimationFrame(() => app.classList.add("visible"));
 }
 
-function setLockVisible(){
+function setLockVisible() {
   const app = el("app");
   app.classList.remove("visible");
-  setTimeout(()=>{ app.style.display = "none"; }, 180);
+  setTimeout(() => { app.style.display = "none"; }, 180);
   el("lock").style.display = "flex";
-  requestAnimationFrame(()=> el("lock").classList.remove("hidden"));
+  requestAnimationFrame(() => el("lock").classList.remove("hidden"));
 }
 
-function requireFs(){
-  if (!window.fs || !window.fs.collection || !window.fs.getDocs) {
+function requireFs() {
+  if (!window.fs || !window.fs.collection || !window.fs.getDocs || !window.fs.doc || !window.fs.setDoc) {
     alert("Firestore غير جاهز. تأكد من firestore-bridge.js");
     return false;
   }
   return true;
 }
 
-/* ========= تسجيل الدخول ========= */
-function login(){
+async function waitForFS(timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    function check() {
+      if (
+        window.fs &&
+        window.fs.db &&
+        window.fs.collection &&
+        window.fs.getDocs &&
+        window.fs.doc &&
+        window.fs.setDoc &&
+        window.fs.deleteDoc
+      ) return resolve();
+      if (Date.now() - start > timeoutMs) return reject(new Error("Firestore not ready"));
+      setTimeout(check, 60);
+    }
+    check();
+  });
+}
+
+function login() {
   const code = el("adminCode").value.trim();
   const pass = el("adminPass").value;
-  const ok = (code === ADMIN_CODE && pass === ADMIN_PASS);
+  const ok = code === ADMIN_CODE && pass === ADMIN_PASS;
   el("loginErr").style.display = ok ? "none" : "block";
   if (!ok) return;
-
   sessionStorage.setItem("adminAuthed", "1");
   setAppVisible();
   initAfterLogin();
 }
 
-function logout(){
+function logout() {
   sessionStorage.removeItem("adminAuthed");
   el("adminCode").value = "";
   el("adminPass").value = "";
   setLockVisible();
 }
 
-/* ========= بناء القائمة والواجهة ========= */
-function buildMenu(){
+function buildMenu() {
   const menu = el("menu");
   menu.innerHTML = "";
-  SECTIONS.forEach(sec=>{
+  SECTIONS.forEach(sec => {
     const b = document.createElement("button");
     b.type = "button";
     b.dataset.key = sec.key;
-    b.innerHTML = `
-      <span><i class="${sec.icon}"></i> ${esc(sec.title)}</span>
-      <i class="ri-arrow-left-s-line"></i>
-    `;
-    b.addEventListener("click", ()=> showSection(sec.key));
+    b.innerHTML = `<span><i class="${sec.icon}"></i> ${esc(sec.title)}</span><i class="ri-arrow-left-s-line"></i>`;
+    b.addEventListener("click", () => showSection(sec.key));
     menu.appendChild(b);
   });
 }
 
-function setActiveMenu(key){
-  document.querySelectorAll("#menu button").forEach(b=>{
+function setActiveMenu(key) {
+  document.querySelectorAll("#menu button").forEach(b => {
     b.classList.toggle("active", b.dataset.key === key);
   });
 }
 
-function sectionTitle(key){
-  const s = SECTIONS.find(x=>x.key===key);
+function sectionTitle(key) {
+  const s = SECTIONS.find(x => x.key === key);
   return s ? s.title : "قسم";
 }
 
-function formatCmd(cmd){
+function formatCmd(cmd) {
   const ed = document.querySelector(".editor");
   if (!ed) return;
   ed.focus();
   document.execCommand(cmd, false, null);
 }
 
-/* ========= قوالب الفورم ========= */
-function buildFormHTML(key){
-  const cfg = SECTIONS.find(s=>s.key===key);
+function buildFormHTML(key) {
+  const cfg = SECTIONS.find(s => s.key === key);
   const isLive = !!cfg?.isLive;
 
-  if (isLive){
+  if (isLive) {
     return `
       <div class="card">
         <h3><i class="ri-edit-2-line"></i> إضافة/تعديل بث مباشر</h3>
@@ -814,29 +842,22 @@ function buildFormHTML(key){
           <textarea id="${key}-short-ar" placeholder="وصف مختصر..."></textarea>
         </div>
 
-<div class="row">
-  <label>رابط البث أو الاجتماع (اختياري)</label>
-  <input type="url" id="${key}-live-link" placeholder="https://..." />
-</div>
+        <div class="row">
+          <label>رابط البث أو الملف</label>
+          <input type="url" id="${key}-live-link" placeholder="https://..." />
+        </div>
 
-<div class="row">
-  <label>PDF من الكمبيوتر (اختياري)</label>
-  <input type="file" id="${key}-live-pdf" accept=".pdf,application/pdf" />
-</div>
-
-<div class="actions">
-  <button class="btn btn-ghost btn-small" type="button" onclick="saveDraft('${key}')">
-    <i class="ri-draft-line"></i> حفظ كمسودة
-  </button>
-
-  <button class="btn btn-small btn-green" id="${key}-publish-btn" type="button" onclick="publishItem('${key}')">
-    <i class="ri-upload-cloud-line"></i> نشر
-  </button>
-
-  <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
-    <i class="ri-refresh-line"></i> تفريغ
-  </button>
-</div>
+        <div class="actions">
+          <button class="btn btn-ghost btn-small" type="button" onclick="saveDraft('${key}')">
+            <i class="ri-draft-line"></i> حفظ كمسودة
+          </button>
+          <button class="btn btn-small btn-green" id="${key}-publish-btn" type="button" onclick="publishItem('${key}')">
+            <i class="ri-upload-cloud-line"></i> نشر
+          </button>
+          <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
+            <i class="ri-refresh-line"></i> تفريغ
+          </button>
+        </div>
 
         <div class="preview" id="${key}-preview"></div>
       </div>
@@ -849,30 +870,31 @@ function buildFormHTML(key){
 
       <div class="grid-2">
         <div>
-<div class="row">
-  <label>العنوان</label>
-  <input type="text" id="${key}-title-ar" placeholder="العنوان بالعربية" />
-</div>
+          <div class="row">
+            <label>العنوان</label>
+            <input type="text" id="${key}-title-ar" placeholder="العنوان بالعربية" />
+          </div>
 
-<div class="row">
-  <label>الكاتب/الباحث</label>
-  <input type="text" id="${key}-author-ar" placeholder="اسم الكاتب بالعربية" />
-</div>
+          <div class="row">
+            <label>الكاتب/الباحث</label>
+            <input type="text" id="${key}-author-ar" placeholder="اسم الكاتب بالعربية" />
+          </div>
 
-<div class="row">
-  <label>الانتماء/المؤسسة (اختياري)</label>
-  <input type="text" id="${key}-aff-ar" placeholder="مثال: جامعة..." />
-</div>
+          <div class="row">
+            <label>الانتماء/المؤسسة</label>
+            <input type="text" id="${key}-aff-ar" placeholder="مثال: جامعة..." />
+          </div>
 
-<div class="row">
-  <label>تاريخ النشر (اختياري)</label>
-  <input type="text" id="${key}-date-ar" placeholder="مثال: أبريل 2026" />
-</div>
+          <div class="row">
+            <label>تاريخ النشر</label>
+            <input type="text" id="${key}-date-ar" placeholder="مثال: أبريل 2026" />
+          </div>
 
-<div class="row">
-  <label>ملخص</label>
-  <textarea id="${key}-short-ar" placeholder="ملخص..."></textarea>
-</div>
+          <div class="row">
+            <label>ملخص</label>
+            <textarea id="${key}-short-ar" placeholder="ملخص..."></textarea>
+          </div>
+
           <div class="row">
             <label>المحتوى الكامل (عربي)</label>
             <div class="toolbar">
@@ -889,39 +911,35 @@ function buildFormHTML(key){
           </div>
 
           <div class="row">
-            <label>تفاصيل/كلمات مفتاحية (عربي)</label>
+            <label>تفاصيل إضافية</label>
             <textarea id="${key}-details-ar" placeholder="تفاصيل إضافية..."></textarea>
           </div>
+        </div>
 
-
+        <div>
           <div class="row">
-            <label>ملف/رابط خارجي (PDF / رابط / ...)</label>
-          <div class="row">
-  <label>رابط خارجي (اختياري)</label>
-  <input type="url" id="${key}-file-url" placeholder="https://..." />
-</div>
-
-<div class="row">
-  <label>PDF من الكمبيوتر (اختياري)</label>
-  <input type="file" id="${key}-pdf-file" accept=".pdf,application/pdf" />
-</div>
+            <label>رابط خارجي (PDF / رابط)</label>
+            <input type="url" id="${key}-file-url" placeholder="https://..." />
           </div>
 
           <div class="row">
-            <label>صورة (اختياري)</label>
+            <label>صورة</label>
             <input type="file" id="${key}-image" accept="image/*" />
           </div>
 
           <div class="row">
-            <label>فيديو (اختياري) (سيتم رفعه إلى السيرفر المحلي)</label>
+            <label>فيديو</label>
             <input type="file" id="${key}-video" accept="video/*" />
           </div>
 
           <div class="preview" id="${key}-preview"></div>
 
           <div class="actions">
-            <button class="btn btn-small btn-green" type="button" onclick="saveItem('${key}')">
-              <i class="ri-check-line"></i> حفظ
+            <button class="btn btn-ghost btn-small" type="button" onclick="saveDraft('${key}')">
+              <i class="ri-draft-line"></i> حفظ كمسودة
+            </button>
+            <button class="btn btn-small btn-green" id="${key}-publish-btn" type="button" onclick="publishItem('${key}')">
+              <i class="ri-upload-cloud-line"></i> نشر
             </button>
             <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
               <i class="ri-refresh-line"></i> تفريغ
@@ -933,7 +951,7 @@ function buildFormHTML(key){
   `;
 }
 
-function buildListHTML(key){
+function buildListHTML(key) {
   return `
     <div class="card">
       <div class="list-head">
@@ -945,19 +963,16 @@ function buildListHTML(key){
           <input type="search" id="${key}-search" placeholder="بحث سريع..." />
         </div>
       </div>
-
       <div class="list" id="${key}-list"></div>
     </div>
   `;
 }
 
-/* ========= إظهار قسم ========= */
-function showSection(key){
+function showSection(key) {
   currentSectionKey = key;
   setActiveMenu(key);
   el("sectionTitle").textContent = sectionTitle(key);
-
-  editing = { key: null, id: null };
+  editing = { key: null, id: null, originalId: null };
 
   const content = el("content");
   content.innerHTML = buildFormHTML(key) + buildListHTML(key);
@@ -967,34 +982,34 @@ function showSection(key){
   renderList(key);
 }
 
-function bindSearch(key){
+function bindSearch(key) {
   const inp = el(`${key}-search`);
   if (!inp) return;
-  inp.addEventListener("input", ()=> renderList(key));
+  inp.addEventListener("input", () => renderList(key));
 }
 
-function bindPreviewHandlers(key){
-  const cfg = SECTIONS.find(s=>s.key===key);
-  if (cfg?.isLive) return;
+function bindPreviewHandlers(key) {
+  const cfg = SECTIONS.find(s => s.key === key);
+  const preview = el(`${key}-preview`);
+  if (!preview || cfg?.isLive) return;
 
   const imgInput = el(`${key}-image`);
   const vidInput = el(`${key}-video`);
-  const preview = el(`${key}-preview`);
 
-  if (imgInput){
-    imgInput.addEventListener("change", ()=>{
+  if (imgInput) {
+    imgInput.addEventListener("change", () => {
       if (!imgInput.files || !imgInput.files[0]) return;
       const url = URL.createObjectURL(imgInput.files[0]);
-      preview.innerHTML = `<div>معاينة الصورة:</div><img src="${url}" alt="preview" />`;
+      preview.innerHTML = `<div>معاينة الصورة:</div><img src="${url}" alt="preview">`;
     });
   }
 
-  if (vidInput){
-    vidInput.addEventListener("change", ()=>{
+  if (vidInput) {
+    vidInput.addEventListener("change", () => {
       if (!vidInput.files || !vidInput.files[0]) return;
       const file = vidInput.files[0];
       const url = URL.createObjectURL(file);
-      const sizeMB = (file.size / (1024*1024)).toFixed(1);
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
       preview.innerHTML = `
         <div>معاينة الفيديو:</div>
         <video controls style="width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.35); max-height:260px;">
@@ -1006,8 +1021,7 @@ function bindPreviewHandlers(key){
   }
 }
 
-/* ========= رفع فيديو للسيرفر المحلي (كما مشروعك الحالي) ========= */
-async function uploadVideoToServer(file){
+async function uploadVideoToServer(file) {
   const formData = new FormData();
   formData.append("video", file);
 
@@ -1019,186 +1033,11 @@ async function uploadVideoToServer(file){
   if (!res.ok) throw new Error("فشل رفع الفيديو");
   const data = await res.json();
   if (!data || !data.url) throw new Error("السيرفر لم يرجع رابط الفيديو");
-  return data.url; // مثال: videos/xxx.mp4
+  return data.url;
 }
 
-/* ========= CRUD: حفظ ========= */
-async function saveItem(key){
-  const cfg = SECTIONS.find(s=>s.key===key);
-  if (!cfg) return;
-
-  if (!requireFs()) return;
-
-  const isLive = !!cfg.isLive;
-
-  let obj = {
-    id: editing.key === key && editing.id ? editing.id : uid(),
-    title: { ar:"", fr:"", en:"" },
-    short: { ar:"", fr:"", en:"" },
-    full:  { ar:"", fr:"", en:"" },
-    details:{ ar:"", fr:"", en:"" },
-    author:{ ar:"", fr:"", en:"" },
-    affiliation:{ ar:"", fr:"", en:"" },
-    date:{ ar:"", fr:"", en:"" },
-    image: "",
-    file: ""
-  };
-
-  if (isLive){
-const titleAr = el(`${key}-title-ar`)?.value.trim() || '';
-const titleFr = el(`${key}-title-fr`)?.value.trim() || '';
-const titleEn = el(`${key}-title-en`)?.value.trim() || '';
-
-if (!titleAr) return alert('أدخل العنوان بالعربية أولاً');
-
-    if (!titleAr) return alert("اكتب عنوان البث (عربي).");
-    if (!link) return alert("ضع رابط البث.");
-
-    obj.title.ar = titleAr;
-    obj.short.ar = shortAr;
-    obj.file = link;
-  } else {
-    const titleAr = el(`${key}-title-ar`)?.value.trim();
-    const titleFr = el(`${key}-title-fr`)?.value.trim();
-    const titleEn = el(`${key}-title-en`)?.value.trim();
-
-if (!titleAr) return alert('أدخل العنوان بالعربية أولاً');
-    obj.title = { ar:titleAr, fr:titleFr, en:titleEn };
-
-obj.short = {
-  ar: el(`${key}-short-ar`)?.value.trim() || '',
-  fr: el(`${key}-short-fr`)?.value.trim() || '',
-  en: el(`${key}-short-en`)?.value.trim() || ''
-};
-
-    obj.full = {
-      ar: (el(`${key}-full-ar-editor`)?.innerHTML || "").trim(),
-      fr: el(`${key}-full-fr`)?.value.trim() || "",
-      en: el(`${key}-full-en`)?.value.trim() || ""
-    };
-
-    obj.details = {
-      ar: el(`${key}-details-ar`)?.value.trim() || "",
-      fr: el(`${key}-details-fr`)?.value.trim() || "",
-      en: el(`${key}-details-en`)?.value.trim() || ""
-    };
-
-    obj.author = {
-      ar: el(`${key}-author-ar`)?.value.trim() || "",
-      fr: el(`${key}-author-fr`)?.value.trim() || "",
-      en: el(`${key}-author-en`)?.value.trim() || ""
-    };
-
-    obj.affiliation = {
-      ar: el(`${key}-aff-ar`)?.value.trim() || "",
-      fr: el(`${key}-aff-fr`)?.value.trim() || "",
-      en: el(`${key}-aff-en`)?.value.trim() || ""
-    };
-
-    obj.date = {
-      ar: el(`${key}-date-ar`)?.value.trim() || "",
-      fr: el(`${key}-date-fr`)?.value.trim() || "",
-      en: el(`${key}-date-en`)?.value.trim() || ""
-    };
-
-    const externalUrl = el(`${key}-file-url`)?.value.trim() || "";
-
-    const imgInput = el(`${key}-image`);
-    const vidInput = el(`${key}-video`);
-
-    try{
-      if (imgInput && imgInput.files && imgInput.files[0]){
-        const imgFile = imgInput.files[0];
-        if (imgFile.size > 6 * 1024 * 1024){
-          const ok = confirm("الصورة أكبر من 6MB، هل تريد المتابعة؟ (قد تكون ثقيلة)");
-          if (!ok) return;
-        }
-        obj.image = await fileToDataURL(imgFile);
-      }
-
-      if (externalUrl){
-        obj.file = externalUrl;
-      } else if (vidInput && vidInput.files && vidInput.files[0]){
-        const vFile = vidInput.files[0];
-        const sizeMB = (vFile.size / (1024*1024)).toFixed(1);
-        const ok = confirm(`حجم الفيديو ${sizeMB}MB. هل تريد رفعه للسيرفر الآن؟`);
-        if (!ok) return;
-        obj.file = await uploadVideoToServer(vFile);
-      }
-    }catch(err){
-      console.error(err);
-      alert("حدث خطأ أثناء تجهيز الملفات/رفع الفيديو.");
-      return;
-    }
-  }
-
-  // دمج مع عنصر سابق أثناء التعديل (حتى لا نفقد صورة/ملف إذا لم يرفعهما)
-  if (editing.key === key && editing.id){
-    const old = db[key].find(x=>x.id === editing.id);
-    if (old){
-      if (!obj.image) obj.image = old.image || "";
-      if (!obj.file) obj.file = old.file || "";
-    }
-  }
-
-  // 1) تحديث الذاكرة المحلية db + localStorage (ليظهر في الموقع) [file:191]
-  upsertLocal(key, obj);
-
-  // 2) حفظ في Firestore لكل الأقسام (بدون استثناء research) [مشكلة الاستثناء كانت موجودة في كودك القديم] [file:193]
-  try{
-    await upsertFirestore(key, obj);
-  }catch(err){
-    console.error(err);
-    alert("تم الحفظ محليًا لكن فشل الحفظ في Firestore. راجع القواعد/الاتصال.");
-    return;
-  }
-
-  resetForm(key);
-  renderList(key);
-  alert("تم الحفظ بنجاح ✅");
-}
-
-function fillFormFromItem(key, item){
-  const cfg = SECTIONS.find(s => s.key === key);
-  if (!item || !cfg) return;
-
-  if (cfg.isLive){
-    if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar") || "";
-    if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar") || "";
-    if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
-
-    const p = el(`${key}-preview`);
-    if (p) p.innerHTML = item.file ? `<div>الرابط الحالي: <a href="${item.file}" target="_blank">${item.file}</a></div>` : "";
-    return;
-  }
-
-  ["ar","fr","en"].forEach(lang => {
-    if (el(`${key}-title-${lang}`)) el(`${key}-title-${lang}`).value = getByLang(item.title, lang) || "";
-    if (el(`${key}-author-${lang}`)) el(`${key}-author-${lang}`).value = getByLang(item.author, lang) || "";
-    if (el(`${key}-aff-${lang}`)) el(`${key}-aff-${lang}`).value = getByLang(item.affiliation, lang) || "";
-    if (el(`${key}-date-${lang}`)) el(`${key}-date-${lang}`).value = getByLang(item.date, lang) || "";
-    if (el(`${key}-short-${lang}`)) el(`${key}-short-${lang}`).value = getByLang(item.short, lang) || "";
-    if (el(`${key}-details-${lang}`)) el(`${key}-details-${lang}`).value = getByLang(item.details, lang) || "";
-    if (lang !== "ar" && el(`${key}-full-${lang}`)) el(`${key}-full-${lang}`).value = getByLang(item.full, lang) || "";
-  });
-
-  const arEditor = el(`${key}-full-ar-editor`);
-  if (arEditor) arEditor.innerHTML = getByLang(item.full, "ar") || "";
-
-  const fileUrl = el(`${key}-file-url`);
-  if (fileUrl) fileUrl.value = item.file || "";
-
-  const p = el(`${key}-preview`);
-  if (p) {
-    p.innerHTML = `
-      ${item.image ? `<div>الصورة الحالية:</div><img src="${item.image}" alt="preview" />` : ""}
-      ${item.file ? `<div style="margin-top:8px;">الملف/الرابط الحالي: <a href="${item.file}" target="_blank">${item.file}</a></div>` : ""}
-    `;
-  }
-}
-/* ========= تحويل ملف لصورة base64 ========= */
-function fileToDataURL(file){
-  return new Promise((resolve, reject)=>{
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
     const r = new FileReader();
     r.onload = e => resolve(e.target.result);
     r.onerror = reject;
@@ -1206,298 +1045,356 @@ function fileToDataURL(file){
   });
 }
 
-/* ========= upsert localStorage ========= */
-function getContentCache(){
-  return safeParse(localStorage.getItem('content_cache'), []);
+function getContentCache() {
+  return safeParse(localStorage.getItem("content_cache"), []);
 }
 
-function setContentCache(items){
-  localStorage.setItem('content_cache', JSON.stringify(items));
+function setContentCache(items) {
+  localStorage.setItem("content_cache", JSON.stringify(items));
 }
 
-function rebuildDbFromCache(){
+function rebuildDbFromCache() {
   const all = getContentCache();
-
   SECTIONS.forEach(s => {
     db[s.key] = all.filter(item => item.section === s.key);
   });
 }
 
-function upsertLocal(key, obj){
+function upsertLocal(key, obj) {
   const all = getContentCache();
   const normalized = { ...obj, section: key };
-  const idx = all.findIndex(x => String(x.id) === String(normalized.id));
+  const idx = all.findIndex(x =>
+    String(x.id) === String(normalized.id) || String(x.docId) === String(normalized.docId)
+  );
 
   if (idx >= 0) all[idx] = normalized;
   else all.unshift(normalized);
 
   setContentCache(all);
   rebuildDbFromCache();
-  editing = { key: null, id: null };
+  editing = { key: null, id: null, originalId: null };
 }
 
 async function upsertFirestore(sectionKey, obj) {
-  if (!window.fs?.doc || !window.fs?.setDoc) {
-    throw new Error('Firestore bridge not ready');
-  }
-
   const now = Date.now();
-  const docId = String(obj.id || uid());
+  const docId = String(obj.docId || obj.id || uid());
 
   obj.id = docId;
   obj.docId = docId;
   obj.section = sectionKey;
   obj.updatedAt = now;
   if (!obj.createdAt) obj.createdAt = now;
-  if (!obj.status) obj.status = 'published';
+  if (!obj.status) obj.status = "published";
 
-  const docRef = window.fs.doc(window.fs.db, 'content', docId);
+  const docRef = window.fs.doc(window.fs.db, "content", docId);
   await window.fs.setDoc(docRef, obj, { merge: true });
-
   return obj;
 }
 
-/* ========= حذف (FIXED: delete by docId = id) ========= */
-async function deleteItem(sectionKey, id){
-  const ok = confirm('سيتم حذف العنصر من localStorage و Firestore. هل أنت متأكد؟');
+async function saveItem(key) {
+  const cfg = SECTIONS.find(s => s.key === key);
+  if (!cfg) return;
+  if (!requireFs()) return;
+
+  const isLive = !!cfg.isLive;
+  const currentId = editing.key === key && editing.id ? editing.id : String(uid());
+
+  const obj = {
+    id: currentId,
+    docId: currentId,
+    title: { ar: "", fr: "", en: "" },
+    short: { ar: "", fr: "", en: "" },
+    full: { ar: "", fr: "", en: "" },
+    details: { ar: "", fr: "", en: "" },
+    author: { ar: "", fr: "", en: "" },
+    affiliation: { ar: "", fr: "", en: "" },
+    date: { ar: "", fr: "", en: "" },
+    image: "",
+    file: ""
+  };
+
+  if (isLive) {
+    const titleAr = el(`${key}-title-ar`)?.value.trim() || "";
+    const shortAr = el(`${key}-short-ar`)?.value.trim() || "";
+    const link = el(`${key}-live-link`)?.value.trim() || "";
+
+    if (!titleAr) return alert("أدخل عنوان البث بالعربية أولاً");
+
+    obj.title.ar = titleAr;
+    obj.short.ar = shortAr;
+    obj.file = link;
+  } else {
+    const titleAr = el(`${key}-title-ar`)?.value.trim() || "";
+    if (!titleAr) return alert("أدخل العنوان بالعربية أولاً");
+
+    obj.title.ar = titleAr;
+    obj.author.ar = el(`${key}-author-ar`)?.value.trim() || "";
+    obj.affiliation.ar = el(`${key}-aff-ar`)?.value.trim() || "";
+    obj.date.ar = el(`${key}-date-ar`)?.value.trim() || "";
+    obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
+    obj.full.ar = (el(`${key}-full-ar-editor`)?.innerHTML || "").trim();
+    obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
+
+    const externalUrl = el(`${key}-file-url`)?.value.trim() || "";
+    const imgInput = el(`${key}-image`);
+    const vidInput = el(`${key}-video`);
+
+    try {
+      if (imgInput && imgInput.files && imgInput.files[0]) {
+        obj.image = await fileToDataURL(imgInput.files[0]);
+      }
+
+      if (externalUrl) {
+        obj.file = externalUrl;
+      } else if (vidInput && vidInput.files && vidInput.files[0]) {
+        obj.file = await uploadVideoToServer(vidInput.files[0]);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("حدث خطأ أثناء تجهيز الملفات أو رفع الفيديو");
+      return;
+    }
+  }
+
+  if (editing.key === key && editing.id) {
+    const old = (db[key] || []).find(x => String(x.id) === String(editing.id));
+    if (old) {
+      if (!obj.image) obj.image = old.image || "";
+      if (!obj.file) obj.file = old.file || "";
+      if (!obj.createdAt) obj.createdAt = old.createdAt || Date.now();
+    }
+  }
+
+  upsertLocal(key, obj);
+
+  try {
+    await upsertFirestore(key, obj);
+  } catch (err) {
+    console.error(err);
+    alert("تم الحفظ محليًا لكن فشل الحفظ في Firestore");
+    return;
+  }
+
+  resetForm(key);
+  renderList(key);
+  alert("تم الحفظ بنجاح");
+}
+
+function fillFormFromItem(key, item) {
+  const cfg = SECTIONS.find(s => s.key === key);
+  if (!item || !cfg) return;
+
+  if (cfg.isLive) {
+    if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar") || "";
+    if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar") || "";
+    if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
+    const p = el(`${key}-preview`);
+    if (p) p.innerHTML = item.file ? `<div>الرابط الحالي: <a href="${item.file}" target="_blank" rel="noopener">${item.file}</a></div>` : "";
+    return;
+  }
+
+  if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar") || "";
+  if (el(`${key}-author-ar`)) el(`${key}-author-ar`).value = getByLang(item.author, "ar") || "";
+  if (el(`${key}-aff-ar`)) el(`${key}-aff-ar`).value = getByLang(item.affiliation, "ar") || "";
+  if (el(`${key}-date-ar`)) el(`${key}-date-ar`).value = getByLang(item.date, "ar") || "";
+  if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar") || "";
+  if (el(`${key}-details-ar`)) el(`${key}-details-ar`).value = getByLang(item.details, "ar") || "";
+  if (el(`${key}-full-ar-editor`)) el(`${key}-full-ar-editor`).innerHTML = getByLang(item.full, "ar") || "";
+  if (el(`${key}-file-url`)) el(`${key}-file-url`).value = item.file || "";
+
+  const p = el(`${key}-preview`);
+  if (p) {
+    p.innerHTML = `
+      ${item.image ? `<div>الصورة الحالية:</div><img src="${item.image}" alt="preview">` : ""}
+      ${item.file ? `<div style="margin-top:8px;">الرابط الحالي: <a href="${item.file}" target="_blank" rel="noopener">${item.file}</a></div>` : ""}
+    `;
+  }
+}
+
+async function deleteItem(sectionKey, id) {
+  const ok = confirm("سيتم حذف العنصر من localStorage و Firestore. هل أنت متأكد؟");
   if (!ok) return;
 
-  const all = safeParse(localStorage.getItem('content_cache'), []);
-  const item = all.find(x =>
-    String(x.id) === String(id) || String(x.docId) === String(id)
-  );
+  const all = getContentCache();
+  const item = all.find(x => String(x.id) === String(id) || String(x.docId) === String(id));
+  const filtered = all.filter(x => String(x.id) !== String(id) && String(x.docId) !== String(id));
 
-  const filtered = all.filter(x =>
-    String(x.id) !== String(id) && String(x.docId) !== String(id)
-  );
-
-  localStorage.setItem('content_cache', JSON.stringify(filtered));
-
-  SECTIONS.forEach(s => {
-    db[s.key] = filtered.filter(entry => entry.section === s.key);
-  });
-
+  setContentCache(filtered);
+  rebuildDbFromCache();
   renderList(sectionKey);
 
   if (!requireFs()) return;
 
   try {
     const docId = item?.docId || item?.id || id;
-    await window.fs.deleteDoc(
-      window.fs.doc(window.fs.db, 'content', String(docId))
-    );
+    await window.fs.deleteDoc(window.fs.doc(window.fs.db, "content", String(docId)));
   } catch (e) {
-    console.error('Firestore delete error:', e);
-    alert('تعذر حذف العنصر من Firestore');
+    console.error("Firestore delete error:", e);
+    alert("تعذر حذف العنصر من Firestore");
   }
 }
 
-/* ========= تفريغ الفورم ========= */
-function resetForm(key){
-  editing = { key: null, id: null };
+function resetForm(key) {
+  editing = { key: null, id: null, originalId: null };
 
-  const cfg = SECTIONS.find(s=>s.key===key);
-  if (cfg?.isLive){
-    el(`${key}-title-ar`).value = "";
-    el(`${key}-short-ar`).value = "";
-    el(`${key}-live-link`).value = "";
-    const p = el(`${key}-preview`); if (p) p.innerHTML = "";
+  const cfg = SECTIONS.find(s => s.key === key);
+  if (cfg?.isLive) {
+    if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = "";
+    if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = "";
+    if (el(`${key}-live-link`)) el(`${key}-live-link`).value = "";
+    const p = el(`${key}-preview`);
+    if (p) p.innerHTML = "";
     return;
   }
 
-  ["ar","fr","en"].forEach(lang=>{
-    const t = el(`${key}-title-${lang}`); if (t) t.value = "";
-    const a = el(`${key}-author-${lang}`); if (a) a.value = "";
-    const aff = el(`${key}-aff-${lang}`); if (aff) aff.value = "";
-    const d = el(`${key}-date-${lang}`); if (d) d.value = "";
-    const s = el(`${key}-short-${lang}`); if (s) s.value = "";
-    const det = el(`${key}-details-${lang}`); if (det) det.value = "";
-    const f = el(`${key}-full-${lang}`); if (f) f.value = "";
+  ["title-ar", "author-ar", "aff-ar", "date-ar", "short-ar", "details-ar", "file-url"].forEach(name => {
+    const node = el(`${key}-${name}`);
+    if (node) node.value = "";
   });
 
-  const ed = el(`${key}-full-ar-editor`); if (ed) ed.innerHTML = "";
-  const fileUrl = el(`${key}-file-url`); if (fileUrl) fileUrl.value = "";
+  const ed = el(`${key}-full-ar-editor`);
+  if (ed) ed.innerHTML = "";
 
-  const img = el(`${key}-image`); if (img) img.value = "";
-  const vid = el(`${key}-video`); if (vid) vid.value = "";
+  const img = el(`${key}-image`);
+  if (img) img.value = "";
 
-  const p = el(`${key}-preview`); if (p) p.innerHTML = "";
+  const vid = el(`${key}-video`);
+  if (vid) vid.value = "";
+
+  const p = el(`${key}-preview`);
+  if (p) p.innerHTML = "";
+
+  const publishBtn = el(`${key}-publish-btn`);
+  if (publishBtn) publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر';
 }
 
-/* ========= عرض قائمة العناصر ========= */
-function renderList(key){
+function renderList(key) {
   const list = el(`${key}-list`);
   const count = el(`${key}-count`);
   if (!list || !count) return;
 
   const q = (el(`${key}-search`)?.value || "").trim().toLowerCase();
-  const data = (db[key] || []).filter(item=>{
+
+  const data = (db[key] || []).filter(item => {
     if (!q) return true;
-    const t = (getByLang(item.title,"ar") + " " + getByLang(item.title,"fr") + " " + getByLang(item.title,"en")).toLowerCase();
-    const s = (getByLang(item.short,"ar") + " " + getByLang(item.short,"fr") + " " + getByLang(item.short,"en")).toLowerCase();
+    const t = getByLang(item.title, "ar").toLowerCase();
+    const s = getByLang(item.short, "ar").toLowerCase();
     return t.includes(q) || s.includes(q);
   });
 
   count.textContent = `${data.length} عنصر`;
 
-  if (!data.length){
+  if (!data.length) {
     list.innerHTML = `<div class="empty">لا توجد عناصر هنا بعد.</div>`;
     return;
   }
 
   list.innerHTML = "";
-  data.forEach(item=>{
-    const title = getByLang(item.title,"ar") || "بدون عنوان";
-    const descFull = getByLang(item.short,"ar") || getByLang(item.details,"ar") || "";
-    const desc = descFull.length > 120 ? descFull.slice(0,120) + "..." : descFull;
-
-    const author = getByLang(item.author,"ar") || "—";
-    const dateLabel = getByLang(item.date,"ar") || new Date(item.id).toLocaleString("ar-EG");
-
-    const hasImg = !!item.image;
-    const imgHtml = hasImg ? `<img src="${item.image}" alt="img">` : `<img src="images/ofouq-logo.jpeg" alt="logo">`;
+  data.forEach(item => {
+    const title = getByLang(item.title, "ar") || "بدون عنوان";
+    const descFull = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
+    const desc = descFull.length > 120 ? descFull.slice(0, 120) + "..." : descFull;
+    const author = getByLang(item.author, "ar") || "—";
+    const dateLabel = getByLang(item.date, "ar") || "—";
+    const imgHtml = item.image ? `<img src="${item.image}" alt="img">` : `<img src="images/ofouq-logo.jpeg" alt="logo">`;
 
     const wrap = document.createElement("div");
     wrap.className = "item";
-wrap.innerHTML = `
-  <div class="item-actions">
-    <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')">تعديل</button>
-    <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')">حذف</button>
-  </div>
-  ${imgHtml}
-  <div class="item-body">
-    <div class="item-title">${esc(title)}</div>
-    <div class="item-desc">${esc(desc || "—")}</div>
-    <div class="item-meta">
-      <span>${esc(author)}</span>
-      <span>${esc(dateLabel)}</span>
-    </div>
-  </div>
-`;
+    wrap.innerHTML = `
+      <div class="item-actions">
+        <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')"><i class="ri-pencil-line"></i></button>
+        <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
+      </div>
+      ${imgHtml}
+      <div class="item-body">
+        <div class="item-title">${esc(title)}</div>
+        <div class="item-desc">${esc(desc || "—")}</div>
+        <div class="item-meta">
+          <span>${esc(author)}</span>
+          <span>${esc(dateLabel)}</span>
+        </div>
+      </div>
+    `;
     list.appendChild(wrap);
   });
 }
 
-function loadForEdit(key, id){
+function loadForEdit(key, id) {
   const item = (db[key] || []).find(x => String(x.id) === String(id));
   if (!item) return alert("العنصر غير موجود.");
 
   editing = { key, id, originalId: id };
   draftMode = true;
-
   fillFormFromItem(key, item);
 
   const publishBtn = el(`${key}-publish-btn`);
-  if (publishBtn) {
-    publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر التعديلات';
-  }
+  if (publishBtn) publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر التعديلات';
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function collectDraftData(key){
+function collectDraftData(key) {
   const cfg = SECTIONS.find(s => s.key === key);
   if (!cfg) return null;
 
-  let obj = {
+  const obj = {
     id: editing.key === key && editing.id ? editing.id : uid(),
-    title: { ar:"", fr:"", en:"" },
-    short: { ar:"", fr:"", en:"" },
-    full:  { ar:"", fr:"", en:"" },
-    details:{ ar:"", fr:"", en:"" },
-    author:{ ar:"", fr:"", en:"" },
-    affiliation:{ ar:"", fr:"", en:"" },
-    date:{ ar:"", fr:"", en:"" },
+    title: { ar: "", fr: "", en: "" },
+    short: { ar: "", fr: "", en: "" },
+    full: { ar: "", fr: "", en: "" },
+    details: { ar: "", fr: "", en: "" },
+    author: { ar: "", fr: "", en: "" },
+    affiliation: { ar: "", fr: "", en: "" },
+    date: { ar: "", fr: "", en: "" },
     image: "",
     file: ""
   };
 
-  if (cfg.isLive){
+  if (cfg.isLive) {
     obj.title.ar = el(`${key}-title-ar`)?.value.trim() || "";
     obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
     obj.file = el(`${key}-live-link`)?.value.trim() || "";
     return obj;
   }
 
-  obj.title = {
-    ar: el(`${key}-title-ar`)?.value.trim() || "",
-    fr: el(`${key}-title-fr`)?.value.trim() || "",
-    en: el(`${key}-title-en`)?.value.trim() || ""
-  };
-
-  obj.short = {
-    ar: el(`${key}-short-ar`)?.value.trim() || "",
-    fr: el(`${key}-short-fr`)?.value.trim() || "",
-    en: el(`${key}-short-en`)?.value.trim() || ""
-  };
-
-  obj.full = {
-    ar: (el(`${key}-full-ar-editor`)?.innerHTML || "").trim(),
-    fr: el(`${key}-full-fr`)?.value.trim() || "",
-    en: el(`${key}-full-en`)?.value.trim() || ""
-  };
-
-  obj.details = {
-    ar: el(`${key}-details-ar`)?.value.trim() || "",
-    fr: el(`${key}-details-fr`)?.value.trim() || "",
-    en: el(`${key}-details-en`)?.value.trim() || ""
-  };
-
-  obj.author = {
-    ar: el(`${key}-author-ar`)?.value.trim() || "",
-    fr: el(`${key}-author-fr`)?.value.trim() || "",
-    en: el(`${key}-author-en`)?.value.trim() || ""
-  };
-
-  obj.affiliation = {
-    ar: el(`${key}-aff-ar`)?.value.trim() || "",
-    fr: el(`${key}-aff-fr`)?.value.trim() || "",
-    en: el(`${key}-aff-en`)?.value.trim() || ""
-  };
-
-  obj.date = {
-    ar: el(`${key}-date-ar`)?.value.trim() || "",
-    fr: el(`${key}-date-fr`)?.value.trim() || "",
-    en: el(`${key}-date-en`)?.value.trim() || ""
-  };
-
+  obj.title.ar = el(`${key}-title-ar`)?.value.trim() || "";
+  obj.author.ar = el(`${key}-author-ar`)?.value.trim() || "";
+  obj.affiliation.ar = el(`${key}-aff-ar`)?.value.trim() || "";
+  obj.date.ar = el(`${key}-date-ar`)?.value.trim() || "";
+  obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
+  obj.full.ar = (el(`${key}-full-ar-editor`)?.innerHTML || "").trim();
+  obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
   obj.file = el(`${key}-file-url`)?.value.trim() || "";
 
   return obj;
 }
 
-function saveDraft(key){
+function saveDraft(key) {
   const draft = collectDraftData(key);
   if (!draft) return;
-
   sessionStorage.setItem(`draft-${key}-${draft.id}`, JSON.stringify(draft));
   draftMode = true;
-  alert("تم حفظ المسودة. لن يظهر التعديل في الموقع حتى تضغط نشر.");
+  alert("تم حفظ المسودة");
 }
 
-async function publishItem(key){
+async function publishItem(key) {
   await saveItem(key);
   draftMode = false;
-
   const publishBtn = el(`${key}-publish-btn`);
-  if (publishBtn) {
-    publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر';
-  }
+  if (publishBtn) publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر';
 }
-/* ========= مزامنة من Firestore → localStorage لكل الأقسام ========= */
-async function reloadFromFirestore(allSections = true){
+
+async function reloadFromFirestore() {
   if (!requireFs()) return;
 
   try {
-    const col = window.fs.collection(window.fs.db, 'content');
+    await waitForFS();
+    const col = window.fs.collection(window.fs.db, "content");
     const snap = await window.fs.getDocs(col);
 
     const all = [];
     snap.forEach(docSnap => {
-      all.push({
-        docId: docSnap.id,
-        ...docSnap.data()
-      });
+      all.push({ docId: docSnap.id, ...docSnap.data() });
     });
 
     all.sort((a, b) =>
@@ -1505,25 +1402,20 @@ async function reloadFromFirestore(allSections = true){
       Number(a.updatedAt || a.createdAt || a.id || 0)
     );
 
-    localStorage.setItem('content_cache', JSON.stringify(all));
-
-    SECTIONS.forEach(s => {
-      db[s.key] = all.filter(item => item.section === s.key);
-    });
-
+    localStorage.setItem("content_cache", JSON.stringify(all));
+    rebuildDbFromCache();
     renderList(currentSectionKey);
-    alert('تم تحميل المحتوى من Firestore');
+    alert("تم تحميل المحتوى من Firestore");
   } catch (e) {
-    console.error('Firestore load error:', e);
-    alert('تعذر تحميل المحتوى من Firestore');
+    console.error("Firestore load error:", e);
+    alert("تعذر تحميل المحتوى من Firestore");
   }
 }
 
-/* ========= تصدير JSON ========= */
-function exportJSON(){
+function exportJSON() {
   const out = {};
-  SECTIONS.forEach(s=> out[s.key] = db[s.key] || []);
-  const blob = new Blob([JSON.stringify(out, null, 2)], { type:"application/json" });
+  SECTIONS.forEach(s => out[s.key] = db[s.key] || []);
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -1534,205 +1426,56 @@ function exportJSON(){
   URL.revokeObjectURL(url);
 }
 
-/* ========= مسح localStorage (فقط) ========= */
-function clearLocalStorage(){
-  const ok = confirm('سيتم حذف الكاش المحلي فقط. هل أنت متأكد؟');
+function clearLocalStorage() {
+  const ok = confirm("سيتم حذف الكاش المحلي فقط. هل أنت متأكد؟");
   if (!ok) return;
-
-  localStorage.removeItem('content_cache');
-
-  SECTIONS.forEach(s => {
-    db[s.key] = [];
-    localStorage.removeItem(s.key);
-  });
-
+  localStorage.removeItem("content_cache");
+  SECTIONS.forEach(s => db[s.key] = []);
   showSection(currentSectionKey);
-  alert('تم حذف الكاش المحلي');
+  alert("تم حذف الكاش المحلي");
 }
-/* ========= بعد الدخول ========= */
-async function initAfterLogin(){
+
+async function initAfterLogin() {
   buildMenu();
+  rebuildDbFromCache();
   showSection(currentSectionKey);
-
-  // تحميل أولي من Firestore (لضمان أحدث نسخة) ثم يكتب localStorage [file:191][file:193]
-  await reloadFromFirestore(true);
+  await reloadFromFirestore();
 }
 
-/* ========= ربط الأزرار العامة ========= */
-(function bindGlobal(){
+(function bindGlobal() {
   el("loginBtn").addEventListener("click", login);
   el("logoutBtn").addEventListener("click", logout);
-
-  el("reloadBtn").addEventListener("click", ()=> reloadFromFirestore(false));
-  el("syncBtn").addEventListener("click", ()=> reloadFromFirestore(true));
+  el("reloadBtn").addEventListener("click", reloadFromFirestore);
+  el("syncBtn").addEventListener("click", reloadFromFirestore);
   el("exportBtn").addEventListener("click", exportJSON);
   el("clearBtn").addEventListener("click", clearLocalStorage);
 
-  document.addEventListener("keydown", (e)=>{
-    if (e.key === "Enter" && el("lock").style.display !== "none" && !e.shiftKey){
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter" && el("lock").style.display !== "none" && !e.shiftKey) {
       login();
     }
   });
 
-  window.addEventListener("load", ()=>{
-    if (sessionStorage.getItem("adminAuthed") === "1"){
+  window.addEventListener("load", () => {
+    rebuildDbFromCache();
+    if (sessionStorage.getItem("adminAuthed") === "1") {
       setAppVisible();
       initAfterLogin();
     } else {
-      // إظهار شاشة القفل
       el("lock").style.display = "flex";
       el("app").style.display = "none";
     }
   });
 })();
 
-/* ========= تعريض الدوال لاستخدامها من onclick ========= */
 window.showSection = showSection;
 window.saveItem = saveItem;
 window.resetForm = resetForm;
 window.loadForEdit = loadForEdit;
 window.deleteItem = deleteItem;
 window.formatCmd = formatCmd;
-
 window.saveDraft = saveDraft;
 window.publishItem = publishItem;
 window.fillFormFromItem = fillFormFromItem;
-/* ===========================
-   Part 3 Patch (Updates)
-   - Delete Firestore by docId
-   - Auto-Translate (MyMemory)
-   - Safer preview links
-=========================== */
-
-/* 1) Override deleteItem: local + Firestore (docId first) */
-
-/* 2) Translation helpers (optional but enabled) */
-async function translateText(text, fromLang, toLang){
-  const trimmed = (text || "").trim();
-  if (!trimmed) return "";
-
-  const maxLen = 500; // مثل كودك السابق [file:193]
-  const toSend = trimmed.length > maxLen ? trimmed.slice(0, maxLen) : trimmed;
-
-  const url =
-    "https://api.mymemory.translated.net/get?q=" +
-    encodeURIComponent(toSend) +
-    "&langpair=" + encodeURIComponent(fromLang + "|" + toLang);
-
-  try{
-    const res = await fetch(url);
-    const data = await res.json();
-    return data?.responseData?.translatedText || "";
-  }catch(e){
-    console.error("Translation error", e);
-    return "";
-  }
-}
-
-function attachAutoTranslateForTriplet(key, fieldBase){
-  const frEl = document.getElementById(`${key}-${fieldBase}-fr`);
-  const enEl = document.getElementById(`${key}-${fieldBase}-en`);
-
-  // Arabic: for "full" we use editor, others are textarea/input
-  const arEl =
-    (fieldBase === "full")
-      ? document.getElementById(`${key}-full-ar-editor`)
-      : document.getElementById(`${key}-${fieldBase}-ar`);
-
-  if (!arEl || !frEl || !enEl) return;
-
-  let timer = null;
-  const debounce = 700; // مثل كودك السابق [file:193]
-
-  const readAr = () => (fieldBase === "full" ? (arEl.innerText || "") : (arEl.value || ""));
-  const writeAr = (v) => { if (fieldBase === "full") arEl.innerText = v; else arEl.value = v; };
-
-  async function run(source){
-    const ar = readAr().trim();
-    const fr = (frEl.value || "").trim();
-    const en = (enEl.value || "").trim();
-
-    const sourceText = (source === "ar") ? ar : (source === "fr") ? fr : en;
-    if (!sourceText) return;
-
-    if (source === "ar"){
-      const [tFr, tEn] = await Promise.all([
-        translateText(sourceText, "ar", "fr"),
-        translateText(sourceText, "ar", "en")
-      ]);
-      if (tFr) frEl.value = tFr;
-      if (tEn) enEl.value = tEn;
-    } else if (source === "fr"){
-      const [tAr, tEn] = await Promise.all([
-        translateText(sourceText, "fr", "ar"),
-        translateText(sourceText, "fr", "en")
-      ]);
-      if (tAr) writeAr(tAr);
-      if (tEn) enEl.value = tEn;
-    } else {
-      const [tAr, tFr] = await Promise.all([
-        translateText(sourceText, "en", "ar"),
-        translateText(sourceText, "en", "fr")
-      ]);
-      if (tAr) writeAr(tAr);
-      if (tFr) frEl.value = tFr;
-    }
-  }
-
-  function bind(elm, lang){
-    elm.addEventListener("input", ()=>{
-      clearTimeout(timer);
-      timer = setTimeout(()=> run(lang), debounce);
-    });
-  }
-
-  bind(arEl, "ar");
-  bind(frEl, "fr");
-  bind(enEl, "en");
-}
-
-/* 3) Hook into showSection AFTER it renders the UI */
-const _origShowSection = window.showSection;
-window.showSection = function(key){
-  _origShowSection(key);
-
-  const cfg = SECTIONS.find(s=>s.key===key);
-  if (cfg?.isLive) return;
-
-  // Enable auto-translate for common fields
-  attachAutoTranslateForTriplet(key, "title");
-  attachAutoTranslateForTriplet(key, "short");
-  attachAutoTranslateForTriplet(key, "details");
-  attachAutoTranslateForTriplet(key, "full");
-};
-
-async function cleanFirestoreSection(section) {
-  if (!window.fs || !confirm(`حذف كل محتوى ${section} من Firestore؟`)) return;
-  
-  try {
-    const { db, collection, getDocs, deleteDoc, doc } = window.fs;
-    const q = collection(db, section);
-    const snap = await getDocs(q);
-    
-    let deleted = 0;
-    snap.forEach(async (d) => {
-      const ref = doc(db, section, d.id);
-      await deleteDoc(ref);
-      deleted++;
-    });
-    
-    console.log(`✅ تم حذف ${deleted} وثيقة من ${section}`);
-    alert(`تم حذف ${deleted} عنصر من ${section}`);
-    
-    // إعادة تحميل القسم للتحقق
-    setTimeout(() => showSection(section), 1000);
-  } catch (e) {
-    console.error('خطأ في الحذف:', e);
-    alert('خطأ: ' + e.message);
-  }
-}
-
-// استخدام: cleanFirestoreSection('research')
-
 </script>
 
