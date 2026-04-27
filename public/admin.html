@@ -556,8 +556,7 @@
   </style>
 </head>
 <body>
-<div id="lock" class="lock">
-
+<form class="lock-card" id="loginForm" action="javascript:void(0);" method="post" autocomplete="off">
 
   <div class="app" id="app">
     <aside class="sidebar">
@@ -749,16 +748,29 @@ function normalizeItem(sectionKey, raw){
       requestAnimationFrame(() => el("lock").classList.remove("hidden"));
     }
 
-    function login(){
-      const code = el("adminCode").value.trim();
-      const pass = el("adminPass").value;
-      const ok = code === ADMIN_CODE && pass === ADMIN_PASS;
-      el("loginErr").style.display = ok ? "none" : "block";
-      if (!ok) return;
-      sessionStorage.setItem("adminAuthed", "1");
-      setAppVisible();
-      initAfterLogin();
-    }
+function login(){
+  const code = el("adminCode")?.value.trim() || "";
+  const pass = el("adminPass")?.value || "";
+  const ok = code === ADMIN_CODE && pass === ADMIN_PASS;
+
+  console.log("login attempt", { code, passLength: pass.length, ok });
+
+  el("loginErr").style.display = ok ? "none" : "block";
+  if (!ok) {
+    alert("بيانات الدخول غير صحيحة");
+    return;
+  }
+
+  sessionStorage.setItem("adminAuthed", "1");
+
+  try {
+    setAppVisible();
+    initAfterLogin();
+  } catch (err) {
+    console.error("Login init error:", err);
+    alert("Login worked, but panel loading failed: " + err.message);
+  }
+}
 
     function logout(){
       sessionStorage.removeItem("adminAuthed");
@@ -1361,23 +1373,16 @@ async function recoverData(){
       showSection(state.currentSectionKey);
       await recoverData();
     }
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  login();
-});
-
-document.addEventListener("keydown", e => {
-  const lock = document.getElementById("lock");
-  const codeInput = document.getElementById("adminCode");
-  const passInput = document.getElementById("adminPass");
-  const lockVisible = lock && getComputedStyle(lock).display !== "none";
-  const isLoginField = document.activeElement === codeInput || document.activeElement === passInput;
-
-  if (e.key === "Enter" && lockVisible && isLoginField) {
+const loginForm = document.getElementById("loginForm");
+if (loginForm) {
+  loginForm.addEventListener("submit", function(e) {
     e.preventDefault();
+    e.stopPropagation();
     login();
-  }
-});
+    return false;
+  });
+}
+
 
     window.addEventListener("load", () => {
       rebuildDbFromCache();
