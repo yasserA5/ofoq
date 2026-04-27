@@ -557,27 +557,7 @@
 </head>
 <body>
 <div id="lock" class="lock">
-  <form class="lock-card" id="loginForm">
-    <h2 class="lock-title"><i class="ri-shield-user-line"></i> تسجيل دخول الإدارة</h2>
-    <p class="lock-desc">أدخل كود الإدارة وكلمة المرور لفتح لوحة التحكم.</p>
 
-    <div class="in">
-      <i class="ri-user-3-line"></i>
-      <input id="adminCode" type="text" placeholder="كود الإدارة" autocomplete="off" />
-    </div>
-
-    <div class="in">
-      <i class="ri-lock-password-line"></i>
-      <input id="adminPass" type="password" placeholder="كلمة المرور" autocomplete="off" />
-    </div>
-
-    <button class="btn btn-primary" id="loginBtn" type="submit">
-      دخول <i class="ri-arrow-left-line"></i>
-    </button>
-
-    <div id="loginErr" class="err">بيانات الدخول غير صحيحة.</div>
-  </form>
-</div>
 
   <div class="app" id="app">
     <aside class="sidebar">
@@ -1381,28 +1361,19 @@ async function recoverData(){
       showSection(state.currentSectionKey);
       await recoverData();
     }
-
-el("loginForm").addEventListener("submit", e => {
+document.getElementById("loginForm").addEventListener("submit", function(e) {
   e.preventDefault();
   login();
 });
-    el("logoutBtn").addEventListener("click", logout);
-    el("reloadBtn").addEventListener("click", reloadFromFirestore);
-    el("recoverBtn").addEventListener("click", recoverData);
-    el("exportBtn").addEventListener("click", exportJSON);
-    el("clearBtn").addEventListener("click", clearLocalStorageOnly);
 
 document.addEventListener("keydown", e => {
-  const lock = el("lock");
-  const codeInput = el("adminCode");
-  const passInput = el("adminPass");
+  const lock = document.getElementById("lock");
+  const codeInput = document.getElementById("adminCode");
+  const passInput = document.getElementById("adminPass");
   const lockVisible = lock && getComputedStyle(lock).display !== "none";
+  const isLoginField = document.activeElement === codeInput || document.activeElement === passInput;
 
-  const isLoginField =
-    document.activeElement === codeInput ||
-    document.activeElement === passInput;
-
-  if (e.key === "Enter" && lockVisible && isLoginField && !e.shiftKey) {
+  if (e.key === "Enter" && lockVisible && isLoginField) {
     e.preventDefault();
     login();
   }
