@@ -2,1183 +2,527 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title id="t-title">البث المباشر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>البث المباشر - Ofouq Academy</title>
+
   <link rel="icon" type="image/png" href="logo1222.jpeg">
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
   <style>
     :root{
-      --primary:#ec4899;
-      --primary-dark:#be185d;
-      --primary-soft:#fef3c7;
-      --nav-bg:#ffffff;
-      --text-main:#374151;
-      --bg-overlay:rgba(15,23,42,0.55);
+      --accent:#f472b6;
+      --accent2:#38bdf8;
+      --bg1:#0f172a;
+      --bg2:#1e293b;
+      --card: rgba(30,41,59,.78);
+      --card2: rgba(15,23,42,.86);
+      --text:#e5e7eb;
+      --muted:#cbd5e1;
+      --soft:#94a3b8;
+      --border: rgba(148,163,184,.20);
+      --shadow: 0 22px 60px rgba(2,6,23,.40);
+      --radius:28px;
     }
 
-    *{margin:0;padding:0;box-sizing:border-box;}
-    html,body{width:100%;overflow-x:hidden;}
+    *{ box-sizing:border-box; }
+
+    html,body{
+      margin:0;
+      padding:0;
+      width:100%;
+      overflow-x:hidden;
+    }
 
     body{
       font-family:"Tajawal",sans-serif;
-      background:linear-gradient(135deg,#1f2937 0%,#111827 100%);
-      color:#f9fafb;
-      line-height:1.6;
-      direction:rtl;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(244,114,182,.12), transparent 28%),
+        radial-gradient(circle at top left, rgba(56,189,248,.10), transparent 30%),
+        linear-gradient(180deg, #0f172a 0%, #111827 100%);
+      min-height:100vh;
     }
 
-    header{
-      padding:10px 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      background:rgba(255,255,255,0.96);
-      backdrop-filter:blur(20px);
-      box-shadow:0 8px 32px rgba(0,0,0,0.2);
-      position:sticky;
-      top:0;
-      z-index:1500;
-      gap:14px;
-    }
-
-    .logo{
-      flex:0 0 auto;
-      display:flex;
-      cursor:pointer;
-      justify-content:center;
-    }
-    .logo img{
-      width:clamp(60px,12vw,85px);
-      height:auto;
-      transition:transform .2s;
-    }
-    .logo img:hover{transform:scale(1.05);}
-
-    nav{
-      flex:1;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-    }
-    nav ul{
-      list-style:none;
-      display:flex;
-      align-items:center;
-      gap:16px;
-      justify-content:flex-start;
-      flex-wrap:nowrap;
-    }
-    nav li{position:relative;}
-    nav a{
+    a{
+      color:inherit;
       text-decoration:none;
-      color:var(--text-main);
-      font-size:13px;
-      font-weight:600;
-      padding:4px 2px;
-      transition:.2s;
-    }
-    nav a:hover{color:var(--primary);}
-    nav a.active{color:var(--primary);}
-    nav a.active::after,
-    nav a:hover::after{
-      content:"";
-      position:absolute;
-      bottom:-2px;
-      inset-inline-start:0;
-      width:100%;
-      height:2px;
-      background:var(--primary);
-      border-radius:999px;
     }
 
-    .dropdown-content{
-      display:none;
-      position:absolute;
-      top:100%;
-      right:0;
-      background:#fff;
-      box-shadow:0 4px 15px rgba(0,0,0,0.13);
-      padding:8px 0;
-      border-radius:10px;
-      min-width:210px;
-      border:1px solid #e5e7eb;
-      z-index:1000;
+    .wrap{
+      width:min(1200px, calc(100% - 28px));
+      margin:0 auto;
     }
-    .dropdown-content a{
-      display:block;
-      padding:8px 16px;
-      color:var(--text-main);
-      white-space:nowrap;
-      font-size:13px;
-    }
-    .dropdown-content a:hover{
-      background:#fdf2ff;
-      color:var(--primary);
-    }
-    .dropdown:hover .dropdown-content{display:block;}
-
-    .nav-search{
-      flex:0 0 150px;
-      position:relative;
-      display:flex;
-      align-items:center;
-    }
-    .nav-search input{
-      width:100%;
-      padding:5px 26px 5px 8px;
-      border-radius:999px;
-      border:1px solid #cbd5e1;
-      font-size:11px;
-      outline:none;
-    }
-    .nav-search input:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 2px rgba(236,72,153,0.18);
-    }
-    .nav-search span{
-      position:absolute;
-      left:8px;
-      font-size:13px;
-      color:#9ca3af;
-    }
-
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .btn{
-      padding:6px 12px;
-      border-radius:26px;
-      border:2px solid rgba(236,72,153,0.5);
-      background:rgba(236,72,153,0.08);
-      cursor:pointer;
-      font-weight:700;
-      font-size:11px;
-      transition:.2s;
-      color:var(--primary-dark);
-      white-space:nowrap;
-    }
-    .btn:hover{background:rgba(236,72,153,0.16);}
-    .btn.primary{
-      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
-      color:#fff;
-      border:none;
-      box-shadow:0 3px 12px rgba(236,72,153,0.35);
-    }
-
-    .lang-wrapper{position:relative;}
-    .lang-toggle{
-      border:none;
-      background:#ffffff;
-      border-radius:999px;
-      padding:6px 12px;
-      font-size:12px;
-      cursor:pointer;
-      color:var(--primary-dark);
-      display:flex;
-      align-items:center;
-      gap:6px;
-      font-weight:600;
-      box-shadow:0 1px 3px rgba(0,0,0,0.1);
-      transition:.2s;
-    }
-    .lang-toggle:hover{
-      background:#f9fafb;
-      box-shadow:0 2px 8px rgba(0,0,0,0.15);
-      transform:translateY(-1px);
-    }
-    .lang-toggle svg{
-      pointer-events:none;
-      transition:transform .2s;
-    }
-    .lang-toggle[aria-expanded="true"] svg{
-      transform:rotate(180deg);
-    }
-
-    .lang-menu{
-      position:absolute;
-      top:115%;
-      right:0;
-      background:#fff;
-      box-shadow:0 8px 25px rgba(0,0,0,0.15);
-      border-radius:12px;
-      min-width:130px;
-      border:1px solid #e2e8f0;
-      display:none;
-      z-index:1200;
-      overflow:hidden;
-    }
-    .lang-menu button{
-      width:100%;
-      border:none;
-      background:transparent;
-      padding:10px 14px;
-      text-align:right;
-      font-size:12px;
-      cursor:pointer;
-      font-weight:500;
-      transition:.2s;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .lang-menu button:hover{
-      background:#f1f5f9;
-      color:var(--primary);
-    }
-
-    .pill-circle{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:6px 18px;
-      border-radius:999px;
-      background:#facc15;
-      color:#111;
-      font-weight:800;
-      font-size:13px;
-      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
-    }
-    .pill-circle::before{
-      content:"●";
-      font-size:9px;
-      margin-left:6px;
-      color:#111;
-    }
-
-    #menu-btn{
-      display:none;
-      width:40px;
-      height:40px;
-      border-radius:50%;
-      border:none;
-      background:rgba(0,155,196,0.22);
-      color:var(--primary-dark);
-      font-size:20px;
-      cursor:pointer;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .nav-sheet-overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.45);
-      opacity:0;
-      pointer-events:none;
-      transition:.25s ease;
-      z-index:1498;
-    }
-    .nav-sheet-overlay.show{opacity:1;pointer-events:auto;}
-
-    .nav-sheet{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      width:100%;
-      max-height:92vh;
-      background:#fff;
-      border-radius:24px 24px 0 0;
-      box-shadow:0 -10px 35px rgba(0,0,0,0.18);
-      padding:12px;
-      overflow-y:auto;
-      transform:translateY(110%);
-      transition:transform .28s ease;
-      z-index:1499;
-    }
-    .nav-sheet.show{transform:translateY(0);}
-    .nav-sheet-handle{width:54px;height:6px;border-radius:999px;background:#cbd5e1;margin:0 auto 10px;}
-    .nav-sheet-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
-    .nav-sheet-brand{display:flex;align-items:center;gap:8px;}
-    .nav-sheet-brand img{width:44px;height:44px;object-fit:contain;border-radius:14px;background:#fff;padding:4px;box-shadow:0 6px 16px rgba(0,0,0,.06);}
-    .nav-sheet-brand strong{display:block;color:#0f172a;font-size:14px;}
-    .nav-sheet-brand span{display:block;color:#64748b;font-size:11px;}
-    .nav-sheet-close{width:38px;height:38px;border:none;border-radius:50%;background:#eef6f8;color:#0f4f65;font-size:16px;cursor:pointer;}
-    .nav-sheet-search{display:flex;gap:6px;margin-bottom:10px;}
-    .nav-sheet-search input{flex:1;border:none;outline:none;background:#fff;border-radius:14px;padding:11px 12px;box-shadow:inset 0 0 0 1px #e2e8f0;font-family:inherit;font-size:14px;}
-    .nav-sheet-search button{border:none;min-width:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;cursor:pointer;}
-    .nav-sheet-mini-tools{display:flex;gap:6px;margin-bottom:12px;}
-    .sheet-tool{border:none;padding:8px 10px;border-radius:999px;background:#ffffff;box-shadow:inset 0 0 0 1px #e2e8f0;color:#0f4f65;font-weight:800;cursor:pointer;font-size:12px;}
-    .nav-sheet-section{margin-bottom:12px;}
-    .nav-sheet-section h3{font-size:13px;color:#0f172a;margin-bottom:8px;}
-    .nav-sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
-    .sheet-card{text-decoration:none;text-align:center;background:#fff;color:#12313c;border:1px solid #e7edf1;border-radius:16px;padding:14px 8px;font-weight:800;box-shadow:0 8px 22px rgba(15,23,42,.04);font-size:14px;line-height:1.3;}
-    .academic-zone{background:linear-gradient(135deg,#fff8df,#fffdf5);border:1px solid rgba(212,175,55,.22);border-radius:20px;padding:10px;}
-    .nav-sheet-pills{display:flex;flex-wrap:wrap;gap:6px;}
-    .nav-sheet-pills a{text-decoration:none;color:#5d4700;background:#fff;border:1px solid rgba(212,175,55,.24);border-radius:999px;padding:8px 10px;font-size:12px;font-weight:800;}
-    .nav-sheet-footer-links{display:flex;gap:8px;margin-bottom:12px;}
-    .nav-sheet-footer-links a{flex:1;text-decoration:none;text-align:center;background:#fff;color:#475569;border:1px solid #e2e8f0;border-radius:14px;padding:10px 8px;font-weight:700;font-size:13px;}
-    .nav-sheet-auth{display:flex;gap:8px;}
-    .nav-sheet-auth a{flex:1;text-decoration:none;text-align:center;border-radius:16px;padding:12px 10px;font-weight:800;font-size:14px;}
-    .nav-sheet-auth a:first-child{background:#fff;color:#0f4f65;border:1px solid #dbe5ea;}
-    .nav-sheet-auth a:last-child{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 12px 24px rgba(0,155,196,.22);}
 
     .hero{
-      padding:clamp(80px,20vw,120px) clamp(25px,8vw,40px);
-      text-align:center;
-      position:relative;
+      padding:26px 0 16px;
     }
-    .live-status{
-      display:inline-flex;
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
       align-items:center;
       gap:12px;
-      padding:clamp(12px,4vw,18px) clamp(24px,6vw,32px);
-      background:linear-gradient(135deg,#fef3c7,#fde68a);
-      color:#92400e;
-      border-radius:50px;
-      font-weight:800;
-      font-size:clamp(16px,5vw,22px);
-      margin-bottom:clamp(20px,6vw,30px);
-      box-shadow:0 8px 25px rgba(254,243,199,0.4);
-      animation:pulse 2s infinite;
-    }
-    .live-dot{width:16px;height:16px;background:#ef4444;border-radius:50%;animation:blink 1.5s infinite;}
-    .hero h1{
-      font-size:clamp(28px,10vw,48px);
-      font-weight:800;
-      background:linear-gradient(135deg,#ec4899,#f472b6);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-      margin-bottom:clamp(15px,5vw,25px);
-    }
-    .hero p{font-size:clamp(16px,4.5vw,20px);max-width:700px;margin:0 auto 30px;opacity:0.9;}
-
-    .live-container{max-width:1200px;margin:0 auto;padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);}
-    .live-video{
-      position:relative;
-      background:#000;
-      border-radius:clamp(20px,6vw,32px);
-      overflow:hidden;
-      box-shadow:0 20px 60px rgba(0,0,0,0.5);
-      margin-bottom:clamp(30px,8vw,40px);
-      min-height:clamp(300px,70vw,600px);
-    }
-    .live-video iframe,.live-video video{width:100%;height:100%;border:none;display:block;}
-    .live-overlay{
-      position:absolute;
-      inset:0;
-      background:rgba(0,0,0,0.85);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      text-align:center;
-      z-index:10;
-      padding:clamp(20px,8vw,40px);
-      cursor:pointer;
-      transition:background 0.3s;
-    }
-    .live-overlay:hover{background:rgba(0,0,0,0.95);}
-    .live-overlay h3{font-size:clamp(20px,6vw,32px);margin-bottom:15px;animation:glow 2s infinite;}
-
-    .live-meta{
-      max-width:1200px;
-      margin:0 auto;
-      padding:0 clamp(20px,8vw,40px) clamp(20px,8vw,10px);
-    }
-    .live-meta-card{
-      background:rgba(255,255,255,0.08);
-      backdrop-filter:blur(20px);
-      border:1px solid rgba(255,255,255,0.15);
-      border-radius:24px;
-      padding:24px;
-      box-shadow:0 18px 40px rgba(0,0,0,0.25);
-    }
-    .live-meta-card h2{font-size:clamp(20px,5vw,32px);margin-bottom:10px;color:#fff;}
-    .live-meta-card p{color:rgba(249,250,251,0.88);font-size:clamp(15px,4vw,18px);margin-bottom:10px;}
-    .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
-    .meta-pill{padding:8px 14px;border-radius:999px;background:rgba(236,72,153,0.18);color:#fbcfe8;font-size:13px;font-weight:700;border:1px solid rgba(244,114,182,0.25);}
-
-    section{padding:clamp(40px,12vw,60px) clamp(25px,8vw,40px);background:rgba(255,255,255,0.03);backdrop-filter:blur(10px);}
-    section h2{font-size:clamp(24px,7vw,36px);margin-bottom:clamp(25px,8vw,35px);text-align:center;background:linear-gradient(135deg,#ec4899,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(280px,42vw,340px),1fr));gap:clamp(20px,6vw,30px);}
-    .card{
-      padding:clamp(20px,6vw,28px);
-      border-radius:20px;
-      background:rgba(255,255,255,0.08);
-      backdrop-filter:blur(20px);
-      border:1px solid rgba(255,255,255,0.18);
-      transition:all 0.3s ease;
-      position:relative;
-      overflow:hidden;
-    }
-    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#ec4899,#f472b6);}
-    .card:hover{transform:translateY(-8px);background:rgba(255,255,255,0.16);box-shadow:0 20px 40px rgba(0,0,0,0.35);}
-    .card-time{font-size:clamp(14px,4vw,16px);color:#ec4899;font-weight:700;background:rgba(236,72,153,0.22);padding:6px 14px;border-radius:20px;display:inline-block;margin-bottom:15px;}
-    .card h3{font-size:clamp(18px,5vw,24px);margin-bottom:12px;color:#f9fafb;font-weight:700;line-height:1.3;}
-    .card p{font-size:clamp(15px,4vw,17px);color:rgba(249,250,251,0.9);line-height:1.7;margin-bottom:20px;}
-    .card-btn{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:clamp(12px,4vw,16px) clamp(20px,6vw,28px);
-      background:linear-gradient(135deg,#ec4899,#f472b6);
-      color:#fff;
-      border:none;
-      border-radius:30px;
-      cursor:pointer;
-      transition:all 0.3s ease;
-      font-weight:700;
-      font-size:clamp(14px,4vw,16px);
-      text-decoration:none;
-      box-shadow:0 6px 20px rgba(236,72,153,0.4);
-      width:100%;
-      justify-content:center;
-    }
-    .card-btn:hover{background:linear-gradient(135deg,#db2777,#be185d);transform:translateY(-3px);box-shadow:0 10px 30px rgba(236,72,153,0.55);}
-
-    .empty-state{text-align:center;padding:clamp(80px,25vw,120px);color:rgba(249,250,251,0.75);grid-column:1/-1;}
-    .empty-state h3{font-size:clamp(22px,7vw,32px);margin-bottom:15px;color:#f9fafb;}
-
-    .issn-badge{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
       flex-wrap:wrap;
-      margin:0 auto 24px;
-      padding:10px 16px;
-      max-width:100%;
-      border-radius:999px;
-      background:rgba(255,255,255,0.10);
-      border:1px solid rgba(255,255,255,0.18);
-      color:#f9fafb;
-      font-size:clamp(12px,3vw,14px);
-      font-weight:800;
-      box-shadow:0 8px 22px rgba(0,0,0,0.22);
-      text-align:center;
+      margin-bottom:20px;
     }
-    .issn-badge::before{
-      content:"ISSN";
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .brand img{
+      width:52px;
+      height:52px;
+      object-fit:cover;
+      border-radius:16px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:20px;
+      color:#fff;
+    }
+
+    .brand p{
+      margin:2px 0 0;
+      font-size:13px;
+      color:var(--soft);
+    }
+
+    .home-link{
       display:inline-flex;
       align-items:center;
-      justify-content:center;
-      padding:4px 9px;
+      gap:8px;
+      padding:10px 14px;
       border-radius:999px;
-      background:rgba(236,72,153,0.18);
-      color:#f9a8d4;
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.3px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,23,42,.55);
+      color:#fff;
+      font-weight:700;
     }
 
-    .toast-container{position:fixed;top:20px;left:20px;z-index:5000;}
-    .toast{background:rgba(255,255,255,0.97);padding:clamp(12px,3vw,16px) clamp(16px,4vw,20px);border-radius:12px;margin-bottom:10px;box-shadow:0 8px 25px rgba(0,0,0,0.35);display:flex;align-items:center;gap:12px;animation:slideIn 0.3s ease-in-out;max-width:90vw;color:#111827;}
-    .toast.success{border-right:4px solid #22c55e;}
-    .toast.info{border-right:4px solid #ec4899;}
-    .toast.error{border-right:4px solid #ef4444;}
-    .toast-icon{font-size:clamp(18px,5vw,20px);}
-    .toast-message{font-weight:500;font-size:clamp(14px,3.5vw,16px);}
+    .hero-card{
+      background: linear-gradient(135deg, rgba(30,41,59,.82), rgba(15,23,42,.90));
+      border:1px solid rgba(148,163,184,.16);
+      border-radius:36px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      padding:16px;
+    }
 
-    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.7;}}
-    @keyframes blink{0%,50%{opacity:1;}51%,100%{opacity:0;}}
-    @keyframes glow{0%,100%{text-shadow:0 0 10px rgba(236,72,153,0.5);}50%{text-shadow:0 0 20px rgba(236,72,153,0.8),0 0 30px rgba(236,72,153,0.4);}}
-    @keyframes slideIn{from{transform:translateX(-100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
-    @keyframes slideOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(-100%);opacity:0;}}
-    .toast.removing{animation:slideOut 0.3s ease-in-out;}
+    .player-shell{
+      background:#000;
+      border-radius:28px;
+      overflow:hidden;
+      min-height:300px;
+      aspect-ratio: 16 / 9;
+      width:100%;
+      border:1px solid rgba(255,255,255,.06);
+    }
 
-    @media(max-width:1100px){.nav-search{display:none;}}
-    @media(max-width:980px){
-      nav{display:none;}
-      .actions{display:none;}
-      #menu-btn{display:flex;order:-1;}
-      header{justify-content:space-between;}
-      .logo{margin-inline:auto;}
-      .toast-container{left:50%;transform:translateX(-50%);width:90%;}
+    .player-shell iframe,
+    .player-shell video{
+      width:100%;
+      height:100%;
+      display:block;
+      border:0;
+      background:#000;
     }
-    @media(max-width:768px){
-      header{padding:15px 20px;}
-      .hero{padding:clamp(60px,18vw,90px) 20px;}
-      .live-container{padding:40px 20px;}
-      section{padding:50px 20px;}
-      .grid{grid-template-columns:1fr;gap:20px;}
+
+    .player-empty{
+      width:100%;
+      height:100%;
+      min-height:300px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:10px;
+      color:#cbd5e1;
+      text-align:center;
+      padding:24px;
     }
-    @media(max-width:480px){
-      header{padding:12px 15px;}
-      .logo img{width:65px;}
-      .hero{padding:50px 15px;}
-      .live-container{padding:30px 12px;}
-      .nav-sheet-grid{grid-template-columns:repeat(2,1fr);gap:6px;}
-      .sheet-card{padding:12px 6px;font-size:13px;}
+
+    .live-info{
+      margin-top:18px;
+      background: linear-gradient(135deg, rgba(51,65,85,.88), rgba(30,41,59,.88));
+      border:1px solid rgba(148,163,184,.15);
+      border-radius:28px;
+      padding:22px;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:18px;
+      align-items:end;
     }
-    @media(min-width:981px){.nav-sheet,.nav-sheet-overlay{display:none;}}
+
+    .live-title{
+      margin:0 0 10px;
+      font-size:24px;
+      color:#fff;
+    }
+
+    .live-desc{
+      margin:0;
+      font-size:18px;
+      color:#dbe4f0;
+      line-height:1.9;
+    }
+
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 16px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:800;
+      color:#ffd6ee;
+      background: rgba(131,24,67,.35);
+      border:1px solid rgba(244,114,182,.22);
+      white-space:nowrap;
+    }
+
+    .meta-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 16px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:700;
+      color:#cfeeff;
+      background: rgba(8,47,73,.35);
+      border:1px solid rgba(56,189,248,.22);
+      white-space:nowrap;
+    }
+
+    .section{
+      padding:22px 0 40px;
+    }
+
+    .section-title{
+      margin:0 0 16px;
+      text-align:center;
+      font-size:34px;
+      color:#f472b6;
+      font-weight:800;
+    }
+
+    .upcoming{
+      background: linear-gradient(135deg, rgba(30,41,59,.84), rgba(15,23,42,.88));
+      border:1px solid rgba(148,163,184,.15);
+      border-radius:28px;
+      box-shadow: var(--shadow);
+      padding:20px;
+    }
+
+    .upcoming-list{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap:14px;
+    }
+
+    .up-card{
+      background: rgba(15,23,42,.7);
+      border:1px solid rgba(148,163,184,.14);
+      border-radius:22px;
+      padding:16px;
+    }
+
+    .up-card h3{
+      margin:0 0 8px;
+      font-size:18px;
+      color:#fff;
+    }
+
+    .up-card p{
+      margin:0 0 10px;
+      color:#cbd5e1;
+      font-size:15px;
+      line-height:1.8;
+    }
+
+    .up-meta{
+      font-size:13px;
+      color:#94a3b8;
+    }
+
+    .status-bar{
+      margin-top:14px;
+      text-align:center;
+      color:#93c5fd;
+      font-size:14px;
+      min-height:22px;
+    }
+
+    @media (max-width: 900px){
+      .live-info{
+        grid-template-columns: 1fr;
+        align-items:start;
+      }
+
+      .badges{
+        justify-content:flex-start;
+      }
+
+      .live-title{
+        font-size:21px;
+      }
+
+      .live-desc{
+        font-size:16px;
+      }
+
+      .section-title{
+        font-size:28px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
-
-  <div class="nav-sheet" id="mobileMenu">
-    <div class="nav-sheet-handle"></div>
-    <div class="nav-sheet-top">
-      <div class="nav-sheet-brand">
-        <img src="logo1.png" alt="Logo">
+  <div class="wrap hero">
+    <div class="topbar">
+      <div class="brand">
+        <img src="logo1222.jpeg" alt="Ofouq Academy">
         <div>
-          <strong data-t="brand_name">أفق</strong>
-          <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
+          <h1>Ofouq Academy</h1>
+          <p>صفحة البث المباشر</p>
         </div>
       </div>
-      <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
+
+      <a class="home-link" href="index.html">
+        <i class="ri-arrow-right-line"></i>
+        العودة إلى الرئيسية
+      </a>
     </div>
 
-    <form class="nav-sheet-search" onsubmit="doSearch(event)">
-      <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
-      <button type="submit">🔍</button>
-    </form>
-
-    <div class="nav-sheet-mini-tools">
-      <button class="sheet-tool" type="button" data-lang-trigger="ar">AR</button>
-      <button class="sheet-tool" type="button" data-lang-trigger="en">EN</button>
-      <button class="sheet-tool" type="button" data-lang-trigger="fr">FR</button>
-    </div>
-
-    <div class="nav-sheet-section">
-      <h3 data-t="mobile_discover">اكتشف</h3>
-      <div class="nav-sheet-grid">
-        <a href="index.html" class="sheet-card" data-t="nav_home">الرئيسية</a>
-        <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
-        <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
-        <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
-        <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
-        <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
-        <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
-        <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
-        <a href="live.html" class="sheet-card" data-t="nav_live">بث مباشر</a>
-        <a href="editorial-board.html" class="sheet-card" data-t="nav_board">هيئة التحرير</a>
-      </div>
-    </div>
-
-    <div class="nav-sheet-section academic-zone">
-      <h3 data-t="nav_academic">أكاديمي</h3>
-      <div class="nav-sheet-pills">
-        <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
-        <a href="special-ir.html" data-t="sp_ir">العلاقات الدولية</a>
-        <a href="special-admin-law.html" data-t="sp_admin_law">القانون الإداري</a>
-        <a href="special-const-law.html" data-t="sp_const_law">القانون الدستوري</a>
-        <a href="special-public-policy.html" data-t="sp_public_policy">السياسات العمومية</a>
-      </div>
-    </div>
-
-    <div class="nav-sheet-footer-links">
-      <a href="rules.html" data-t="nav_rules">شروط النشر</a>
-      <a href="contact.html" data-t="nav_contact">اتصل بنا</a>
-      <a href="editorial-board.html" data-t="nav_board">هيئة التحرير</a>
-    </div>
-
-    <div class="nav-sheet-auth">
-      <a href="login.html" id="mobileLogin" data-t="nav_login">تسجيل الدخول</a>
-      <a href="register.html" id="mobileRegister" data-t="nav_join">انضم إلينا</a>
-    </div>
-  </div>
-
-  <div class="toast-container" id="toastContainer"></div>
-
-  <header>
-    <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
-
-    <div class="logo" onclick="goToHome()">
-      <img src="logo1.png" alt="Logo">
-    </div>
-
-    <nav>
-      <ul>
-        <li><a href="index.html" id="navHome">الرئيسية</a></li>
-        <li class="dropdown">
-          <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
-          <div class="dropdown-content">
-            <a href="research.html" id="navResearch">أبحاث محكمة</a>
-            <a href="articles.html" id="navArticles">مقالات محكمة</a>
-            <a href="files.html" id="navFiles">ملفات بحثية</a>
-            <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
-          </div>
-        </li>
-        <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
-        <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
-        <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
-        <li class="dropdown">
-          <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
-          <div class="dropdown-content">
-            <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
-            <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
-            <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
-            <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
-            <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
-          </div>
-        </li>
-        <li><a href="live.html" class="active" id="navLive">بث مباشر</a></li>
-        <li><a href="rules.html" id="navRules">شروط النشر</a></li>
-        <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-        <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
-      </ul>
-
-      <form class="nav-search" onsubmit="doSearch(event)">
-        <input type="search" id="navSearchInput" placeholder="ابحث..." />
-        <span>🔍</span>
-      </form>
-    </nav>
-
-    <div class="actions" id="headerActions">
-      <div class="lang-wrapper">
-        <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
-          <span id="langCurrent">AR</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"></path></svg>
-        </button>
-        <div class="lang-menu" id="langMenu">
-          <button type="button" data-lang-trigger="ar" title="العربية">العربية</button>
-          <button type="button" data-lang-trigger="en" title="English">English</button>
-          <button type="button" data-lang-trigger="fr" title="Français">Français</button>
+    <div class="hero-card">
+      <div id="livePlayer" class="player-shell">
+        <div class="player-empty">
+          <i class="ri-live-line" style="font-size:42px;color:#f472b6;"></i>
+          <div>جارٍ تحميل البث المباشر...</div>
         </div>
       </div>
-      <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
-      <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
-    </div>
-  </header>
 
-  <div class="hero">
-    <div class="live-status">
-      <div class="live-dot"></div>
-      <span id="liveStatusText" data-t="hero_live_badge">🔴 البث المباشر الآن</span>
-    </div>
-    <h1 data-t="hero_title_live">البث الحي</h1>
-    <p data-t="hero_sub_live">تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة</p>
-    <div class="issn-badge">3119-6691</div>
-  </div>
-
-  <div class="live-container">
-    <div class="live-video" id="liveVideo"></div>
-  </div>
-
-  <div class="live-meta">
-    <div class="live-meta-card">
-      <h2 id="liveTitle">البث المباشر</h2>
-      <p id="liveDescription">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
-      <div class="meta-row">
-        <span class="meta-pill" id="liveDatePill">📅 —</span>
-        <span class="meta-pill" id="liveTypePill">🎥 مباشر</span>
-      </div>
-    </div>
-  </div>
-
-  <section>
-    <h2 data-t="sec_live_next">البث القادم</h2>
-    <div class="grid" id="upcomingStreams"></div>
-  </section>
-
-  <footer style="background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #000000 100%);padding: clamp(30px, 8vw, 50px) clamp(25px, 6vw, 45px);text-align: center;color: #f9fafb;font-size: clamp(14px, 3vw, 16px);position: relative;overflow: hidden;box-shadow: 0 -8px 40px rgba(236,72,153,0.15);border-top: 1px solid rgba(255,255,255,0.08);">
-    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg, transparent, #ec4899, #f472b6, transparent);filter:blur(1px);"></div>
-    <div style="max-width:1100px;margin:0 auto;position:relative;z-index:2;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px 24px;margin-bottom:20px;font-weight:700;opacity:0.95;">
-        <div style="margin:0 auto 18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;max-width:100%;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:#f9fafb;font-weight:800;font-size:clamp(12px, 3vw, 14px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.28);">
-          <span style="color:#f9a8d4;font-weight:900;">ISSN:</span>
-          <span>3119-6691</span>
+      <div class="live-info">
+        <div>
+          <h2 id="liveTitle" class="live-title">البث المباشر</h2>
+          <p id="liveDesc" class="live-desc">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
         </div>
-        <a href="https://ofouqacademie.com" style="background:linear-gradient(135deg, #ec4899, #f472b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;font-weight:900;font-size:1.15em;">Ofouq Academie</a>
-        <span style="font-size:1em;">© 2026 by</span>
-        <a href="https://github.com/yasserA5" style="color:#facc15;text-decoration:none;font-weight:800;text-shadow:0 0 8px rgba(250,204,21,0.5);">Karim Rasmi</a>
-        <span>– جميع الحقوق محفوظة – منصتك العلمية</span>
+
+        <div class="badges">
+          <span class="badge"><i class="ri-live-fill"></i> مباشر</span>
+          <a id="openLiveLink" class="meta-link" href="#" target="_blank" rel="noopener" style="display:none;">
+            <i class="ri-external-link-line"></i>
+            فتح الرابط
+          </a>
+        </div>
       </div>
-      <div style="display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:18px 28px;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:25px;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:all 0.3s ease;cursor:pointer;max-width:700px;margin:0 auto 16px;" onclick="window.open('https://creativecommons.org/licenses/by-nc/4.0/', '_blank')">
-        <span style="color:#e6f3ff;font-weight:700;font-size:1.05em;">Creative Commons Attribution-NonCommercial 4.0 International</span>
-        <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width:22px;height:22px;opacity:0.95;">
-        <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width:22px;height:22px;opacity:0.95;">
-        <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width:22px;height:22px;opacity:0.95;">
-      </div>
-      <p style="margin:0;opacity:0.7;font-size:0.88em;font-style:italic;line-height:1.5;">إلا إذا ذُكر خلاف ذلك | Except where otherwise noted.</p>
+
+      <div id="statusBar" class="status-bar"></div>
     </div>
-  </footer>
+  </div>
+
+  <div class="wrap section">
+    <h2 class="section-title">البث القادم</h2>
+
+    <div class="upcoming">
+      <div id="upcomingList" class="upcoming-list">
+        <div class="up-card">
+          <h3>لا توجد عناصر أخرى حالياً</h3>
+          <p>ستظهر هنا البثوث الأخرى المحفوظة في قسم البث المباشر داخل لوحة التحكم.</p>
+          <div class="up-meta">يتم جلب البيانات تلقائياً من Firestore.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script type="module">
     import { db } from "./firebase-init.js";
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-    const liveVideo = document.getElementById("liveVideo");
-    const upcomingStreams = document.getElementById("upcomingStreams");
-    const liveTitle = document.getElementById("liveTitle");
-    const liveDescription = document.getElementById("liveDescription");
-    const liveDatePill = document.getElementById("liveDatePill");
-    const liveTypePill = document.getElementById("liveTypePill");
-    const liveStatusText = document.getElementById("liveStatusText");
-
-    let user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null");
-    let currentLang = localStorage.getItem("lang") || "ar";
-    let liveData = [];
-
-    const translations = {
-      ar:{
-        title:"البث المباشر",
-        brand_name:"أفق",
-        brand_tagline:"منصة أكاديمية حديثة",
-        mobile_discover:"اكتشف",
-        nav_home:"الرئيسية",
-        nav_research_peer:"أبحاث محكمة",
-        nav_articles_peer:"مقالات محكمة",
-        nav_files:"ملفات بحثية",
-        nav_foreign:"مقالات أجنبية",
-        nav_articles:"مقالات",
-        nav_editions:"إصداراتنا",
-        nav_activities:"أنشطتنا",
-        nav_board:"هيئة التحرير",
-        nav_academic:"أكاديمي",
-        nav_live:"بث مباشر",
-        nav_rules:"شروط النشر",
-        nav_contact:"اتصل بنا",
-        nav_login:"تسجيل الدخول",
-        nav_join:"انضم إلينا",
-        hero_live_badge:"🔴 البث المباشر الآن",
-        hero_title_live:"البث الحي",
-        hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة",
-        sec_live_next:"البث القادم",
-        logout:"تسجيل الخروج",
-        toast_logout_success:"تم تسجيل الخروج بنجاح",
-        toast_open_live:"جاري فتح البث...",
-        no_live:"لا توجد بثوث مباشرة حالياً",
-        no_live_sub:"ستظهر هنا البثوث القادمة بمجرد إضافتها من لوحة التحكم.",
-        remind_saved:"تم حفظ تذكير البث",
-        current_live_title:"البث المباشر",
-        current_live_desc:"سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.",
-        stream_date_label:"📅",
-        stream_live_label:"🎥 مباشر",
-        stream_upcoming_label:"📡 قادم",
-        open_stream:"فتح البث",
-        open_external:"سيفتح في نافذة جديدة",
-        load_error:"تعذر تحميل البث المباشر.",
-        sp_politics:"تخصص علوم سياسية",
-        sp_ir:"تخصص العلاقات الدولية",
-        sp_admin_law:"القانون الإداري",
-        sp_const_law:"القانون الدستوري",
-        sp_public_policy:"السياسات العمومية"
-      },
-      en:{
-        title:"Live Stream",
-        brand_name:"Ofouq",
-        brand_tagline:"A modern academic platform",
-        mobile_discover:"Discover",
-        nav_home:"Home",
-        nav_research_peer:"Peer-reviewed research",
-        nav_articles_peer:"Peer-reviewed articles",
-        nav_files:"Research files",
-        nav_foreign:"Foreign articles",
-        nav_articles:"Articles",
-        nav_editions:"Our publications",
-        nav_activities:"Activities",
-        nav_board:"Editorial board",
-        nav_academic:"Academic",
-        nav_live:"Live",
-        nav_rules:"Submission Rules",
-        nav_contact:"Contact us",
-        nav_login:"Login",
-        nav_join:"Join us",
-        hero_live_badge:"🔴 Live now",
-        hero_title_live:"Live Stream",
-        hero_sub_live:"Follow our live events, seminars and scientific talks.",
-        sec_live_next:"Upcoming Live",
-        logout:"Logout",
-        toast_logout_success:"Logged out successfully",
-        toast_open_live:"Opening live stream...",
-        no_live:"No live streams currently",
-        no_live_sub:"Upcoming streams will appear here once added from the dashboard.",
-        remind_saved:"Stream reminder saved",
-        current_live_title:"Current live stream",
-        current_live_desc:"The current live stream description will appear here once added from the dashboard.",
-        stream_date_label:"📅",
-        stream_live_label:"🎥 Live",
-        stream_upcoming_label:"📡 Upcoming",
-        open_stream:"Open stream",
-        open_external:"Opens in a new tab",
-        load_error:"Unable to load live streams.",
-        sp_politics:"Political Science",
-        sp_ir:"International Relations",
-        sp_admin_law:"Administrative Law",
-        sp_const_law:"Constitutional Law",
-        sp_public_policy:"Public Policy"
-      },
-      fr:{
-        title:"Diffusion en direct",
-        brand_name:"Ofouq",
-        brand_tagline:"Une plateforme académique moderne",
-        mobile_discover:"Découvrir",
-        nav_home:"Accueil",
-        nav_research_peer:"Recherches évaluées",
-        nav_articles_peer:"Articles évalués",
-        nav_files:"Dossiers de recherche",
-        nav_foreign:"Articles étrangers",
-        nav_articles:"Articles",
-        nav_editions:"Nos publications",
-        nav_activities:"Activités",
-        nav_board:"Comité éditorial",
-        nav_academic:"Académique",
-        nav_live:"Direct",
-        nav_rules:"Conditions de publication",
-        nav_contact:"Contactez-nous",
-        nav_login:"Connexion",
-        nav_join:"Rejoignez-nous",
-        hero_live_badge:"🔴 Direct en cours",
-        hero_title_live:"Diffusion en direct",
-        hero_sub_live:"Suivez en direct nos événements, séminaires et conférences scientifiques.",
-        sec_live_next:"Prochains directs",
-        logout:"Déconnexion",
-        toast_logout_success:"Déconnexion réussie",
-        toast_open_live:"Ouverture du direct...",
-        no_live:"Aucun direct pour le moment",
-        no_live_sub:"Les prochains directs apparaîtront ici une fois ajoutés depuis le tableau de bord.",
-        remind_saved:"Rappel du direct enregistré",
-        current_live_title:"Direct actuel",
-        current_live_desc:"La description du direct actuel apparaîtra ici une fois ajoutée depuis le tableau de bord.",
-        stream_date_label:"📅",
-        stream_live_label:"🎥 En direct",
-        stream_upcoming_label:"📡 À venir",
-        open_stream:"Ouvrir le direct",
-        open_external:"S'ouvre dans un nouvel onglet",
-        load_error:"Impossible de charger les directs.",
-        sp_politics:"Science politique",
-        sp_ir:"Relations internationales",
-        sp_admin_law:"Droit administratif",
-        sp_const_law:"Droit constitutionnel",
-        sp_public_policy:"Politiques publiques"
-      }
-    };
-
-    function t(key){
-      const dict = translations[currentLang] || translations.ar;
-      return dict[key] || translations.ar[key] || "";
-    }
-
-    function getByLang(field, lang = "ar"){
-      if (!field) return "";
-      if (typeof field === "string") return field;
-      return field[lang] || field.ar || field.fr || field.en || "";
-    }
+    const playerBox = document.getElementById("livePlayer");
+    const titleEl = document.getElementById("liveTitle");
+    const descEl = document.getElementById("liveDesc");
+    const statusBar = document.getElementById("statusBar");
+    const openLiveLink = document.getElementById("openLiveLink");
+    const upcomingList = document.getElementById("upcomingList");
 
     function escapeHtml(value){
-      return String(value ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+      return String(value ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[m]));
     }
 
-    function showToast(message, type='info'){
-      const container = document.getElementById('toastContainer');
-      if(!container) return;
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      const icons = {success:'✅', info:'ℹ️', error:'⚠️'};
-      toast.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ️'}</span><span class="toast-message">${escapeHtml(message)}</span>`;
-      container.appendChild(toast);
-      setTimeout(()=>{
-        toast.classList.add('removing');
-        setTimeout(()=>toast.remove(),300);
-      }, 3500);
+    function getText(field){
+      if (!field) return "";
+      if (typeof field === "string") return field;
+      return field.ar || field.fr || field.en || "";
     }
 
-    function goToHome(){ window.location.href='index.html'; }
-    window.goToHome = goToHome;
+    function toEmbedUrl(url) {
+      if (!url) return "";
 
-    function toggleMenu(){
-      const menu = document.getElementById("mobileMenu");
-      const overlay = document.getElementById("navSheetOverlay");
-      const btn = document.getElementById("menu-btn");
-      if(!menu || !overlay || !btn) return;
-      const isOpen = menu.classList.contains("show");
-      menu.classList.toggle("show", !isOpen);
-      overlay.classList.toggle("show", !isOpen);
-      document.body.style.overflow = isOpen ? "" : "hidden";
-      btn.setAttribute("aria-expanded", String(!isOpen));
-    }
-    window.toggleMenu = toggleMenu;
+      url = url.trim();
 
-    function doSearch(e){
-      e.preventDefault();
-      const desktopInput = document.getElementById("navSearchInput");
-      const mobileInput = document.getElementById("navSearchInputMobile");
-      const q = (mobileInput && mobileInput.value.trim()) || (desktopInput && desktopInput.value.trim()) || "";
-      if(!q) return;
-      window.location.href = 'search.html?q=' + encodeURIComponent(q);
-    }
-    window.doSearch = doSearch;
-
-    function toggleLangMenu(){
-      const menu = document.getElementById("langMenu");
-      const toggles = document.querySelectorAll('.lang-toggle');
-      if(!menu) return;
-      const isOpen = menu.style.display === "block";
-      menu.style.display = isOpen ? "none" : "block";
-      toggles.forEach(btn=>btn.setAttribute('aria-expanded', String(!isOpen)));
-    }
-    window.toggleLangMenu = toggleLangMenu;
-
-    document.addEventListener('click', e => {
-      if(!e.target.closest('.lang-wrapper')){
-        const menu = document.getElementById('langMenu');
-        if(menu) menu.style.display='none';
-        document.querySelectorAll('.lang-toggle').forEach(btn=>btn.setAttribute('aria-expanded','false'));
+      if (url.includes("youtube.com/watch?v=")) {
+        const u = new URL(url);
+        const id = u.searchParams.get("v");
+        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
       }
-    });
 
-    function updateHeader(){
-      const headerActions = document.getElementById("headerActions");
-      const mobileLogin = document.getElementById("mobileLogin");
-      const mobileRegister = document.getElementById("mobileRegister");
-      if(user && user.loggedIn){
-        const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
-        if(headerActions){
-          headerActions.innerHTML = `
-            <div class="lang-wrapper">
-              <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false">
-                <span id="langCurrent">${currentLang.toUpperCase()}</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"></path></svg>
-              </button>
-              <div class="lang-menu" id="langMenu">
-                <button type="button" data-lang-trigger="ar">العربية</button>
-                <button type="button" data-lang-trigger="en">English</button>
-                <button type="button" data-lang-trigger="fr">Français</button>
-              </div>
-            </div>
-            <span style="margin-right:8px;font-size:12px;color:#6b7280;">${escapeHtml(displayName)}</span>
-            <button class="btn" type="button" id="logoutDesktopBtn">${t('logout')}</button>
-          `;
-        }
-        if(mobileLogin){ mobileLogin.textContent = t('logout'); mobileLogin.href = '#'; mobileLogin.onclick = (e)=>{ e.preventDefault(); logout(); }; }
-        if(mobileRegister){ mobileRegister.style.display = 'none'; }
-      } else {
-        if(headerActions){
-          headerActions.innerHTML = `
-            <div class="lang-wrapper">
-              <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false">
-                <span id="langCurrent">${currentLang.toUpperCase()}</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"></path></svg>
-              </button>
-              <div class="lang-menu" id="langMenu">
-                <button type="button" data-lang-trigger="ar">العربية</button>
-                <button type="button" data-lang-trigger="en">English</button>
-                <button type="button" data-lang-trigger="fr">Français</button>
-              </div>
-            </div>
-            <button class="btn" onclick="location.href='login.html'" data-t="nav_login">${t('nav_login')}</button>
-            <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">${t('nav_join')}</button>
-          `;
-        }
-        if(mobileLogin){ mobileLogin.textContent = t('nav_login'); mobileLogin.href = 'login.html'; mobileLogin.onclick = null; }
-        if(mobileRegister){ mobileRegister.style.display = ''; mobileRegister.textContent = t('nav_join'); mobileRegister.href = 'register.html'; }
+      if (url.includes("youtu.be/")) {
+        const id = url.split("youtu.be/")[1]?.split("?")[0];
+        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
       }
-      bindLangTriggers();
-      const logoutBtn = document.getElementById('logoutDesktopBtn');
-      if(logoutBtn) logoutBtn.addEventListener('click', logout);
-    }
 
-    function logout(){
-      localStorage.removeItem("user");
-      sessionStorage.removeItem("user");
-      user = null;
-      showToast(t('toast_logout_success'),'success');
-      setTimeout(()=>location.reload(), 500);
-    }
-    window.logout = logout;
-
-    function bindLangTriggers(){
-      document.querySelectorAll('[data-lang-trigger]').forEach(btn => {
-        btn.onclick = () => setLang(btn.getAttribute('data-lang-trigger'));
-      });
-    }
-
-    function normalizeLiveItem(docSnap){
-      const raw = docSnap.data() || {};
-      return {
-        id: docSnap.id,
-        section: raw.section || '',
-        status: raw.status || 'published',
-        titleObj: raw.title || {},
-        shortObj: raw.short || {},
-        dateObj: raw.date || {},
-        detailsObj: raw.details || {},
-        file: raw.file || raw.link || '',
-        image: raw.image || '',
-        createdAt: Number(raw.createdAt || 0),
-        updatedAt: Number(raw.updatedAt || raw.createdAt || 0)
-      };
-    }
-
-    function isProbablyUpcoming(item){
-      return String(item.status || '').toLowerCase() === 'scheduled';
-    }
-
-    function universalEmbed(url){
-      if(!url) return '';
-      const clean = String(url).trim();
-      if(!clean) return '';
-
-      if (/youtube\.com\/watch\?v=([^&]+)/i.test(clean)) {
-        const id = clean.match(/youtube\.com\/watch\?v=([^&]+)/i)?.[1];
-        return id ? `https://www.youtube.com/embed/${id}?rel=0` : '';
+      if (url.includes("youtube.com/embed/")) {
+        return url.includes("?") ? url : `${url}?autoplay=1&rel=0`;
       }
-      if (/youtu\.be\/([^?&/]+)/i.test(clean)) {
-        const id = clean.match(/youtu\.be\/([^?&/]+)/i)?.[1];
-        return id ? `https://www.youtube.com/embed/${id}?rel=0` : '';
-      }
-      if (/facebook\.com/i.test(clean)) {
-        const encoded = encodeURIComponent(clean);
-        return `https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&width=1280`;
-      }
-      if (/vimeo\.com\/(\d+)/i.test(clean)) {
-        const id = clean.match(/vimeo\.com\/(\d+)/i)?.[1];
-        return id ? `https://player.vimeo.com/video/${id}` : '';
-      }
-      if (/^https:\/\/player\./i.test(clean) || /embed/i.test(clean)) return clean;
-      return '';
+
+      return url;
     }
 
-    async function loadLiveFromFirestore(){
-      try{
-        const snap = await getDocs(collection(db, 'content'));
-        const items = [];
-        snap.forEach(docSnap => {
-          const item = normalizeLiveItem(docSnap);
-          if(item.section === 'live') items.push(item);
-        });
-
-        items.sort((a,b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
-        liveData = items;
-        renderLive();
-      } catch(err){
-        console.error('Live Firestore load error:', err);
-        liveVideo.innerHTML = `<div class="live-overlay"><h3>⚠️ ${escapeHtml(t('load_error'))}</h3><p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(err?.message || 'Firestore error')}</p></div>`;
-        upcomingStreams.innerHTML = `<div class="empty-state"><h3>${escapeHtml(t('load_error'))}</h3><p>${escapeHtml(err?.message || 'Firestore error')}</p></div>`;
-        liveTitle.textContent = t('current_live_title');
-        liveDescription.textContent = t('current_live_desc');
-        liveDatePill.textContent = `${t('stream_date_label')} —`;
-        liveTypePill.textContent = t('stream_live_label');
-        showToast(t('load_error'), 'error');
-      }
+    function renderEmpty(message){
+      playerBox.innerHTML = `
+        <div class="player-empty">
+          <i class="ri-live-line" style="font-size:42px;color:#f472b6;"></i>
+          <div>${escapeHtml(message)}</div>
+        </div>
+      `;
     }
 
-    function renderCurrentLive(item){
-      const title = getByLang(item.titleObj, currentLang) || getByLang(item.titleObj, 'ar') || t('current_live_title');
-      const desc = getByLang(item.shortObj, currentLang) || getByLang(item.detailsObj, currentLang) || getByLang(item.shortObj, 'ar') || t('current_live_desc');
-      const dateLabel = getByLang(item.dateObj, currentLang) || getByLang(item.dateObj, 'ar') || '—';
-      const embedUrl = universalEmbed(item.file);
-
-      liveTitle.textContent = title;
-      liveDescription.textContent = desc;
-      liveDatePill.textContent = `${t('stream_date_label')} ${dateLabel}`;
-      liveTypePill.textContent = isProbablyUpcoming(item) ? t('stream_upcoming_label') : t('stream_live_label');
-      liveStatusText.textContent = isProbablyUpcoming(item) ? t('stream_upcoming_label') : t('hero_live_badge');
-
-      if(embedUrl){
-        liveVideo.innerHTML = `
-          <iframe
-            src="${embedUrl}"
-            title="${escapeHtml(title)}"
-            width="100%"
-            height="100%"
-            frameborder="0"
-            allowfullscreen
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            loading="lazy">
-          </iframe>
-        `;
-      } else if(item.file && item.file.match(/\.(mp4|webm|ogg|m3u8)$/i)){
-        liveVideo.innerHTML = `
-          <video controls autoplay playsinline style="width:100%;height:100%;object-fit:cover;">
-            <source src="${item.file}" type="video/mp4">
-            متصفحك لا يدعم تشغيل الفيديو.
-          </video>
-        `;
-      } else if(item.file){
-        const safeUrl = item.file.replace(/'/g, '%27');
-        liveVideo.innerHTML = `
-          <div class="live-overlay" id="externalLiveOverlay">
-            <h3>🔗 ${escapeHtml(t('open_stream'))}</h3>
-            <p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(title)}</p>
-            <small style="opacity:0.8;">${escapeHtml(t('open_external'))}</small>
-          </div>
-        `;
-        const overlay = document.getElementById('externalLiveOverlay');
-        if(overlay) overlay.addEventListener('click', ()=>window.open(safeUrl, '_blank', 'noopener'));
-      } else {
-        liveVideo.innerHTML = `<div class="live-overlay"><h3>🎥 ${escapeHtml(t('no_live'))}</h3><p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(t('no_live_sub'))}</p></div>`;
-      }
-    }
-
-    function renderUpcoming(items){
-      upcomingStreams.innerHTML = '';
-      if(!items.length){
-        upcomingStreams.innerHTML = `<div class="empty-state"><h3>${escapeHtml(t('no_live'))}</h3><p>${escapeHtml(t('no_live_sub'))}</p></div>`;
+    function renderPlayer(url) {
+      if (!url) {
+        renderEmpty("لا يوجد بث مباشر الآن");
         return;
       }
 
-      items.forEach(item => {
-        const title = getByLang(item.titleObj, currentLang) || getByLang(item.titleObj, 'ar') || t('current_live_title');
-        const desc = getByLang(item.shortObj, currentLang) || getByLang(item.detailsObj, currentLang) || getByLang(item.shortObj, 'ar') || t('current_live_desc');
-        const dateLabel = getByLang(item.dateObj, currentLang) || getByLang(item.dateObj, 'ar') || '—';
-        const href = item.file || '#';
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="card-time">📺 ${escapeHtml(dateLabel)}</div>
-          <h3>${escapeHtml(title)}</h3>
-          <p>${escapeHtml(desc)}</p>
-          <a class="card-btn" href="${href}" target="_blank" rel="noopener">
-            <span>${escapeHtml(t('open_stream'))}</span>
-            <span>🔔</span>
-          </a>
+      const embedUrl = toEmbedUrl(url);
+
+      const isDirectVideo =
+        embedUrl.endsWith(".mp4") ||
+        embedUrl.endsWith(".webm") ||
+        embedUrl.endsWith(".ogg") ||
+        embedUrl.includes(".m3u8");
+
+      if (isDirectVideo) {
+        playerBox.innerHTML = `
+          <video controls autoplay playsinline muted style="width:100%;height:100%;background:#000;">
+            <source src="${embedUrl}">
+            متصفحك لا يدعم تشغيل الفيديو.
+          </video>
         `;
-        upcomingStreams.appendChild(card);
-      });
+        return;
+      }
+
+      playerBox.innerHTML = `
+        <iframe
+          src="${embedUrl}"
+          title="البث المباشر"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
+      `;
     }
 
-    function renderLive(){
-      if(!liveData.length){
-        liveVideo.innerHTML = `<div class="live-overlay"><h3>🎥 ${escapeHtml(t('no_live'))}</h3><p style="font-size:clamp(16px,4vw,20px);">${escapeHtml(t('no_live_sub'))}</p></div>`;
-        liveTitle.textContent = t('current_live_title');
-        liveDescription.textContent = t('current_live_desc');
-        liveDatePill.textContent = `${t('stream_date_label')} —`;
-        liveTypePill.textContent = t('stream_live_label');
-        liveStatusText.textContent = t('hero_live_badge');
+    function renderUpcoming(items){
+      if (!items.length) {
+        upcomingList.innerHTML = `
+          <div class="up-card">
+            <h3>لا توجد عناصر أخرى حالياً</h3>
+            <p>ستظهر هنا البثوث الأخرى المحفوظة في قسم البث المباشر داخل لوحة التحكم.</p>
+            <div class="up-meta">يتم جلب البيانات تلقائياً من Firestore.</div>
+          </div>
+        `;
+        return;
+      }
+
+      upcomingList.innerHTML = items.map(item => {
+        const title = escapeHtml(getText(item.title) || "بث مباشر");
+        const desc = escapeHtml(getText(item.short) || "بدون وصف.");
+        const link = item.file || "#";
+        return `
+          <div class="up-card">
+            <h3>${title}</h3>
+            <p>${desc}</p>
+            <div class="up-meta">
+              <a href="${link}" target="_blank" rel="noopener">فتح رابط البث</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadLivePage() {
+      statusBar.textContent = "جارٍ تحميل البث من Firestore...";
+
+      const snap = await getDocs(collection(db, "content"));
+      const liveItems = [];
+
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.section === "live") {
+          liveItems.push({
+            id: docSnap.id,
+            ...data
+          });
+        }
+      });
+
+      liveItems.sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+
+      if (!liveItems.length) {
+        titleEl.textContent = "لا يوجد بث مباشر";
+        descEl.textContent = "سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.";
+        openLiveLink.style.display = "none";
+        renderEmpty("لا يوجد بث مباشر الآن");
+        statusBar.textContent = "لم يتم العثور على أي عنصر في قسم البث المباشر.";
         renderUpcoming([]);
         return;
       }
 
-      const currentLive = liveData[0];
-      const upcoming = liveData.slice(1);
-      renderCurrentLive(currentLive);
-      renderUpcoming(upcoming);
+      const current = liveItems[0];
+      const others = liveItems.slice(1);
+
+      titleEl.textContent = getText(current.title) || "بث مباشر";
+      descEl.textContent = getText(current.short) || " ";
+      renderPlayer(current.file || "");
+
+      if (current.file) {
+        openLiveLink.href = current.file;
+        openLiveLink.style.display = "inline-flex";
+      } else {
+        openLiveLink.style.display = "none";
+      }
+
+      renderUpcoming(others);
+      statusBar.textContent = `تم تحميل ${liveItems.length} عنصر من قسم البث المباشر.`;
     }
 
-    function setLang(lang){
-      currentLang = lang;
-      localStorage.setItem('lang', lang);
-      document.documentElement.lang = lang;
-      document.documentElement.dir = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
-      document.getElementById('t-title').textContent = t('title');
-
-      const currentLabel = document.getElementById('langCurrent');
-      if(currentLabel) currentLabel.textContent = lang.toUpperCase();
-
-      document.querySelectorAll('[data-t]').forEach(el => {
-        const key = el.dataset.t;
-        const value = t(key);
-        if(value) el.textContent = value;
-      });
-
-      document.querySelectorAll('[data-ph]').forEach(el => {
-        const key = el.dataset.ph;
-        const value = t(key);
-        if(value) el.setAttribute('placeholder', value);
-      });
-
-      updateHeader();
-      renderLive();
-    }
-    window.setLang = setLang;
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      bindLangTriggers();
-      updateHeader();
-      setLang(currentLang);
-      await loadLiveFromFirestore();
+    loadLivePage().catch(error => {
+      console.error("Live page error:", error);
+      titleEl.textContent = "تعذر تحميل البث";
+      descEl.textContent = "حدث خطأ أثناء قراءة بيانات البث المباشر.";
+      openLiveLink.style.display = "none";
+      renderEmpty("تعذر تحميل مشغل البث المباشر");
+      statusBar.textContent = "حدث خطأ أثناء الاتصال بـ Firestore.";
     });
   </script>
 </body>
