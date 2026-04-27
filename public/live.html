@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>البث المباشر - Ofouq Academy</title>
+  <title>البث المباشر - Ofouq Academy</titltle>
 
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  /png" href="logo1222.jpegeg">
+  //fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" " />
+  //cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
   <style>
     :root{
@@ -16,23 +16,15 @@
       --bg1:#0f172a;
       --bg2:#1e293b;
       --card: rgba(30,41,59,.78);
-      --card2: rgba(15,23,42,.86);
       --text:#e5e7eb;
       --muted:#cbd5e1;
       --soft:#94a3b8;
       --border: rgba(148,163,184,.20);
       --shadow: 0 22px 60px rgba(2,6,23,.40);
-      --radius:28px;
     }
 
     *{ box-sizing:border-box; }
-
-    html,body{
-      margin:0;
-      padding:0;
-      width:100%;
-      overflow-x:hidden;
-    }
+    html,body{ margin:0; padding:0; width:100%; overflow-x:hidden; }
 
     body{
       font-family:"Tajawal",sans-serif;
@@ -44,10 +36,7 @@
       min-height:100vh;
     }
 
-    a{
-      color:inherit;
-      text-decoration:none;
-    }
+    a{ color:inherit; text-decoration:none; }
 
     .wrap{
       width:min(1200px, calc(100% - 28px));
@@ -119,13 +108,12 @@
       border-radius:28px;
       overflow:hidden;
       min-height:300px;
-      aspect-ratio: 16 / 9;
+      aspect-ratio:16/9;
       width:100%;
       border:1px solid rgba(255,255,255,.06);
     }
 
-    .player-shell iframe,
-    .player-shell video{
+    .player-shell iframe{
       width:100%;
       height:100%;
       display:block;
@@ -153,10 +141,6 @@
       border:1px solid rgba(148,163,184,.15);
       border-radius:28px;
       padding:22px;
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:18px;
-      align-items:end;
     }
 
     .live-title{
@@ -172,92 +156,6 @@
       line-height:1.9;
     }
 
-    .badges{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:flex-end;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 16px;
-      border-radius:999px;
-      font-size:14px;
-      font-weight:800;
-      color:#ffd6ee;
-      background: rgba(131,24,67,.35);
-      border:1px solid rgba(244,114,182,.22);
-      white-space:nowrap;
-    }
-
-    .meta-link{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 16px;
-      border-radius:999px;
-      font-size:14px;
-      font-weight:700;
-      color:#cfeeff;
-      background: rgba(8,47,73,.35);
-      border:1px solid rgba(56,189,248,.22);
-      white-space:nowrap;
-    }
-
-    .section{
-      padding:22px 0 40px;
-    }
-
-    .section-title{
-      margin:0 0 16px;
-      text-align:center;
-      font-size:34px;
-      color:#f472b6;
-      font-weight:800;
-    }
-
-    .upcoming{
-      background: linear-gradient(135deg, rgba(30,41,59,.84), rgba(15,23,42,.88));
-      border:1px solid rgba(148,163,184,.15);
-      border-radius:28px;
-      box-shadow: var(--shadow);
-      padding:20px;
-    }
-
-    .upcoming-list{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap:14px;
-    }
-
-    .up-card{
-      background: rgba(15,23,42,.7);
-      border:1px solid rgba(148,163,184,.14);
-      border-radius:22px;
-      padding:16px;
-    }
-
-    .up-card h3{
-      margin:0 0 8px;
-      font-size:18px;
-      color:#fff;
-    }
-
-    .up-card p{
-      margin:0 0 10px;
-      color:#cbd5e1;
-      font-size:15px;
-      line-height:1.8;
-    }
-
-    .up-meta{
-      font-size:13px;
-      color:#94a3b8;
-    }
-
     .status-bar{
       margin-top:14px;
       text-align:center;
@@ -267,26 +165,8 @@
     }
 
     @media (max-width: 900px){
-      .live-info{
-        grid-template-columns: 1fr;
-        align-items:start;
-      }
-
-      .badges{
-        justify-content:flex-start;
-      }
-
-      .live-title{
-        font-size:21px;
-      }
-
-      .live-desc{
-        font-size:16px;
-      }
-
-      .section-title{
-        font-size:28px;
-      }
+      .live-title{ font-size:21px; }
+      .live-desc{ font-size:16px; }
     }
   </style>
 </head>
@@ -316,35 +196,11 @@
       </div>
 
       <div class="live-info">
-        <div>
-          <h2 id="liveTitle" class="live-title">البث المباشر</h2>
-          <p id="liveDesc" class="live-desc">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
-        </div>
-
-        <div class="badges">
-          <span class="badge"><i class="ri-live-fill"></i> مباشر</span>
-          <a id="openLiveLink" class="meta-link" href="#" target="_blank" rel="noopener" style="display:none;">
-            <i class="ri-external-link-line"></i>
-            فتح الرابط
-          </a>
-        </div>
+        <h2 id="liveTitle" class="live-title">البث المباشر</h2>
+        <p id="liveDesc" class="live-desc">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
       </div>
 
       <div id="statusBar" class="status-bar"></div>
-    </div>
-  </div>
-
-  <div class="wrap section">
-    <h2 class="section-title">البث القادم</h2>
-
-    <div class="upcoming">
-      <div id="upcomingList" class="upcoming-list">
-        <div class="up-card">
-          <h3>لا توجد عناصر أخرى حالياً</h3>
-          <p>ستظهر هنا البثوث الأخرى المحفوظة في قسم البث المباشر داخل لوحة التحكم.</p>
-          <div class="up-meta">يتم جلب البيانات تلقائياً من Firestore.</div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -356,8 +212,6 @@
     const titleEl = document.getElementById("liveTitle");
     const descEl = document.getElementById("liveDesc");
     const statusBar = document.getElementById("statusBar");
-    const openLiveLink = document.getElementById("openLiveLink");
-    const upcomingList = document.getElementById("upcomingList");
 
     function escapeHtml(value){
       return String(value ?? "").replace(/[&<>"']/g, m => ({
@@ -375,32 +229,36 @@
       return field.ar || field.fr || field.en || "";
     }
 
-function toEmbedUrl(url) {
-  if (!url) return "";
+    function youtubeEmbedUrl(url) {
+      if (!url) return "";
 
-  url = url.trim();
+      url = url.trim();
 
-  if (url.includes("youtube.com/watch?v=")) {
-    const u = new URL(url);
-    const id = u.searchParams.get("v");
-    return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
-  }
+      if (url.includes("youtube.com/watch?v=")) {
+        const u = new URL(url);
+        const id = u.searchParams.get("v");
+        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0&playsinline=1` : "";
+      }
 
-  if (url.includes("youtu.be/")) {
-    const id = url.split("youtu.be/")[1]?.split("?")[0];
-    return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
-  }
+      if (url.includes("youtu.be/")) {
+        const id = url.split("youtu.be/")[1]?.split("?")[0];
+        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0&playsinline=1` : "";
+      }
 
-  if (url.includes("youtube.com/embed/")) {
-    return url.includes("?") ? url : `${url}?autoplay=1&rel=0`;
-  }
+      if (url.includes("youtube.com/embed/")) {
+        return url.includes("?")
+          ? `${url}&autoplay=1&mute=1&rel=0&playsinline=1`
+          : `${url}?autoplay=1&mute=1&rel=0&playsinline=1`;
+      }
 
-  if (url.includes("facebook.com")) {
-    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&autoplay=1`;
-  }
+      if (url.includes("/shorts/")) {
+        const id = url.split("/shorts/")[1]?.split("?")[0];
+        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&rel=0&playsinline=1` : "";
+      }
 
-  return url;
-}
+      return "";
+    }
+
     function renderEmpty(message){
       playerBox.innerHTML = `
         <div class="player-empty">
@@ -410,74 +268,23 @@ function toEmbedUrl(url) {
       `;
     }
 
-function renderPlayer(url) {
-  if (!url) {
-    renderEmpty("لا يوجد بث مباشر الآن");
-    return;
-  }
+    function renderPlayer(url) {
+      const embedUrl = youtubeEmbedUrl(url);
 
-  const embedUrl = toEmbedUrl(url);
-  const isFacebook = url.includes("facebook.com");
-
-  const isDirectVideo =
-    embedUrl.endsWith(".mp4") ||
-    embedUrl.endsWith(".webm") ||
-    embedUrl.endsWith(".ogg") ||
-    embedUrl.includes(".m3u8");
-
-  if (isDirectVideo) {
-    playerBox.innerHTML = `
-      <video controls autoplay playsinline muted style="width:100%;height:100%;background:#000;">
-        <source src="${embedUrl}">
-        متصفحك لا يدعم تشغيل الفيديو.
-      </video>
-    `;
-    return;
-  }
-
-  playerBox.innerHTML = `
-    <iframe
-      src="${embedUrl}"
-      title="البث المباشر"
-      width="100%"
-      height="100%"
-      style="border:0;background:#000;"
-      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
-      allowfullscreen>
-    </iframe>
-  `;
-
-  if (isFacebook) {
-    statusBar.textContent = "إذا لم يعمل بث Facebook، تأكد أن المنشور أو الفيديو Public وليس خاصاً.";
-  }
-}
-
-    function renderUpcoming(items){
-      if (!items.length) {
-        upcomingList.innerHTML = `
-          <div class="up-card">
-            <h3>لا توجد عناصر أخرى حالياً</h3>
-            <p>ستظهر هنا البثوث الأخرى المحفوظة في قسم البث المباشر داخل لوحة التحكم.</p>
-            <div class="up-meta">يتم جلب البيانات تلقائياً من Firestore.</div>
-          </div>
-        `;
+      if (!embedUrl) {
+        renderEmpty("رابط البث غير صالح. ضع رابط YouTube صحيح من لوحة التحكم.");
+        statusBar.textContent = "يجب إدخال رابط YouTube فقط.";
         return;
       }
 
-      upcomingList.innerHTML = items.map(item => {
-        const title = escapeHtml(getText(item.title) || "بث مباشر");
-        const desc = escapeHtml(getText(item.short) || "بدون وصف.");
-        const link = item.file || "#";
-        return `
-          <div class="up-card">
-            <h3>${title}</h3>
-            <p>${desc}</p>
-            <div class="up-meta">
-              <a href="${link}" target="_blank" rel="noopener">فتح رابط البث</a>
-            </div>
-          </div>
-        `;
-      }).join("");
+      playerBox.innerHTML = `
+        <iframe
+          src="${embedUrl}"
+          title="YouTube Live Player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      `;
     }
 
     async function loadLivePage() {
@@ -501,36 +308,22 @@ function renderPlayer(url) {
       if (!liveItems.length) {
         titleEl.textContent = "لا يوجد بث مباشر";
         descEl.textContent = "سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.";
-        openLiveLink.style.display = "none";
         renderEmpty("لا يوجد بث مباشر الآن");
         statusBar.textContent = "لم يتم العثور على أي عنصر في قسم البث المباشر.";
-        renderUpcoming([]);
         return;
       }
 
       const current = liveItems[0];
-      const others = liveItems.slice(1);
-
       titleEl.textContent = getText(current.title) || "بث مباشر";
       descEl.textContent = getText(current.short) || " ";
       renderPlayer(current.file || "");
-
-      if (current.file) {
-        openLiveLink.href = current.file;
-        openLiveLink.style.display = "inline-flex";
-      } else {
-        openLiveLink.style.display = "none";
-      }
-
-      renderUpcoming(others);
-      statusBar.textContent = `تم تحميل ${liveItems.length} عنصر من قسم البث المباشر.`;
+      statusBar.textContent = "تم تحميل البث المباشر بنجاح.";
     }
 
     loadLivePage().catch(error => {
       console.error("Live page error:", error);
       titleEl.textContent = "تعذر تحميل البث";
       descEl.textContent = "حدث خطأ أثناء قراءة بيانات البث المباشر.";
-      openLiveLink.style.display = "none";
       renderEmpty("تعذر تحميل مشغل البث المباشر");
       statusBar.textContent = "حدث خطأ أثناء الاتصال بـ Firestore.";
     });
