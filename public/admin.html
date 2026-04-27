@@ -1228,7 +1228,7 @@ async function deleteItem(sectionKey, id) {
   rebuildDbFromCache();
   renderList(sectionKey);
 
-  if (!requireFs()) return;
+  if (!(await requireFs())) return;
 
   try {
     const docId = item?.docId || item?.id || id;
@@ -1390,10 +1390,9 @@ async function publishItem(key) {
 }
 
 async function reloadFromFirestore() {
-  if (!requireFs()) return;
+  if (!(await requireFs())) return;
 
   try {
-    await waitForFS();
     const col = window.fs.collection(window.fs.db, "content");
     const snap = await window.fs.getDocs(col);
 
@@ -1483,4 +1482,9 @@ window.saveDraft = saveDraft;
 window.publishItem = publishItem;
 window.fillFormFromItem = fillFormFromItem;
 </script>
-
+<script type="module" src="./firestore-bridge.js"></script>
+<script>
+  // admin script here
+</script>
+</body>
+</html>
