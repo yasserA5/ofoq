@@ -608,23 +608,26 @@
       padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);
     }
 
-    .live-video{
-      position:relative;
-      background:#000;
-      border-radius:clamp(20px,6vw,32px);
-      overflow:hidden;
-      box-shadow:0 20px 60px rgba(0,0,0,0.5);
-      margin-bottom:clamp(30px,8vw,40px);
-      min-height:clamp(300px,70vw,600px);
-    }
+.live-video{
+  position:relative;
+  background:#000;
+  border-radius:clamp(20px,6vw,32px);
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  margin-bottom:clamp(30px,8vw,40px);
+  width:min(1400px, 96vw);
+  margin-inline:auto;
+  aspect-ratio:16/9;
+  min-height:auto;
+}
 
-    .live-video iframe,
-    .live-video video{
-      width:100%;
-      height:100%;
-      border:none;
-      display:block;
-    }
+.live-video iframe,
+.live-video video{
+  width:100%;
+  height:100%;
+  border:none;
+  display:block;
+}
 
     .live-overlay{
       position:absolute;
