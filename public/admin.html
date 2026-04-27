@@ -637,7 +637,7 @@
   </div>
 
   <!-- ملاحظة: هذا الملف يعتمد على firestore-bridge.js مثل مشروعك الحالي -->
-<script type="module" src="/firestore-bridge.js"></script>
+<script type="module" src="./firestore-bridge.js"></script>
 <script>
   async function syncFirestoreToLocal() {
     try {
@@ -754,24 +754,30 @@ function requireFs() {
   return true;
 }
 
-async function waitForFS(timeoutMs = 8000) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    function check() {
-      if (
-        window.fs &&
-        window.fs.db &&
-        window.fs.collection &&
-        window.fs.getDocs &&
-        window.fs.doc &&
-        window.fs.setDoc &&
-        window.fs.deleteDoc
-      ) return resolve();
-      if (Date.now() - start > timeoutMs) return reject(new Error("Firestore not ready"));
-      setTimeout(check, 60);
-    }
-    check();
-  });
+async function waitForFS(timeout = 8000){
+  const start = Date.now();
+  while (Date.now() - start < timeout){
+    if (
+      window.fs &&
+      window.fs.db &&
+      window.fs.collection &&
+      window.fs.getDocs &&
+      window.fs.doc &&
+      window.fs.setDoc &&
+      window.fs.deleteDoc
+    ) return true;
+    await new Promise(r => setTimeout(r, 120));
+  }
+  return false;
+}
+
+async function requireFs(){
+  const ok = await waitForFS();
+  if (!ok){
+    alert("Firestore غير جاهز. تأكد من firestore-bridge.js");
+    return false;
+  }
+  return true;
 }
 
 function login() {
@@ -1094,8 +1100,7 @@ async function upsertFirestore(sectionKey, obj) {
 async function saveItem(key) {
   const cfg = SECTIONS.find(s => s.key === key);
   if (!cfg) return;
-  if (!requireFs()) return;
-
+if (!(await requireFs())) return;
   const isLive = !!cfg.isLive;
   const currentId = editing.key === key && editing.id ? editing.id : String(uid());
 
