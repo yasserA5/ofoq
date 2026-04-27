@@ -1,301 +1,1439 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>البث المباشر - Ofouq Academy</titltle>
-
-  /png" href="logo1222.jpeg">
-  //fonts.googleapis.com">
-  //fonts.gstatic.com" crossorigigin>
-  //fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheetet">
-  //cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title id="t-title">البث المباشر</title>
+  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg1:#0f172a;
-      --bg2:#111827;
-      --card:rgba(15,23,42,.82);
-      --card-2:rgba(30,41,59,.88);
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --line:rgba(148,163,184,.18);
-      --pink:#f472b6;
-      --blue:#38bdf8;
-      --shadow:0 22px 60px rgba(2,6,23,.42);
-      --r:28px;
+      --primary:#ec4899;
+      --primary-dark:#be185d;
+      --primary-soft:#fef3c7;
+      --nav-bg:#ffffff;
+      --text-main:#374151;
+      --bg-overlay:rgba(15,23,42,0.55);
     }
 
-    *{ box-sizing:border-box; }
-
-    html,body{
-      margin:0;
-      padding:0;
-      width:100%;
-      overflow-x:hidden;
-    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{width:100%;overflow-x:hidden;}
 
     body{
       font-family:"Tajawal",sans-serif;
-      color:var(--text);
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top right, rgba(244,114,182,.10), transparent 24%),
-        radial-gradient(circle at top left, rgba(56,189,248,.08), transparent 26%),
-        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+      background:linear-gradient(135deg,#1f2937 0%,#111827 100%);
+      color:#f9fafb;
+      line-height:1.6;
+      direction:rtl;
     }
 
-    a{
-      color:inherit;
-      text-decoration:none;
+    header{
+      padding:10px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:rgba(255,255,255,0.96);
+      backdrop-filter:blur(20px);
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+      position:sticky;
+      top:0;
+      z-index:1500;
+      gap:14px;
     }
 
-    .container{
-      width:min(1180px, calc(100% - 24px));
-      margin:0 auto;
-      padding:24px 0 40px;
+    .logo{
+      flex:0 0 auto;
+      display:flex;
+      cursor:pointer;
+      justify-content:center;
     }
 
-    .topbar{
+    .logo img{
+      width:clamp(60px,12vw,85px);
+      height:auto;
+      transition:transform .2s;
+    }
+
+    .logo img:hover{transform:scale(1.05);}
+
+    nav{
+      flex:1;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:14px;
-      flex-wrap:wrap;
-      margin-bottom:18px;
     }
 
-    .brand{
+    nav ul{
+      list-style:none;
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:16px;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
     }
 
-    .brand img{
-      width:54px;
-      height:54px;
-      object-fit:cover;
-      border-radius:16px;
-      box-shadow:var(--shadow);
-    }
+    nav li{position:relative;}
 
-    .brand h1{
-      margin:0;
-      font-size:20px;
-      color:#fff;
-    }
-
-    .brand p{
-      margin:4px 0 0;
+    nav a{
+      text-decoration:none;
+      color:var(--text-main);
       font-size:13px;
-      color:var(--muted);
+      font-weight:600;
+      padding:4px 2px;
+      transition:.2s;
     }
 
-    .back-btn{
-      display:inline-flex;
+    nav a:hover{color:var(--primary);}
+    nav a.active{color:var(--primary);}
+
+    nav a.active::after,
+    nav a:hover::after{
+      content:"";
+      position:absolute;
+      bottom:-2px;
+      inset-inline-start:0;
+      width:100%;
+      height:2px;
+      background:var(--primary);
+      border-radius:999px;
+    }
+
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:100%;
+      right:0;
+      background:#fff;
+      box-shadow:0 4px 15px rgba(0,0,0,0.13);
+      padding:8px 0;
+      border-radius:10px;
+      min-width:210px;
+      border:1px solid #e5e7eb;
+      z-index:1000;
+    }
+
+    .dropdown-content a{
+      display:block;
+      padding:8px 16px;
+      color:var(--text-main);
+      white-space:nowrap;
+      font-size:13px;
+    }
+
+    .dropdown-content a:hover{
+      background:#fdf2ff;
+      color:var(--primary);
+    }
+
+    .dropdown:hover .dropdown-content{display:block;}
+
+    .nav-search{
+      flex:0 0 150px;
+      position:relative;
+      display:flex;
+      align-items:center;
+    }
+
+    .nav-search input{
+      width:100%;
+      padding:5px 26px 5px 8px;
+      border-radius:999px;
+      border:1px solid #cbd5e1;
+      font-size:11px;
+      outline:none;
+    }
+
+    .nav-search input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 2px rgba(236,72,153,0.18);
+    }
+
+    .nav-search span{
+      position:absolute;
+      left:8px;
+      font-size:13px;
+      color:#9ca3af;
+    }
+
+    .actions{
+      display:flex;
       align-items:center;
       gap:8px;
-      padding:10px 16px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(15,23,42,.55);
+    }
+
+    .btn{
+      padding:6px 12px;
+      border-radius:26px;
+      border:2px solid rgba(236,72,153,0.5);
+      background:rgba(236,72,153,0.08);
+      cursor:pointer;
+      font-weight:700;
+      font-size:11px;
+      transition:.2s;
+      color:var(--primary-dark);
+      white-space:nowrap;
+    }
+
+    .btn:hover{background:rgba(236,72,153,0.16);}
+
+    .btn.primary{
+      background:linear-gradient(90deg,var(--primary),var(--primary-dark));
       color:#fff;
-      font-weight:800;
+      border:none;
+      box-shadow:0 3px 12px rgba(236,72,153,0.35);
     }
 
-    .hero{
-      background:linear-gradient(135deg, rgba(30,41,59,.84), rgba(15,23,42,.92));
-      border:1px solid var(--line);
-      border-radius:36px;
-      box-shadow:var(--shadow);
-      padding:16px;
-      overflow:hidden;
-    }
+    .lang-wrapper{position:relative;}
 
-    .player-wrap{
-      width:100%;
-      aspect-ratio:16/9;
-      min-height:280px;
-      background:#000;
-      border-radius:24px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.06);
-    }
-
-    .player-wrap iframe{
-      width:100%;
-      height:100%;
-      border:0;
-      display:block;
-      background:#000;
-    }
-
-    .empty{
-      width:100%;
-      height:100%;
-      min-height:280px;
+    .lang-toggle{
+      border:none;
+      background:#ffffff;
+      border-radius:999px;
+      padding:6px 12px;
+      font-size:12px;
+      cursor:pointer;
+      color:var(--primary-dark);
       display:flex;
+      align-items:center;
+      gap:6px;
+      font-weight:600;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      transition:.2s;
+    }
+
+    .lang-toggle:hover{
+      background:#f9fafb;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
+      transform:translateY(-1px);
+    }
+
+    .lang-toggle svg{
+      pointer-events:none;
+      transition:transform .2s;
+    }
+
+    .lang-toggle[aria-expanded="true"] svg{
+      transform:rotate(180deg);
+    }
+
+    .lang-menu{
+      position:absolute;
+      top:115%;
+      right:0;
+      background:#fff;
+      box-shadow:0 8px 25px rgba(0,0,0,0.15);
+      border-radius:12px;
+      min-width:130px;
+      border:1px solid #e2e8f0;
+      display:none;
+      z-index:1200;
+      overflow:hidden;
+    }
+
+    .lang-menu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      padding:10px 14px;
+      text-align:right;
+      font-size:12px;
+      cursor:pointer;
+      font-weight:500;
+      transition:.2s;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .lang-menu button:hover{
+      background:#f1f5f9;
+      color:var(--primary);
+    }
+
+    .pill-circle{
+      display:inline-flex;
       align-items:center;
       justify-content:center;
-      flex-direction:column;
-      gap:10px;
-      padding:22px;
-      text-align:center;
-      color:#dbe4f0;
-      background:linear-gradient(180deg, rgba(2,6,23,.78), rgba(15,23,42,.92));
+      padding:6px 18px;
+      border-radius:999px;
+      background:#facc15;
+      color:#111;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 0 2px rgba(0,0,0,0.06);
     }
 
-    .empty i{
-      font-size:44px;
-      color:var(--pink);
+    .pill-circle::before{
+      content:"●";
+      font-size:9px;
+      margin-left:6px;
+      color:#111;
     }
 
-    .info{
-      margin-top:18px;
-      padding:22px;
-      border-radius:24px;
-      border:1px solid var(--line);
-      background:linear-gradient(135deg, rgba(51,65,85,.9), rgba(30,41,59,.9));
+    #menu-btn{
+      display:none;
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      border:none;
+      background:rgba(0,155,196,0.22);
+      color:var(--primary-dark);
+      font-size:20px;
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
     }
 
-    .live-badge{
-      display:inline-flex;
+    .nav-sheet-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:1498;
+    }
+
+    .nav-sheet-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .nav-sheet{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      width:100%;
+      max-height:92vh;
+      background:#fff;
+      border-radius:24px 24px 0 0;
+      box-shadow:0 -10px 35px rgba(0,0,0,0.18);
+      padding:12px;
+      overflow-y:auto;
+      transform:translateY(110%);
+      transition:transform .28s ease;
+      z-index:1499;
+    }
+
+    .nav-sheet.show{
+      transform:translateY(0);
+    }
+
+    .nav-sheet-handle{
+      width:54px;
+      height:6px;
+      border-radius:999px;
+      background:#cbd5e1;
+      margin:0 auto 10px;
+    }
+
+    .nav-sheet-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .nav-sheet-brand{
+      display:flex;
       align-items:center;
       gap:8px;
-      padding:8px 14px;
-      border-radius:999px;
-      background:rgba(131,24,67,.35);
-      color:#ffd4e8;
-      border:1px solid rgba(244,114,182,.22);
-      font-size:13px;
-      font-weight:800;
+    }
+
+    .nav-sheet-brand img{
+      width:44px;
+      height:44px;
+      object-fit:contain;
+      border-radius:14px;
+      background:#fff;
+      padding:4px;
+      box-shadow:0 6px 16px rgba(0,0,0,.06);
+    }
+
+    .nav-sheet-brand strong{
+      display:block;
+      color:#0f172a;
+      font-size:14px;
+    }
+
+    .nav-sheet-brand span{
+      display:block;
+      color:#64748b;
+      font-size:11px;
+    }
+
+    .nav-sheet-close{
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:50%;
+      background:#eef6f8;
+      color:#0f4f65;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .nav-sheet-search{
+      display:flex;
+      gap:6px;
+      margin-bottom:10px;
+    }
+
+    .nav-sheet-search input{
+      flex:1;
+      border:none;
+      outline:none;
+      background:#fff;
+      border-radius:14px;
+      padding:11px 12px;
+      box-shadow:inset 0 0 0 1px #e2e8f0;
+      font-family:inherit;
+      font-size:14px;
+    }
+
+    .nav-sheet-search button{
+      border:none;
+      min-width:44px;
+      border-radius:14px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      cursor:pointer;
+    }
+
+    .nav-sheet-mini-tools{
+      display:flex;
+      gap:6px;
       margin-bottom:12px;
     }
 
-    .title{
-      margin:0 0 10px;
-      font-size:26px;
-      color:#fff;
-      line-height:1.4;
+    .sheet-tool{
+      border:none;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#ffffff;
+      box-shadow:inset 0 0 0 1px #e2e8f0;
+      color:#0f4f65;
+      font-weight:800;
+      cursor:pointer;
+      font-size:12px;
     }
 
-    .desc{
-      margin:0;
-      color:#dbe4f0;
-      line-height:1.9;
-      font-size:17px;
+    .nav-sheet-section{
+      margin-bottom:12px;
     }
 
-    .meta{
-      margin-top:16px;
+    .nav-sheet-section h3{
+      font-size:13px;
+      color:#0f172a;
+      margin-bottom:8px;
+    }
+
+    .nav-sheet-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .sheet-card{
+      text-decoration:none;
+      text-align:center;
+      background:#fff;
+      color:#12313c;
+      border:1px solid #e7edf1;
+      border-radius:16px;
+      padding:14px 8px;
+      font-weight:800;
+      box-shadow:0 8px 22px rgba(15,23,42,.04);
+      font-size:14px;
+      line-height:1.3;
+    }
+
+    .academic-zone{
+      background:linear-gradient(135deg,#fff8df,#fffdf5);
+      border:1px solid rgba(212,175,55,.22);
+      border-radius:20px;
+      padding:10px;
+    }
+
+    .nav-sheet-pills{
       display:flex;
-      gap:10px;
       flex-wrap:wrap;
+      gap:6px;
     }
 
-    .meta a{
+    .nav-sheet-pills a{
+      text-decoration:none;
+      color:#5d4700;
+      background:#fff;
+      border:1px solid rgba(212,175,55,.24);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .nav-sheet-footer-links{
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .nav-sheet-footer-links a{
+      flex:1;
+      text-decoration:none;
+      text-align:center;
+      background:#fff;
+      color:#475569;
+      border:1px solid #e2e8f0;
+      border-radius:14px;
+      padding:10px 8px;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .nav-sheet-auth{
+      display:flex;
+      gap:8px;
+    }
+
+    .nav-sheet-auth a{
+      flex:1;
+      text-decoration:none;
+      text-align:center;
+      border-radius:16px;
+      padding:12px 10px;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .nav-sheet-auth a:first-child{
+      background:#fff;
+      color:#0f4f65;
+      border:1px solid #dbe5ea;
+    }
+
+    .nav-sheet-auth a:last-child{
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      box-shadow:0 12px 24px rgba(0,155,196,.22);
+    }
+
+    .hero{
+      padding:clamp(80px,20vw,120px) clamp(25px,8vw,40px);
+      text-align:center;
+      position:relative;
+    }
+
+    .live-status{
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      font-size:13px;
+      gap:12px;
+      padding:clamp(12px,4vw,18px) clamp(24px,6vw,32px);
+      background:linear-gradient(135deg,#fef3c7,#fde68a);
+      color:#92400e;
+      border-radius:50px;
       font-weight:800;
-      background:rgba(8,47,73,.35);
-      color:#d7f1ff;
-      border:1px solid rgba(56,189,248,.24);
+      font-size:clamp(16px,5vw,22px);
+      margin-bottom:clamp(20px,6vw,30px);
+      box-shadow:0 8px 25px rgba(254,243,199,0.4);
+      animation:pulse 2s infinite;
     }
 
-    .status{
-      margin-top:14px;
-      min-height:22px;
+    .live-dot{
+      width:16px;
+      height:16px;
+      background:#ef4444;
+      border-radius:50%;
+      animation:blink 1.5s infinite;
+    }
+
+    .hero h1{
+      font-size:clamp(28px,10vw,48px);
+      font-weight:800;
+      background:linear-gradient(135deg,#ec4899,#f472b6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      margin-bottom:clamp(15px,5vw,25px);
+    }
+
+    .hero p{
+      font-size:clamp(16px,4.5vw,20px);
+      max-width:700px;
+      margin:0 auto 30px;
+      opacity:0.9;
+    }
+
+    .issn-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:0 auto 24px;
+      padding:10px 16px;
+      max-width:100%;
+      border-radius:999px;
+      background:rgba(255,255,255,0.10);
+      border:1px solid rgba(255,255,255,0.18);
+      color:#f9fafb;
+      font-size:clamp(12px,3vw,14px);
+      font-weight:800;
+      box-shadow:0 8px 22px rgba(0,0,0,0.22);
       text-align:center;
-      color:#93c5fd;
-      font-size:14px;
     }
 
-    .note{
-      margin-top:24px;
-      padding:16px 18px;
+    .issn-badge::before{
+      content:"ISSN";
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:4px 9px;
+      border-radius:999px;
+      background:rgba(236,72,153,0.18);
+      color:#f9a8d4;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.3px;
+    }
+
+    .live-container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);
+    }
+
+    .live-video{
+      position:relative;
+      background:#000;
+      border-radius:clamp(20px,6vw,32px);
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,0.5);
+      margin-bottom:clamp(30px,8vw,40px);
+      min-height:clamp(300px,70vw,600px);
+    }
+
+    .live-video iframe,
+    .live-video video{
+      width:100%;
+      height:100%;
+      border:none;
+      display:block;
+    }
+
+    .live-overlay{
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.85);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      text-align:center;
+      z-index:10;
+      padding:clamp(20px,8vw,40px);
+      transition:background 0.3s;
+    }
+
+    .live-overlay h3{
+      font-size:clamp(20px,6vw,32px);
+      margin-bottom:15px;
+      animation:glow 2s infinite;
+    }
+
+    section{
+      padding:clamp(40px,12vw,60px) clamp(25px,8vw,40px);
+      background:rgba(255,255,255,0.03);
+      backdrop-filter:blur(10px);
+    }
+
+    section h2{
+      font-size:clamp(24px,7vw,36px);
+      margin-bottom:clamp(25px,8vw,35px);
+      text-align:center;
+      background:linear-gradient(135deg,#ec4899,#f472b6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(clamp(280px,42vw,340px),1fr));
+      gap:clamp(20px,6vw,30px);
+    }
+
+    .card{
+      padding:clamp(20px,6vw,28px);
       border-radius:20px;
-      background:rgba(15,23,42,.55);
-      border:1px solid var(--line);
-      color:#cbd5e1;
-      font-size:14px;
-      line-height:1.8;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.18);
+      transition:all 0.3s ease;
+      position:relative;
+      overflow:hidden;
     }
 
-    @media (max-width:900px){
-      .title{ font-size:22px; }
-      .desc{ font-size:16px; }
-      .container{ width:min(100%, calc(100% - 18px)); }
-      .hero{ border-radius:28px; }
-      .player-wrap{ border-radius:18px; }
-      .info{ border-radius:18px; padding:18px; }
+    .card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg,#ec4899,#f472b6);
+    }
+
+    .card:hover{
+      transform:translateY(-8px);
+      background:rgba(255,255,255,0.16);
+      box-shadow:0 20px 40px rgba(0,0,0,0.35);
+    }
+
+    .card-time{
+      font-size:clamp(14px,4vw,16px);
+      color:#ec4899;
+      font-weight:700;
+      background:rgba(236,72,153,0.22);
+      padding:6px 14px;
+      border-radius:20px;
+      display:inline-block;
+      margin-bottom:15px;
+    }
+
+    .card h3{
+      font-size:clamp(18px,5vw,24px);
+      margin-bottom:12px;
+      color:#f9fafb;
+      font-weight:700;
+      line-height:1.3;
+    }
+
+    .card p{
+      font-size:clamp(15px,4vw,17px);
+      color:rgba(249,250,251,0.9);
+      line-height:1.7;
+      margin-bottom:20px;
+    }
+
+    .card-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:clamp(12px,4vw,16px) clamp(20px,6vw,28px);
+      background:linear-gradient(135deg,#ec4899,#f472b6);
+      color:#fff;
+      border:none;
+      border-radius:30px;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-weight:700;
+      font-size:clamp(14px,4vw,16px);
+      text-decoration:none;
+      box-shadow:0 6px 20px rgba(236,72,153,0.4);
+      width:100%;
+      justify-content:center;
+    }
+
+    .card-btn:hover{
+      background:linear-gradient(135deg,#db2777,#be185d);
+      transform:translateY(-3px);
+      box-shadow:0 10px 30px rgba(236,72,153,0.55);
+    }
+
+    .empty-state{
+      text-align:center;
+      padding:clamp(80px,25vw,120px);
+      color:rgba(249,250,251,0.75);
+      grid-column:1/-1;
+    }
+
+    .empty-state h3{
+      font-size:clamp(22px,7vw,32px);
+      margin-bottom:15px;
+      color:#f9fafb;
+    }
+
+    footer{
+      margin-top:clamp(30px,8vw,40px);
+      padding:clamp(25px,8vw,35px);
+      background:#000000;
+      color:#f9fafb;
+      text-align:center;
+      font-size:clamp(15px,4vw,18px);
+    }
+
+    .toast-container{
+      position:fixed;
+      top:20px;
+      left:20px;
+      z-index:5000;
+    }
+
+    .toast{
+      background:rgba(255,255,255,0.97);
+      padding:clamp(12px,3vw,16px) clamp(16px,4vw,20px);
+      border-radius:12px;
+      margin-bottom:10px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.35);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      animation:slideIn 0.3s ease-in-out;
+      max-width:90vw;
+      color:#111827;
+    }
+
+    .toast.success{border-right:4px solid #22c55e;}
+    .toast.info{border-right:4px solid #ec4899;}
+
+    .toast-icon{font-size:clamp(18px,5vw,20px);}
+
+    .toast-message{
+      font-weight:500;
+      font-size:clamp(14px,3.5vw,16px);
+    }
+
+    @keyframes pulse{
+      0%,100%{opacity:1;}
+      50%{opacity:0.7;}
+    }
+
+    @keyframes blink{
+      0%,50%{opacity:1;}
+      51%,100%{opacity:0;}
+    }
+
+    @keyframes glow{
+      0%,100%{text-shadow:0 0 10px rgba(236,72,153,0.5);}
+      50%{text-shadow:0 0 20px rgba(236,72,153,0.8),0 0 30px rgba(236,72,153,0.4);}
+    }
+
+    @keyframes slideIn{
+      from{transform:translateX(-100%);opacity:0;}
+      to{transform:translateX(0);opacity:1;}
+    }
+
+    @keyframes slideOut{
+      from{transform:translateX(0);opacity:1;}
+      to{transform:translateX(-100%);opacity:0;}
+    }
+
+    .toast.removing{animation:slideOut 0.3s ease-in-out;}
+
+    @media(max-width:1100px){
+      .nav-search{display:none;}
+    }
+
+    @media(max-width:980px){
+      nav{display:none;}
+      .actions{display:none;}
+      #menu-btn{
+        display:flex;
+        order:-1;
+      }
+      header{justify-content:space-between;}
+      .logo{margin-inline:auto;}
+      .toast-container{
+        left:50%;
+        transform:translateX(-50%);
+        width:90%;
+      }
+    }
+
+    @media(max-width:768px){
+      header{padding:15px 20px;}
+      .hero{padding:clamp(60px,18vw,90px) 20px;}
+      .live-container{padding:40px 20px;}
+      section{padding:50px 20px;}
+      .grid{
+        grid-template-columns:1fr;
+        gap:20px;
+      }
+    }
+
+    @media(max-width:480px){
+      header{padding:12px 15px;}
+      .logo img{width:65px;}
+      .hero{padding:50px 15px;}
+      .live-container{padding:30px 12px;}
+      .nav-sheet-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:6px;
+      }
+      .sheet-card{
+        padding:12px 6px;
+        font-size:13px;
+      }
+    }
+
+    @media(min-width:981px){
+      .nav-sheet,
+      .nav-sheet-overlay{
+        display:none;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="topbar">
-      <div class="brand">
-        <img src="logo1222.jpeg" alt="Ofouq Academy">
+  <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
+
+  <div class="nav-sheet" id="mobileMenu">
+    <div class="nav-sheet-handle"></div>
+
+    <div class="nav-sheet-top">
+      <div class="nav-sheet-brand">
+        <img src="logo1.png" alt="Logo">
         <div>
-          <h1>Ofouq Academy</h1>
-          <p>صفحة البث المباشر</p>
+          <strong data-t="brand_name">أفق</strong>
+          <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
         </div>
       </div>
-
-      <a href="index.html" class="back-btn">
-        <i class="ri-arrow-right-line"></i>
-        العودة إلى الرئيسية
-      </a>
+      <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
     </div>
 
-    <section class="hero">
-      <div id="livePlayer" class="player-wrap">
-        <div class="empty">
-          <i class="ri-live-line"></i>
-          <div>جارٍ تحميل البث المباشر...</div>
-        </div>
+    <form class="nav-sheet-search" onsubmit="doSearch(event)">
+      <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
+      <button type="submit">🔍</button>
+    </form>
+
+    <div class="nav-sheet-mini-tools">
+      <button class="sheet-tool" type="button" onclick="setLang('ar')">AR</button>
+      <button class="sheet-tool" type="button" onclick="setLang('en')">EN</button>
+      <button class="sheet-tool" type="button" onclick="setLang('fr')">FR</button>
+    </div>
+
+    <div class="nav-sheet-section">
+      <h3 data-t="mobile_discover">اكتشف</h3>
+      <div class="nav-sheet-grid">
+        <a href="index.html" class="sheet-card" data-t="nav_home">الرئيسية</a>
+        <a href="research.html" class="sheet-card" data-t="nav_research_peer">أبحاث محكمة</a>
+        <a href="articles.html" class="sheet-card" data-t="nav_articles_peer">مقالات محكمة</a>
+        <a href="files.html" class="sheet-card" data-t="nav_files">ملفات بحثية</a>
+        <a href="articles-foreign.html" class="sheet-card" data-t="nav_foreign">مقالات أجنبية</a>
+        <a href="general-articles.html" class="sheet-card" data-t="nav_articles">مقالات</a>
+        <a href="editions.html" class="sheet-card" data-t="nav_editions">إصداراتنا</a>
+        <a href="activities.html" class="sheet-card" data-t="nav_activities">أنشطتنا</a>
+        <a href="live.html" class="sheet-card" data-t="nav_live">بث مباشر</a>
+        <a href="editorial-board.html" class="sheet-card" data-t="nav_board">هيئة التحرير</a>
       </div>
+    </div>
 
-      <div class="info">
-        <div class="live-badge">
-          <i class="ri-broadcast-line"></i>
-          مباشر الآن
-        </div>
-
-        <h2 id="liveTitle" class="title">البث المباشر</h2>
-        <p id="liveDesc" class="desc">سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.</p>
-
-        <div class="meta">
-          <a id="youtubeBtn" href="#" target="_blank" rel="noopener" style="display:none;">
-            <i class="ri-youtube-fill"></i>
-            فتح على يوتيوب
-          </a>
-        </div>
-
-        <div id="statusBar" class="status"></div>
+    <div class="nav-sheet-section academic-zone">
+      <h3 data-t="nav_academic">أكاديمي</h3>
+      <div class="nav-sheet-pills">
+        <a href="special-politics.html" data-t="sp_politics">تخصص علوم سياسية</a>
+        <a href="special-ir.html" data-t="sp_ir">العلاقات الدولية</a>
+        <a href="special-admin-law.html" data-t="sp_admin_law">القانون الإداري</a>
+        <a href="special-const-law.html" data-t="sp_const_law">القانون الدستوري</a>
+        <a href="special-public-policy.html" data-t="sp_public_policy">السياسات العمومية</a>
       </div>
+    </div>
 
-      <div class="note">
-        استخدم في لوحة التحكم رابط YouTube فقط، مثل رابط watch أو youtu.be أو embed، وسيتم تحويله تلقائياً إلى مشغل مناسب داخل الصفحة. [web:160]
-      </div>
-    </section>
+    <div class="nav-sheet-footer-links">
+      <a href="rules.html" data-t="nav_rules">شروط النشر</a>
+      <a href="contact.html" data-t="nav_contact">اتصل بنا</a>
+      <a href="editorial-board.html" data-t="nav_board">هيئة التحرير</a>
+    </div>
+
+    <div class="nav-sheet-auth">
+      <a href="login.html" id="mobileLogin" data-t="nav_login">تسجيل الدخول</a>
+      <a href="register.html" id="mobileRegister" data-t="nav_join">انضم إلينا</a>
+    </div>
   </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <header>
+    <button
+      id="menu-btn"
+      type="button"
+      onclick="toggleMenu()"
+      aria-label="Toggle navigation menu"
+      aria-expanded="false"
+    >☰</button>
+
+    <div class="logo" onclick="goToHome()">
+      <img src="logo1.png" alt="Logo">
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="index.html" id="navHome">الرئيسية</a></li>
+        <li class="dropdown">
+          <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
+          <div class="dropdown-content">
+            <a href="research.html" id="navResearch">أبحاث محكمة</a>
+            <a href="articles.html" id="navArticles">مقالات محكمة</a>
+            <a href="files.html" id="navFiles">ملفات بحثية</a>
+            <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
+          </div>
+        </li>
+        <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
+        <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
+        <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
+        <li class="dropdown">
+          <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
+          <div class="dropdown-content">
+            <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
+            <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
+            <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
+            <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
+            <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
+          </div>
+        </li>
+        <li><a href="live.html" class="active" id="navLive">بث مباشر</a></li>
+        <li><a href="rules.html" id="navRules">شروط النشر</a></li>
+        <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
+        <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
+      </ul>
+
+      <form class="nav-search" onsubmit="doSearch(event)">
+        <input type="search" id="navSearchInput" placeholder="ابحث...">
+        <span>🔍</span>
+      </form>
+    </nav>
+
+    <div class="actions" id="headerActions">
+      <div class="lang-wrapper">
+        <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+          <span id="langCurrent">AR</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7 10l5 5 5-5z"></path>
+          </svg>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <button type="button" onclick="setLang('ar')">العربية</button>
+          <button type="button" onclick="setLang('en')">English</button>
+          <button type="button" onclick="setLang('fr')">Français</button>
+        </div>
+      </div>
+      <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+      <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="live-status">
+      <div class="live-dot"></div>
+      <span data-t="hero_live_badge">🔴 البث المباشر الآن</span>
+    </div>
+    <h1 data-t="hero_title_live">البث الحي</h1>
+    <p data-t="hero_sub_live">تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة</p>
+    <div class="issn-badge">3119-6691</div>
+  </div>
+
+  <div class="live-container">
+    <div class="live-video" id="liveVideo"></div>
+  </div>
+
+  <section>
+    <h2 data-t="sec_live_next">البث القادم</h2>
+    <div class="grid" id="upcomingStreams"></div>
+  </section>
+
+  <footer data-t="footer_text" style="
+    background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #000000 100%);
+    padding: clamp(30px, 8vw, 50px) clamp(25px, 6vw, 45px);
+    text-align: center;
+    color: #f9fafb;
+    font-size: clamp(14px, 3vw, 16px);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 -8px 40px rgba(236,72,153,0.15);
+    border-top: 1px solid rgba(255,255,255,0.08);
+  ">
+    <div style="
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 4px; background: linear-gradient(90deg, transparent, #ec4899, #f472b6, transparent);
+      filter: blur(1px);
+    "></div>
+
+    <div style="max-width: 1100px; margin: 0 auto; position: relative; z-index: 2;">
+      <div style="
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+        gap: 16px 24px; margin-bottom: 20px; font-weight: 700;
+        opacity: 0.95;
+      ">
+        <div style="
+          margin: 0 auto 18px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          flex-wrap: wrap;
+          max-width: 100%;
+          padding: 10px 18px;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.14);
+          color: #f9fafb;
+          font-weight: 800;
+          font-size: clamp(12px, 3vw, 14px);
+          text-align: center;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+        ">
+          <span style="color:#f9a8d4; font-weight:900;">ISSN:</span>
+          <span>3119-6691</span>
+        </div>
+
+        <a href="https://ofouqacademie.com" style="
+          background: linear-gradient(135deg, #ec4899, #f472b6);
+          -webkit-background-clip: text; background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-decoration: none; font-weight: 900; font-size: 1.15em;
+        ">Ofouq Academie</a>
+
+        <span style="font-size: 1em;">© 2026 by</span>
+
+        <a href="https://github.com/yasserA5" style="
+          color: #facc15; text-decoration: none; font-weight: 800;
+          text-shadow: 0 0 8px rgba(250,204,21,0.5);
+        ">Karim Rasmi</a>
+
+        <span>– جميع الحقوق محفوظة – منصتك العلمية</span>
+      </div>
+
+      <div style="
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 12px; padding: 18px 28px;
+        background: rgba(255,255,255,0.06); backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        transition: all 0.3s ease; cursor: pointer;
+        max-width: 700px; margin: 0 auto 16px;
+      " onclick="window.open('https://creativecommons.org/licenses/by-nc/4.0/', '_blank')">
+        <span style="color: #e6f3ff; font-weight: 700; font-size: 1.05em;">
+          Creative Commons Attribution-NonCommercial 4.0 International
+        </span>
+
+        <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width: 22px; height: 22px; opacity: 0.95;">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width: 22px; height: 22px; opacity: 0.95;">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width: 22px; height: 22px; opacity: 0.95;">
+      </div>
+
+      <p style="
+        margin: 0; opacity: 0.7; font-size: 0.88em;
+        font-style: italic; line-height: 1.5;
+      ">
+        إلا إذا ذُكر خلاف ذلك | Except where otherwise noted.
+      </p>
+    </div>
+  </footer>
 
   <script type="module">
     import { db } from "./firebase-init.js";
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-    const playerBox = document.getElementById("livePlayer");
-    const titleEl = document.getElementById("liveTitle");
-    const descEl = document.getElementById("liveDesc");
-    const statusBar = document.getElementById("statusBar");
-    const youtubeBtn = document.getElementById("youtubeBtn");
+    function goToHome(){window.location.href='index.html';}
 
-    function escapeHtml(value) {
+    window.goToHome = goToHome;
+
+    window.toggleMenu = function(){
+      const menu = document.getElementById("mobileMenu");
+      const overlay = document.getElementById("navSheetOverlay");
+      const btn = document.getElementById("menu-btn");
+      if(!menu || !overlay || !btn) return;
+      const isOpen = menu.classList.contains("show");
+      menu.classList.toggle("show", !isOpen);
+      overlay.classList.toggle("show", !isOpen);
+      document.body.style.overflow = isOpen ? "" : "hidden";
+      btn.setAttribute("aria-expanded", String(!isOpen));
+    };
+
+    window.doSearch = function(e){
+      e.preventDefault();
+      const desktopInput = document.getElementById("navSearchInput");
+      const mobileInput = document.getElementById("navSearchInputMobile");
+      const q = (mobileInput && mobileInput.value.trim()) || (desktopInput && desktopInput.value.trim()) || "";
+      if(!q) return;
+      window.location.href = "search.html?q=" + encodeURIComponent(q);
+    };
+
+    window.toggleLangMenu = function(){
+      const desktopMenu = document.getElementById("langMenu");
+      const toggle = document.querySelector(".lang-toggle");
+      if(!desktopMenu || !toggle) return;
+      const isOpen = desktopMenu.style.display === "block";
+      desktopMenu.style.display = isOpen ? "none" : "block";
+      toggle.setAttribute("aria-expanded", String(!isOpen));
+    };
+
+    document.addEventListener("click", function(e){
+      if(!e.target.closest(".lang-wrapper")){
+        const m1 = document.getElementById("langMenu");
+        if(m1) m1.style.display = "none";
+        document.querySelectorAll(".lang-toggle").forEach(btn => btn.setAttribute("aria-expanded","false"));
+      }
+    });
+
+    function showToast(message, type = "info"){
+      const container = document.getElementById("toastContainer");
+      if(!container) return;
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      const icons = { success:"✅", info:"ℹ️" };
+      toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || "ℹ️"}</span>
+        <span class="toast-message">${message}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add("removing");
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    let user = JSON.parse(
+      localStorage.getItem("user") ||
+      sessionStorage.getItem("user") ||
+      "null"
+    );
+
+    function updateHeader(){
+      const headerActions = document.getElementById("headerActions");
+      const mobileLogin = document.getElementById("mobileLogin");
+      const mobileRegister = document.getElementById("mobileRegister");
+
+      if(user && user.loggedIn){
+        const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
+
+        if(headerActions){
+          headerActions.innerHTML = `
+            <div class="lang-wrapper">
+              <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
+                <span id="langCurrent">${currentLang.toUpperCase()}</span>
+              </button>
+              <div class="lang-menu" id="langMenu">
+                <button type="button" onclick="setLang('ar')">العربية</button>
+                <button type="button" onclick="setLang('en')">English</button>
+                <button type="button" onclick="setLang('fr')">Français</button>
+              </div>
+            </div>
+            <span style="margin-right:8px;font-size:12px;color:#374151;font-weight:700;">${displayName}</span>
+            <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
+          `;
+        }
+
+        if(mobileLogin){
+          mobileLogin.textContent = translations[currentLang]?.logout || translations.ar.logout;
+          mobileLogin.href = "#";
+          mobileLogin.onclick = function(e){ e.preventDefault(); logout(); };
+        }
+
+        if(mobileRegister){
+          mobileRegister.style.display = "none";
+        }
+      } else {
+        if(headerActions){
+          headerActions.innerHTML = `
+            <div class="lang-wrapper">
+              <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
+                <span id="langCurrent">${currentLang.toUpperCase()}</span>
+              </button>
+              <div class="lang-menu" id="langMenu">
+                <button type="button" onclick="setLang('ar')">العربية</button>
+                <button type="button" onclick="setLang('en')">English</button>
+                <button type="button" onclick="setLang('fr')">Français</button>
+              </div>
+            </div>
+            <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+            <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
+          `;
+        }
+
+        if(mobileLogin){
+          mobileLogin.href = "login.html";
+          mobileLogin.onclick = null;
+          mobileLogin.textContent = translations[currentLang]?.nav_login || translations.ar.nav_login;
+        }
+
+        if(mobileRegister){
+          mobileRegister.style.display = "";
+          mobileRegister.href = "register.html";
+          mobileRegister.textContent = translations[currentLang]?.nav_join || translations.ar.nav_join;
+        }
+      }
+    }
+
+    window.logout = function(){
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
+      user = null;
+      location.reload();
+    };
+
+    const liveVideo = document.getElementById("liveVideo");
+    const upcomingStreams = document.getElementById("upcomingStreams");
+
+    const translations = {
+      ar:{
+        title:"البث المباشر",
+        brand_name:"أفق",
+        brand_tagline:"منصة أكاديمية حديثة",
+        mobile_discover:"اكتشف",
+        nav_home:"الرئيسية",
+        nav_research_peer:"أبحاث محكمة",
+        nav_articles_peer:"مقالات محكمة",
+        nav_files:"ملفات بحثية",
+        nav_foreign:"مقالات أجنبية",
+        nav_articles:"مقالات",
+        nav_editions:"إصداراتنا",
+        nav_activities:"أنشطتنا",
+        nav_academic:"أكاديمي",
+        nav_live:"بث مباشر",
+        nav_rules:"شروط النشر",
+        nav_contact:"اتصل بنا",
+        nav_board:"هيئة التحرير",
+        nav_login:"تسجيل الدخول",
+        nav_join:"انضم إلينا",
+        hero_live_badge:"🔴 البث المباشر الآن",
+        hero_title_live:"البث الحي",
+        hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة",
+        sec_live_next:"البث القادم",
+        footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
+        logout:"تسجيل الخروج",
+        toast_logout_success:"تم تسجيل الخروج بنجاح",
+        toast_open_live:"جاري تحميل البث...",
+        no_live:"لا توجد بثوث مباشرة حالياً",
+        no_live_sub:"ستظهر البثوث القادمة هنا بمجرد إضافتها من لوحة التحكم.",
+        remind_saved:"تم حفظ تذكير البث",
+        btn_remind:"تذكير لاحقاً",
+        watch_youtube:"مشاهدة على يوتيوب",
+        invalid_youtube:"الرابط الحالي ليس رابط YouTube صالحاً.",
+        sp_politics:"تخصص علوم سياسية",
+        sp_ir:"العلاقات الدولية",
+        sp_admin_law:"القانون الإداري",
+        sp_const_law:"القانون الدستوري",
+        sp_public_policy:"السياسات العمومية"
+      },
+      en:{
+        title:"Live Stream",
+        brand_name:"Ofouq",
+        brand_tagline:"Modern academic platform",
+        mobile_discover:"Discover",
+        nav_home:"Home",
+        nav_research_peer:"Peer-reviewed research",
+        nav_articles_peer:"Peer-reviewed articles",
+        nav_files:"Research files",
+        nav_foreign:"Foreign articles",
+        nav_articles:"Articles",
+        nav_editions:"Our publications",
+        nav_activities:"Activities",
+        nav_academic:"Academic",
+        nav_live:"Live",
+        nav_rules:"Submission rules",
+        nav_contact:"Contact us",
+        nav_board:"Editorial board",
+        nav_login:"Login",
+        nav_join:"Join us",
+        hero_live_badge:"🔴 Live now",
+        hero_title_live:"Live Stream",
+        hero_sub_live:"Follow our live events, seminars and scientific talks.",
+        sec_live_next:"Upcoming Live",
+        footer_text:"© All rights reserved – Your Academic Platform",
+        logout:"Logout",
+        toast_logout_success:"Logged out successfully",
+        toast_open_live:"Loading live stream...",
+        no_live:"No live streams currently",
+        no_live_sub:"Upcoming streams will appear here once added from the dashboard.",
+        remind_saved:"Stream reminder saved",
+        btn_remind:"Remind me later",
+        watch_youtube:"Watch on YouTube",
+        invalid_youtube:"The current link is not a valid YouTube URL.",
+        sp_politics:"Political Science",
+        sp_ir:"International Relations",
+        sp_admin_law:"Administrative Law",
+        sp_const_law:"Constitutional Law",
+        sp_public_policy:"Public Policy"
+      },
+      fr:{
+        title:"Diffusion en direct",
+        brand_name:"Ofouq",
+        brand_tagline:"Plateforme académique moderne",
+        mobile_discover:"Découvrir",
+        nav_home:"Accueil",
+        nav_research_peer:"Recherches évaluées",
+        nav_articles_peer:"Articles évalués",
+        nav_files:"Dossiers de recherche",
+        nav_foreign:"Articles étrangers",
+        nav_articles:"Articles",
+        nav_editions:"Nos publications",
+        nav_activities:"Activités",
+        nav_academic:"Académique",
+        nav_live:"Direct",
+        nav_rules:"Conditions de publication",
+        nav_contact:"Contactez-nous",
+        nav_board:"Comité éditorial",
+        nav_login:"Connexion",
+        nav_join:"Rejoignez-nous",
+        hero_live_badge:"🔴 En direct",
+        hero_title_live:"Diffusion en direct",
+        hero_sub_live:"Suivez en direct nos événements, séminaires et conférences scientifiques.",
+        sec_live_next:"Prochains directs",
+        footer_text:"© Tous droits réservés – Votre plateforme scientifique",
+        logout:"Déconnexion",
+        toast_logout_success:"Déconnexion réussie",
+        toast_open_live:"Chargement du direct...",
+        no_live:"Aucune diffusion pour le moment",
+        no_live_sub:"Les prochains directs apparaîtront ici une fois ajoutés depuis le tableau de bord.",
+        remind_saved:"Rappel enregistré",
+        btn_remind:"Me rappeler plus tard",
+        watch_youtube:"Voir sur YouTube",
+        invalid_youtube:"Le lien actuel n’est pas une URL YouTube valide.",
+        sp_politics:"Science politique",
+        sp_ir:"Relations internationales",
+        sp_admin_law:"Droit administratif",
+        sp_const_law:"Droit constitutionnel",
+        sp_public_policy:"Politiques publiques"
+      }
+    };
+
+    let currentLang = localStorage.getItem("lang") || "ar";
+    let liveData = [];
+
+    function t(key){
+      const dict = translations[currentLang] || translations.ar;
+      return dict[key] || "";
+    }
+
+    window.setLang = function(lang){
+      currentLang = lang;
+      localStorage.setItem("lang", lang);
+
+      const dict = translations[lang] || translations.ar;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === "en" || lang === "fr") ? "ltr" : "rtl";
+
+      const titleEl = document.getElementById("t-title");
+      if(titleEl && dict.title) titleEl.textContent = dict.title;
+
+      const langCurrent = document.getElementById("langCurrent");
+      if(langCurrent) langCurrent.textContent = lang.toUpperCase();
+
+      document.querySelectorAll("[data-t]").forEach(el => {
+        const key = el.getAttribute("data-t");
+        if(dict[key]) el.textContent = dict[key];
+      });
+
+      updateHeader();
+      renderLive();
+    };
+
+    function getText(field){
+      if(!field) return "";
+      if(typeof field === "string") return field;
+      return field[currentLang] || field.ar || field.fr || field.en || "";
+    }
+
+    function escapeHtml(value){
       return String(value ?? "").replace(/[&<>"']/g, function(m){
         return {
           "&":"&amp;",
@@ -307,125 +1445,161 @@
       });
     }
 
-    function getText(field) {
-      if (!field) return "";
-      if (typeof field === "string") return field;
-      return field.ar || field.fr || field.en || "";
-    }
-
-    function extractYouTubeId(url) {
-      if (!url) return "";
+    function extractYouTubeId(url){
+      if(!url) return "";
       const clean = String(url).trim();
 
-      try {
-        if (clean.includes("youtube.com/watch")) {
+      try{
+        if(clean.includes("youtube.com/watch")){
           const u = new URL(clean);
           return u.searchParams.get("v") || "";
         }
 
-        if (clean.includes("youtu.be/")) {
+        if(clean.includes("youtu.be/")){
           return clean.split("youtu.be/")[1]?.split(/[?&/]/)[0] || "";
         }
 
-        if (clean.includes("youtube.com/embed/")) {
+        if(clean.includes("youtube.com/embed/")){
           return clean.split("youtube.com/embed/")[1]?.split(/[?&/]/)[0] || "";
         }
 
-        if (clean.includes("youtube.com/shorts/")) {
+        if(clean.includes("youtube.com/live/")){
+          return clean.split("youtube.com/live/")[1]?.split(/[?&/]/)[0] || "";
+        }
+
+        if(clean.includes("youtube.com/shorts/")){
           return clean.split("youtube.com/shorts/")[1]?.split(/[?&/]/)[0] || "";
         }
-      } catch (e) {
+      }catch(e){
         return "";
       }
 
       return "";
     }
 
-    function buildEmbedUrl(url) {
+    function buildYouTubeEmbed(url){
       const id = extractYouTubeId(url);
-      if (!id) return "";
-      return "https://www.youtube.com/embed/" + id + "?autoplay=1&mute=1&rel=0&playsinline=1";
+      if(!id) return "";
+      return `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`;
     }
 
-    function renderEmpty(message) {
-      playerBox.innerHTML =
-        '<div class="empty">' +
-          '<i class="ri-live-line"></i>' +
-          '<div>' + escapeHtml(message) + '</div>' +
-        '</div>';
-    }
+    function renderLive(){
+      if(!liveVideo || !upcomingStreams) return;
 
-    function renderPlayer(sourceUrl) {
-      const embedUrl = buildEmbedUrl(sourceUrl);
+      liveVideo.innerHTML = "";
+      upcomingStreams.innerHTML = "";
 
-      if (!embedUrl) {
-        renderEmpty("رابط البث غير صالح. أدخل رابط YouTube صحيح من لوحة التحكم.");
-        statusBar.textContent = "الرابط الحالي ليس رابط YouTube صالحاً.";
-        youtubeBtn.style.display = "none";
-        return;
-      }
+      if(liveData.length > 0){
+        const currentLive = liveData[0];
+        const title = escapeHtml(getText(currentLive.title) || t("hero_title_live"));
+        const short = escapeHtml(getText(currentLive.short) || "");
+        const sourceUrl = currentLive.file || "";
+        const embedUrl = buildYouTubeEmbed(sourceUrl);
 
-      playerBox.innerHTML =
-        '<iframe ' +
-          'src="' + embedUrl + '" ' +
-          'title="YouTube Live Player" ' +
-          'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
-          'allowfullscreen>' +
-        '</iframe>';
+        if(embedUrl){
+          liveVideo.innerHTML = `
+            <iframe
+              src="${embedUrl}"
+              title="${title}"
+              width="100%"
+              height="100%"
+              frameborder="0"
+              allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin">
+            </iframe>
+          `;
+          showToast(`${t("toast_open_live")} ${getText(currentLive.title) || ""}`.trim(), "info");
+        } else {
+          liveVideo.innerHTML = `
+            <div class="live-overlay">
+              <h3>🎥 ${t("no_live")}</h3>
+              <p style="font-size:clamp(16px,4vw,20px);">${t("invalid_youtube")}</p>
+              ${sourceUrl ? `<a href="${sourceUrl}" target="_blank" rel="noopener" class="card-btn" style="max-width:280px;margin-top:20px;">${t("watch_youtube")}</a>` : ""}
+            </div>
+          `;
+        }
 
-      youtubeBtn.href = sourceUrl;
-      youtubeBtn.style.display = "inline-flex";
-    }
+        if(liveData.length === 1){
+          upcomingStreams.innerHTML = `
+            <div class="empty-state">
+              <h3>${t("no_live")}</h3>
+              <p>${t("no_live_sub")}</p>
+            </div>
+          `;
+        } else {
+          liveData.slice(1).forEach(item => {
+            const card = document.createElement("div");
+            card.className = "card";
+            const whenText = escapeHtml(getText(item.date) || "📅 قريباً");
+            const itemTitle = escapeHtml(getText(item.title) || t("hero_title_live"));
+            const itemShort = escapeHtml(getText(item.short) || t("no_live_sub"));
 
-    async function loadLivePage() {
-      statusBar.textContent = "جارٍ تحميل البث من Firestore...";
-
-      const snap = await getDocs(collection(db, "content"));
-      const liveItems = [];
-
-      snap.forEach(function(docSnap) {
-        const data = docSnap.data();
-        if (data.section === "live") {
-          liveItems.push({
-            id: docSnap.id,
-            ...data
+            card.innerHTML = `
+              <div class="card-time">${whenText}</div>
+              <h3>${itemTitle}</h3>
+              <p>${itemShort}</p>
+              <button class="card-btn" type="button" onclick="remindStream('${item.id}')">
+                <span>${t("btn_remind")}</span>
+                <span>🔔</span>
+              </button>
+            `;
+            upcomingStreams.appendChild(card);
           });
         }
-      });
+      } else {
+        liveVideo.innerHTML = `
+          <div class="live-overlay">
+            <h3>🎥 ${t("no_live")}</h3>
+            <p style="font-size:clamp(16px,4vw,20px);">${t("no_live_sub")}</p>
+          </div>
+        `;
 
-      liveItems.sort(function(a, b) {
-        return Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0);
-      });
-
-      if (!liveItems.length) {
-        titleEl.textContent = "لا يوجد بث مباشر";
-        descEl.textContent = "سيظهر هنا وصف البث المباشر الحالي بمجرد إضافته من لوحة التحكم.";
-        renderEmpty("لا يوجد بث مباشر الآن");
-        statusBar.textContent = "لم يتم العثور على أي عنصر في قسم البث المباشر.";
-        youtubeBtn.style.display = "none";
-        return;
-      }
-
-      const current = liveItems[0];
-      const title = getText(current.title) || "بث مباشر";
-      const desc = getText(current.short) || " ";
-
-      titleEl.textContent = title;
-      descEl.textContent = desc;
-
-      renderPlayer(current.file || "");
-      if (buildEmbedUrl(current.file || "")) {
-        statusBar.textContent = "تم تحميل البث المباشر بنجاح.";
+        upcomingStreams.innerHTML = `
+          <div class="empty-state">
+            <h3>${t("no_live")}</h3>
+            <p>${t("no_live_sub")}</p>
+          </div>
+        `;
       }
     }
 
-    loadLivePage().catch(function(error) {
-      console.error("Live page error:", error);
-      titleEl.textContent = "تعذر تحميل البث";
-      descEl.textContent = "حدث خطأ أثناء قراءة بيانات البث المباشر.";
-      renderEmpty("تعذر تحميل مشغل البث المباشر");
-      statusBar.textContent = "حدث خطأ أثناء الاتصال بـ Firestore.";
-      youtubeBtn.style.display = "none";
+    window.remindStream = function(id){
+      const stream = liveData.find(item => String(item.id) === String(id));
+      if(stream){
+        showToast(`🔔 ${t("remind_saved")} "${getText(stream.title) || ""}"`, "success");
+      }
+    };
+
+    async function loadLiveFromFirestore(){
+      try{
+        const snap = await getDocs(collection(db, "content"));
+        const items = [];
+
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          if(data.section === "live"){
+            items.push({
+              id: docSnap.id,
+              ...data
+            });
+          }
+        });
+
+        items.sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+        liveData = items;
+        renderLive();
+      }catch(error){
+        console.error("Live load error:", error);
+        liveData = [];
+        renderLive();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      updateHeader();
+      setLang(currentLang);
+      await loadLiveFromFirestore();
     });
   </script>
 </body>
