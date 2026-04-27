@@ -637,37 +637,8 @@
   </div>
 
   <!-- ملاحظة: هذا الملف يعتمد على firestore-bridge.js مثل مشروعك الحالي -->
+
 <script type="module" src="./firestore-bridge.js"></script>
-<script>
-  async function syncFirestoreToLocal() {
-    try {
-      await waitForFS(); // من admin.html
-      const sections = ['research', 'articles', 'editions', 'activities'];
-      for (let sec of sections) {
-        const q = window.fs.query(window.fs.collection(window.fs.db, sec), 
-                   window.fs.orderBy('id', 'desc'));
-        const snap = await window.fs.getDocs(q);
-        const data = snap.docs.map(d => ({docId: d.id, ...d.data()}));
-        localStorage.setItem(sec, JSON.stringify(data));
-        renderContent(sec, sec + 'Grid');
-      }
-      updateStats();
-      console.log('✅ Firestore synced to localStorage');
-    } catch(e) {
-      console.error('Firestore sync failed:', e);
-    }
-  }
-  
-  window.addEventListener('load', syncFirestoreToLocal);
-</script>
-
-
-  <!-- الجزء 2/3 سيضع هنا سكربت JS الرئيسي -->
-  <script>
-    // (سيتم استبداله بالكامل في الجزء 2/3)
-  </script>
-</body>
-</html>
 <script>
 const ADMIN_CODE = "admin";
 const ADMIN_PASS = "ofouqaca12";
@@ -719,7 +690,7 @@ function esc(s) {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
-    "\"": "&quot;",
+    '"': "&quot;",
     "'": "&#039;"
   }[m]));
 }
@@ -746,17 +717,9 @@ function setLockVisible() {
   requestAnimationFrame(() => el("lock").classList.remove("hidden"));
 }
 
-function requireFs() {
-  if (!window.fs || !window.fs.collection || !window.fs.getDocs || !window.fs.doc || !window.fs.setDoc) {
-    alert("Firestore غير جاهز. تأكد من firestore-bridge.js");
-    return false;
-  }
-  return true;
-}
-
-async function waitForFS(timeout = 8000){
+async function waitForFS(timeout = 8000) {
   const start = Date.now();
-  while (Date.now() - start < timeout){
+  while (Date.now() - start < timeout) {
     if (
       window.fs &&
       window.fs.db &&
@@ -771,9 +734,9 @@ async function waitForFS(timeout = 8000){
   return false;
 }
 
-async function requireFs(){
+async function requireFs() {
   const ok = await waitForFS();
-  if (!ok){
+  if (!ok) {
     alert("Firestore غير جاهز. تأكد من firestore-bridge.js");
     return false;
   }
@@ -1100,7 +1063,8 @@ async function upsertFirestore(sectionKey, obj) {
 async function saveItem(key) {
   const cfg = SECTIONS.find(s => s.key === key);
   if (!cfg) return;
-if (!(await requireFs())) return;
+  if (!(await requireFs())) return;
+
   const isLive = !!cfg.isLive;
   const currentId = editing.key === key && editing.id ? editing.id : String(uid());
 
@@ -1296,12 +1260,14 @@ function renderList(key) {
 
   list.innerHTML = "";
   data.forEach(item => {
-    const title = getByLang(item.title, "ar") || "بدون عنوان";
-    const descFull = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
+    const title = getByLang(item.title, "ar");
+    const descFull = getByLang(item.short, "ar") || getByLang(item.details, "ar");
     const desc = descFull.length > 120 ? descFull.slice(0, 120) + "..." : descFull;
-    const author = getByLang(item.author, "ar") || "—";
-    const dateLabel = getByLang(item.date, "ar") || "—";
-    const imgHtml = item.image ? `<img src="${item.image}" alt="img">` : `<img src="images/ofouq-logo.jpeg" alt="logo">`;
+    const author = getByLang(item.author, "ar");
+    const dateLabel = getByLang(item.date, "ar");
+    const imgHtml = item.image
+      ? `<img src="${item.image}" alt="img">`
+      : `<img src="images/ofouq-logo.jpeg" alt="logo">`;
 
     const wrap = document.createElement("div");
     wrap.className = "item";
@@ -1313,7 +1279,7 @@ function renderList(key) {
       ${imgHtml}
       <div class="item-body">
         <div class="item-title">${esc(title)}</div>
-        <div class="item-desc">${esc(desc || "—")}</div>
+        <div class="item-desc">${esc(desc)}</div>
         <div class="item-meta">
           <span>${esc(author)}</span>
           <span>${esc(dateLabel)}</span>
@@ -1327,14 +1293,11 @@ function renderList(key) {
 function loadForEdit(key, id) {
   const item = (db[key] || []).find(x => String(x.id) === String(id));
   if (!item) return alert("العنصر غير موجود.");
-
   editing = { key, id, originalId: id };
   draftMode = true;
   fillFormFromItem(key, item);
-
   const publishBtn = el(`${key}-publish-btn`);
-  if (publishBtn) publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر التعديلات';
-
+  if (publishBtn) publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> تحديث';
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -1370,7 +1333,6 @@ function collectDraftData(key) {
   obj.full.ar = (el(`${key}-full-ar-editor`)?.innerHTML || "").trim();
   obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
   obj.file = el(`${key}-file-url`)?.value.trim() || "";
-
   return obj;
 }
 
@@ -1379,7 +1341,7 @@ function saveDraft(key) {
   if (!draft) return;
   sessionStorage.setItem(`draft-${key}-${draft.id}`, JSON.stringify(draft));
   draftMode = true;
-  alert("تم حفظ المسودة");
+  alert("تم حفظ المسودة في المتصفح");
 }
 
 async function publishItem(key) {
@@ -1418,7 +1380,8 @@ async function reloadFromFirestore() {
 
 function exportJSON() {
   const out = {};
-  SECTIONS.forEach(s => out[s.key] = db[s.key] || []);
+  SECTIONS.forEach(s => out[s.key] = db[s.key]);
+
   const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -1431,12 +1394,12 @@ function exportJSON() {
 }
 
 function clearLocalStorage() {
-  const ok = confirm("سيتم حذف الكاش المحلي فقط. هل أنت متأكد؟");
+  const ok = confirm("سيتم مسح المحتوى المحلي فقط. هل تريد المتابعة؟");
   if (!ok) return;
   localStorage.removeItem("content_cache");
   SECTIONS.forEach(s => db[s.key] = []);
   showSection(currentSectionKey);
-  alert("تم حذف الكاش المحلي");
+  alert("تم مسح التخزين المحلي");
 }
 
 async function initAfterLogin() {
@@ -1446,7 +1409,7 @@ async function initAfterLogin() {
   await reloadFromFirestore();
 }
 
-(function bindGlobal() {
+function bindGlobal() {
   el("loginBtn").addEventListener("click", login);
   el("logoutBtn").addEventListener("click", logout);
   el("reloadBtn").addEventListener("click", reloadFromFirestore);
@@ -1455,22 +1418,21 @@ async function initAfterLogin() {
   el("clearBtn").addEventListener("click", clearLocalStorage);
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Enter" && el("lock").style.display !== "none" && !e.shiftKey) {
-      login();
-    }
+    if (e.key === "Enter" && el("lock").style.display !== "none" && !e.shiftKey) login();
   });
+}
 
-  window.addEventListener("load", () => {
-    rebuildDbFromCache();
-    if (sessionStorage.getItem("adminAuthed") === "1") {
-      setAppVisible();
-      initAfterLogin();
-    } else {
-      el("lock").style.display = "flex";
-      el("app").style.display = "none";
-    }
-  });
-})();
+bindGlobal();
+window.addEventListener("load", () => {
+  rebuildDbFromCache();
+  if (sessionStorage.getItem("adminAuthed") === "1") {
+    setAppVisible();
+    initAfterLogin();
+  } else {
+    el("lock").style.display = "flex";
+    el("app").style.display = "none";
+  }
+});
 
 window.showSection = showSection;
 window.saveItem = saveItem;
@@ -1481,10 +1443,6 @@ window.formatCmd = formatCmd;
 window.saveDraft = saveDraft;
 window.publishItem = publishItem;
 window.fillFormFromItem = fillFormFromItem;
-</script>
-<script type="module" src="./firestore-bridge.js"></script>
-<script>
-  // admin script here
 </script>
 </body>
 </html>
