@@ -711,33 +711,47 @@
     function setContentCache(items){
       localStorage.setItem("content_cache", JSON.stringify(items));
     }
+function rebuildDbFromCache(){
+  const all = getContentCache()
+    .map(item => normalizeItem(item.section, item))
+    .filter(item => SECTIONS.some(s => s.key === item.section));
 
-    function rebuildDbFromCache(){
-      const all = getContentCache();
-      SECTIONS.forEach(s => {
-        state.bySection[s.key] = all.filter(item => item.section === s.key);
-      });
-    }
+  SECTIONS.forEach(s => {
+    state.bySection[s.key] = all
+      .filter(item => item.section === s.key)
+      .sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+  });
+}
 
-    function normalizeItem(sectionKey, raw){
-      return {
-        id: String(raw.id || raw.docId || uid()),
-        docId: String(raw.docId || raw.id || uid()),
-        section: sectionKey || raw.section || "research",
-        title: raw.title || { ar:"", fr:"", en:"" },
-        short: raw.short || { ar:"", fr:"", en:"" },
-        full: raw.full || { ar:"", fr:"", en:"" },
-        details: raw.details || { ar:"", fr:"", en:"" },
-        author: raw.author || { ar:"", fr:"", en:"" },
-        affiliation: raw.affiliation || { ar:"", fr:"", en:"" },
-        date: raw.date || { ar:"", fr:"", en:"" },
-        image: raw.image || "",
-        file: raw.file || "",
-        createdAt: raw.createdAt || Date.now(),
-        updatedAt: raw.updatedAt || Date.now(),
-        status: raw.status || "published"
-      };
-    }
+js
+function normalizeItem(sectionKey, raw){
+  const fixedSection = (
+    sectionKey ||
+    raw.section ||
+    (raw.type === "live" ? "live" : "") ||
+    "research"
+  );
+
+  const normalizedId = String(raw.docId || raw.id || uid());
+
+  return {
+    id: normalizedId,
+    docId: normalizedId,
+    section: fixedSection,
+    title: typeof raw.title === "object" ? raw.title : { ar: raw.title || "", fr:"", en:"" },
+    short: typeof raw.short === "object" ? raw.short : { ar: raw.short || "", fr:"", en:"" },
+    full: typeof raw.full === "object" ? raw.full : { ar: raw.full || "", fr:"", en:"" },
+    details: typeof raw.details === "object" ? raw.details : { ar: raw.details || "", fr:"", en:"" },
+    author: typeof raw.author === "object" ? raw.author : { ar: raw.author || "", fr:"", en:"" },
+    affiliation: typeof raw.affiliation === "object" ? raw.affiliation : { ar: raw.affiliation || "", fr:"", en:"" },
+    date: typeof raw.date === "object" ? raw.date : { ar: raw.date || "", fr:"", en:"" },
+    image: raw.image || "",
+    file: raw.file || raw.link || "",
+    createdAt: Number(raw.createdAt || Date.now()),
+    updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
+    status: raw.status || "published"
+  };
+}
 
     function setAppVisible(){
       el("lock").classList.add("hidden");
@@ -1020,20 +1034,17 @@
       });
     }
 
-    function upsertLocal(sectionKey, obj){
-      const all = getContentCache();
-      const normalized = normalizeItem(sectionKey, obj);
-      const idx = all.findIndex(x =>
-        String(x.id) === String(normalized.id) || String(x.docId) === String(normalized.docId)
-      );
+function upsertLocal(sectionKey, obj){
+  const all = getContentCache().map(item => normalizeItem(item.section, item));
+  const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
 
-      if (idx >= 0) all[idx] = normalized;
-      else all.unshift(normalized);
+  const filtered = all.filter(x => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
+  filtered.unshift(normalized);
 
-      setContentCache(all);
-      rebuildDbFromCache();
-      state.editing = { key: null, id: null, originalId: null };
-    }
+  setContentCache(filtered);
+  rebuildDbFromCache();
+  state.editing = { key: null, id: null, originalId: null };
+}
 
     async function upsertFirestore(sectionKey, obj){
       const now = Date.now();
@@ -1123,17 +1134,16 @@
         }
       }
 
-      upsertLocal(key, obj);
-
+obj.section = key;
+upsertLocal(key, obj);
       try {
         await upsertFirestore(key, obj);
       } catch (err) {
-        console.error(err);
-        setStatus("تم الحفظ محليًا لكن فشل الحفظ في Firestore: " + err.message);
-        alert("تم الحفظ محليًا لكن فشل الحفظ في Firestore");
+        console.error("Firestore save error:", err);
+        setStatus("تم الحفظ محليًا لكن فشل الحفظ في Firestore: " + (err?.message || err));
+        alert("Firestore error: " + (err?.message || err));
         return;
       }
-
       resetForm(key);
       renderList(key);
       setStatus("تم الحفظ بنجاح في Firestore والكاش المحلي.");
@@ -1171,28 +1181,26 @@
       }
     }
 
-    async function deleteItemById(sectionKey, id){
-      const ok = confirm("سيتم حذف العنصر من localStorage و Firestore. هل أنت متأكد؟");
-      if (!ok) return;
+async function deleteItemById(sectionKey, id){
+  const ok = confirm("سيتم حذف العنصر من localStorage و Firestore. هل أنت متأكد؟");
+  if (!ok) return;
 
-      const all = getContentCache();
-      const item = all.find(x => String(x.id) === String(id) || String(x.docId) === String(id));
-      const filtered = all.filter(x => String(x.id) !== String(id) && String(x.docId) !== String(id));
+  const all = getContentCache().map(item => normalizeItem(item.section, item));
+  const filtered = all.filter(x => String(x.docId || x.id) !== String(id));
 
-      setContentCache(filtered);
-      rebuildDbFromCache();
-      renderList(sectionKey);
+  setContentCache(filtered);
+  rebuildDbFromCache();
+  renderList(sectionKey);
 
-      try {
-        const docIdValue = item?.docId || item?.id || id;
-        await deleteDoc(doc(db, "content", String(docIdValue)));
-        setStatus("تم حذف العنصر من Firestore والكاش المحلي.");
-      } catch (e) {
-        console.error("Firestore delete error:", e);
-        setStatus("تعذر حذف العنصر من Firestore: " + e.message);
-        alert("تعذر حذف العنصر من Firestore");
-      }
-    }
+  try {
+    await deleteDoc(doc(db, "content", String(id)));
+    setStatus("تم حذف العنصر من Firestore والكاش المحلي.");
+  } catch (e) {
+    console.error("Firestore delete error:", e);
+    setStatus("تعذر حذف العنصر من Firestore: " + e.message);
+    alert("تم حذف العنصر محليًا فقط، لكن فشل الحذف من Firestore");
+  }
+}
 
     function resetForm(key){
       state.editing = { key: null, id: null, originalId: null };
@@ -1227,100 +1235,110 @@
       const publishBtn = el(`${key}-publish-btn`);
       if (publishBtn) publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر';
     }
+function renderList(key){
+  const list = el(`${key}-list`);
+  const count = el(`${key}-count`);
+  if (!list || !count) return;
 
-    function renderList(key){
-      const list = el(`${key}-list`);
-      const count = el(`${key}-count`);
-      if (!list || !count) return;
+  const q = (el(`${key}-search`)?.value || "").trim().toLowerCase();
 
-      const q = (el(`${key}-search`)?.value || "").trim().toLowerCase();
+  const data = (state.bySection[key] || []).filter(item => {
+    if (item.section !== key) return false;
+    if (!q) return true;
+    const t = getByLang(item.title, "ar").toLowerCase();
+    const s = getByLang(item.short, "ar").toLowerCase();
+    const d = getByLang(item.details, "ar").toLowerCase();
+    return t.includes(q) || s.includes(q) || d.includes(q);
+  });
 
-      const data = (state.bySection[key] || []).filter(item => {
-        if (!q) return true;
-        const t = getByLang(item.title, "ar").toLowerCase();
-        const s = getByLang(item.short, "ar").toLowerCase();
-        return t.includes(q) || s.includes(q);
-      });
+  count.textContent = `${data.length} عنصر`;
 
-      count.textContent = `${data.length} عنصر`;
+  if (!data.length) {
+    list.innerHTML = `<div class="empty">لا توجد عناصر هنا بعد.</div>`;
+    return;
+  }
 
-      if (!data.length) {
-        list.innerHTML = `<div class="empty">لا توجد عناصر هنا بعد.</div>`;
-        return;
-      }
+  list.innerHTML = "";
+  data.forEach(item => {
+    const title = getByLang(item.title, "ar") || "بدون عنوان";
+    const descFull = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
+    const desc = descFull.length > 120 ? descFull.slice(0, 120) + "..." : descFull;
+    const author = getByLang(item.author, "ar") || "—";
+    const dateLabel = getByLang(item.date, "ar") || "—";
+    const imgHtml = item.image
+      ? `<img src="${item.image}" alt="img">`
+      : `<img src="images/ofouq-logo.jpeg" alt="logo">`;
 
-      list.innerHTML = "";
-      data.forEach(item => {
-        const title = getByLang(item.title, "ar") || "بدون عنوان";
-        const descFull = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
-        const desc = descFull.length > 120 ? descFull.slice(0, 120) + "..." : descFull;
-        const author = getByLang(item.author, "ar") || "—";
-        const dateLabel = getByLang(item.date, "ar") || "—";
-        const imgHtml = item.image ? `<img src="${item.image}" alt="img">` : `<img src="images/ofouq-logo.jpeg" alt="logo">`;
+    const liveBadge = key === "live"
+      ? `<div style="margin:6px 0 8px; font-size:11px; color:#38bdf8; font-weight:700;">رابط البث: ${item.file ? `<a href="${item.file}" target="_blank" rel="noopener" style="color:#7dd3fc;">فتح الرابط</a>` : "غير موجود"}</div>`
+      : "";
 
-        const wrap = document.createElement("div");
-        wrap.className = "item";
-        wrap.innerHTML = `
-          <div class="item-actions">
-            <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')"><i class="ri-pencil-line"></i></button>
-            <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
-          </div>
-          ${imgHtml}
-          <div class="item-body">
-            <div class="item-title">${esc(title)}</div>
-            <div class="item-desc">${esc(desc || "—")}</div>
-            <div class="item-meta">
-              <span>${esc(author)}</span>
-              <span>${esc(dateLabel)}</span>
-            </div>
-          </div>
-        `;
-        list.appendChild(wrap);
-      });
-    }
+    const wrap = document.createElement("div");
+    wrap.className = "item";
+    wrap.innerHTML = `
+      <div class="item-actions">
+        <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')"><i class="ri-pencil-line"></i></button>
+        <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
+      </div>
+      ${imgHtml}
+      <div class="item-body">
+        <div class="item-title">${esc(title)}</div>
+        ${liveBadge}
+        <div class="item-desc">${esc(desc || "—")}</div>
+        <div class="item-meta">
+          <span>${esc(author)}</span>
+          <span>${esc(dateLabel)}</span>
+        </div>
+      </div>
+    `;
+    list.appendChild(wrap);
+  });
+}
 
-    function loadForEdit(key, id){
-      const item = (state.bySection[key] || []).find(x => String(x.id) === String(id));
-      if (!item) return alert("العنصر غير موجود.");
+async function reloadFromFirestore(){
+  try {
+    setStatus("جارٍ تحميل المحتوى من Firestore...");
+    const snap = await getDocs(collection(db, "content"));
 
-      state.editing = { key, id, originalId: id };
-      fillFormFromItem(key, item);
+    const all = [];
+    snap.forEach(docSnap => {
+      const raw = { docId: docSnap.id, ...docSnap.data() };
+      all.push(normalizeItem(raw.section, raw));
+    });
 
-      const publishBtn = el(`${key}-publish-btn`);
-      if (publishBtn) publishBtn.innerHTML = '<i class="ri-upload-cloud-line"></i> نشر التعديلات';
+    const dedupedMap = new Map();
+    all.forEach(item => {
+      dedupedMap.set(String(item.docId || item.id), item);
+    });
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    const deduped = Array.from(dedupedMap.values()).sort((a, b) =>
+      Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0)
+    );
 
-    async function reloadFromFirestore(){
-      try {
-        setStatus("جارٍ تحميل المحتوى من Firestore...");
-        const snap = await getDocs(collection(db, "content"));
+    setContentCache(deduped);
+    rebuildDbFromCache();
+    renderList(state.currentSectionKey);
+    setStatus(`تم استرجاع ${deduped.length} عنصر من Firestore.`);
+    return deduped;
+  } catch (e) {
+    console.error("Firestore load error:", e);
+    setStatus("تعذر تحميل المحتوى من Firestore: " + e.message);
+    return [];
+  }
+}
 
-        const all = [];
-        snap.forEach(docSnap => {
-          const raw = { docId: docSnap.id, ...docSnap.data() };
-          const sectionKey = raw.section || "research";
-          all.push(normalizeItem(sectionKey, raw));
-        });
+async function recoverData(){
+  const data = await reloadFromFirestore();
 
-        all.sort((a, b) =>
-          Number(b.updatedAt || b.createdAt || b.id || 0) -
-          Number(a.updatedAt || a.createdAt || a.id || 0)
-        );
+  if (data.length) {
+    alert("تم استرجاع البيانات السابقة من Firestore بنجاح");
+    return;
+  }
 
-        setContentCache(all);
-        rebuildDbFromCache();
-        renderList(state.currentSectionKey);
-        setStatus(`تم استرجاع ${all.length} عنصر من Firestore.`);
-        return all;
-      } catch (e) {
-        console.error("Firestore load error:", e);
-        setStatus("تعذر تحميل المحتوى من Firestore: " + e.message);
-        alert("تعذر تحميل المحتوى من Firestore");
-        return [];
-      }
-    }
+  rebuildDbFromCache();
+  renderList(state.currentSectionKey);
+  setStatus(`تم الاعتماد على الكاش المحلي بعد تعذر تحميل Firestore. العناصر الحالية: ${getContentCache().length}`);
+}
 
     async function recoverData(){
       const data = await reloadFromFirestore();
