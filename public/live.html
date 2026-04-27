@@ -375,29 +375,32 @@
       return field.ar || field.fr || field.en || "";
     }
 
-    function toEmbedUrl(url) {
-      if (!url) return "";
+function toEmbedUrl(url) {
+  if (!url) return "";
 
-      url = url.trim();
+  url = url.trim();
 
-      if (url.includes("youtube.com/watch?v=")) {
-        const u = new URL(url);
-        const id = u.searchParams.get("v");
-        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
-      }
+  if (url.includes("youtube.com/watch?v=")) {
+    const u = new URL(url);
+    const id = u.searchParams.get("v");
+    return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
+  }
 
-      if (url.includes("youtu.be/")) {
-        const id = url.split("youtu.be/")[1]?.split("?")[0];
-        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
-      }
+  if (url.includes("youtu.be/")) {
+    const id = url.split("youtu.be/")[1]?.split("?")[0];
+    return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : url;
+  }
 
-      if (url.includes("youtube.com/embed/")) {
-        return url.includes("?") ? url : `${url}?autoplay=1&rel=0`;
-      }
+  if (url.includes("youtube.com/embed/")) {
+    return url.includes("?") ? url : `${url}?autoplay=1&rel=0`;
+  }
 
-      return url;
-    }
+  if (url.includes("facebook.com")) {
+    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&autoplay=1`;
+  }
 
+  return url;
+}
     function renderEmpty(message){
       playerBox.innerHTML = `
         <div class="player-empty">
@@ -407,40 +410,47 @@
       `;
     }
 
-    function renderPlayer(url) {
-      if (!url) {
-        renderEmpty("لا يوجد بث مباشر الآن");
-        return;
-      }
+function renderPlayer(url) {
+  if (!url) {
+    renderEmpty("لا يوجد بث مباشر الآن");
+    return;
+  }
 
-      const embedUrl = toEmbedUrl(url);
+  const embedUrl = toEmbedUrl(url);
+  const isFacebook = url.includes("facebook.com");
 
-      const isDirectVideo =
-        embedUrl.endsWith(".mp4") ||
-        embedUrl.endsWith(".webm") ||
-        embedUrl.endsWith(".ogg") ||
-        embedUrl.includes(".m3u8");
+  const isDirectVideo =
+    embedUrl.endsWith(".mp4") ||
+    embedUrl.endsWith(".webm") ||
+    embedUrl.endsWith(".ogg") ||
+    embedUrl.includes(".m3u8");
 
-      if (isDirectVideo) {
-        playerBox.innerHTML = `
-          <video controls autoplay playsinline muted style="width:100%;height:100%;background:#000;">
-            <source src="${embedUrl}">
-            متصفحك لا يدعم تشغيل الفيديو.
-          </video>
-        `;
-        return;
-      }
+  if (isDirectVideo) {
+    playerBox.innerHTML = `
+      <video controls autoplay playsinline muted style="width:100%;height:100%;background:#000;">
+        <source src="${embedUrl}">
+        متصفحك لا يدعم تشغيل الفيديو.
+      </video>
+    `;
+    return;
+  }
 
-      playerBox.innerHTML = `
-        <iframe
-          src="${embedUrl}"
-          title="البث المباشر"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowfullscreen
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
-      `;
-    }
+  playerBox.innerHTML = `
+    <iframe
+      src="${embedUrl}"
+      title="البث المباشر"
+      width="100%"
+      height="100%"
+      style="border:0;background:#000;"
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
+      allowfullscreen>
+    </iframe>
+  `;
+
+  if (isFacebook) {
+    statusBar.textContent = "إذا لم يعمل بث Facebook، تأكد أن المنشور أو الفيديو Public وليس خاصاً.";
+  }
+}
 
     function renderUpcoming(items){
       if (!items.length) {
