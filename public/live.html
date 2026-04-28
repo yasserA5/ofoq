@@ -12,14 +12,11 @@
     :root{
       --primary:#ec4899;
       --primary-dark:#be185d;
-      --primary-soft:#fef3c7;
-      --nav-bg:#ffffff;
       --text-main:#374151;
-      --bg-overlay:rgba(15,23,42,0.55);
     }
 
-    *{margin:0;padding:0;box-sizing:border-box;}
-    html,body{width:100%;overflow-x:hidden;}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;overflow-x:hidden}
 
     body{
       font-family:"Tajawal",sans-serif;
@@ -56,7 +53,7 @@
       transition:transform .2s;
     }
 
-    .logo img:hover{transform:scale(1.05);}
+    .logo img:hover{transform:scale(1.05)}
 
     nav{
       flex:1;
@@ -75,7 +72,7 @@
       flex-wrap:nowrap;
     }
 
-    nav li{position:relative;}
+    nav li{position:relative}
 
     nav a{
       text-decoration:none;
@@ -86,8 +83,8 @@
       transition:.2s;
     }
 
-    nav a:hover{color:var(--primary);}
-    nav a.active{color:var(--primary);}
+    nav a:hover{color:var(--primary)}
+    nav a.active{color:var(--primary)}
 
     nav a.active::after,
     nav a:hover::after{
@@ -128,7 +125,7 @@
       color:var(--primary);
     }
 
-    .dropdown:hover .dropdown-content{display:block;}
+    .dropdown:hover .dropdown-content{display:block}
 
     .nav-search{
       flex:0 0 150px;
@@ -144,11 +141,6 @@
       border:1px solid #cbd5e1;
       font-size:11px;
       outline:none;
-    }
-
-    .nav-search input:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 2px rgba(236,72,153,0.18);
     }
 
     .nav-search span{
@@ -177,8 +169,6 @@
       white-space:nowrap;
     }
 
-    .btn:hover{background:rgba(236,72,153,0.16);}
-
     .btn.primary{
       background:linear-gradient(90deg,var(--primary),var(--primary-dark));
       color:#fff;
@@ -186,7 +176,7 @@
       box-shadow:0 3px 12px rgba(236,72,153,0.35);
     }
 
-    .lang-wrapper{position:relative;}
+    .lang-wrapper{position:relative}
 
     .lang-toggle{
       border:none;
@@ -201,22 +191,6 @@
       gap:6px;
       font-weight:600;
       box-shadow:0 1px 3px rgba(0,0,0,0.1);
-      transition:.2s;
-    }
-
-    .lang-toggle:hover{
-      background:#f9fafb;
-      box-shadow:0 2px 8px rgba(0,0,0,0.15);
-      transform:translateY(-1px);
-    }
-
-    .lang-toggle svg{
-      pointer-events:none;
-      transition:transform .2s;
-    }
-
-    .lang-toggle[aria-expanded="true"] svg{
-      transform:rotate(180deg);
     }
 
     .lang-menu{
@@ -242,10 +216,6 @@
       font-size:12px;
       cursor:pointer;
       font-weight:500;
-      transition:.2s;
-      display:flex;
-      align-items:center;
-      gap:8px;
     }
 
     .lang-menu button:hover{
@@ -319,10 +289,7 @@
       z-index:1499;
     }
 
-    .nav-sheet.show{
-      transform:translateY(0);
-    }
-
+    .nav-sheet.show{transform:translateY(0)}
     .nav-sheet-handle{
       width:54px;
       height:6px;
@@ -423,10 +390,7 @@
       font-size:12px;
     }
 
-    .nav-sheet-section{
-      margin-bottom:12px;
-    }
-
+    .nav-sheet-section{margin-bottom:12px}
     .nav-sheet-section h3{
       font-size:13px;
       color:#0f172a;
@@ -608,26 +572,25 @@
       padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);
     }
 
-.live-video{
-  position:relative;
-  background:#000;
-  border-radius:clamp(20px,6vw,32px);
-  overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-  margin-bottom:clamp(30px,8vw,40px);
-width:min(1700px, 98vw);
-  margin-inline:auto;
-  aspect-ratio:16/9;
-  min-height:auto;
-}
+    .live-video{
+      position:relative;
+      background:#000;
+      border-radius:clamp(20px,6vw,32px);
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,0.5);
+      margin:0 auto clamp(30px,8vw,40px);
+      width:min(1400px,96vw);
+      aspect-ratio:16/9;
+      min-height:auto;
+    }
 
-.live-video iframe,
-.live-video video{
-  width:100%;
-  height:100%;
-  border:none;
-  display:block;
-}
+    .live-video iframe{
+      width:100%;
+      height:100%;
+      border:none;
+      display:block;
+      background:#000;
+    }
 
     .live-overlay{
       position:absolute;
@@ -641,7 +604,6 @@ width:min(1700px, 98vw);
       text-align:center;
       z-index:10;
       padding:clamp(20px,8vw,40px);
-      transition:background 0.3s;
     }
 
     .live-overlay h3{
@@ -766,7 +728,7 @@ width:min(1700px, 98vw);
     footer{
       margin-top:clamp(30px,8vw,40px);
       padding:clamp(25px,8vw,35px);
-      background:#000000;
+      background:#000;
       color:#f9fafb;
       text-align:center;
       font-size:clamp(15px,4vw,18px);
@@ -793,56 +755,49 @@ width:min(1700px, 98vw);
       color:#111827;
     }
 
-    .toast.success{border-right:4px solid #22c55e;}
-    .toast.info{border-right:4px solid #ec4899;}
+    .toast.success{border-right:4px solid #22c55e}
+    .toast.info{border-right:4px solid #ec4899}
 
-    .toast-icon{font-size:clamp(18px,5vw,20px);}
-
-    .toast-message{
-      font-weight:500;
-      font-size:clamp(14px,3.5vw,16px);
-    }
+    .toast-icon{font-size:clamp(18px,5vw,20px)}
+    .toast-message{font-weight:500;font-size:clamp(14px,3.5vw,16px)}
 
     @keyframes pulse{
-      0%,100%{opacity:1;}
-      50%{opacity:0.7;}
+      0%,100%{opacity:1}
+      50%{opacity:0.7}
     }
 
     @keyframes blink{
-      0%,50%{opacity:1;}
-      51%,100%{opacity:0;}
+      0%,50%{opacity:1}
+      51%,100%{opacity:0}
     }
 
     @keyframes glow{
-      0%,100%{text-shadow:0 0 10px rgba(236,72,153,0.5);}
-      50%{text-shadow:0 0 20px rgba(236,72,153,0.8),0 0 30px rgba(236,72,153,0.4);}
+      0%,100%{text-shadow:0 0 10px rgba(236,72,153,0.5)}
+      50%{text-shadow:0 0 20px rgba(236,72,153,0.8),0 0 30px rgba(236,72,153,0.4)}
     }
 
     @keyframes slideIn{
-      from{transform:translateX(-100%);opacity:0;}
-      to{transform:translateX(0);opacity:1;}
+      from{transform:translateX(-100%);opacity:0}
+      to{transform:translateX(0);opacity:1}
     }
 
     @keyframes slideOut{
-      from{transform:translateX(0);opacity:1;}
-      to{transform:translateX(-100%);opacity:0;}
+      from{transform:translateX(0);opacity:1}
+      to{transform:translateX(-100%);opacity:0}
     }
 
-    .toast.removing{animation:slideOut 0.3s ease-in-out;}
+    .toast.removing{animation:slideOut 0.3s ease-in-out}
 
     @media(max-width:1100px){
-      .nav-search{display:none;}
+      .nav-search{display:none}
     }
 
     @media(max-width:980px){
-      nav{display:none;}
-      .actions{display:none;}
-      #menu-btn{
-        display:flex;
-        order:-1;
-      }
-      header{justify-content:space-between;}
-      .logo{margin-inline:auto;}
+      nav{display:none}
+      .actions{display:none}
+      #menu-btn{display:flex;order:-1}
+      header{justify-content:space-between}
+      .logo{margin-inline:auto}
       .toast-container{
         left:50%;
         transform:translateX(-50%);
@@ -851,41 +806,33 @@ width:min(1700px, 98vw);
     }
 
     @media(max-width:768px){
-      header{padding:15px 20px;}
-      .hero{padding:clamp(60px,18vw,90px) 20px;}
-      .live-container{padding:40px 20px;}
-      section{padding:50px 20px;}
-      .grid{
-        grid-template-columns:1fr;
-        gap:20px;
-      }
+      header{padding:15px 20px}
+      .hero{padding:clamp(60px,18vw,90px) 20px}
+      .live-container{padding:40px 20px}
+      section{padding:50px 20px}
+      .grid{grid-template-columns:1fr;gap:20px}
     }
 
     @media(max-width:480px){
-      header{padding:12px 15px;}
-      .logo img{width:65px;}
-      .hero{padding:50px 15px;}
-      .live-container{padding:30px 12px;}
-      .nav-sheet-grid{
-        grid-template-columns:repeat(2,1fr);
-        gap:6px;
-      }
-      .sheet-card{
-        padding:12px 6px;
-        font-size:13px;
-      }
+      header{padding:12px 15px}
+      .logo img{width:65px}
+      .hero{padding:50px 15px}
+      .live-container{padding:30px 12px}
+      .nav-sheet-grid{grid-template-columns:repeat(2,1fr);gap:6px}
+      .sheet-card{padding:12px 6px;font-size:13px}
     }
 
     @media(min-width:981px){
-      .nav-sheet,
-      .nav-sheet-overlay{
-        display:none;
-      }
+      .nav-sheet,.nav-sheet-overlay{display:none}
     }
   </style>
 </head>
 
 <body>
+  <div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/ar_AR/sdk.js#xfbml=1&version=v19.0">
+</script>
   <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
   <div class="nav-sheet" id="mobileMenu">
@@ -903,7 +850,7 @@ width:min(1700px, 98vw);
     </div>
 
     <form class="nav-sheet-search" onsubmit="doSearch(event)">
-      <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
+      <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة...">
       <button type="submit">🔍</button>
     </form>
 
@@ -955,13 +902,7 @@ width:min(1700px, 98vw);
   <div class="toast-container" id="toastContainer"></div>
 
   <header>
-    <button
-      id="menu-btn"
-      type="button"
-      onclick="toggleMenu()"
-      aria-label="Toggle navigation menu"
-      aria-expanded="false"
-    >☰</button>
+    <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
 
     <div class="logo" onclick="goToHome()">
       <img src="logo1.png" alt="Logo">
@@ -1006,11 +947,8 @@ width:min(1700px, 98vw);
 
     <div class="actions" id="headerActions">
       <div class="lang-wrapper">
-        <button class="lang-toggle" type="button" onclick="toggleLangMenu()" title="تغيير اللغة" aria-expanded="false">
+        <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-expanded="false">
           <span id="langCurrent">AR</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M7 10l5 5 5-5z"></path>
-          </svg>
         </button>
         <div class="lang-menu" id="langMenu">
           <button type="button" onclick="setLang('ar')">العربية</button>
@@ -1042,101 +980,18 @@ width:min(1700px, 98vw);
     <div class="grid" id="upcomingStreams"></div>
   </section>
 
-  <footer data-t="footer_text" style="
-    background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #000000 100%);
-    padding: clamp(30px, 8vw, 50px) clamp(25px, 6vw, 45px);
-    text-align: center;
-    color: #f9fafb;
-    font-size: clamp(14px, 3vw, 16px);
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 -8px 40px rgba(236,72,153,0.15);
-    border-top: 1px solid rgba(255,255,255,0.08);
-  ">
-    <div style="
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 4px; background: linear-gradient(90deg, transparent, #ec4899, #f472b6, transparent);
-      filter: blur(1px);
-    "></div>
+  <section>
+    <h2 id="endedTitle">الإعادات السابقة</h2>
+    <div class="grid" id="endedStreams"></div>
+  </section>
 
-    <div style="max-width: 1100px; margin: 0 auto; position: relative; z-index: 2;">
-      <div style="
-        display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-        gap: 16px 24px; margin-bottom: 20px; font-weight: 700;
-        opacity: 0.95;
-      ">
-        <div style="
-          margin: 0 auto 18px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          flex-wrap: wrap;
-          max-width: 100%;
-          padding: 10px 18px;
-          border-radius: 999px;
-          background: rgba(255,255,255,0.08);
-          border: 1px solid rgba(255,255,255,0.14);
-          color: #f9fafb;
-          font-weight: 800;
-          font-size: clamp(12px, 3vw, 14px);
-          text-align: center;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-        ">
-          <span style="color:#f9a8d4; font-weight:900;">ISSN:</span>
-          <span>3119-6691</span>
-        </div>
-
-        <a href="https://ofouqacademie.com" style="
-          background: linear-gradient(135deg, #ec4899, #f472b6);
-          -webkit-background-clip: text; background-clip: text;
-          -webkit-text-fill-color: transparent;
-          text-decoration: none; font-weight: 900; font-size: 1.15em;
-        ">Ofouq Academie</a>
-
-        <span style="font-size: 1em;">© 2026 by</span>
-
-        <a href="https://github.com/yasserA5" style="
-          color: #facc15; text-decoration: none; font-weight: 800;
-          text-shadow: 0 0 8px rgba(250,204,21,0.5);
-        ">Karim Rasmi</a>
-
-        <span>– جميع الحقوق محفوظة – منصتك العلمية</span>
-      </div>
-
-      <div style="
-        display: inline-flex; align-items: center; justify-content: center;
-        gap: 12px; padding: 18px 28px;
-        background: rgba(255,255,255,0.06); backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.15);
-        border-radius: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        transition: all 0.3s ease; cursor: pointer;
-        max-width: 700px; margin: 0 auto 16px;
-      " onclick="window.open('https://creativecommons.org/licenses/by-nc/4.0/', '_blank')">
-        <span style="color: #e6f3ff; font-weight: 700; font-size: 1.05em;">
-          Creative Commons Attribution-NonCommercial 4.0 International
-        </span>
-
-        <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width: 22px; height: 22px; opacity: 0.95;">
-        <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width: 22px; height: 22px; opacity: 0.95;">
-        <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width: 22px; height: 22px; opacity: 0.95;">
-      </div>
-
-      <p style="
-        margin: 0; opacity: 0.7; font-size: 0.88em;
-        font-style: italic; line-height: 1.5;
-      ">
-        إلا إذا ذُكر خلاف ذلك | Except where otherwise noted.
-      </p>
-    </div>
+  <footer>
+    © 2026 Ofouq Academie
   </footer>
 
-  <script type="module">
-    import { db } from "./firebase-init.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+<script>
 
-    function goToHome(){window.location.href='index.html';}
-
+    function goToHome(){ window.location.href = "index.html"; }
     window.goToHome = goToHome;
 
     window.toggleMenu = function(){
@@ -1194,87 +1049,7 @@ width:min(1700px, 98vw);
       }, 3500);
     }
 
-    let user = JSON.parse(
-      localStorage.getItem("user") ||
-      sessionStorage.getItem("user") ||
-      "null"
-    );
-
-    function updateHeader(){
-      const headerActions = document.getElementById("headerActions");
-      const mobileLogin = document.getElementById("mobileLogin");
-      const mobileRegister = document.getElementById("mobileRegister");
-
-      if(user && user.loggedIn){
-        const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
-
-        if(headerActions){
-          headerActions.innerHTML = `
-            <div class="lang-wrapper">
-              <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
-                <span id="langCurrent">${currentLang.toUpperCase()}</span>
-              </button>
-              <div class="lang-menu" id="langMenu">
-                <button type="button" onclick="setLang('ar')">العربية</button>
-                <button type="button" onclick="setLang('en')">English</button>
-                <button type="button" onclick="setLang('fr')">Français</button>
-              </div>
-            </div>
-            <span style="margin-right:8px;font-size:12px;color:#374151;font-weight:700;">${displayName}</span>
-            <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
-          `;
-        }
-
-        if(mobileLogin){
-          mobileLogin.textContent = translations[currentLang]?.logout || translations.ar.logout;
-          mobileLogin.href = "#";
-          mobileLogin.onclick = function(e){ e.preventDefault(); logout(); };
-        }
-
-        if(mobileRegister){
-          mobileRegister.style.display = "none";
-        }
-      } else {
-        if(headerActions){
-          headerActions.innerHTML = `
-            <div class="lang-wrapper">
-              <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
-                <span id="langCurrent">${currentLang.toUpperCase()}</span>
-              </button>
-              <div class="lang-menu" id="langMenu">
-                <button type="button" onclick="setLang('ar')">العربية</button>
-                <button type="button" onclick="setLang('en')">English</button>
-                <button type="button" onclick="setLang('fr')">Français</button>
-              </div>
-            </div>
-            <button class="btn" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
-            <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
-          `;
-        }
-
-        if(mobileLogin){
-          mobileLogin.href = "login.html";
-          mobileLogin.onclick = null;
-          mobileLogin.textContent = translations[currentLang]?.nav_login || translations.ar.nav_login;
-        }
-
-        if(mobileRegister){
-          mobileRegister.style.display = "";
-          mobileRegister.href = "register.html";
-          mobileRegister.textContent = translations[currentLang]?.nav_join || translations.ar.nav_join;
-        }
-      }
-    }
-
-    window.logout = function(){
-      localStorage.removeItem("user");
-      sessionStorage.removeItem("user");
-      user = null;
-      location.reload();
-    };
-
-    const liveVideo = document.getElementById("liveVideo");
-    const upcomingStreams = document.getElementById("upcomingStreams");
+    let user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null");
 
     const translations = {
       ar:{
@@ -1301,16 +1076,15 @@ width:min(1700px, 98vw);
         hero_title_live:"البث الحي",
         hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة",
         sec_live_next:"البث القادم",
-        footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
-        logout:"تسجيل الخروج",
-        toast_logout_success:"تم تسجيل الخروج بنجاح",
-        toast_open_live:"جاري تحميل البث...",
+        sec_live_ended:"الإعادات السابقة",
         no_live:"لا توجد بثوث مباشرة حالياً",
         no_live_sub:"ستظهر البثوث القادمة هنا بمجرد إضافتها من لوحة التحكم.",
+        no_ended:"لا توجد إعادات بعد",
         remind_saved:"تم حفظ تذكير البث",
         btn_remind:"تذكير لاحقاً",
-        watch_youtube:"مشاهدة على يوتيوب",
-        invalid_youtube:"الرابط الحالي ليس رابط YouTube صالحاً.",
+        watch_replay:"▶ مشاهدة الإعادة",
+        watch_facebook:"فتح على Facebook",
+        logout:"تسجيل الخروج",
         sp_politics:"تخصص علوم سياسية",
         sp_ir:"العلاقات الدولية",
         sp_admin_law:"القانون الإداري",
@@ -1341,16 +1115,15 @@ width:min(1700px, 98vw);
         hero_title_live:"Live Stream",
         hero_sub_live:"Follow our live events, seminars and scientific talks.",
         sec_live_next:"Upcoming Live",
-        footer_text:"© All rights reserved – Your Academic Platform",
-        logout:"Logout",
-        toast_logout_success:"Logged out successfully",
-        toast_open_live:"Loading live stream...",
+        sec_live_ended:"Previous Replays",
         no_live:"No live streams currently",
         no_live_sub:"Upcoming streams will appear here once added from the dashboard.",
+        no_ended:"No replays yet",
         remind_saved:"Stream reminder saved",
         btn_remind:"Remind me later",
-        watch_youtube:"Watch on YouTube",
-        invalid_youtube:"The current link is not a valid YouTube URL.",
+        watch_replay:"▶ Watch replay",
+        watch_facebook:"Open on Facebook",
+        logout:"Logout",
         sp_politics:"Political Science",
         sp_ir:"International Relations",
         sp_admin_law:"Administrative Law",
@@ -1381,16 +1154,15 @@ width:min(1700px, 98vw);
         hero_title_live:"Diffusion en direct",
         hero_sub_live:"Suivez en direct nos événements, séminaires et conférences scientifiques.",
         sec_live_next:"Prochains directs",
-        footer_text:"© Tous droits réservés – Votre plateforme scientifique",
-        logout:"Déconnexion",
-        toast_logout_success:"Déconnexion réussie",
-        toast_open_live:"Chargement du direct...",
+        sec_live_ended:"Rediffusions précédentes",
         no_live:"Aucune diffusion pour le moment",
         no_live_sub:"Les prochains directs apparaîtront ici une fois ajoutés depuis le tableau de bord.",
+        no_ended:"Aucune rediffusion pour le moment",
         remind_saved:"Rappel enregistré",
         btn_remind:"Me rappeler plus tard",
-        watch_youtube:"Voir sur YouTube",
-        invalid_youtube:"Le lien actuel n’est pas une URL YouTube valide.",
+        watch_replay:"▶ Voir la rediffusion",
+        watch_facebook:"Ouvrir sur Facebook",
+        logout:"Déconnexion",
         sp_politics:"Science politique",
         sp_ir:"Relations internationales",
         sp_admin_law:"Droit administratif",
@@ -1400,12 +1172,106 @@ width:min(1700px, 98vw);
     };
 
     let currentLang = localStorage.getItem("lang") || "ar";
-    let liveData = [];
-
+const LIVE_URL = "https://www.facebook.com/share/v/1DseR5hovs/";
+let liveData = [
+  {
+    id: "live1",
+    status: "live",
+    file: LIVE_URL,
+    title: {
+      ar: "البث المباشر",
+      en: "Live Stream",
+      fr: "Diffusion en direct"
+    },
+    short: {
+      ar: "تابعوا البث الآن مباشرة على Facebook.",
+      en: "Watch the live stream now on Facebook.",
+      fr: "Suivez le direct maintenant sur Facebook."
+    }
+  }
+];
     function t(key){
       const dict = translations[currentLang] || translations.ar;
       return dict[key] || "";
     }
+
+    function getText(field){
+      if(!field) return "";
+      if(typeof field === "string") return field;
+      return field[currentLang] || field.ar || field.fr || field.en || "";
+    }
+
+    function escapeHtml(value){
+      return String(value ?? "").replace(/[&<>"']/g, function(m){
+        return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m];
+      });
+    }
+
+    function updateHeader(){
+      const headerActions = document.getElementById("headerActions");
+      const mobileLogin = document.getElementById("mobileLogin");
+      const mobileRegister = document.getElementById("mobileRegister");
+
+      if(user && user.loggedIn){
+        const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "User");
+        if(headerActions){
+          headerActions.innerHTML = `
+            <div class="lang-wrapper">
+              <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
+                <span id="langCurrent">${currentLang.toUpperCase()}</span>
+              </button>
+              <div class="lang-menu" id="langMenu">
+                <button type="button" onclick="setLang('ar')">العربية</button>
+                <button type="button" onclick="setLang('en')">English</button>
+                <button type="button" onclick="setLang('fr')">Français</button>
+              </div>
+            </div>
+            <span style="margin-right:8px;font-size:12px;color:#374151;font-weight:700;">${displayName}</span>
+            <button class="btn" onclick="logout()" data-t="logout">${t("logout")}</button>
+          `;
+        }
+        if(mobileLogin){
+          mobileLogin.textContent = t("logout");
+          mobileLogin.href = "#";
+          mobileLogin.onclick = function(e){ e.preventDefault(); logout(); };
+        }
+        if(mobileRegister) mobileRegister.style.display = "none";
+      } else {
+        if(headerActions){
+          headerActions.innerHTML = `
+            <div class="lang-wrapper">
+              <button class="lang-toggle" type="button" onclick="toggleLangMenu()">
+                <span id="langCurrent">${currentLang.toUpperCase()}</span>
+              </button>
+              <div class="lang-menu" id="langMenu">
+                <button type="button" onclick="setLang('ar')">العربية</button>
+                <button type="button" onclick="setLang('en')">English</button>
+                <button type="button" onclick="setLang('fr')">Français</button>
+              </div>
+            </div>
+            <button class="btn" onclick="location.href='login.html'" data-t="nav_login">${t("nav_login")}</button>
+            <button class="btn primary" onclick="location.href='register.html'" data-t="nav_join">${t("nav_join")}</button>
+          `;
+        }
+        if(mobileLogin){
+          mobileLogin.href = "login.html";
+          mobileLogin.onclick = null;
+          mobileLogin.textContent = t("nav_login");
+        }
+        if(mobileRegister){
+          mobileRegister.style.display = "";
+          mobileRegister.href = "register.html";
+          mobileRegister.textContent = t("nav_join");
+        }
+      }
+    }
+
+    window.logout = function(){
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("user");
+      user = null;
+      location.reload();
+    };
 
     window.setLang = function(lang){
       currentLang = lang;
@@ -1426,146 +1292,124 @@ width:min(1700px, 98vw);
         if(dict[key]) el.textContent = dict[key];
       });
 
+      const endedTitle = document.getElementById("endedTitle");
+      if(endedTitle) endedTitle.textContent = dict.sec_live_ended || "الإعادات السابقة";
+
       updateHeader();
       renderLive();
     };
 
-    function getText(field){
-      if(!field) return "";
-      if(typeof field === "string") return field;
-      return field[currentLang] || field.ar || field.fr || field.en || "";
-    }
+    const liveVideo = document.getElementById("liveVideo");
+    const upcomingStreams = document.getElementById("upcomingStreams");
+    const endedStreams = document.getElementById("endedStreams");
 
-    function escapeHtml(value){
-      return String(value ?? "").replace(/[&<>"']/g, function(m){
-        return {
-          "&":"&amp;",
-          "<":"&lt;",
-          ">":"&gt;",
-          '"':"&quot;",
-          "'":"&#039;"
-        }[m];
-      });
-    }
+    
 
-    function extractYouTubeId(url){
-      if(!url) return "";
-      const clean = String(url).trim();
 
-      try{
-        if(clean.includes("youtube.com/watch")){
-          const u = new URL(clean);
-          return u.searchParams.get("v") || "";
-        }
+function renderLive(){
+  if(!liveVideo || !upcomingStreams || !endedStreams) return;
 
-        if(clean.includes("youtu.be/")){
-          return clean.split("youtu.be/")[1]?.split(/[?&/]/)[0] || "";
-        }
+  liveVideo.innerHTML = "";
+  upcomingStreams.innerHTML = "";
+  endedStreams.innerHTML = "";
 
-        if(clean.includes("youtube.com/embed/")){
-          return clean.split("youtube.com/embed/")[1]?.split(/[?&/]/)[0] || "";
-        }
+  const liveNow = liveData.filter(item => String(item.status || "").toLowerCase() === "live");
+  const upcoming = liveData.filter(item => {
+    const s = String(item.status || "").toLowerCase();
+    return s === "upcoming" || s === "";
+  });
+  const ended = liveData.filter(item => String(item.status || "").toLowerCase() === "ended");
 
-        if(clean.includes("youtube.com/live/")){
-          return clean.split("youtube.com/live/")[1]?.split(/[?&/]/)[0] || "";
-        }
+  const current = liveNow[0] || ended[0] || null;
 
-        if(clean.includes("youtube.com/shorts/")){
-          return clean.split("youtube.com/shorts/")[1]?.split(/[?&/]/)[0] || "";
-        }
-      }catch(e){
-        return "";
-      }
+  if(current && current.file){
+    const safeUrl = String(current.file).trim();
+    const safeTitle = escapeHtml(getText(current.title) || t("hero_title_live"));
 
-      return "";
-    }
-
-    function buildYouTubeEmbed(url){
-      const id = extractYouTubeId(url);
-      if(!id) return "";
-      return `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`;
-    }
-
-    function renderLive(){
-      if(!liveVideo || !upcomingStreams) return;
-
-      liveVideo.innerHTML = "";
-      upcomingStreams.innerHTML = "";
-
-      if(liveData.length > 0){
-        const currentLive = liveData[0];
-        const title = escapeHtml(getText(currentLive.title) || t("hero_title_live"));
-        const short = escapeHtml(getText(currentLive.short) || "");
-        const sourceUrl = currentLive.file || "";
-        const embedUrl = buildYouTubeEmbed(sourceUrl);
-
-        if(embedUrl){
-          liveVideo.innerHTML = `
-            <iframe
-              src="${embedUrl}"
-              title="${title}"
-              width="100%"
-              height="100%"
-              frameborder="0"
-              allowfullscreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin">
-            </iframe>
-          `;
-          showToast(`${t("toast_open_live")} ${getText(currentLive.title) || ""}`.trim(), "info");
-        } else {
-          liveVideo.innerHTML = `
-            <div class="live-overlay">
-              <h3>🎥 ${t("no_live")}</h3>
-              <p style="font-size:clamp(16px,4vw,20px);">${t("invalid_youtube")}</p>
-              ${sourceUrl ? `<a href="${sourceUrl}" target="_blank" rel="noopener" class="card-btn" style="max-width:280px;margin-top:20px;">${t("watch_youtube")}</a>` : ""}
-            </div>
-          `;
-        }
-
-        if(liveData.length === 1){
-          upcomingStreams.innerHTML = `
-            <div class="empty-state">
-              <h3>${t("no_live")}</h3>
-              <p>${t("no_live_sub")}</p>
-            </div>
-          `;
-        } else {
-          liveData.slice(1).forEach(item => {
-            const card = document.createElement("div");
-            card.className = "card";
-            const whenText = escapeHtml(getText(item.date) || "📅 قريباً");
-            const itemTitle = escapeHtml(getText(item.title) || t("hero_title_live"));
-            const itemShort = escapeHtml(getText(item.short) || t("no_live_sub"));
-
-            card.innerHTML = `
-              <div class="card-time">${whenText}</div>
-              <h3>${itemTitle}</h3>
-              <p>${itemShort}</p>
-              <button class="card-btn" type="button" onclick="remindStream('${item.id}')">
-                <span>${t("btn_remind")}</span>
-                <span>🔔</span>
-              </button>
-            `;
-            upcomingStreams.appendChild(card);
-          });
-        }
-      } else {
-        liveVideo.innerHTML = `
-          <div class="live-overlay">
-            <h3>🎥 ${t("no_live")}</h3>
-            <p style="font-size:clamp(16px,4vw,20px);">${t("no_live_sub")}</p>
+    liveVideo.innerHTML = `
+      <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px;">
+        <div class="fb-video"
+             data-href="${safeUrl}"
+             data-width="1200"
+             data-show-text="false"
+             data-allowfullscreen="true">
+          <div class="fb-xfbml-parse-ignore">
+            <blockquote cite="${safeUrl}">
+              <a href="${safeUrl}" target="_blank" rel="noopener">${safeTitle}</a>
+            </blockquote>
           </div>
-        `;
+        </div>
 
-        upcomingStreams.innerHTML = `
-          <div class="empty-state">
-            <h3>${t("no_live")}</h3>
-            <p>${t("no_live_sub")}</p>
-          </div>
-        `;
-      }
+        <div style="margin-top:16px;text-align:center;width:100%;display:flex;justify-content:center;">
+          <a class="card-btn" href="${safeUrl}" target="_blank" rel="noopener" style="max-width:320px;">
+            ${t("watch_facebook")}
+          </a>
+        </div>
+      </div>
+    `;
+
+    if(window.FB && typeof window.FB.XFBML.parse === "function"){
+      window.FB.XFBML.parse(liveVideo);
     }
+  } else {
+    liveVideo.innerHTML = `
+      <div class="live-overlay">
+        <h3>${t("no_live")}</h3>
+        <p style="font-size:clamp(16px,4vw,20px);">${t("no_live_sub")}</p>
+      </div>
+    `;
+  }
+
+  if(upcoming.length > 0){
+    upcoming.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      const time = item.date ? escapeHtml(getText(item.date)) : "📅 قريباً";
+
+      card.innerHTML = `
+        <div class="card-time">${time}</div>
+        <h3>${escapeHtml(getText(item.title) || "بث قادم")}</h3>
+        <p>${escapeHtml(getText(item.short) || "")}</p>
+        <button class="card-btn" type="button" onclick="remindStream('${item.id}')">
+          <span>${t("btn_remind")}</span>
+          <span>🔔</span>
+        </button>
+      `;
+      upcomingStreams.appendChild(card);
+    });
+  } else {
+    upcomingStreams.innerHTML = `
+      <div class="empty-state">
+        <h3>${t("no_live")}</h3>
+        <p>${t("no_live_sub")}</p>
+      </div>
+    `;
+  }
+
+  if(ended.length > 0){
+    ended.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      const time = item.date ? escapeHtml(getText(item.date)) : "منتهي";
+
+      card.innerHTML = `
+        <div class="card-time">${time}</div>
+        <h3>${escapeHtml(getText(item.title) || "إعادة")}</h3>
+        <p>${escapeHtml(getText(item.short) || "")}</p>
+        <a class="card-btn" href="${item.file || '#'}" target="_blank" rel="noopener">
+          ${t("watch_replay")}
+        </a>
+      `;
+      endedStreams.appendChild(card);
+    });
+  } else {
+    endedStreams.innerHTML = `
+      <div class="empty-state">
+        <h3>${t("no_ended")}</h3>
+      </div>
+    `;
+  }
+}
 
     window.remindStream = function(id){
       const stream = liveData.find(item => String(item.id) === String(id));
@@ -1574,36 +1418,12 @@ width:min(1700px, 98vw);
       }
     };
 
-    async function loadLiveFromFirestore(){
-      try{
-        const snap = await getDocs(collection(db, "content"));
-        const items = [];
 
-        snap.forEach(docSnap => {
-          const data = docSnap.data();
-          if(data.section === "live"){
-            items.push({
-              id: docSnap.id,
-              ...data
-            });
-          }
-        });
-
-        items.sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
-        liveData = items;
-        renderLive();
-      }catch(error){
-        console.error("Live load error:", error);
-        liveData = [];
-        renderLive();
-      }
-    }
-
-    window.addEventListener("DOMContentLoaded", async () => {
-      updateHeader();
-      setLang(currentLang);
-      await loadLiveFromFirestore();
-    });
+window.addEventListener("DOMContentLoaded", () => {
+  updateHeader();
+  setLang(currentLang);
+  renderLive();
+});
   </script>
 </body>
-</html>
+</html>.
