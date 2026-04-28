@@ -571,18 +571,16 @@
       margin:0 auto;
       padding:clamp(40px,12vw,60px) clamp(20px,8vw,40px);
     }
-
-    .live-video{
-      position:relative;
-      background:#000;
-      border-radius:clamp(20px,6vw,32px);
-      overflow:hidden;
-      box-shadow:0 20px 60px rgba(0,0,0,0.5);
-      margin:0 auto clamp(30px,8vw,40px);
-      width:min(1400px,96vw);
-      aspect-ratio:16/9;
-      min-height:auto;
-    }
+.live-video{
+  position:relative;
+  background:#000;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  margin:0 auto 30px;
+  width:min(720px,92vw);
+  aspect-ratio:9/16;
+}
 
     .live-video iframe{
       width:100%;
@@ -1172,7 +1170,7 @@
     };
 
     let currentLang = localStorage.getItem("lang") || "ar";
-const LIVE_URL = "https://www.facebook.com/share/v/16jWpt8MSG/";
+const LIVE_URL = "https://www.facebook.com/f.polydisciplinaire/videos/891217570596753";
 let liveData = [
   {
     id: "live1",
@@ -1330,7 +1328,7 @@ function renderLive(){
       <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px;">
         <div class="fb-video"
              data-href="${safeUrl}"
-             data-width="1200"
+           data-width="700"
              data-show-text="false"
              data-allowfullscreen="true">
           <div class="fb-xfbml-parse-ignore">
