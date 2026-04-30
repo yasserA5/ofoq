@@ -893,6 +893,9 @@ img, video {
 window.addEventListener("load", async () => {
   const savedLang = getCurrentLang();
 
+  // 👇 FIRST wait Firestore BEFORE anything else
+  await waitForFirestore();
+
   try {
     window.displayItem = await getArticleById();
   } catch (e) {
@@ -1373,31 +1376,21 @@ async function getArticleById() {
   }
 
 // انتظار Firestore بشكل أقوى
-async function waitForFirestore(maxRetries = 100) {
+
+{
   let retries = 0;
 
   while (retries < maxRetries) {
-    if (
-      window.fs &&
-      window.fs.db &&
-      window.fs.collection &&
-      window.fs.getDocs &&
-      window.fs.getDoc &&
-      window.fs.doc &&
-      window.fs.query &&
-      window.fs.where
-    ) {
-      return true;
-    }
+    if (window.fs && window.fs.db) return true;
 
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise(r => setTimeout(r, 50));
     retries++;
   }
 
   return false;
 }
 
-  const ready = await waitForFirestore();
+
 
   if (!ready) {
     console.error("Firestore failed to initialize");
