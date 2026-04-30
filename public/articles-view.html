@@ -1372,27 +1372,30 @@ async function getArticleById() {
     console.log("LocalStorage error:", e);
   }
 
-  // انتظار Firestore بشكل أقوى
-  async function waitForFirestore(maxRetries = 100) {
-    let retries = 0;
+// انتظار Firestore بشكل أقوى
+async function waitForFirestore(maxRetries = 100) {
+  let retries = 0;
 
-    while (retries < maxRetries) {
-      if (
-        window.fs &&
-        window.fs.db &&
-        window.fs.collection &&
-        window.fs.getDocs &&
-
-      ) {
-        return true;
-      }
-
-      await new Promise(r => setTimeout(r, 100));
-      retries++;
+  while (retries < maxRetries) {
+    if (
+      window.fs &&
+      window.fs.db &&
+      window.fs.collection &&
+      window.fs.getDocs &&
+      window.fs.getDoc &&
+      window.fs.doc &&
+      window.fs.query &&
+      window.fs.where
+    ) {
+      return true;
     }
 
-    return false;
+    await new Promise(r => setTimeout(r, 100));
+    retries++;
   }
+
+  return false;
+}
 
   const ready = await waitForFirestore();
 
