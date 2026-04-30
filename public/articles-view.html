@@ -889,24 +889,6 @@ img, video {
     
   </style>
 </head>
-<script>
-
-
-window.addEventListener("load", async () => {
-  const savedLang = getCurrentLang();
-
-  // 👇 FIRST wait Firestore BEFORE anything else
-  await waitForFirestore();
-
-  try {
-    window.displayItem = await getArticleById();
-  } catch (e) {
-    console.error(e);
-  }
-
-  applyLang(savedLang);
-});
-</script>
 <body>
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
@@ -1124,14 +1106,8 @@ window.addEventListener("load", async () => {
     </div>
   </div>
 </footer>
-<script type="module">
-  import { initFirestore } from "./firestore-bridge.js";
-
-  window.fs = await initFirestore();
-  window.dispatchEvent(new Event("fs-ready"));
-</script>
-
-
+<script type="module" src="firestore-bridge.js"></script>
+<script src="view-loader.js"></script>
 <script>
   document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
@@ -1193,13 +1169,12 @@ document.addEventListener('keydown', function(e) {
     window.location.href = 'index.html';
   }
 
-function goBack() {
-  if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
-    window.history.back();
-  } else {
-    window.location.href = 'articles.html';
+  function goBack(){
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1){
+      window.history.back();
+    } else {
+window.location.href = 'articles.html';    }
   }
-}
 
   function toggleMenu(){
     const menu = document.getElementById("mobileMenu");
@@ -1358,7 +1333,7 @@ function goBack() {
   function getQueryParam(name){
     return new URLSearchParams(window.location.search).get(name);
   }
-console.log("FS STATE:", window.fs);
+
 async function getArticleById() {
   const rawId =
     getQueryParam('id') ||
@@ -1367,31 +1342,72 @@ async function getArticleById() {
 
   if (!rawId) return null;
 
-  // wait for fs
-  await new Promise(resolve => {
-    if (window.fs?.db) return resolve();
-    window.addEventListener("fs-ready", resolve, { once: true });
-    setTimeout(resolve, 5000);
-  });
+  const allData = safeParse(localStorage.getItem('articles'), []);
+  if (Array.isArray(allData)) {
+    const localItem = allData.find(i =>
+      String(i?.id) === String(rawId) ||
+      String(i?.docId) === String(rawId)
+    );
+    if (localItem) return localItem;
+  }
 
   try {
-    const docRef = window.fs.doc(window.fs.db, 'articles', rawId);
-    const docSnap = await window.fs.getDoc(docRef);
+    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
+      const start = Date.now();
+      function check() {
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.where
+        ) return resolve(true);
 
-    if (docSnap.exists()) {
-      return {
-        docId: docSnap.id,
-        ...docSnap.data()
-      };
+        if (Date.now() - start > timeoutMs) {
+          return reject(new Error('Firestore not ready'));
+        }
+        setTimeout(check, 50);
+      }
+      check();
+    });
+
+    await waitForFS();
+
+    const col = window.fs.collection(window.fs.db, 'articles');
+
+    let snap = await window.fs.getDocs(
+      window.fs.query(col, window.fs.where('id', '==', rawId))
+    );
+
+    if (snap.empty) {
+      snap = await window.fs.getDocs(
+        window.fs.query(col, window.fs.where('docId', '==', rawId))
+      );
     }
 
+    if (!snap.empty) {
+      const docSnap = snap.docs[0];
+      const item = { docId: docSnap.id, ...docSnap.data() };
+
+      const updated = Array.isArray(allData) ? allData : [];
+      const index = updated.findIndex(x =>
+        String(x?.id) === String(item.id) ||
+        String(x?.docId) === String(item.docId)
+      );
+
+      if (index >= 0) updated[index] = item;
+      else updated.unshift(item);
+
+      localStorage.setItem('articles', JSON.stringify(updated));
+      return item;
+    }
   } catch (err) {
-    console.error("Firestore error:", err);
+    console.error('Firestore fetch failed:', err);
   }
 
   return null;
 }
-
   function buildNotFound(lang){
     const t = uiTexts[lang] || uiTexts.ar;
     return `
@@ -1399,7 +1415,7 @@ async function getArticleById() {
         <div class="empty-wrap">
           <h2>${escapeHtml(t.notFoundTitle)}</h2>
           <p>${escapeHtml(t.notFoundText)}</p>
-     <button class="btn primary" onclick="window.location.href='articles.html'">${escapeHtml(t.backToArticles)}</button>
+         <button class="btn primary" onclick="window.location.href='articles.html'">${escapeHtml(t.backToArticles)}</button>
         </div>
       </div>
     `;
@@ -1695,7 +1711,11 @@ async function getArticleById() {
 
 window.displayItem = null;
 
-
+window.addEventListener('DOMContentLoaded', async () => {
+  const savedLang = getCurrentLang();
+window.displayItem = await getArticleById();
+  applyLang(savedLang);
+});
 </script>
 
 </body>
