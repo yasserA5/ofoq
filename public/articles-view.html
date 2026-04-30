@@ -1382,18 +1382,6 @@ async function getArticleById() {
   return null;
 }
 
-  function buildNotFound(lang){
-    const t = uiTexts[lang] || uiTexts.ar;
-    return `
-      <div class="page-shell">
-        <div class="empty-wrap">
-          <h2>${escapeHtml(t.notFoundTitle)}</h2>
-          <p>${escapeHtml(t.notFoundText)}</p>
-          <button class="btn primary" onclick="window.location.href='research.html'">${escapeHtml(t.backToArticles)}</button>
-        </div>
-      </div>
-    `;
-  }
 
   function buildPageShell(){
     return `
@@ -1682,24 +1670,30 @@ async function getArticleById() {
     const menu = document.getElementById('langMenu');
     if(menu) menu.style.display = 'none';
   }
+function buildNotFound(lang){
+  const t = uiTexts[lang] || uiTexts.ar;
+  return `
+    <div class="page-shell">
+      <div class="empty-wrap">
+        <h2>${escapeHtml(t.notFoundTitle)}</h2>
+        <p>${escapeHtml(t.notFoundText)}</p>
+        <button class="btn primary" onclick="window.location.href='articles.html'">${escapeHtml(t.backToArticles)}</button>
+      </div>
+    </div>
+  `;
+}
 
 window.displayItem = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
-  
-  // محاولة جلب المقال
-const article = await getArticleById();
-  
-  // إذا وجد المقال، نعرض الصفحة
+  window.displayItem = await getArticleById();
+
   if (window.displayItem) {
     applyLang(savedLang);
   } else {
-    // إذا لم يوجد، نعرض صفحة "غير موجود"
     const appRoot = document.getElementById('appRoot');
-    if (appRoot) {
-      appRoot.innerHTML = buildNotFound(savedLang);
-    }
+    if (appRoot) appRoot.innerHTML = buildNotFound(savedLang);
   }
 });
 </script>
