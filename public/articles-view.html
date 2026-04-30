@@ -1354,35 +1354,46 @@ async function getResearchById() {
   const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
   if (!rawId) return null;
 
-  try {
-    const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {
-      const start = Date.now();
-      (function check() {
-        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs && window.fs.query && window.fs.where) {
-          resolve();
-          return;
-        }
-        if (Date.now() - start > timeoutMs) {
-          reject(new Error('Firestore not ready'));
-          return;
-        }
-        setTimeout(check, 100);
-      })();
-    });
+  const localArticles = safeParse(localStorage.getItem('articles'), []);
+  if (Array.isArray(localArticles)) {
+    const found = localArticles.find(item =>
+      String(item?.id) === String(rawId) ||
+      String(item?.docId) === String(rawId)
+    );
+    if (found) return found;
+  }
 
-    await waitForFS();
+  const localResearch = safeParse(localStorage.getItem('research'), []);
+  if (Array.isArray(localResearch)) {
+    const found = localResearch.find(item =>
+      String(item?.id) === String(rawId) ||
+      String(item?.docId) === String(rawId)
+    );
+    if (found) return found;
+  }
+
+  try {
+    const start = Date.now();
+    while (!(window.fs && window.fs.db && window.fs.collection && window.fs.getDocs && window.fs.query && window.fs.where)) {
+      if (Date.now() - start > 15000) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    if (!(window.fs && window.fs.db && window.fs.collection && window.fs.getDocs && window.fs.query && window.fs.where)) {
+      return null;
+    }
 
     const collections = ['articles', 'research'];
 
     for (const collectionName of collections) {
       const col = window.fs.collection(window.fs.db, collectionName);
 
-      const queryList = [
+      const queries = [
         window.fs.query(col, window.fs.where('id', '==', rawId)),
         window.fs.query(col, window.fs.where('docId', '==', rawId))
       ];
 
-      for (const q of queryList) {
+      for (const q of queries) {
         const snap = await window.fs.getDocs(q);
         if (!snap.empty) {
           const docSnap = snap.docs[0];
@@ -1404,7 +1415,7 @@ function buildNotFound(lang) {
       <div class="empty-wrap">
         <h2>${escapeHtml(t.notFoundTitle)}</h2>
         <p>${escapeHtml(t.notFoundText)}</p>
-        <button class="btn primary" onclick="window.location.href='articles.html'">
+    onclick="window.location.href='articles.html'"
           ${escapeHtml(t.backToArticles)}
         </button>
       </div>
@@ -1699,11 +1710,12 @@ function buildNotFound(lang) {
     const menu = document.getElementById('langMenu');
     if(menu) menu.style.display = 'none';
   }
-
 window.displayItem = null;
 
-function buildLoading(lang) {
-  return `
+window.addEventListener('DOMContentLoaded', async () => {
+  const lang = getCurrentLang();
+  const appRoot = document.getElementById('appRoot');
+  appRoot.innerHTML = `
     <div class="page-shell">
       <div class="empty-wrap">
         <h2>${lang === 'ar' ? 'جاري تحميل المقال...' : lang === 'fr' ? 'Chargement de l’article...' : 'Loading article...'}</h2>
@@ -1711,23 +1723,14 @@ function buildLoading(lang) {
       </div>
     </div>
   `;
-}
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const lang = getCurrentLang();
-  const appRoot = document.getElementById('appRoot');
-  appRoot.innerHTML = buildLoading(lang);
+  try {
+    window.displayItem = await getResearchById();
+  } catch (e) {
+    console.error(e);
+    window.displayItem = null;
+  }
 
-  window.displayItem = await getResearchById();
-  applyLang(lang);
-});
-
-window.addEventListener('DOMContentLoaded', async () => {
-  const lang = getCurrentLang();
-  const appRoot = document.getElementById('appRoot');
-  appRoot.innerHTML = buildLoading(lang);
-
-  window.displayItem = await getResearchById();
   applyLang(lang);
 });
 
