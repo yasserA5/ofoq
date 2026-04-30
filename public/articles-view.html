@@ -888,6 +888,7 @@ img, video {
     }
     
   </style>
+</head>
 <body>
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
@@ -1334,37 +1335,28 @@ window.location.href = 'articles.html';    }
   }
 
 async function getResearchById() {
-  const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
+  const rawId = getQueryParam('id');
   if (!rawId) return null;
 
-  const localResearch = safeParse(localStorage.getItem('research'), []);
-  if (Array.isArray(localResearch)) {
-    const found = localResearch.find(i =>
-      String(i?.id) === String(rawId) ||
-      String(i?.docId) === String(rawId)
-    );
-    if (found) return found;
-  }
-
-  const localArticles = safeParse(localStorage.getItem('articles'), []);
-  if (Array.isArray(localArticles)) {
-    const found = localArticles.find(i =>
-      String(i?.id) === String(rawId) ||
-      String(i?.docId) === String(rawId)
-    );
-    if (found) return found;
+  const allData = safeParse(localStorage.getItem('research'), []);
+  if (Array.isArray(allData)) {
+    const localItem = allData.find(i => String(i?.id) === String(rawId));
+    if (localItem) return localItem;
   }
 
   try {
-const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {.
+    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
       const start = Date.now();
       function check() {
-        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs && window.fs.query && window.fs.where) {
-          return resolve();
-        }
-        if (Date.now() - start > timeoutMs) {
-          return reject(new Error('Firestore not ready'));
-        }
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.where
+        ) return resolve();
+        if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
         setTimeout(check, 50);
       }
       check();
@@ -1372,39 +1364,21 @@ const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {.
 
     await waitForFS();
 
-    const collectionsToTry = ['articles', 'research'];
+    const col = window.fs.collection(window.fs.db, 'research');
+    const q = window.fs.query(col, window.fs.where('id', '==', rawId));
+    const snap = await window.fs.getDocs(q);
 
-    for (const collectionName of collectionsToTry) {
-      const col = window.fs.collection(window.fs.db, collectionName);
+    if (!snap.empty) {
+      const docSnap = snap.docs[0];
+      const item = { docId: docSnap.id, ...docSnap.data() };
 
-      let snap = await window.fs.getDocs(
-        window.fs.query(col, window.fs.where('id', '==', rawId))
-      );
+      const updated = Array.isArray(allData) ? allData : [];
+      const index = updated.findIndex(x => String(x?.id) === String(item.id));
+      if (index >= 0) updated[index] = item;
+      else updated.unshift(item);
 
-      if (snap.empty) {
-        snap = await window.fs.getDocs(
-          window.fs.query(col, window.fs.where('docId', '==', rawId))
-        );
-      }
-
-      if (!snap.empty) {
-        const docSnap = snap.docs[0];
-        const item = { docId: docSnap.id, ...docSnap.data() };
-
-        const storageKey = collectionName === 'articles' ? 'articles' : 'research';
-        const existing = safeParse(localStorage.getItem(storageKey), []);
-        const updated = Array.isArray(existing) ? existing : [];
-        const index = updated.findIndex(x =>
-          String(x?.id) === String(item.id) ||
-          String(x?.docId) === String(item.docId)
-        );
-
-        if (index >= 0) updated[index] = item;
-        else updated.unshift(item);
-
-        localStorage.setItem(storageKey, JSON.stringify(updated));
-        return item;
-      }
+      localStorage.setItem('research', JSON.stringify(updated));
+      return item;
     }
   } catch (err) {
     console.error('Firestore fetch failed:', err);
@@ -1420,7 +1394,8 @@ const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {.
         <div class="empty-wrap">
           <h2>${escapeHtml(t.notFoundTitle)}</h2>
           <p>${escapeHtml(t.notFoundText)}</p>
-<button class="btn primary" onclick="window.location.href='articles.html'">   </div>
+          <button class="btn primary" onclick="window.location.href='research.html'">${escapeHtml(t.backToArticles)}</button>
+        </div>
       </div>
     `;
   }
@@ -1715,36 +1690,9 @@ const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {.
 
 window.displayItem = null;
 
-function buildLoading(lang) {
-  const t = uiTexts[lang] || uiTexts.ar;
-  return `
-    <div class="page-shell">
-      <div class="empty-wrap">
-        <h2>${escapeHtml(lang === 'ar' ? 'جاري تحميل المقال...' : lang === 'fr' ? 'Chargement de l’article...' : 'Loading article...')}</h2>
-        <p>${escapeHtml(lang === 'ar' ? 'يرجى الانتظار قليلاً.' : lang === 'fr' ? 'Veuillez patienter un instant.' : 'Please wait a moment.')}</p>
-      </div>
-    </div>
-  `;
-}
-
-async function loadItemWithRetry(maxAttempts = 8, delay = 1500) {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const item = await getResearchById();
-    if (item) return item;
-    await new Promise(resolve => setTimeout(resolve, delay));
-  }
-  return null;
-}
-
 window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
-  const appRoot = document.getElementById('appRoot');
-
-  if (appRoot) {
-    appRoot.innerHTML = buildLoading(savedLang);
-  }
-
-  window.displayItem = await loadItemWithRetry(8, 1500);
+  window.displayItem = await getResearchById();
   applyLang(savedLang);
 });
 </script>
