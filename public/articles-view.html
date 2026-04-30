@@ -1169,12 +1169,13 @@ document.addEventListener('keydown', function(e) {
     window.location.href = 'index.html';
   }
 
-  function goBack(){
-    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1){
-      window.history.back();
-    } else {
-window.location.href = 'articles.html';    }
+function goBack() {
+  if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+    window.history.back();
+  } else {
+    window.location.href = 'articles.html';
   }
+}
 
   function toggleMenu(){
     const menu = document.getElementById("mobileMenu");
@@ -1333,55 +1334,94 @@ window.location.href = 'articles.html';    }
   function getQueryParam(name){
     return new URLSearchParams(window.location.search).get(name);
   }
+
 async function getArticleById() {
-  const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
+  const rawId =
+    getQueryParam('id') ||
+    getQueryParam('articleId') ||
+    getQueryParam('docId');
+
   if (!rawId) return null;
 
-  const localSources = ['articles', 'research', 'generalArticles'];
-  for (const key of localSources) {
-    const localData = safeParse(localStorage.getItem(key), []) || [];
-    const foundLocal = localData.find(i =>
-      String(i?.id) === String(rawId) || String(i?.docId) === String(rawId)
+  const allData = safeParse(localStorage.getItem('articles'), []);
+  if (Array.isArray(allData)) {
+    const localItem = allData.find(i =>
+      String(i?.id) === String(rawId) ||
+      String(i?.docId) === String(rawId)
     );
-    if (foundLocal) return foundLocal;
+    if (localItem) return localItem;
   }
 
   try {
-    const start = Date.now();
-    while (!(window.fs?.db)) {
-      if (Date.now() - start > 10000) break;
-      await new Promise(r => setTimeout(r, 200));
+    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
+      const start = Date.now();
+      function check() {
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.where
+        ) return resolve(true);
+
+        if (Date.now() - start > timeoutMs) {
+          return reject(new Error('Firestore not ready'));
+        }
+        setTimeout(check, 50);
+      }
+      check();
+    });
+
+    await waitForFS();
+
+    const col = window.fs.collection(window.fs.db, 'articles');
+
+    let snap = await window.fs.getDocs(
+      window.fs.query(col, window.fs.where('id', '==', rawId))
+    );
+
+    if (snap.empty) {
+      snap = await window.fs.getDocs(
+        window.fs.query(col, window.fs.where('docId', '==', rawId))
+      );
     }
 
-    if (window.fs?.db) {
-      const collections = ['articles', 'research', 'generalArticles'];
+    if (!snap.empty) {
+      const docSnap = snap.docs[0];
+      const item = { docId: docSnap.id, ...docSnap.data() };
 
-      for (const collectionName of collections) {
-        const col = window.fs.collection(window.fs.db, collectionName);
+      const updated = Array.isArray(allData) ? allData : [];
+      const index = updated.findIndex(x =>
+        String(x?.id) === String(item.id) ||
+        String(x?.docId) === String(item.docId)
+      );
 
-        let q = window.fs.query(col, window.fs.where('id', '==', rawId));
-        let snap = await window.fs.getDocs(q);
+      if (index >= 0) updated[index] = item;
+      else updated.unshift(item);
 
-        if (!snap.empty) {
-          const item = { docId: snap.docs[0].id, ...snap.docs[0].data() };
-          return item;
-        }
-
-        const docRef = window.fs.doc(window.fs.db, collectionName, rawId);
-        const docSnap = await window.fs.getDoc(docRef);
-
-        if (docSnap.exists()) {
-          return { docId: docSnap.id, ...docSnap.data() };
-        }
-      }
+      localStorage.setItem('articles', JSON.stringify(updated));
+      return item;
     }
   } catch (err) {
-    console.error('Firestore error:', err);
+    console.error('Firestore fetch failed:', err);
   }
 
   return null;
 }
 
+  function buildNotFound(lang){
+    const t = uiTexts[lang] || uiTexts.ar;
+    return `
+      <div class="page-shell">
+        <div class="empty-wrap">
+          <h2>${escapeHtml(t.notFoundTitle)}</h2>
+          <p>${escapeHtml(t.notFoundText)}</p>
+     <button class="btn primary" onclick="window.location.href='articles.html'">${escapeHtml(t.backToArticles)}</button>
+        </div>
+      </div>
+    `;
+  }
 
   function buildPageShell(){
     return `
@@ -1670,31 +1710,13 @@ async function getArticleById() {
     const menu = document.getElementById('langMenu');
     if(menu) menu.style.display = 'none';
   }
-function buildNotFound(lang){
-  const t = uiTexts[lang] || uiTexts.ar;
-  return `
-    <div class="page-shell">
-      <div class="empty-wrap">
-        <h2>${escapeHtml(t.notFoundTitle)}</h2>
-        <p>${escapeHtml(t.notFoundText)}</p>
-        <button class="btn primary" onclick="window.location.href='articles.html'">${escapeHtml(t.backToArticles)}</button>
-      </div>
-    </div>
-  `;
-}
 
 window.displayItem = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
-  window.displayItem = await getArticleById();
-
-  if (window.displayItem) {
-    applyLang(savedLang);
-  } else {
-    const appRoot = document.getElementById('appRoot');
-    if (appRoot) appRoot.innerHTML = buildNotFound(savedLang);
-  }
+window.displayItem = await getArticleById();
+  applyLang(savedLang);
 });
 </script>
 
