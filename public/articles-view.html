@@ -1124,8 +1124,14 @@ window.addEventListener("load", async () => {
     </div>
   </div>
 </footer>
-<script type="module" src="firestore-bridge.js"></script>
-<script src="view-loader.js"></script>
+<script type="module">
+  import { initFirestore } from "./firestore-bridge.js";
+
+  window.fs = await initFirestore();
+  window.dispatchEvent(new Event("fs-ready"));
+</script>
+
+<script src="view-loader.js"></script><script src="view-loader.js"></script>
 <script>
   document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
@@ -1352,7 +1358,7 @@ function goBack() {
   function getQueryParam(name){
     return new URLSearchParams(window.location.search).get(name);
   }
-
+console.log("FS STATE:", window.fs);
 async function getArticleById() {
   const rawId =
     getQueryParam('id') ||
@@ -1360,9 +1366,13 @@ async function getArticleById() {
     getQueryParam('docId');
 
   if (!rawId) return null;
-const ready = await waitForFirestore();
+await new Promise(resolve => {
+  if (window.fs) return resolve();
 
-if (!ready) return null;
+  window.addEventListener("fs-ready", resolve, { once: true });
+
+  setTimeout(resolve, 5000); // fallback
+});
   // محاولة localStorage
   try {
     const allData = safeParse(localStorage.getItem('articles'), []);
