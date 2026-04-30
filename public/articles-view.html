@@ -1335,55 +1335,36 @@ window.location.href = 'articles.html';    }
   }
 
 async function getResearchById() {
-  const rawId = getQueryParam('id');
+  const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
   if (!rawId) return null;
 
-  const allData = safeParse(localStorage.getItem('research'), []);
-  if (Array.isArray(allData)) {
-    const localItem = allData.find(i => String(i?.id) === String(rawId));
-    if (localItem) return localItem;
-  }
-
   try {
-    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
-      const start = Date.now();
-      function check() {
-        if (
-          window.fs &&
-          window.fs.db &&
-          window.fs.collection &&
-          window.fs.getDocs &&
-          window.fs.query &&
-          window.fs.where
-        ) return resolve();
-        if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
-        setTimeout(check, 50);
-      }
-      check();
-    });
+    // انتظار تهيئة Firestore (بحد أقصى 10 ثوانٍ)
+    const start = Date.now();
+    while (!window.fs?.db) {
+      if (Date.now() - start > 10000) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    if (!window.fs?.db) throw new Error("Firestore not ready");
 
-    await waitForFS();
+    const collections = ['articles', 'research'];
 
-    const col = window.fs.collection(window.fs.db, 'research');
-    const q = window.fs.query(col, window.fs.where('id', '==', rawId));
-    const snap = await window.fs.getDocs(q);
+    for (const collName of collections) {
+      // 1. محاولة الجلب المباشر بالمعرف
+      try {
+        const docSnap = await window.fs.getDoc(window.fs.doc(window.fs.db, collName, rawId));
+        if (docSnap.exists()) return { docId: docSnap.id, ...docSnap.data() };
+      } catch (e) {}
 
-    if (!snap.empty) {
-      const docSnap = snap.docs[0];
-      const item = { docId: docSnap.id, ...docSnap.data() };
-
-      const updated = Array.isArray(allData) ? allData : [];
-      const index = updated.findIndex(x => String(x?.id) === String(item.id));
-      if (index >= 0) updated[index] = item;
-      else updated.unshift(item);
-
-      localStorage.setItem('research', JSON.stringify(updated));
-      return item;
+      // 2. محاولة الجلب بالاستعلام
+      const col = window.fs.collection(window.fs.db, collName);
+      const q = window.fs.query(col, window.fs.where('id', '==', rawId));
+      const snap = await window.fs.getDocs(q);
+      if (!snap.empty) return { docId: snap.docs[0].id, ...snap.docs[0].data() };
     }
   } catch (err) {
-    console.error('Firestore fetch failed:', err);
+    console.error("خطأ في جلب المقال:", err);
   }
-
   return null;
 }
 
@@ -1691,9 +1672,39 @@ async function getResearchById() {
 window.displayItem = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const savedLang = getCurrentLang();
+  const lang = getCurrentLang();
+  const appRoot = document.getElementById('appRoot');
+  
+  if (appRoot) {
+    appRoot.innerHTML = `
+      <div class="page-shell">
+        <div class="empty-wrap">
+          <h2>${lang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</h2>
+        </div>
+      </div>
+    `;
+  }
+
   window.displayItem = await getResearchById();
-  applyLang(savedLang);
+  
+  if (window.displayItem) {
+    applyLang(lang);
+  } else {
+    // رسالة الخطأ مع الرابط الصحيح لصفحة المقالات
+    const t = uiTexts[lang] || uiTexts.ar;
+    if (appRoot) {
+        appRoot.innerHTML = `
+            <div class="page-shell">
+                <div class="empty-wrap">
+                    <h2>${esc(t.notFoundTitle)}</h2>
+                    <p>${esc(t.notFoundText)}</p>
+                    <button class="btn primary" onclick="window.location.href='articles.html'">
+                        ${esc(t.backToArticles)}
+                    </button>
+                </div>
+            </div>`;
+    }
+  }
 });
 </script>
 
