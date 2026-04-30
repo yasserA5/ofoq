@@ -1352,48 +1352,42 @@ async function waitForFS(timeoutMs = 15000) {
 
 async function getResearchById() {
   const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
+  console.log("الرابط يحتوي على معرف:", rawId);
   if (!rawId) return null;
 
-  try {
-    const start = Date.now();
-    while (!(window.fs && window.fs.db && window.fs.collection && window.fs.getDocs && window.fs.query && window.fs.where && window.fs.doc && window.fs.getDoc)) {
-      if (Date.now() - start > 15000) break;
-      await new Promise(r => setTimeout(r, 100));
-    }
-
-    if (!(window.fs && window.fs.db && window.fs.collection && window.fs.getDocs && window.fs.query && window.fs.where && window.fs.doc && window.fs.getDoc)) {
-      return null;
-    }
-
-    const collections = ['articles', 'research'];
-
-    for (const collectionName of collections) {
-      try {
-        const docRef = window.fs.doc(window.fs.db, collectionName, rawId);
-        const docSnap = await window.fs.getDoc(docRef);
-        if (docSnap && docSnap.exists()) {
-          return { docId: docSnap.id, ...docSnap.data() };
-        }
-      } catch (e) {}
-
-      const col = window.fs.collection(window.fs.db, collectionName);
-      const queries = [
-        window.fs.query(col, window.fs.where('id', '==', rawId)),
-        window.fs.query(col, window.fs.where('docId', '==', rawId))
-      ];
-
-      for (const q of queries) {
-        const snap = await window.fs.getDocs(q);
-        if (!snap.empty) {
-          const docSnap = snap.docs[0];
-          return { docId: docSnap.id, ...docSnap.data() };
-        }
-      }
-    }
-  } catch (err) {
-    console.error('Firestore fetch failed:', err);
+  // انتظار الفايرستور
+  const start = Date.now();
+  while (!(window.fs?.db)) {
+    if (Date.now() - start > 10000) break;
+    await new Promise(r => setTimeout(r, 200));
   }
+  if (!window.fs?.db) return null;
 
+  const collections = ['articles', 'research'];
+
+  for (const collName of collections) {
+    try {
+      console.log("جاري البحث في مجموعة:", collName);
+      
+      // 1. محاولة البحث المباشر كـ Document ID
+      const docRef = window.fs.doc(window.fs.db, collName, rawId);
+      const docSnap = await window.fs.getDoc(docRef);
+      if (docSnap.exists()) {
+        console.log("تم العثور عليه كمستند مباشر في:", collName);
+        return { docId: docSnap.id, ...docSnap.data() };
+      }
+
+      // 2. محاولة البحث بحقل id
+      const q = window.fs.query(window.fs.collection(window.fs.db, collName), window.fs.where('id', '==', rawId));
+      const snap = await window.fs.getDocs(q);
+      if (!snap.empty) {
+        console.log("تم العثور عليه عن طريق حقل id في:", collName);
+        return { docId: snap.docs[0].id, ...snap.docs[0].data() };
+      }
+    } catch (e) {
+      console.error("خطأ أثناء البحث في:", collName, e);
+    }
+  }
   return null;
 }
 
