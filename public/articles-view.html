@@ -1338,32 +1338,34 @@ async function getResearchById() {
   const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
   if (!rawId) return null;
 
+  // 1. البحث في الذاكرة المحلية (Cache)
+  const localData = safeParse(localStorage.getItem('research'), []) || [];
+  const foundLocal = localData.find(i => String(i?.id) === String(rawId));
+  if (foundLocal) return foundLocal;
+
+  // 2. البحث في Firestore إذا لم يوجد محلياً
   try {
-    // انتظار تهيئة Firestore (بحد أقصى 10 ثوانٍ)
     const start = Date.now();
-    while (!window.fs?.db) {
+    while (!(window.fs?.db)) {
       if (Date.now() - start > 10000) break;
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise(r => setTimeout(r, 200));
     }
-    if (!window.fs?.db) throw new Error("Firestore not ready");
 
-    const collections = ['articles', 'research'];
-
-    for (const collName of collections) {
-      // 1. محاولة الجلب المباشر بالمعرف
-      try {
-        const docSnap = await window.fs.getDoc(window.fs.doc(window.fs.db, collName, rawId));
-        if (docSnap.exists()) return { docId: docSnap.id, ...docSnap.data() };
-      } catch (e) {}
-
-      // 2. محاولة الجلب بالاستعلام
-      const col = window.fs.collection(window.fs.db, collName);
+    if (window.fs?.db) {
+      const col = window.fs.collection(window.fs.db, 'research');
       const q = window.fs.query(col, window.fs.where('id', '==', rawId));
       const snap = await window.fs.getDocs(q);
-      if (!snap.empty) return { docId: snap.docs[0].id, ...snap.docs[0].data() };
+      
+      if (!snap.empty) {
+        const item = { docId: snap.docs[0].id, ...snap.docs[0].data() };
+        // حفظه محلياً للمرات القادمة
+        localData.unshift(item);
+        localStorage.setItem('research', JSON.stringify(localData));
+        return item;
+      }
     }
   } catch (err) {
-    console.error("خطأ في جلب المقال:", err);
+    console.error("خطأ في Firestore:", err);
   }
   return null;
 }
@@ -1672,37 +1674,19 @@ async function getResearchById() {
 window.displayItem = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const lang = getCurrentLang();
-  const appRoot = document.getElementById('appRoot');
+  const savedLang = getCurrentLang();
   
-  if (appRoot) {
-    appRoot.innerHTML = `
-      <div class="page-shell">
-        <div class="empty-wrap">
-          <h2>${lang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</h2>
-        </div>
-      </div>
-    `;
-  }
-
+  // محاولة جلب المقال
   window.displayItem = await getResearchById();
   
+  // إذا وجد المقال، نعرض الصفحة
   if (window.displayItem) {
-    applyLang(lang);
+    applyLang(savedLang);
   } else {
-    // رسالة الخطأ مع الرابط الصحيح لصفحة المقالات
-    const t = uiTexts[lang] || uiTexts.ar;
+    // إذا لم يوجد، نعرض صفحة "غير موجود"
+    const appRoot = document.getElementById('appRoot');
     if (appRoot) {
-        appRoot.innerHTML = `
-            <div class="page-shell">
-                <div class="empty-wrap">
-                    <h2>${esc(t.notFoundTitle)}</h2>
-                    <p>${esc(t.notFoundText)}</p>
-                    <button class="btn primary" onclick="window.location.href='articles.html'">
-                        ${esc(t.backToArticles)}
-                    </button>
-                </div>
-            </div>`;
+      appRoot.innerHTML = buildNotFound(savedLang);
     }
   }
 });
