@@ -1333,17 +1333,19 @@ window.location.href = 'articles.html';    }
   function getQueryParam(name){
     return new URLSearchParams(window.location.search).get(name);
   }
-
-async function getResearchById() {
+async function getArticleById() {
   const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
   if (!rawId) return null;
 
-  // 1. البحث في الذاكرة المحلية (Cache)
-  const localData = safeParse(localStorage.getItem('research'), []) || [];
-  const foundLocal = localData.find(i => String(i?.id) === String(rawId));
-  if (foundLocal) return foundLocal;
+  const localSources = ['articles', 'research', 'generalArticles'];
+  for (const key of localSources) {
+    const localData = safeParse(localStorage.getItem(key), []) || [];
+    const foundLocal = localData.find(i =>
+      String(i?.id) === String(rawId) || String(i?.docId) === String(rawId)
+    );
+    if (foundLocal) return foundLocal;
+  }
 
-  // 2. البحث في Firestore إذا لم يوجد محلياً
   try {
     const start = Date.now();
     while (!(window.fs?.db)) {
@@ -1352,21 +1354,31 @@ async function getResearchById() {
     }
 
     if (window.fs?.db) {
-      const col = window.fs.collection(window.fs.db, 'research');
-      const q = window.fs.query(col, window.fs.where('id', '==', rawId));
-      const snap = await window.fs.getDocs(q);
-      
-      if (!snap.empty) {
-        const item = { docId: snap.docs[0].id, ...snap.docs[0].data() };
-        // حفظه محلياً للمرات القادمة
-        localData.unshift(item);
-        localStorage.setItem('research', JSON.stringify(localData));
-        return item;
+      const collections = ['articles', 'research', 'generalArticles'];
+
+      for (const collectionName of collections) {
+        const col = window.fs.collection(window.fs.db, collectionName);
+
+        let q = window.fs.query(col, window.fs.where('id', '==', rawId));
+        let snap = await window.fs.getDocs(q);
+
+        if (!snap.empty) {
+          const item = { docId: snap.docs[0].id, ...snap.docs[0].data() };
+          return item;
+        }
+
+        const docRef = window.fs.doc(window.fs.db, collectionName, rawId);
+        const docSnap = await window.fs.getDoc(docRef);
+
+        if (docSnap.exists()) {
+          return { docId: docSnap.id, ...docSnap.data() };
+        }
       }
     }
   } catch (err) {
-    console.error("خطأ في Firestore:", err);
+    console.error('Firestore error:', err);
   }
+
   return null;
 }
 
@@ -1677,7 +1689,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
   
   // محاولة جلب المقال
-  window.displayItem = await getResearchById();
+const article = await getArticleById();
   
   // إذا وجد المقال، نعرض الصفحة
   if (window.displayItem) {
