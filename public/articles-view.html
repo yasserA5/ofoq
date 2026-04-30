@@ -1382,8 +1382,7 @@ async function getArticleById() {
         window.fs.db &&
         window.fs.collection &&
         window.fs.getDocs &&
-        window.fs.query &&
-        window.fs.where
+
       ) {
         return true;
       }
@@ -1405,15 +1404,23 @@ async function getArticleById() {
   try {
     const col = window.fs.collection(window.fs.db, 'articles');
 
-    let snap = await window.fs.getDocs(
-      window.fs.query(col, window.fs.where('id', '==', rawId))
-    );
+try {
+  // محاولة مباشرة باستعمال document id الحقيقي
+  const docRef = window.fs.doc(window.fs.db, 'articles', rawId);
 
-    if (snap.empty) {
-      snap = await window.fs.getDocs(
-        window.fs.query(col, window.fs.where('docId', '==', rawId))
-      );
-    }
+  const docSnap = await window.fs.getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const item = {
+      docId: docSnap.id,
+      ...docSnap.data()
+    };
+
+    return item;
+  }
+} catch (e) {
+  console.error("Direct document fetch failed:", e);
+}
 
     if (!snap.empty) {
       const docSnap = snap.docs[0];
