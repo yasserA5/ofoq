@@ -608,7 +608,7 @@
 
       <div class="in">
         <i class="ri-user-3-line"></i>
-        <input id="adminCode" type="text" placeholder="كود الإدارة" autocomplete="off" />
+<input id="adminCode" type="text" placeholder="كود الإدارة" autocomplete="off" />
       </div>
 
       <div class="in">
@@ -675,208 +675,269 @@
     </main>
   </div>
 
-  <script type="module">
-    import { db } from "./firebase-init.js";
-    import {
-      collection,
-      getDocs,
-      doc,
-      setDoc,
-      deleteDoc
-    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+<script type="module">
+  import { db, auth } from "./firebase-init.js";
+  import {
+    collection,
+    getDocs,
+    doc,
+    setDoc,
+    deleteDoc
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-    const ADMIN_CODE = "admin";
-    const ADMIN_PASS = "ofouqaca12";
 
-    const SECTIONS = [
-      { key: "research", title: "الأبحاث المحكمة", icon: "ri-file-text-line", isLive: false },
-      { key: "articles", title: "المقالات العلمية", icon: "ri-file-paper-line", isLive: false },
-      { key: "files", title: "الملفات البحثية", icon: "ri-folder-3-line", isLive: false },
-      { key: "general-articles", title: "مقالات عامة", icon: "ri-newspaper-line", isLive: false },
-      { key: "foreign-articles", title: "مقالات أجنبية", icon: "ri-article-line", isLive: false },
-      { key: "special-politics", title: "تخصص: العلوم السياسية", icon: "ri-government-line", isLive: false },
-      { key: "special-ir", title: "تخصص: العلاقات الدولية", icon: "ri-global-line", isLive: false },
-      { key: "special-admin-law", title: "تخصص: القانون الإداري", icon: "ri-briefcase-4-line", isLive: false },
-      { key: "special-const-law", title: "تخصص: القانون الدستوري", icon: "ri-balance-line", isLive: false },
-      { key: "special-public-policy", title: "تخصص: السياسات العامة", icon: "ri-community-line", isLive: false },
-      { key: "editions", title: "الإصدارات", icon: "ri-book-open-line", isLive: false },
-      { key: "activities", title: "الأنشطة", icon: "ri-calendar-2-line", isLive: false },
-      { key: "talks", title: "الندوات/الحوارات", icon: "ri-voiceprint-line", isLive: false },
-      { key: "training", title: "التكوين/الدورات", icon: "ri-train-line", isLive: false },
-      { key: "live", title: "البث المباشر", icon: "ri-live-line", isLive: true }
-    ];
 
-    const state = {
-      bySection: {},
-      currentSectionKey: "research",
-      editing: { key: null, id: null }
+  const SECTIONS = [
+    { key: "research", title: "الأبحاث المحكمة", icon: "ri-file-text-line", isLive: false },
+    { key: "articles", title: "المقالات العلمية", icon: "ri-file-paper-line", isLive: false },
+    { key: "files", title: "الملفات البحثية", icon: "ri-folder-3-line", isLive: false },
+    { key: "general-articles", title: "مقالات عامة", icon: "ri-newspaper-line", isLive: false },
+    { key: "foreign-articles", title: "مقالات أجنبية", icon: "ri-article-line", isLive: false },
+    { key: "special-politics", title: "تخصص: العلوم السياسية", icon: "ri-government-line", isLive: false },
+    { key: "special-ir", title: "تخصص: العلاقات الدولية", icon: "ri-global-line", isLive: false },
+    { key: "special-admin-law", title: "تخصص: القانون الإداري", icon: "ri-briefcase-4-line", isLive: false },
+    { key: "special-const-law", title: "تخصص: القانون الدستوري", icon: "ri-balance-line", isLive: false },
+    { key: "special-public-policy", title: "تخصص: السياسات العامة", icon: "ri-community-line", isLive: false },
+    { key: "editions", title: "الإصدارات", icon: "ri-book-open-line", isLive: false },
+    { key: "activities", title: "الأنشطة", icon: "ri-calendar-2-line", isLive: false },
+    { key: "talks", title: "الندوات/الحوارات", icon: "ri-voiceprint-line", isLive: false },
+    { key: "training", title: "التكوين/الدورات", icon: "ri-train-line", isLive: false },
+    { key: "live", title: "البث المباشر", icon: "ri-live-line", isLive: true }
+  ];
+
+  const state = {
+    bySection: {},
+    currentSectionKey: "research",
+    editing: { key: null, id: null }
+  };
+
+  SECTIONS.forEach(s => state.bySection[s.key] = []);
+
+  function el(id){ return document.getElementById(id); }
+
+  function setStatus(msg){
+    el("status").textContent = msg;
+  }
+
+  function safeParse(v, fallback){
+    try{
+      const x = JSON.parse(v);
+      return Array.isArray(x) ? x : fallback;
+    }catch{
+      return fallback;
+    }
+  }
+
+  function uid(){
+    return crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.floor(Math.random() * 99999));
+  }
+
+  function esc(s){
+    return String(s ?? "").replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m]));
+  }
+
+  function getByLang(field, lang = "ar"){
+    if (!field) return "";
+    if (typeof field === "string") return field;
+    return field[lang] || field.ar || field.fr || field.en || "";
+  }
+
+  function getContentCache(){
+    return safeParse(localStorage.getItem("content_cache"), []);
+  }
+
+  function setContentCache(items){
+    localStorage.setItem("content_cache", JSON.stringify(items));
+  }
+
+  function stripHtml(html){
+    const div = document.createElement("div");
+    div.innerHTML = html || "";
+    return div.textContent || div.innerText || "";
+  }
+
+  function normalizeItem(sectionKey, raw){
+    const fixedSection = sectionKey || raw.section || (raw.type === "live" ? "live" : "research");
+    const normalizedId = String(raw.docId || raw.id || uid());
+
+    return {
+      id: normalizedId,
+      docId: normalizedId,
+      section: fixedSection,
+      title: typeof raw.title === "object" ? raw.title : { ar: raw.title || "", fr:"", en:"" },
+      short: typeof raw.short === "object" ? raw.short : { ar: raw.short || "", fr:"", en:"" },
+      full: typeof raw.full === "object" ? raw.full : { ar: raw.full || "", fr:"", en:"" },
+      details: typeof raw.details === "object" ? raw.details : { ar: raw.details || "", fr:"", en:"" },
+      author: typeof raw.author === "object" ? raw.author : { ar: raw.author || "", fr:"", en:"" },
+      affiliation: typeof raw.affiliation === "object" ? raw.affiliation : { ar: raw.affiliation || "", fr:"", en:"" },
+      date: typeof raw.date === "object" ? raw.date : { ar: raw.date || "", fr:"", en:"" },
+      image: raw.image || "",
+      file: raw.file || raw.link || "",
+      createdAt: Number(raw.createdAt || Date.now()),
+      updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
+      status: raw.status || "published"
     };
+  }
 
-    SECTIONS.forEach(s => state.bySection[s.key] = []);
+  function rebuildDbFromCache(){
+    const all = getContentCache()
+      .map(item => normalizeItem(item.section, item))
+      .filter(item => SECTIONS.some(s => s.key === item.section));
 
-    function el(id){ return document.getElementById(id); }
+    SECTIONS.forEach(s => {
+      state.bySection[s.key] = all
+        .filter(item => item.section === s.key)
+        .sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+    });
+  }
 
-    function setStatus(msg){
-      el("status").textContent = msg;
-      console.log(msg);
+  function setAppVisible(){
+    el("lock").classList.add("hidden");
+    setTimeout(() => { el("lock").style.display = "none"; }, 220);
+    const app = el("app");
+    app.style.display = "grid";
+    requestAnimationFrame(() => app.classList.add("visible"));
+  }
+
+  function setLockVisible(){
+    const app = el("app");
+    app.classList.remove("visible");
+    setTimeout(() => { app.style.display = "none"; }, 180);
+    el("lock").style.display = "flex";
+    requestAnimationFrame(() => el("lock").classList.remove("hidden"));
+  }
+
+const ADMIN_CODE = "admin";
+const ADMIN_PASS = "ofouqaca12";
+
+async function login(){
+  const code = el("adminCode")?.value.trim() || "";
+  const pass = el("adminPass")?.value || "";
+  const ok = code === ADMIN_CODE && pass === ADMIN_PASS;
+
+  el("loginErr").style.display = ok ? "none" : "block";
+  if (!ok) return;
+
+  sessionStorage.setItem("adminAuthed", "1");
+  setAppVisible();
+  await initAfterLogin();
+}
+
+  async function logout(){
+    await signOut(auth);
+    if (el("adminCode")) el("adminCode").value = "";
+    if (el("adminPass")) el("adminPass").value = "";
+    sessionStorage.removeItem("adminAuthed");
+    setLockVisible();
+  }
+
+  function buildMenu(){
+    const menu = el("menu");
+    menu.innerHTML = "";
+    SECTIONS.forEach(sec => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.dataset.key = sec.key;
+      b.innerHTML = `<span><i class="${sec.icon}"></i> ${esc(sec.title)}</span><i class="ri-arrow-left-s-line"></i>`;
+      b.addEventListener("click", () => showSection(sec.key));
+      menu.appendChild(b);
+    });
+  }
+
+  function setActiveMenu(key){
+    document.querySelectorAll("#menu button").forEach(b => {
+      b.classList.toggle("active", b.dataset.key === key);
+    });
+  }
+
+  function sectionTitle(key){
+    const s = SECTIONS.find(x => x.key === key);
+    return s ? s.title : "قسم";
+  }
+
+  function buildFormHTML(key){
+    const cfg = SECTIONS.find(s => s.key === key);
+    const isLive = !!cfg?.isLive;
+
+    if (isLive) {
+      return `
+        <div class="card">
+          <h3><i class="ri-edit-2-line"></i> إضافة/تعديل بث مباشر</h3>
+          <div class="row">
+            <label>عنوان البث (عربي)</label>
+            <input type="text" id="${key}-title-ar" placeholder="مثال: بث مباشر الآن" />
+          </div>
+          <div class="row">
+            <label>وصف مختصر (عربي)</label>
+            <textarea id="${key}-short-ar" placeholder="وصف مختصر..."></textarea>
+          </div>
+          <div class="row">
+            <label>رابط البث أو الملف</label>
+            <input type="url" id="${key}-live-link" placeholder="https://..." />
+          </div>
+          <div class="actions">
+            <button class="btn btn-small btn-green" type="button" onclick="publishItem('${key}')">
+              <i class="ri-upload-cloud-line"></i> نشر
+            </button>
+            <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
+              <i class="ri-refresh-line"></i> تفريغ
+            </button>
+          </div>
+          <div class="preview" id="${key}-preview"></div>
+        </div>
+      `;
     }
 
-    function safeParse(v, fallback){
-      try{
-        const x = JSON.parse(v);
-        return Array.isArray(x) ? x : fallback;
-      }catch{
-        return fallback;
-      }
-    }
-
-    function uid(){
-      return String(Date.now() + Math.floor(Math.random() * 999));
-    }
-
-    function esc(s){
-      return String(s ?? "").replace(/[&<>"']/g, m => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[m]));
-    }
-
-    function getByLang(field, lang = "ar"){
-      if (!field) return "";
-      if (typeof field === "string") return field;
-      return field[lang] || field.ar || field.fr || field.en || "";
-    }
-
-    function getContentCache(){
-      return safeParse(localStorage.getItem("content_cache"), []);
-    }
-
-    function setContentCache(items){
-      localStorage.setItem("content_cache", JSON.stringify(items));
-    }
-
-    function normalizeItem(sectionKey, raw){
-      const fixedSection = sectionKey || raw.section || (raw.type === "live" ? "live" : "") || "research";
-      const normalizedId = String(raw.docId || raw.id || uid());
-
-      return {
-        id: normalizedId,
-        docId: normalizedId,
-        section: fixedSection,
-        title: typeof raw.title === "object" ? raw.title : { ar: raw.title || "", fr:"", en:"" },
-        short: typeof raw.short === "object" ? raw.short : { ar: raw.short || "", fr:"", en:"" },
-        full: typeof raw.full === "object" ? raw.full : { ar: raw.full || "", fr:"", en:"" },
-        details: typeof raw.details === "object" ? raw.details : { ar: raw.details || "", fr:"", en:"" },
-        author: typeof raw.author === "object" ? raw.author : { ar: raw.author || "", fr:"", en:"" },
-        affiliation: typeof raw.affiliation === "object" ? raw.affiliation : { ar: raw.affiliation || "", fr:"", en:"" },
-        date: typeof raw.date === "object" ? raw.date : { ar: raw.date || "", fr:"", en:"" },
-        image: raw.image || "",
-        file: raw.file || raw.link || "",
-        createdAt: Number(raw.createdAt || Date.now()),
-        updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
-        status: raw.status || "published"
-      };
-    }
-
-    function rebuildDbFromCache(){
-      const all = getContentCache()
-        .map(item => normalizeItem(item.section, item))
-        .filter(item => SECTIONS.some(s => s.key === item.section));
-
-      SECTIONS.forEach(s => {
-        state.bySection[s.key] = all
-          .filter(item => item.section === s.key)
-          .sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
-      });
-    }
-
-    function setAppVisible(){
-      el("lock").classList.add("hidden");
-      setTimeout(() => { el("lock").style.display = "none"; }, 220);
-      const app = el("app");
-      app.style.display = "grid";
-      requestAnimationFrame(() => app.classList.add("visible"));
-    }
-
-    function setLockVisible(){
-      const app = el("app");
-      app.classList.remove("visible");
-      setTimeout(() => { app.style.display = "none"; }, 180);
-      el("lock").style.display = "flex";
-      requestAnimationFrame(() => el("lock").classList.remove("hidden"));
-    }
-
-    function login(){
-      const code = el("adminCode")?.value.trim() || "";
-      const pass = el("adminPass")?.value || "";
-      const ok = code === ADMIN_CODE && pass === ADMIN_PASS;
-
-      el("loginErr").style.display = ok ? "none" : "block";
-      if (!ok) return;
-
-      sessionStorage.setItem("adminAuthed", "1");
-      setAppVisible();
-      initAfterLogin();
-    }
-
-    function logout(){
-      sessionStorage.removeItem("adminAuthed");
-      if (el("adminCode")) el("adminCode").value = "";
-      if (el("adminPass")) el("adminPass").value = "";
-      setLockVisible();
-    }
-
-    function buildMenu(){
-      const menu = el("menu");
-      menu.innerHTML = "";
-      SECTIONS.forEach(sec => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.dataset.key = sec.key;
-        b.innerHTML = `<span><i class="${sec.icon}"></i> ${esc(sec.title)}</span><i class="ri-arrow-left-s-line"></i>`;
-        b.addEventListener("click", () => showSection(sec.key));
-        menu.appendChild(b);
-      });
-    }
-
-    function setActiveMenu(key){
-      document.querySelectorAll("#menu button").forEach(b => {
-        b.classList.toggle("active", b.dataset.key === key);
-      });
-    }
-
-    function sectionTitle(key){
-      const s = SECTIONS.find(x => x.key === key);
-      return s ? s.title : "قسم";
-    }
-
-    function buildFormHTML(key){
-      const cfg = SECTIONS.find(s => s.key === key);
-      const isLive = !!cfg?.isLive;
-
-      if (isLive) {
-        return `
-          <div class="card">
-            <h3><i class="ri-edit-2-line"></i> إضافة/تعديل بث مباشر</h3>
-
+    return `
+      <div class="card">
+        <h3><i class="ri-edit-2-line"></i> إضافة/تعديل عنصر</h3>
+        <div class="grid-2">
+          <div>
             <div class="row">
-              <label>عنوان البث (عربي)</label>
-              <input type="text" id="${key}-title-ar" placeholder="مثال: بث مباشر الآن" />
+              <label>العنوان</label>
+              <input type="text" id="${key}-title-ar" placeholder="العنوان بالعربية" />
             </div>
-
             <div class="row">
-              <label>وصف مختصر (عربي)</label>
-              <textarea id="${key}-short-ar" placeholder="وصف مختصر..."></textarea>
+              <label>الكاتب/الباحث</label>
+              <input type="text" id="${key}-author-ar" placeholder="اسم الكاتب بالعربية" />
             </div>
-
             <div class="row">
-              <label>رابط البث أو الملف</label>
-              <input type="url" id="${key}-live-link" placeholder="https://..." />
+              <label>الانتماء/المؤسسة</label>
+              <input type="text" id="${key}-aff-ar" placeholder="مثال: جامعة..." />
             </div>
-
+            <div class="row">
+              <label>تاريخ النشر</label>
+              <input type="text" id="${key}-date-ar" placeholder="مثال: أبريل 2026" />
+            </div>
+            <div class="row">
+              <label>ملخص</label>
+              <textarea id="${key}-short-ar" placeholder="ملخص..."></textarea>
+            </div>
+            <div class="row">
+              <label>المحتوى الكامل (نص فقط حاليًا)</label>
+              <div class="editor" id="${key}-full-ar-editor" contenteditable="true"></div>
+            </div>
+            <div class="row">
+              <label>تفاصيل إضافية</label>
+              <textarea id="${key}-details-ar" placeholder="تفاصيل إضافية..."></textarea>
+            </div>
+          </div>
+          <div>
+            <div class="row">
+              <label>رابط خارجي (PDF / رابط)</label>
+              <input type="url" id="${key}-file-url" placeholder="https://..." />
+            </div>
+            <div class="row">
+              <label>صورة</label>
+              <input type="file" id="${key}-image" accept="image/*" />
+            </div>
+            <div class="preview" id="${key}-preview"></div>
             <div class="actions">
               <button class="btn btn-small btn-green" type="button" onclick="publishItem('${key}')">
                 <i class="ri-upload-cloud-line"></i> نشر
@@ -885,434 +946,409 @@
                 <i class="ri-refresh-line"></i> تفريغ
               </button>
             </div>
-
-            <div class="preview" id="${key}-preview"></div>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="card">
-          <h3><i class="ri-edit-2-line"></i> إضافة/تعديل عنصر</h3>
-
-          <div class="grid-2">
-            <div>
-              <div class="row">
-                <label>العنوان</label>
-                <input type="text" id="${key}-title-ar" placeholder="العنوان بالعربية" />
-              </div>
-
-              <div class="row">
-                <label>الكاتب/الباحث</label>
-                <input type="text" id="${key}-author-ar" placeholder="اسم الكاتب بالعربية" />
-              </div>
-
-              <div class="row">
-                <label>الانتماء/المؤسسة</label>
-                <input type="text" id="${key}-aff-ar" placeholder="مثال: جامعة..." />
-              </div>
-
-              <div class="row">
-                <label>تاريخ النشر</label>
-                <input type="text" id="${key}-date-ar" placeholder="مثال: أبريل 2026" />
-              </div>
-
-              <div class="row">
-                <label>ملخص</label>
-                <textarea id="${key}-short-ar" placeholder="ملخص..."></textarea>
-              </div>
-
-              <div class="row">
-                <label>المحتوى الكامل (عربي)</label>
-                <div class="editor" id="${key}-full-ar-editor" contenteditable="true"></div>
-              </div>
-
-              <div class="row">
-                <label>تفاصيل إضافية</label>
-                <textarea id="${key}-details-ar" placeholder="تفاصيل إضافية..."></textarea>
-              </div>
-            </div>
-
-            <div>
-              <div class="row">
-                <label>رابط خارجي (PDF / رابط)</label>
-                <input type="url" id="${key}-file-url" placeholder="https://..." />
-              </div>
-
-              <div class="row">
-                <label>صورة</label>
-                <input type="file" id="${key}-image" accept="image/*" />
-              </div>
-
-              <div class="preview" id="${key}-preview"></div>
-
-              <div class="actions">
-                <button class="btn btn-small btn-green" type="button" onclick="publishItem('${key}')">
-                  <i class="ri-upload-cloud-line"></i> نشر
-                </button>
-                <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
-                  <i class="ri-refresh-line"></i> تفريغ
-                </button>
-              </div>
-            </div>
           </div>
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    function buildListHTML(key){
-      return `
-        <div class="card">
-          <div class="list-head">
-            <div class="left">
-              <h3 style="margin:0;"><i class="ri-list-unordered"></i> عناصر القسم</h3>
-              <span class="pill" id="${key}-count">0 عنصر</span>
-            </div>
-            <div class="left">
-              <input type="search" id="${key}-search" placeholder="بحث سريع..." />
-            </div>
+  function buildListHTML(key){
+    return `
+      <div class="card">
+        <div class="list-head">
+          <div class="left">
+            <h3 style="margin:0;"><i class="ri-list-unordered"></i> عناصر القسم</h3>
+            <span class="pill" id="${key}-count">0 عنصر</span>
           </div>
-          <div class="list" id="${key}-list"></div>
+          <div class="left">
+            <input type="search" id="${key}-search" placeholder="بحث سريع..." />
+          </div>
         </div>
-      `;
+        <div class="list" id="${key}-list"></div>
+      </div>
+    `;
+  }
+
+  function showSection(key){
+    state.currentSectionKey = key;
+    setActiveMenu(key);
+    el("sectionTitle").textContent = sectionTitle(key);
+    state.editing = { key: null, id: null };
+
+    const content = el("content");
+    content.innerHTML = buildFormHTML(key) + buildListHTML(key);
+
+    const searchInput = el(`${key}-search`);
+    if (searchInput) {
+      searchInput.addEventListener("input", () => renderList(key));
     }
 
-    function showSection(key){
-      state.currentSectionKey = key;
-      setActiveMenu(key);
-      el("sectionTitle").textContent = sectionTitle(key);
-      state.editing = { key: null, id: null };
+    const imgInput = el(`${key}-image`);
+    const preview = el(`${key}-preview`);
+    if (imgInput && preview) {
+      imgInput.addEventListener("change", () => {
+        if (!imgInput.files || !imgInput.files[0]) return;
+        const url = URL.createObjectURL(imgInput.files[0]);
+        preview.innerHTML = `<div>معاينة الصورة:</div><img src="${url}" alt="preview">`;
+      });
+    }
 
-      const content = el("content");
-      content.innerHTML = buildFormHTML(key) + buildListHTML(key);
+    renderList(key);
+  }
 
-      const searchInput = el(`${key}-search`);
-      if (searchInput) {
-        searchInput.addEventListener("input", () => renderList(key));
-      }
+  function fileToDataURL(file){
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = e => resolve(e.target.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function upsertLocal(sectionKey, obj){
+    const all = getContentCache().map(item => normalizeItem(item.section, item));
+    const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
+
+    const filtered = all.filter(x => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
+    filtered.unshift(normalized);
+
+    setContentCache(filtered);
+    rebuildDbFromCache();
+    state.editing = { key: null, id: null };
+  }
+
+  async function upsertFirestore(sectionKey, obj){
+    const now = Date.now();
+    const docIdValue = String(obj.docId || obj.id || uid());
+
+    obj.id = docIdValue;
+    obj.docId = docIdValue;
+    obj.section = sectionKey;
+    obj.updatedAt = now;
+    if (!obj.createdAt) obj.createdAt = now;
+    if (!obj.status) obj.status = "published";
+
+    await setDoc(doc(db, "content", docIdValue), obj, { merge: true });
+    return obj;
+  }
+
+  async function saveItem(key){
+    const cfg = SECTIONS.find(s => s.key === key);
+    if (!cfg) return;
+
+    const isLive = !!cfg.isLive;
+    const currentId = state.editing.key === key && state.editing.id ? state.editing.id : uid();
+
+    const obj = {
+      id: currentId,
+      docId: currentId,
+      title: { ar: "", fr: "", en: "" },
+      short: { ar: "", fr: "", en: "" },
+      full: { ar: "", fr: "", en: "" },
+      details: { ar: "", fr: "", en: "" },
+      author: { ar: "", fr: "", en: "" },
+      affiliation: { ar: "", fr: "", en: "" },
+      date: { ar: "", fr: "", en: "" },
+      image: "",
+      file: ""
+    };
+
+    if (isLive) {
+      const titleAr = el(`${key}-title-ar`)?.value.trim() || "";
+      const shortAr = el(`${key}-short-ar`)?.value.trim() || "";
+      const link = el(`${key}-live-link`)?.value.trim() || "";
+
+      if (!titleAr) return alert("أدخل عنوان البث بالعربية أولاً");
+
+      obj.title.ar = titleAr;
+      obj.short.ar = shortAr;
+      obj.file = link;
+    } else {
+      const titleAr = el(`${key}-title-ar`)?.value.trim() || "";
+      if (!titleAr) return alert("أدخل العنوان بالعربية أولاً");
+
+      obj.title.ar = titleAr;
+      obj.author.ar = el(`${key}-author-ar`)?.value.trim() || "";
+      obj.affiliation.ar = el(`${key}-aff-ar`)?.value.trim() || "";
+      obj.date.ar = el(`${key}-date-ar`)?.value.trim() || "";
+      obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
+      obj.full.ar = stripHtml(el(`${key}-full-ar-editor`)?.innerHTML || "");
+      obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
+      obj.file = el(`${key}-file-url`)?.value.trim() || "";
 
       const imgInput = el(`${key}-image`);
-      const preview = el(`${key}-preview`);
-      if (imgInput && preview) {
-        imgInput.addEventListener("change", () => {
-          if (!imgInput.files || !imgInput.files[0]) return;
-          const url = URL.createObjectURL(imgInput.files[0]);
-          preview.innerHTML = `<div>معاينة الصورة:</div><img src="${url}" alt="preview">`;
-        });
-      }
+      const existing = (state.bySection[key] || []).find(x => String(x.id) === String(currentId));
+      obj.image = existing?.image || "";
 
-      renderList(key);
-    }
-
-    function fileToDataURL(file){
-      return new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = e => resolve(e.target.result);
-        r.onerror = reject;
-        r.readAsDataURL(file);
-      });
-    }
-
-    function upsertLocal(sectionKey, obj){
-      const all = getContentCache().map(item => normalizeItem(item.section, item));
-      const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
-
-      const filtered = all.filter(x => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
-      filtered.unshift(normalized);
-
-      setContentCache(filtered);
-      rebuildDbFromCache();
-      state.editing = { key: null, id: null };
-    }
-
-    async function upsertFirestore(sectionKey, obj){
-      const now = Date.now();
-      const docIdValue = String(obj.docId || obj.id || uid());
-
-      obj.id = docIdValue;
-      obj.docId = docIdValue;
-      obj.section = sectionKey;
-      obj.updatedAt = now;
-      if (!obj.createdAt) obj.createdAt = now;
-      if (!obj.status) obj.status = "published";
-
-      await setDoc(doc(db, "content", docIdValue), obj, { merge: true });
-      return obj;
-    }
-
-    async function saveItem(key){
-      const cfg = SECTIONS.find(s => s.key === key);
-      if (!cfg) return;
-
-      const isLive = !!cfg.isLive;
-      const currentId = state.editing.key === key && state.editing.id ? state.editing.id : String(uid());
-
-      const obj = {
-        id: currentId,
-        docId: currentId,
-        title: { ar: "", fr: "", en: "" },
-        short: { ar: "", fr: "", en: "" },
-        full: { ar: "", fr: "", en: "" },
-        details: { ar: "", fr: "", en: "" },
-        author: { ar: "", fr: "", en: "" },
-        affiliation: { ar: "", fr: "", en: "" },
-        date: { ar: "", fr: "", en: "" },
-        image: "",
-        file: ""
-      };
-
-      if (isLive) {
-        const titleAr = el(`${key}-title-ar`)?.value.trim() || "";
-        const shortAr = el(`${key}-short-ar`)?.value.trim() || "";
-        const link = el(`${key}-live-link`)?.value.trim() || "";
-
-        if (!titleAr) return alert("أدخل عنوان البث بالعربية أولاً");
-
-        obj.title.ar = titleAr;
-        obj.short.ar = shortAr;
-        obj.file = link;
-      } else {
-        const titleAr = el(`${key}-title-ar`)?.value.trim() || "";
-        if (!titleAr) return alert("أدخل العنوان بالعربية أولاً");
-
-        obj.title.ar = titleAr;
-        obj.author.ar = el(`${key}-author-ar`)?.value.trim() || "";
-        obj.affiliation.ar = el(`${key}-aff-ar`)?.value.trim() || "";
-        obj.date.ar = el(`${key}-date-ar`)?.value.trim() || "";
-        obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
-        obj.full.ar = (el(`${key}-full-ar-editor`)?.innerHTML || "").trim();
-        obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
-        obj.file = el(`${key}-file-url`)?.value.trim() || "";
-
-        const imgInput = el(`${key}-image`);
-        if (imgInput && imgInput.files && imgInput.files[0]) {
-          obj.image = await fileToDataURL(imgInput.files[0]);
-        }
-      }
-
-      upsertLocal(key, obj);
-
-      try {
-        await upsertFirestore(key, obj);
-      } catch (err) {
-        console.error("Firestore save error:", err);
-        alert("تم الحفظ محليًا لكن فشل الحفظ في Firestore");
-      }
-
-      resetForm(key);
-      renderList(key);
-      setStatus("تم الحفظ بنجاح.");
-    }
-
-    function loadForEdit(key, id){
-      const item = (state.bySection[key] || []).find(x => String(x.id) === String(id));
-      if (!item) return;
-
-      state.editing = { key, id };
-
-      if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar") || "";
-      if (el(`${key}-author-ar`)) el(`${key}-author-ar`).value = getByLang(item.author, "ar") || "";
-      if (el(`${key}-aff-ar`)) el(`${key}-aff-ar`).value = getByLang(item.affiliation, "ar") || "";
-      if (el(`${key}-date-ar`)) el(`${key}-date-ar`).value = getByLang(item.date, "ar") || "";
-      if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar") || "";
-      if (el(`${key}-details-ar`)) el(`${key}-details-ar`).value = getByLang(item.details, "ar") || "";
-      if (el(`${key}-full-ar-editor`)) el(`${key}-full-ar-editor`).innerHTML = getByLang(item.full, "ar") || "";
-      if (el(`${key}-file-url`)) el(`${key}-file-url`).value = item.file || "";
-      if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
-
-      const p = el(`${key}-preview`);
-      if (p) {
-        p.innerHTML = item.image ? `<div>الصورة الحالية:</div><img src="${item.image}" alt="preview">` : "";
+      if (imgInput && imgInput.files && imgInput.files[0]) {
+        obj.image = await fileToDataURL(imgInput.files[0]);
       }
     }
 
-    async function deleteItemById(sectionKey, id){
-      const ok = confirm("سيتم حذف العنصر. هل أنت متأكد؟");
-      if (!ok) return;
+    upsertLocal(key, obj);
 
-      const all = getContentCache().map(item => normalizeItem(item.section, item));
-      const filtered = all.filter(x => String(x.docId || x.id) !== String(id));
-
-      setContentCache(filtered);
-      rebuildDbFromCache();
-      renderList(sectionKey);
-
-      try {
-        await deleteDoc(doc(db, "content", String(id)));
-      } catch (e) {
-        console.error("Firestore delete error:", e);
-      }
+    try {
+      await upsertFirestore(key, obj);
+    } catch (err) {
+      console.error("Firestore save error:", err);
+      alert("تم الحفظ محليًا لكن فشل الحفظ في Firestore");
     }
 
-    function resetForm(key){
-      state.editing = { key: null, id: null };
+    resetForm(key);
+    renderList(key);
+    setStatus("تم الحفظ بنجاح.");
+  }
 
-      [
-        "title-ar","author-ar","aff-ar","date-ar","short-ar","details-ar","file-url","live-link"
-      ].forEach(name => {
-        const node = el(`${key}-${name}`);
-        if (node) node.value = "";
-      });
+  function loadForEdit(key, id){
+    const item = (state.bySection[key] || []).find(x => String(x.id) === String(id));
+    if (!item) return;
 
-      const ed = el(`${key}-full-ar-editor`);
-      if (ed) ed.innerHTML = "";
+    state.editing = { key, id };
 
-      const img = el(`${key}-image`);
-      if (img) img.value = "";
+    if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar") || "";
+    if (el(`${key}-author-ar`)) el(`${key}-author-ar`).value = getByLang(item.author, "ar") || "";
+    if (el(`${key}-aff-ar`)) el(`${key}-aff-ar`).value = getByLang(item.affiliation, "ar") || "";
+    if (el(`${key}-date-ar`)) el(`${key}-date-ar`).value = getByLang(item.date, "ar") || "";
+    if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar") || "";
+    if (el(`${key}-details-ar`)) el(`${key}-details-ar`).value = getByLang(item.details, "ar") || "";
+    if (el(`${key}-full-ar-editor`)) el(`${key}-full-ar-editor`).textContent = getByLang(item.full, "ar") || "";
+    if (el(`${key}-file-url`)) el(`${key}-file-url`).value = item.file || "";
+    if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
 
-      const p = el(`${key}-preview`);
-      if (p) p.innerHTML = "";
+    const p = el(`${key}-preview`);
+    if (p) {
+      p.innerHTML = item.image ? `<div>الصورة الحالية:</div><img src="${item.image}" alt="preview">` : "";
     }
+  }
 
-    function renderList(key){
-      const list = el(`${key}-list`);
-      const count = el(`${key}-count`);
-      if (!list || !count) return;
+  async function deleteItemById(sectionKey, id){
+    const ok = confirm("سيتم حذف العنصر. هل أنت متأكد؟");
+    if (!ok) return;
 
-      const q = (el(`${key}-search`)?.value || "").trim().toLowerCase();
+    const all = getContentCache().map(item => normalizeItem(item.section, item));
+    const filtered = all.filter(x => String(x.docId || x.id) !== String(id));
 
-      const data = (state.bySection[key] || []).filter(item => {
-        if (item.section !== key) return false;
-        if (!q) return true;
-        const t = getByLang(item.title, "ar").toLowerCase();
-        const s = getByLang(item.short, "ar").toLowerCase();
-        const d = getByLang(item.details, "ar").toLowerCase();
-        return t.includes(q) || s.includes(q) || d.includes(q);
-      });
+    setContentCache(filtered);
+    rebuildDbFromCache();
+    renderList(sectionKey);
 
-      count.textContent = `${data.length} عنصر`;
-
-      if (!data.length) {
-        list.innerHTML = `<div class="empty">لا توجد عناصر هنا بعد.</div>`;
-        return;
-      }
-
-      list.innerHTML = "";
-
-      data.forEach(item => {
-        const title = getByLang(item.title, "ar") || "بدون عنوان";
-        const descFull = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
-        const desc = descFull.length > 120 ? descFull.slice(0, 120) + "..." : descFull;
-        const author = getByLang(item.author, "ar") || "—";
-        const dateLabel = getByLang(item.date, "ar") || "—";
-        const imgHtml = item.image
-          ? `<img src="${item.image}" alt="img">`
-          : `<img src="logo1222.jpeg" alt="logo">`;
-
-        const wrap = document.createElement("div");
-        wrap.className = "item";
-        wrap.innerHTML = `
-          <div class="item-actions">
-            <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')"><i class="ri-pencil-line"></i></button>
-            <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
-          </div>
-          ${imgHtml}
-          <div class="item-body">
-            <div class="item-title">${esc(title)}</div>
-            <div class="item-desc">${esc(desc || "—")}</div>
-            <div class="item-meta">
-              <span>${esc(author)}</span>
-              <span>${esc(dateLabel)}</span>
-            </div>
-          </div>
-        `;
-        list.appendChild(wrap);
-      });
+    try {
+      await deleteDoc(doc(db, "content", String(id)));
+    } catch (e) {
+      console.error("Firestore delete error:", e);
     }
+  }
 
-    async function reloadFromFirestore(){
-      try {
-        setStatus("جارٍ تحميل المحتوى من Firestore...");
-        const snap = await getDocs(collection(db, "content"));
+  function resetForm(key){
+    state.editing = { key: null, id: null };
 
-        const all = [];
-        snap.forEach(docSnap => {
-          const raw = { docId: docSnap.id, ...docSnap.data() };
-          all.push(normalizeItem(raw.section, raw));
-        });
-
-        setContentCache(all);
-        rebuildDbFromCache();
-        renderList(state.currentSectionKey);
-        setStatus(`تم استرجاع ${all.length} عنصر من Firestore.`);
-        return all;
-      } catch (e) {
-        console.error("Firestore load error:", e);
-        setStatus("تعذر تحميل المحتوى من Firestore.");
-        return [];
-      }
-    }
-
-    async function recoverData(){
-      const data = await reloadFromFirestore();
-      if (!data.length) {
-        rebuildDbFromCache();
-        renderList(state.currentSectionKey);
-      }
-    }
-
-    function exportJSON(){
-      const out = {};
-      SECTIONS.forEach(s => out[s.key] = state.bySection[s.key] || []);
-      const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "site-data.json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function clearLocalStorageOnly(){
-      const ok = confirm("سيتم حذف الكاش المحلي فقط. هل أنت متأكد؟");
-      if (!ok) return;
-      localStorage.removeItem("content_cache");
-      SECTIONS.forEach(s => state.bySection[s.key] = []);
-      showSection(state.currentSectionKey);
-      setStatus("تم حذف الكاش المحلي فقط.");
-    }
-
-    async function initAfterLogin(){
-      buildMenu();
-      rebuildDbFromCache();
-      showSection(state.currentSectionKey);
-      await recoverData();
-    }
-
-    const loginForm = document.getElementById("loginForm");
-    if (loginForm) {
-      loginForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        login();
-        return false;
-      });
-    }
-
-    el("logoutBtn").addEventListener("click", logout);
-    el("reloadBtn").addEventListener("click", reloadFromFirestore);
-    el("recoverBtn").addEventListener("click", recoverData);
-    el("exportBtn").addEventListener("click", exportJSON);
-    el("clearBtn").addEventListener("click", clearLocalStorageOnly);
-
-    window.addEventListener("load", () => {
-      rebuildDbFromCache();
-      if (sessionStorage.getItem("adminAuthed") === "1") {
-        setAppVisible();
-        initAfterLogin();
-      } else {
-        el("lock").style.display = "flex";
-        el("app").style.display = "none";
-      }
+    [
+      "title-ar","author-ar","aff-ar","date-ar","short-ar","details-ar","file-url","live-link"
+    ].forEach(name => {
+      const node = el(`${key}-${name}`);
+      if (node) node.value = "";
     });
 
-    window.showSection = showSection;
-    window.resetForm = resetForm;
-    window.loadForEdit = loadForEdit;
-    window.deleteItem = deleteItemById;
-    window.publishItem = saveItem;
-  </script>
+    const ed = el(`${key}-full-ar-editor`);
+    if (ed) ed.textContent = "";
+
+    const img = el(`${key}-image`);
+    if (img) img.value = "";
+
+    const p = el(`${key}-preview`);
+    if (p) p.innerHTML = "";
+  }
+
+  function renderList(key){
+    const list = el(`${key}-list`);
+    const count = el(`${key}-count`);
+    if (!list || !count) return;
+
+    const q = (el(`${key}-search`)?.value || "").trim().toLowerCase();
+
+    const data = (state.bySection[key] || []).filter(item => {
+      if (item.section !== key) return false;
+      if (!q) return true;
+      const t = getByLang(item.title, "ar").toLowerCase();
+      const s = getByLang(item.short, "ar").toLowerCase();
+      const d = getByLang(item.details, "ar").toLowerCase();
+      return t.includes(q) || s.includes(q) || d.includes(q);
+    });
+
+    count.textContent = `${data.length} عنصر`;
+
+    if (!data.length) {
+      list.innerHTML = `<div class="empty">لا توجد عناصر هنا بعد.</div>`;
+      return;
+    }
+
+    list.innerHTML = "";
+
+    data.forEach(item => {
+      const title = getByLang(item.title, "ar") || "بدون عنوان";
+      const descFull = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
+      const desc = descFull.length > 120 ? descFull.slice(0, 120) + "..." : descFull;
+      const author = getByLang(item.author, "ar") || "—";
+      const dateLabel = getByLang(item.date, "ar") || "—";
+      const imgHtml = item.image
+        ? `<img src="${item.image}" alt="img">`
+        : `<img src="logo1222.jpeg" alt="logo">`;
+
+      const wrap = document.createElement("div");
+      wrap.className = "item";
+      wrap.innerHTML = `
+        <div class="item-actions">
+          <button class="mini" title="تعديل" onclick="loadForEdit('${key}', '${item.id}')"><i class="ri-pencil-line"></i></button>
+          <button class="mini danger" title="حذف" onclick="deleteItem('${key}', '${item.docId || item.id}')"><i class="ri-delete-bin-line"></i></button>
+        </div>
+        ${imgHtml}
+        <div class="item-body">
+          <div class="item-title">${esc(title)}</div>
+          <div class="item-desc">${esc(desc || "—")}</div>
+          <div class="item-meta">
+            <span>${esc(author)}</span>
+            <span>${esc(dateLabel)}</span>
+          </div>
+        </div>
+      `;
+      list.appendChild(wrap);
+    });
+  }
+
+  async function reloadFromFirestore(){
+    try {
+      setStatus("جارٍ تحميل المحتوى من Firestore...");
+      const snap = await getDocs(collection(db, "content"));
+
+      const all = [];
+      snap.forEach(docSnap => {
+        const raw = { docId: docSnap.id, ...docSnap.data() };
+        all.push(normalizeItem(raw.section, raw));
+      });
+
+      setContentCache(all);
+      rebuildDbFromCache();
+      renderList(state.currentSectionKey);
+      setStatus(`تم استرجاع ${all.length} عنصر من Firestore.`);
+      return all;
+    } catch (e) {
+      console.error("Firestore load error:", e);
+      setStatus("تعذر تحميل المحتوى من Firestore.");
+      return [];
+    }
+  }
+
+async function recoverAllData(){
+  setStatus("جارٍ استرجاع كل البيانات من Firestore والكاش المحلي...");
+
+  let firestoreItems = [];
+  let localItems = [];
+
+  try {
+    const snap = await getDocs(collection(db, "content"));
+    snap.forEach(docSnap => {
+      const raw = { docId: docSnap.id, ...docSnap.data() };
+      firestoreItems.push(normalizeItem(raw.section, raw));
+    });
+  } catch (e) {
+    console.error("Firestore load error:", e);
+  }
+
+  try {
+    localItems = getContentCache().map(item => normalizeItem(item.section, item));
+  } catch (e) {
+    console.error("Local cache read error:", e);
+  }
+
+  const mergedMap = new Map();
+
+  [...localItems, ...firestoreItems].forEach(item => {
+    const id = String(item.docId || item.id || uid());
+    const existing = mergedMap.get(id);
+
+    if (!existing) {
+      mergedMap.set(id, item);
+      return;
+    }
+
+    const oldUpdated = Number(existing.updatedAt || 0);
+    const newUpdated = Number(item.updatedAt || 0);
+
+    if (newUpdated >= oldUpdated) {
+      mergedMap.set(id, item);
+    }
+  });
+
+  const merged = Array.from(mergedMap.values());
+
+  setContentCache(merged);
+  rebuildDbFromCache();
+  showSection(state.currentSectionKey);
+  setStatus(`تم استرجاع ${merged.length} عنصر إلى لوحة الإدارة.`);
+}
+
+function exportJSON(){
+  const out = {};
+  SECTIONS.forEach(s => out[s.key] = state.bySection[s.key] || []);
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `site-data-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+  function clearLocalStorageOnly(){
+    const ok = confirm("سيتم حذف الكاش المحلي فقط. هل أنت متأكد؟");
+    if (!ok) return;
+    localStorage.removeItem("content_cache");
+    SECTIONS.forEach(s => state.bySection[s.key] = []);
+    showSection(state.currentSectionKey);
+    setStatus("تم حذف الكاش المحلي فقط.");
+  }
+
+  async function initAfterLogin(){
+    buildMenu();
+    rebuildDbFromCache();
+    showSection(state.currentSectionKey);
+await recoverAllData();
+  }
+
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      await login();
+      return false;
+    });
+  }
+
+  el("logoutBtn").addEventListener("click", logout);
+  el("reloadBtn").addEventListener("click", reloadFromFirestore);
+el("recoverBtn").addEventListener("click", recoverAllData);
+  el("exportBtn").addEventListener("click", exportJSON);
+  el("clearBtn").addEventListener("click", clearLocalStorageOnly);
+
+window.addEventListener("load", () => {
+  rebuildDbFromCache();
+  if (sessionStorage.getItem("adminAuthed") === "1") {
+    setAppVisible();
+    initAfterLogin();
+  } else {
+    el("lock").style.display = "flex";
+    el("app").style.display = "none";
+  }
+});
+
+  window.showSection = showSection;
+  window.resetForm = resetForm;
+  window.loadForEdit = loadForEdit;
+  window.deleteItem = deleteItemById;
+  window.publishItem = saveItem;
+</script>
 </body>
 </html>

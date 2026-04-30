@@ -1337,49 +1337,58 @@ async function getResearchById() {
   const rawId = getQueryParam('id') || getQueryParam('articleId') || getQueryParam('docId');
   if (!rawId) return null;
 
-  const localResearch = safeParse(localStorage.getItem('research'), []);
-  if (Array.isArray(localResearch)) {
-    const found = localResearch.find(i =>
-      String(i?.id) === String(rawId) ||
-      String(i?.docId) === String(rawId)
-    );
-    if (found) return found;
-  }
+  const tryLocal = (key) => {
+    const data = safeParse(localStorage.getItem(key), []);
+    if (!Array.isArray(data)) return null;
+    return data.find(item =>
+      String(item?.id) === String(rawId) ||
+      String(item?.docId) === String(rawId)
+    ) || null;
+  };
 
-  const localArticles = safeParse(localStorage.getItem('articles'), []);
-  if (Array.isArray(localArticles)) {
-    const found = localArticles.find(i =>
-      String(i?.id) === String(rawId) ||
-      String(i?.docId) === String(rawId)
-    );
-    if (found) return found;
-  }
+  let item = tryLocal('articles') || tryLocal('research');
+  if (item) return item;
 
   try {
-const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {
+    const waitForFS = (timeoutMs = 12000) => new Promise((resolve, reject) => {
       const start = Date.now();
       function check() {
-        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs && window.fs.query && window.fs.where) {
-          return resolve();
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.where
+        ) {
+          resolve();
+          return;
         }
         if (Date.now() - start > timeoutMs) {
-          return reject(new Error('Firestore not ready'));
+          reject(new Error('Firestore not ready'));
+          return;
         }
-        setTimeout(check, 50);
+        setTimeout(check, 100);
       }
       check();
     });
 
     await waitForFS();
 
-    const collectionsToTry = ['articles', 'research'];
+    const collections = ['articles', 'research'];
 
-    for (const collectionName of collectionsToTry) {
+    for (const collectionName of collections) {
       const col = window.fs.collection(window.fs.db, collectionName);
 
       let snap = await window.fs.getDocs(
         window.fs.query(col, window.fs.where('id', '==', rawId))
       );
+
+      if (snap.empty) {
+        snap = await window.fs.getDocs(
+          window.fs.query(col, window.fs.where('__name__', '==', rawId))
+        );
+      }
 
       if (snap.empty) {
         snap = await window.fs.getDocs(
@@ -1389,7 +1398,7 @@ const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {
 
       if (!snap.empty) {
         const docSnap = snap.docs[0];
-        const item = { docId: docSnap.id, ...docSnap.data() };
+        item = { docId: docSnap.id, ...docSnap.data() };
 
         const storageKey = collectionName === 'articles' ? 'articles' : 'research';
         const existing = safeParse(localStorage.getItem(storageKey), []);
@@ -1413,17 +1422,20 @@ const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {
   return null;
 }
 
-  function buildNotFound(lang){
-    const t = uiTexts[lang] || uiTexts.ar;
-    return `
-      <div class="page-shell">
-        <div class="empty-wrap">
-          <h2>${escapeHtml(t.notFoundTitle)}</h2>
-          <p>${escapeHtml(t.notFoundText)}</p>
-<button class="btn primary" onclick="window.location.href='articles.html'">   </div>
+function buildNotFound(lang) {
+  const t = uiTexts[lang] || uiTexts.ar;
+  return `
+    <div class="page-shell">
+      <div class="empty-wrap">
+        <h2>${escapeHtml(t.notFoundTitle)}</h2>
+        <p>${escapeHtml(t.notFoundText)}</p>
+        <button class="btn primary" onclick="window.location.href='articles.html'">
+          ${escapeHtml(t.backToArticles)}
+        </button>
       </div>
-    `;
-  }
+    </div>
+  `;
+}
 
   function buildPageShell(){
     return `
@@ -1716,16 +1728,44 @@ const waitForFS = (timeoutMs = 15000) => new Promise((resolve, reject) => {
 window.displayItem = null;
 
 function buildLoading(lang) {
-  const t = uiTexts[lang] || uiTexts.ar;
   return `
     <div class="page-shell">
       <div class="empty-wrap">
-        <h2>${escapeHtml(lang === 'ar' ? 'جاري تحميل المقال...' : lang === 'fr' ? 'Chargement de l’article...' : 'Loading article...')}</h2>
-        <p>${escapeHtml(lang === 'ar' ? 'يرجى الانتظار قليلاً.' : lang === 'fr' ? 'Veuillez patienter un instant.' : 'Please wait a moment.')}</p>
+        <h2>${lang === 'ar' ? 'جاري تحميل المقال...' : lang === 'fr' ? 'Chargement de l’article...' : 'Loading article...'}</h2>
+        <p>${lang === 'ar' ? 'يرجى الانتظار قليلاً.' : lang === 'fr' ? 'Veuillez patienter un instant.' : 'Please wait a moment.'}</p>
       </div>
     </div>
   `;
 }
+
+async function loadItemWithRetry(maxAttempts = 4, delay = 2000) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const item = await getResearchById();
+    if (item) return item;
+    if (attempt < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  return null;
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const savedLang = getCurrentLang();
+  const appRoot = document.getElementById('appRoot');
+
+  if (appRoot) {
+    appRoot.innerHTML = buildLoading(savedLang);
+  }
+
+  try {
+    window.displayItem = await loadItemWithRetry(4, 2000);
+  } catch (e) {
+    console.error(e);
+    window.displayItem = null;
+  }
+
+  applyLang(savedLang);
+});
 
 async function loadItemWithRetry(maxAttempts = 8, delay = 1500) {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
