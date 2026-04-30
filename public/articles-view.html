@@ -890,6 +890,8 @@ img, video {
   </style>
 </head>
 <script>
+
+
 window.addEventListener("load", async () => {
   const savedLang = getCurrentLang();
 
@@ -1358,7 +1360,9 @@ async function getArticleById() {
     getQueryParam('docId');
 
   if (!rawId) return null;
+const ready = await waitForFirestore();
 
+if (!ready) return null;
   // محاولة localStorage
   try {
     const allData = safeParse(localStorage.getItem('articles'), []);
@@ -1377,11 +1381,13 @@ async function getArticleById() {
 
 // انتظار Firestore بشكل أقوى
 
-{
+async function waitForFirestore(maxRetries = 100) {
   let retries = 0;
 
   while (retries < maxRetries) {
-    if (window.fs && window.fs.db) return true;
+    if (window.fs && window.fs.db && window.fs.getDoc) {
+      return true;
+    }
 
     await new Promise(r => setTimeout(r, 50));
     retries++;
