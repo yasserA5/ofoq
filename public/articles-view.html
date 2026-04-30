@@ -1131,7 +1131,7 @@ window.addEventListener("load", async () => {
   window.dispatchEvent(new Event("fs-ready"));
 </script>
 
-<script src="view-loader.js"></script><script src="view-loader.js"></script>
+
 <script>
   document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
@@ -1366,106 +1366,27 @@ async function getArticleById() {
     getQueryParam('docId');
 
   if (!rawId) return null;
-await new Promise(resolve => {
-  if (window.fs) return resolve();
 
-  window.addEventListener("fs-ready", resolve, { once: true });
-
-  setTimeout(resolve, 5000); // fallback
-});
-  // محاولة localStorage
-  try {
-    const allData = safeParse(localStorage.getItem('articles'), []);
-
-    if (Array.isArray(allData)) {
-      const localItem = allData.find(i =>
-        String(i?.id) === String(rawId) ||
-        String(i?.docId) === String(rawId)
-      );
-
-      if (localItem) return localItem;
-    }
-  } catch (e) {
-    console.log("LocalStorage error:", e);
-  }
-
-// انتظار Firestore بشكل أقوى
-
-async function waitForFirestore(maxRetries = 100) {
-  let retries = 0;
-
-  while (retries < maxRetries) {
-    if (window.fs && window.fs.db && window.fs.getDoc) {
-      return true;
-    }
-
-    await new Promise(r => setTimeout(r, 50));
-    retries++;
-  }
-
-  return false;
-}
-
-
-
-  if (!ready) {
-    console.error("Firestore failed to initialize");
-    return null;
-  }
+  // wait for fs
+  await new Promise(resolve => {
+    if (window.fs?.db) return resolve();
+    window.addEventListener("fs-ready", resolve, { once: true });
+    setTimeout(resolve, 5000);
+  });
 
   try {
-    const col = window.fs.collection(window.fs.db, 'articles');
+    const docRef = window.fs.doc(window.fs.db, 'articles', rawId);
+    const docSnap = await window.fs.getDoc(docRef);
 
-try {
-  // محاولة مباشرة باستعمال document id الحقيقي
-  const docRef = window.fs.doc(window.fs.db, 'articles', rawId);
-
-  const docSnap = await window.fs.getDoc(docRef);
-
-  if (docSnap.exists()) {
-    const item = {
-      docId: docSnap.id,
-      ...docSnap.data()
-    };
-
-    return item;
-  }
-} catch (e) {
-  console.error("Direct document fetch failed:", e);
-}
-
-    if (!snap.empty) {
-      const docSnap = snap.docs[0];
-
-      const item = {
+    if (docSnap.exists()) {
+      return {
         docId: docSnap.id,
         ...docSnap.data()
       };
-
-      // حفظ محلي
-      try {
-        const existing = safeParse(localStorage.getItem('articles'), []);
-
-        const updated = Array.isArray(existing) ? existing : [];
-
-        const index = updated.findIndex(x =>
-          String(x?.id) === String(item.id) ||
-          String(x?.docId) === String(item.docId)
-        );
-
-        if (index >= 0) updated[index] = item;
-        else updated.unshift(item);
-
-        localStorage.setItem('articles', JSON.stringify(updated));
-      } catch (e) {
-        console.log("Cache save failed:", e);
-      }
-
-      return item;
     }
 
   } catch (err) {
-    console.error('Firestore fetch failed:', err);
+    console.error("Firestore error:", err);
   }
 
   return null;
