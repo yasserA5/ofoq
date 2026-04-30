@@ -889,6 +889,19 @@ img, video {
     
   </style>
 </head>
+<script>
+window.addEventListener("load", async () => {
+  const savedLang = getCurrentLang();
+
+  try {
+    window.displayItem = await getArticleById();
+  } catch (e) {
+    console.error(e);
+  }
+
+  applyLang(savedLang);
+});
+</script>
 <body>
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
@@ -1343,38 +1356,53 @@ async function getArticleById() {
 
   if (!rawId) return null;
 
-  const allData = safeParse(localStorage.getItem('articles'), []);
-  if (Array.isArray(allData)) {
-    const localItem = allData.find(i =>
-      String(i?.id) === String(rawId) ||
-      String(i?.docId) === String(rawId)
-    );
-    if (localItem) return localItem;
+  // محاولة localStorage
+  try {
+    const allData = safeParse(localStorage.getItem('articles'), []);
+
+    if (Array.isArray(allData)) {
+      const localItem = allData.find(i =>
+        String(i?.id) === String(rawId) ||
+        String(i?.docId) === String(rawId)
+      );
+
+      if (localItem) return localItem;
+    }
+  } catch (e) {
+    console.log("LocalStorage error:", e);
+  }
+
+  // انتظار Firestore بشكل أقوى
+  async function waitForFirestore(maxRetries = 100) {
+    let retries = 0;
+
+    while (retries < maxRetries) {
+      if (
+        window.fs &&
+        window.fs.db &&
+        window.fs.collection &&
+        window.fs.getDocs &&
+        window.fs.query &&
+        window.fs.where
+      ) {
+        return true;
+      }
+
+      await new Promise(r => setTimeout(r, 100));
+      retries++;
+    }
+
+    return false;
+  }
+
+  const ready = await waitForFirestore();
+
+  if (!ready) {
+    console.error("Firestore failed to initialize");
+    return null;
   }
 
   try {
-    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
-      const start = Date.now();
-      function check() {
-        if (
-          window.fs &&
-          window.fs.db &&
-          window.fs.collection &&
-          window.fs.getDocs &&
-          window.fs.query &&
-          window.fs.where
-        ) return resolve(true);
-
-        if (Date.now() - start > timeoutMs) {
-          return reject(new Error('Firestore not ready'));
-        }
-        setTimeout(check, 50);
-      }
-      check();
-    });
-
-    await waitForFS();
-
     const col = window.fs.collection(window.fs.db, 'articles');
 
     let snap = await window.fs.getDocs(
@@ -1389,20 +1417,34 @@ async function getArticleById() {
 
     if (!snap.empty) {
       const docSnap = snap.docs[0];
-      const item = { docId: docSnap.id, ...docSnap.data() };
 
-      const updated = Array.isArray(allData) ? allData : [];
-      const index = updated.findIndex(x =>
-        String(x?.id) === String(item.id) ||
-        String(x?.docId) === String(item.docId)
-      );
+      const item = {
+        docId: docSnap.id,
+        ...docSnap.data()
+      };
 
-      if (index >= 0) updated[index] = item;
-      else updated.unshift(item);
+      // حفظ محلي
+      try {
+        const existing = safeParse(localStorage.getItem('articles'), []);
 
-      localStorage.setItem('articles', JSON.stringify(updated));
+        const updated = Array.isArray(existing) ? existing : [];
+
+        const index = updated.findIndex(x =>
+          String(x?.id) === String(item.id) ||
+          String(x?.docId) === String(item.docId)
+        );
+
+        if (index >= 0) updated[index] = item;
+        else updated.unshift(item);
+
+        localStorage.setItem('articles', JSON.stringify(updated));
+      } catch (e) {
+        console.log("Cache save failed:", e);
+      }
+
       return item;
     }
+
   } catch (err) {
     console.error('Firestore fetch failed:', err);
   }
@@ -1713,11 +1755,7 @@ async function getArticleById() {
 
 window.displayItem = null;
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const savedLang = getCurrentLang();
-window.displayItem = await getArticleById();
-  applyLang(savedLang);
-});
+
 </script>
 
 </body>
