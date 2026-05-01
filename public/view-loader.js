@@ -21,16 +21,22 @@ async function getItemByIdWithFallback(collectionName, storageKey) {
   }
 
   try {
-    if (
-      !window.fs ||
-      !window.fs.db ||
-      !window.fs.collection ||
-      !window.fs.getDocs ||
-      !window.fs.query ||
-      !window.fs.where
-    ) {
-      return null;
-    }
+    await new Promise((resolve, reject) => {
+      const start = Date.now();
+      function check() {
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.where
+        ) return resolve();
+        if (Date.now() - start > 5000) return reject(new Error('Firestore not ready'));
+        setTimeout(check, 50);
+      }
+      check();
+    });
 
     const col = window.fs.collection(window.fs.db, collectionName);
     const q = window.fs.query(col, window.fs.where('id', '==', rawId));

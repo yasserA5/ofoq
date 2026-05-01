@@ -1151,6 +1151,8 @@
 
 <script type="module" src="/firestore-bridge.js"></script>
 <script>
+let currentLang = localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
+
 function getCurrentLang() {
   return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
 }

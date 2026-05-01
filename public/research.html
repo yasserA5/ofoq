@@ -1017,6 +1017,101 @@
 
 <script type="module" src="/firestore-bridge.js"></script>
 <script>
+  async function waitForFS(timeoutMs = 7000) {
+    return new Promise((resolve, reject) => {
+      const t0 = Date.now();
+      function tick() {
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.orderBy
+        ) {
+          return resolve();
+        }
+        if (Date.now() - t0 > timeoutMs) {
+          return reject(new Error('Firestore not ready'));
+        }
+        setTimeout(tick, 80);
+      }
+      tick();
+    });
+  }
+
+  function renderContent(storageKey, gridId) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const lang = localStorage.getItem('lang') || 'ar';
+
+    grid.innerHTML = '';
+    if (!items.length) {
+      grid.innerHTML = `<div class="empty-state"><p>لا توجد عناصر بعد</p></div>`;
+      return;
+    }
+
+    items.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const title = item.title?.[lang] || item.title?.ar || item.title?.en || item.title?.fr || 'بدون عنوان';
+      const author = item.author?.[lang] || item.author?.ar || item.author?.en || item.author?.fr || '';
+      const desc = item.description?.[lang] || item.short?.[lang] || item.details?.[lang] || item.description || '';
+      const img = item.image || item.photo || '';
+
+      card.innerHTML = `
+        ${img ? `<div class="card-img-wrapper"><img src="${img}" alt="${title}" class="card-img"></div>` : ''}
+        <div class="card-body">
+          <h3>${title}</h3>
+          ${author ? `<span class="card-author">بقلم: ${author}</span>` : ''}
+          <p>${desc}</p>
+        </div>
+        <div class="card-footer">
+          <span>${storageKey}</span>
+          <button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function goToPage(pageType, index) {
+    const list = JSON.parse(localStorage.getItem(pageType) || '[]');
+    const selected = list[index];
+    if (selected) {
+      localStorage.setItem('selectedItem', JSON.stringify(selected));
+    }
+    const pageMap = {
+      research: 'research.html',
+      articles: 'articles.html',
+      files: 'files.html',
+      'general-articles': 'general-articles.html',
+      editions: 'editions.html',
+      activities: 'activities.html',
+      training: 'training.html'
+    };
+    window.location.href = pageMap[pageType] || 'index.html';
+  }
+
+  function updateStats() {
+    const research = JSON.parse(localStorage.getItem('research') || '[]');
+    const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+    const editions = JSON.parse(localStorage.getItem('editions') || '[]');
+    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+
+    const stat1 = document.getElementById('stat1_number');
+    const stat2 = document.getElementById('stat2_number');
+    const stat3 = document.getElementById('stat3_number');
+    const stat4 = document.getElementById('stat4_number');
+
+    if (stat1) stat1.textContent = research.length;
+    if (stat2) stat2.textContent = articles.length;
+    if (stat3) stat3.textContent = editions.length;
+    if (stat4) stat4.textContent = activities.length;
+  }
+
   async function syncFirestoreToLocal() {
     try {
       await waitForFS(); // من admin.html
@@ -1030,7 +1125,6 @@
         renderContent(sec, sec + 'Grid');
       }
       updateStats();
-      console.log('✅ Firestore synced to localStorage');
     } catch(e) {
       console.error('Firestore sync failed:', e);
     }

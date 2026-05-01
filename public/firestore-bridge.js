@@ -7,7 +7,8 @@ import {
   getDoc,
   query,
   where,
-  doc
+  doc,
+  orderBy
 }
  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
@@ -22,5 +23,8 @@ window.fs = {
   getDoc,
   query,
   where,
-  doc
+  doc,
+  orderBy
 };
+
+window.dispatchEvent(new CustomEvent('firestoreReady'));
