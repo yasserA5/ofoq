@@ -13,7 +13,6 @@ import {
  from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 onAuthStateChanged(auth, (user) => {
-  console.log("SAVE PAGE auth user:", user ? user.uid : null);
 });
 
 window.fs = {

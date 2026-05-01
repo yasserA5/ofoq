@@ -18,5 +18,4 @@ export const db = getFirestore(app);
 
 export const auth = getAuth(app);
 onAuthStateChanged(auth, (user) => {
-  console.log("Auth user:", user ? user.uid : null);
 });
