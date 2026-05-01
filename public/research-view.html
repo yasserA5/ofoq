@@ -1337,11 +1337,13 @@ document.addEventListener('keydown', function(e) {
 
 async function getResearchById() {
   const rawId = getQueryParam('id');
-  if (!rawId) return null;
+  if (!rawId) {
+    return null;
+  }
 
   const allData = safeParse(localStorage.getItem('research'), []);
   if (Array.isArray(allData)) {
-    const localItem = allData.find(i => String(i?.id) === String(rawId));
+    const localItem = allData.find(i => String(i?.id) === String(rawId) || String(i?.docId) === String(rawId));
     if (localItem) return localItem;
   }
 
@@ -1365,19 +1367,63 @@ async function getResearchById() {
 
     await waitForFS();
 
-    const col = window.fs.collection(window.fs.db, 'research');
-    const q = window.fs.query(col, window.fs.where('id', '==', rawId));
-    const snap = await window.fs.getDocs(q);
+    const researchCollection = window.fs.collection(window.fs.db, 'research');
+    const contentCollection = window.fs.collection(window.fs.db, 'content');
 
+    try {
+      const docRef = window.fs.doc(researchCollection, rawId);
+      const docSnap = await window.fs.getDoc(docRef);
+      if (docSnap.exists()) {
+        const item = { docId: docSnap.id, ...docSnap.data() };
+        const updated = Array.isArray(allData) ? allData : [];
+        const index = updated.findIndex(x => String(x?.docId) === String(item.docId) || String(x?.id) === String(item.id));
+        if (index >= 0) updated[index] = item;
+        else updated.unshift(item);
+        localStorage.setItem('research', JSON.stringify(updated));
+        return item;
+      }
+    } catch (directErr) {
+      // ignore direct fetch failure
+    }
+
+    const q = window.fs.query(researchCollection, window.fs.where('id', '==', rawId));
+    const snap = await window.fs.getDocs(q);
     if (!snap.empty) {
       const docSnap = snap.docs[0];
       const item = { docId: docSnap.id, ...docSnap.data() };
-
       const updated = Array.isArray(allData) ? allData : [];
-      const index = updated.findIndex(x => String(x?.id) === String(item.id));
+      const index = updated.findIndex(x => String(x?.docId) === String(item.docId) || String(x?.id) === String(item.id));
       if (index >= 0) updated[index] = item;
       else updated.unshift(item);
+      localStorage.setItem('research', JSON.stringify(updated));
+      return item;
+    }
 
+    try {
+      const contentDocRef = window.fs.doc(contentCollection, rawId);
+      const contentDocSnap = await window.fs.getDoc(contentDocRef);
+      if (contentDocSnap.exists()) {
+        const item = { docId: contentDocSnap.id, ...contentDocSnap.data() };
+        const updated = Array.isArray(allData) ? allData : [];
+        const index = updated.findIndex(x => String(x?.docId) === String(item.docId) || String(x?.id) === String(item.id));
+        if (index >= 0) updated[index] = item;
+        else updated.unshift(item);
+        localStorage.setItem('research', JSON.stringify(updated));
+        return item;
+      }
+    } catch (contentDirectErr) {
+      // ignore direct content fetch failure
+    }
+
+    const contentQuery = window.fs.query(contentCollection, window.fs.where('id', '==', rawId));
+    const contentSnap = await window.fs.getDocs(contentQuery);
+    if (!contentSnap.empty) {
+      const docSnap = contentSnap.docs[0];
+      const item = { docId: docSnap.id, ...docSnap.data() };
+      const updated = Array.isArray(allData) ? allData : [];
+      const index = updated.findIndex(x => String(x?.docId) === String(item.docId) || String(x?.id) === String(item.id));
+      if (index >= 0) updated[index] = item;
+      else updated.unshift(item);
       localStorage.setItem('research', JSON.stringify(updated));
       return item;
     }
@@ -1542,7 +1588,9 @@ async function getResearchById() {
 
   function renderContentForLang(lang){
     const it = window.displayItem;
-    if(!it) return;
+    if(!it) {
+      return;
+    }
 
     const t = uiTexts[lang] || uiTexts.ar;
 

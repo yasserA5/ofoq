@@ -1056,6 +1056,8 @@
     items.forEach((item, index) => {
       const card = document.createElement('div');
       card.className = 'card';
+      const itemId = item.docId || item.id || '';
+      card.dataset.id = itemId;
       const title = item.title?.[lang] || item.title?.ar || item.title?.en || item.title?.fr || 'بدون عنوان';
       const author = item.author?.[lang] || item.author?.ar || item.author?.en || item.author?.fr || '';
       const desc = item.description?.[lang] || item.short?.[lang] || item.details?.[lang] || item.description || '';
@@ -1070,7 +1072,7 @@
         </div>
         <div class="card-footer">
           <span>${storageKey}</span>
-          <button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>
+          <button type="button" class="card-btn" onclick="event.stopPropagation(); goToPage('${storageKey}', ${index})">عرض</button>
         </div>
       `;
       grid.appendChild(card);
@@ -1082,6 +1084,14 @@
     const selected = list[index];
     if (selected) {
       localStorage.setItem('selectedItem', JSON.stringify(selected));
+      if (pageType === 'research') {
+        const targetId = selected.docId || selected.id;
+        const targetUrl = 'research-view?id=' + encodeURIComponent(targetId);
+        if (targetId) {
+          window.location.assign(targetUrl);
+          return;
+        }
+      }
     }
     const pageMap = {
       research: 'research.html',
@@ -1415,8 +1425,7 @@ hero_sub_research:"Cliquez sur une carte de recherche pour voir le contenu compl
     researchData.forEach((item) => {
       const card = document.createElement("article");
       card.className = "card";
-      if (item.id != null) card.dataset.id = item.id;
-
+      card.dataset.id = item.docId || item.id || '';
 
       // ✅ قراءة القيم كنص (حتى لو كانت مخزنة كـ object متعدد اللغات)
       const title = getAnyText(item.title) || 'بدون عنوان';
@@ -1445,14 +1454,19 @@ hero_sub_research:"Cliquez sur une carte de recherche pour voir le contenu compl
   }
 
 function handleProtectedResearch(id){
-  if (id) window.location.href = 'research-view.html?id=' + encodeURIComponent(id);
+  if (id) {
+    const targetUrl = 'research-view?id=' + encodeURIComponent(id);
+    window.location.assign(targetUrl);
+  }
 }
 
 
 
   document.addEventListener('click', (e) => {
     const card = e.target.closest('.card');
-    if (!card || !card.dataset.id) return;
+    if (!card || !card.dataset.id) {
+      return;
+    }
     const id = card.dataset.id;
     handleProtectedResearch(id);
   });
