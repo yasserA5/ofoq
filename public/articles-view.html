@@ -1106,7 +1106,7 @@ img, video {
     </div>
   </div>
 </footer>
-<script type="module" src="firestore-bridge.js"></script>
+<script type="module" src="/firestore-bridge.js"></script>
 <script src="view-loader.js"></script>
 <script>
   document.addEventListener('contextmenu', function(e) {
@@ -1335,10 +1335,14 @@ window.location.href = 'articles.html';    }
   }
 
 async function getArticleById() {
-  const rawId =
-    getQueryParam('id') ||
-    getQueryParam('articleId') ||
-    getQueryParam('docId');
+  const docIdParam = getQueryParam('docId');
+  const idParam = getQueryParam('id') || getQueryParam('articleId');
+  const rawId = docIdParam || idParam;
+
+  const selectedItem = safeParse(localStorage.getItem('selectedItem'), null);
+  if (!rawId && selectedItem) {
+    return selectedItem;
+  }
 
   if (!rawId) return null;
 
@@ -1348,62 +1352,134 @@ async function getArticleById() {
       String(i?.id) === String(rawId) ||
       String(i?.docId) === String(rawId)
     );
-    if (localItem) return localItem;
+    if (localItem && (
+      localItem.full || localItem.content || localItem.body || localItem.text ||
+      localItem.fullContent || localItem.details || localItem.notes
+    )) {
+      return localItem;
+    }
   }
 
-  try {
-    const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
-      const start = Date.now();
-      function check() {
-        if (
-          window.fs &&
-          window.fs.db &&
-          window.fs.collection &&
-          window.fs.getDocs &&
-          window.fs.query &&
-          window.fs.where
-        ) return resolve(true);
+  // Retry logic: try up to 2 times with delay
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const waitForFS = (timeoutMs = 5000) => new Promise((resolve, reject) => {
+        const start = Date.now();
+        function check() {
+          const ready = (
+            window.fs &&
+            window.fs.db &&
+            window.fs.collection &&
+            window.fs.getDocs &&
+            window.fs.query &&
+            window.fs.where
+          );
+          if (ready) {
+            return resolve(true);
+          }
 
-        if (Date.now() - start > timeoutMs) {
-          return reject(new Error('Firestore not ready'));
+          if (Date.now() - start > timeoutMs) {
+            return reject(new Error('Firestore not ready'));
+          }
+          setTimeout(check, 50);
         }
-        setTimeout(check, 50);
+        check();
+      });
+
+      await waitForFS();
+
+      async function fetchDocumentFromCollections(id) {
+        const collectionsToTry = ['articles', 'content'];
+        for (const collectionName of collectionsToTry) {
+          try {
+            const docRef = window.fs.doc(window.fs.db, collectionName, id);
+            const docSnap = await window.fs.getDoc(docRef);
+            if (docSnap.exists()) {
+              return { docId: docSnap.id, ...docSnap.data() };
+            }
+          } catch (docErr) {
+            // ignore direct fetch failures and continue to next collection
+          }
+        }
+        return null;
       }
-      check();
-    });
 
-    await waitForFS();
+      if (docIdParam && window.fs.doc && window.fs.getDoc) {
+        const directItem = await fetchDocumentFromCollections(docIdParam);
+        if (directItem) {
+          const updated = Array.isArray(allData) ? allData : [];
+          const index = updated.findIndex(x =>
+            String(x?.id) === String(directItem.id) ||
+            String(x?.docId) === String(directItem.docId)
+          );
 
-    const col = window.fs.collection(window.fs.db, 'articles');
+          if (index >= 0) updated[index] = directItem;
+          else updated.unshift(directItem);
 
-    let snap = await window.fs.getDocs(
-      window.fs.query(col, window.fs.where('id', '==', rawId))
-    );
+          localStorage.setItem('articles', JSON.stringify(updated));
+          return directItem;
+        }
+      }
 
-    if (snap.empty) {
-      snap = await window.fs.getDocs(
-        window.fs.query(col, window.fs.where('docId', '==', rawId))
-      );
+      const articleCollection = window.fs.collection(window.fs.db, 'articles');
+      const contentCollection = window.fs.collection(window.fs.db, 'content');
+      let snap = null;
+
+      async function queryCollections(queryFn) {
+        const articleSnap = await window.fs.getDocs(queryFn(articleCollection));
+        if (!articleSnap.empty) return articleSnap;
+        const contentSnap = await window.fs.getDocs(queryFn(contentCollection));
+        return contentSnap;
+      }
+
+      if (idParam) {
+        snap = await queryCollections(col => window.fs.query(col, window.fs.where('id', '==', idParam)));
+        if (snap.empty) {
+          snap = await queryCollections(col => window.fs.query(col, window.fs.where('docId', '==', idParam)));
+        }
+      }
+
+      if ((!snap || snap.empty) && rawId) {
+        const [articlesSnap, contentSnap] = await Promise.all([
+          window.fs.getDocs(articleCollection),
+          window.fs.getDocs(contentCollection)
+        ]);
+        const allItems = [
+          ...articlesSnap.docs.map(docSnap => ({ docId: docSnap.id, ...docSnap.data() })),
+          ...contentSnap.docs.map(docSnap => ({ docId: docSnap.id, ...docSnap.data() }))
+        ];
+        const fallbackItem = allItems.find(i =>
+          String(i?.id) === String(rawId) ||
+          String(i?.docId) === String(rawId)
+        );
+        if (fallbackItem) {
+          localStorage.setItem('articles', JSON.stringify([fallbackItem, ...(Array.isArray(allData) ? allData : [])]));
+          return fallbackItem;
+        }
+      }
+
+      if (snap && !snap.empty) {
+        const docSnap = snap.docs[0];
+        const item = { docId: docSnap.id, ...docSnap.data() };
+
+        const updated = Array.isArray(allData) ? allData : [];
+        const index = updated.findIndex(x =>
+          String(x?.id) === String(item.id) ||
+          String(x?.docId) === String(item.docId)
+        );
+
+        if (index >= 0) updated[index] = item;
+        else updated.unshift(item);
+
+        localStorage.setItem('articles', JSON.stringify(updated));
+        return item;
+      }
+    } catch (err) {
+      console.error(`Firestore fetch failed (attempt ${attempt}):`, err);
+      if (attempt < 2) {
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
+      }
     }
-
-    if (!snap.empty) {
-      const docSnap = snap.docs[0];
-      const item = { docId: docSnap.id, ...docSnap.data() };
-
-      const updated = Array.isArray(allData) ? allData : [];
-      const index = updated.findIndex(x =>
-        String(x?.id) === String(item.id) ||
-        String(x?.docId) === String(item.docId)
-      );
-
-      if (index >= 0) updated[index] = item;
-      else updated.unshift(item);
-
-      localStorage.setItem('articles', JSON.stringify(updated));
-      return item;
-    }
-  } catch (err) {
-    console.error('Firestore fetch failed:', err);
   }
 
   return null;
@@ -1711,11 +1787,26 @@ async function getArticleById() {
 
 window.displayItem = null;
 
-window.addEventListener('DOMContentLoaded', async () => {
+async function initPage() {
   const savedLang = getCurrentLang();
-window.displayItem = await getArticleById();
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasIdParam = urlParams.has('id') || urlParams.has('articleId') || urlParams.has('docId');
+  if (!hasIdParam) {
+    const selectedItem = safeParse(localStorage.getItem('selectedItem'), null);
+    if (selectedItem && selectedItem.docId) {
+      window.history.replaceState({}, '', `${window.location.pathname}?docId=${encodeURIComponent(selectedItem.docId)}`);
+    }
+  }
+  window.displayItem = await getArticleById();
   applyLang(savedLang);
-});
+}
+
+const _ready = { dom: document.readyState !== 'loading', fs: !!(window.fs && window.fs.db) };
+let _ran = false;
+function _tryInit() { if (_ready.dom && _ready.fs && !_ran) { _ran = true; initPage(); } }
+document.addEventListener('DOMContentLoaded', () => { _ready.dom = true; _tryInit(); });
+window.addEventListener('firestoreReady', () => { _ready.fs = true; _tryInit(); }, { once: true });
+_tryInit();
 </script>
 
 </body>

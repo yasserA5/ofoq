@@ -1,0 +1,9 @@
+node_modules/
+ofouq-api/node_modules/
+ofouq-api/uploads/videos/
+public/node_modules/
+*.log
+npm-debug.log*
+.DS_Store
+.env
+.env.local

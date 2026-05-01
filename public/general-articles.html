@@ -1141,10 +1141,49 @@
   </div>
 </footer>
 
+<script type="module" src="/firestore-bridge.js"></script>
 
 <script>
   function goToHome(){
     window.location.href='index.html';
+  }
+
+  async function waitForFS(timeoutMs = 7000) {
+    return new Promise((resolve, reject) => {
+      const t0 = Date.now();
+      function tick() {
+        if (
+          window.fs &&
+          window.fs.db &&
+          window.fs.collection &&
+          window.fs.getDocs &&
+          window.fs.query &&
+          window.fs.orderBy
+        ) {
+          return resolve();
+        }
+        if (Date.now() - t0 > timeoutMs) {
+          return reject(new Error('Firestore not ready'));
+        }
+        setTimeout(tick, 80);
+      }
+      tick();
+    });
+  }
+
+  async function syncGeneralArticles() {
+    try {
+      await waitForFS();
+      const col = window.fs.collection(window.fs.db, 'general-articles');
+      const q = window.fs.query(col, window.fs.orderBy('id', 'desc'));
+      const snap = await window.fs.getDocs(q);
+      const data = snap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+      localStorage.setItem('general-articles', JSON.stringify(data));
+      renderGeneralArticles();
+    } catch (err) {
+      console.error('Failed to sync general articles:', err);
+      renderGeneralArticles();
+    }
   }
 
 
@@ -1561,11 +1600,11 @@ function updateHeader(){
   }
 
 
-  window.addEventListener('DOMContentLoaded',()=>{
+  window.addEventListener('DOMContentLoaded', async () => {
     updateHeader();
     setLang(currentLang);
     initMobileDropdowns();
-    renderGeneralArticles();
+    await syncGeneralArticles();
   });
 </script>
 

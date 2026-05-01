@@ -1182,6 +1182,7 @@
 
       if (item.id != null) card.dataset.id = item.id;
       if (item.docId != null) card.dataset.docId = item.docId;
+      card.dataset.selectedItem = JSON.stringify(item);
 
       const title = getTextByLang(item.title) || 'Untitled';
       const authorName = getTextByLang(item.author);
@@ -1217,18 +1218,30 @@
 
   function handleProtectedArticle(id, docId) {
     const finalId = docId || id;
-    if (!finalId) return;
-    window.location.href = `articles-view.html?id=${encodeURIComponent(finalId)}`;
+    if (!finalId) {
+      return;
+    }
+    const paramName = docId ? 'docId' : 'id';
+    const url = `articles-view.html?${paramName}=${encodeURIComponent(finalId)}`;
+    window.location.href = url;
   }
 
   document.addEventListener('click', e => {
     const card = e.target.closest('.card');
-    if (!card) return;
+    if (!card) {
+      return;
+    }
 
     const id = card.dataset.id;
     const docId = card.dataset.docId;
 
-    if (!id && !docId) return;
+
+    if (!id && !docId) {
+      return;
+    }
+    if (card.dataset.selectedItem) {
+      localStorage.setItem('selectedItem', card.dataset.selectedItem);
+    }
     handleProtectedArticle(id, docId);
   });
 
