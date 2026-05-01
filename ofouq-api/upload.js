@@ -44,6 +44,6 @@ app.post('/upload-video', upload.single('video'), (req, res) => {
 });
 
 // تشغيل السيرفر
-const PORT = 3001;
+const PORT = 3000;
 app.listen(PORT, () => {
 });
