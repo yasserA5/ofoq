@@ -973,7 +973,11 @@ row.className = "card edition-article-row";
   if (article.file) row.dataset.file = article.file;
   wrap.appendChild(row);
 }
-
+if (!auth.currentUser) {
+  alert("Please sign in first");
+  setStatus("You are not signed in");
+  return [];
+}
 async function collectEditionArticles(key, issueId){
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return [];
