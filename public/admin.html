@@ -497,23 +497,21 @@
       window.addEventListener("firestoreReady", resolve, { once: true });
     });
 
-    const SECTIONS = [
-      { key:"research", title:"البحوث", icon:"ri-file-text-line", kind:"content" },
-      { key:"articles", title:"المقالات", icon:"ri-file-paper-line", kind:"content" },
-      { key:"files", title:"الملفات", icon:"ri-folder-3-line", kind:"content" },
-      { key:"generalArticles", title:"مقالات عامة", icon:"ri-newspaper-line", kind:"content" },
-      { key:"foreignArticles", title:"مقالات أجنبية", icon:"ri-article-line", kind:"content" },
-      { key:"specialPolitics", title:"السياسة", icon:"ri-government-line", kind:"content" },
-      { key:"specialIR", title:"العلاقات الدولية", icon:"ri-global-line", kind:"content" },
-      { key:"specialAdminLaw", title:"القانون الإداري", icon:"ri-briefcase-4-line", kind:"content" },
-      { key:"specialConstLaw", title:"القانون الدستوري", icon:"ri-scales-3-line", kind:"content" },
-      { key:"specialPublicPolicy", title:"السياسات العامة", icon:"ri-community-line", kind:"content" },
-      { key:"editions", title:"الإصدارات", icon:"ri-book-open-line", kind:"edition" },
-      { key:"activities", title:"الأنشطة", icon:"ri-calendar-event-line", kind:"content" },
-      { key:"talks", title:"المحاضرات", icon:"ri-mic-line", kind:"content" },
-      { key:"training", title:"التدريب", icon:"ri-graduation-cap-line", kind:"content" },
-      { key:"live", title:"مباشر", icon:"ri-live-line", kind:"live" }
-    ];
+const SECTIONS = [
+  { key:"research", title:"أبحاث محكمة", page:"research.html", icon:"ri-file-text-line", kind:"content" },
+  { key:"articles", title:"مقالات محكمة", page:"articles.html", icon:"ri-file-paper-line", kind:"content" },
+  { key:"files", title:"ملفات بحثية", page:"files.html", icon:"ri-folder-3-line", kind:"content" },
+  { key:"articles-foreign", title:"مقالات أجنبية", page:"articles-foreign.html", icon:"ri-article-line", kind:"content" },
+  { key:"general-articles", title:"مقالات", page:"general-articles.html", icon:"ri-newspaper-line", kind:"content" },
+  { key:"editions", title:"إصداراتنا", page:"editions.html", icon:"ri-book-open-line", kind:"edition" },
+  { key:"activities", title:"أنشطتنا", page:"activities.html", icon:"ri-calendar-event-line", kind:"content" },
+  { key:"special-politics", title:"تخصص علوم سياسية", page:"special-politics.html", icon:"ri-government-line", kind:"content" },
+  { key:"special-ir", title:"تخصص العلاقات الدولية", page:"special-ir.html", icon:"ri-global-line", kind:"content" },
+  { key:"special-admin-law", title:"تخصص القانون الإداري", page:"special-admin-law.html", icon:"ri-briefcase-4-line", kind:"content" },
+  { key:"special-const-law", title:"تخصص القانون الدستوري", page:"special-const-law.html", icon:"ri-scales-3-line", kind:"content" },
+  { key:"special-public-policy", title:"تخصص السياسات العمومية", page:"special-public-policy.html", icon:"ri-community-line", kind:"content" },
+  { key:"live", title:"بث مباشر", page:"live.html", icon:"ri-live-line", kind:"live" }
+];
 
     const state = {
       bySection: {},
@@ -571,31 +569,31 @@
       localStorage.setItem("contentcache", JSON.stringify(items));
     }
 
-    function normalizeItem(sectionKey, raw){
-      const id = String(raw.docId || raw.id || uid());
-      return {
-        id,
-        docId: id,
-        section: sectionKey || raw.section || "research",
-        type: raw.type || "item",
-        title: typeof raw.title === "object" ? raw.title : { ar: raw.title || "", fr:"", en:"" },
-        short: typeof raw.short === "object" ? raw.short : { ar: raw.short || "", fr:"", en:"" },
-        full: typeof raw.full === "object" ? raw.full : { ar: raw.full || "", fr:"", en:"" },
-        details: typeof raw.details === "object" ? raw.details : { ar: raw.details || "", fr:"", en:"" },
-        author: typeof raw.author === "object" ? raw.author : { ar: raw.author || "", fr:"", en:"" },
-        affiliation: typeof raw.affiliation === "object" ? raw.affiliation : { ar: raw.affiliation || "", fr:"", en:"" },
-        date: typeof raw.date === "object" ? raw.date : { ar: raw.date || "", fr:"", en:"" },
-        image: raw.image || "",
-        file: raw.file || raw.link || "",
-        filePath: raw.filePath || "",
-        editionNumber: Number(raw.editionNumber || 0),
-        articles: Array.isArray(raw.articles) ? raw.articles : [],
-        createdAt: Number(raw.createdAt || Date.now()),
-        updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
-        status: raw.status || "published"
-      };
-    }
-
+function normalizeItem(sectionKey, raw){
+  const id = String(raw.docId || raw.id || uid());
+  return {
+    id,
+    docId: id,
+    section: sectionKey || raw.section || "research",
+    type: raw.type || "item",
+    title: typeof raw.title === "object" ? raw.title : { ar: raw.title || "", fr:"", en:"" },
+    short: typeof raw.short === "object" ? raw.short : { ar: raw.short || "", fr:"", en:"" },
+    full: typeof raw.full === "object" ? raw.full : { ar: raw.full || "", fr:"", en:"" },
+    details: typeof raw.details === "object" ? raw.details : { ar: raw.details || "", fr:"", en:"" },
+    author: typeof raw.author === "object" ? raw.author : { ar: raw.author || "", fr:"", en:"" },
+    affiliation: typeof raw.affiliation === "object" ? raw.affiliation : { ar: raw.affiliation || "", fr:"", en:"" },
+    date: typeof raw.date === "object" ? raw.date : { ar: raw.date || "", fr:"", en:"" },
+    image: raw.image || "",
+    imagePath: raw.imagePath || "",
+    file: raw.file || raw.link || "",
+    filePath: raw.filePath || "",
+    editionNumber: Number(raw.editionNumber || 0),
+    articles: Array.isArray(raw.articles) ? raw.articles : [],
+    createdAt: Number(raw.createdAt || Date.now()),
+    updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
+    status: raw.status || "published"
+  };
+}
     function rebuildDbFromCache(){
       const all = getContentCache()
         .map(item => normalizeItem(item.section, item))
@@ -617,11 +615,11 @@
       return SECTIONS.find(s => s.key === key);
     }
 
-    function getNextEditionNumber(){
-      const items = state.bySection.editions || [];
-      const numbers = items.map(x => Number(x.editionNumber || 0)).filter(Boolean);
-      return numbers.length ? Math.max(...numbers) + 1 : 1;
-    }
+function getNextEditionNumber(){
+  const items = state.bySection.editions || [];
+  const numbers = items.map(x => Number(x.editionNumber || 0)).filter(Boolean);
+  return numbers.length ? Math.max(...numbers) + 1 : 1;
+}
 
     function buildMenu(){
       const menu = el("menu");
@@ -642,50 +640,60 @@
       });
     }
 
-    function buildEditionForm(key){
-      return `
-        <div class="card">
-          <h3><i class="ri-book-open-line"></i>إضافة إصدار جديد</h3>
-          <div class="grid-2">
-            <div>
-              <div class="row">
-                <label>اسم الإصدار</label>
-                <input type="text" id="${key}-title-ar" readonly />
-                <div class="hint">الاسم يُنشأ تلقائيًا: العدد 1، العدد 2، العدد 3...</div>
-              </div>
-              <div class="row">
-                <label>وصف الإصدار</label>
-                <textarea id="${key}-details-ar" placeholder="اكتب وصفًا مختصرًا للإصدار"></textarea>
-              </div>
-              <div class="row">
-                <label>مقالات هذا العدد (اختياري JSON)</label>
-                <textarea id="${key}-articles-json" placeholder='[{"title":"مقال 1","startPage":1,"endPage":10},{"title":"مقال 2","startPage":11,"endPage":20}]'></textarea>
-                <div class="hint">إذا لم تردها الآن، اتركها فارغة وسيبقى الإصدار صالحًا.</div>
-              </div>
-            </div>
-            <div>
-              <div class="row">
-                <label>PDF الإصدار</label>
-                <input type="file" id="${key}-pdf-file" accept="application/pdf" />
-              </div>
-              <div class="row">
-                <label>صورة الغلاف</label>
-                <input type="file" id="${key}-image" accept="image/*" />
-              </div>
-              <div class="preview" id="${key}-preview"></div>
-            </div>
+function buildEditionForm(key){
+  return `
+    <div class="card">
+      <h3><i class="ri-book-open-line"></i>إضافة عدد جديد</h3>
+      <div class="grid-2">
+        <div>
+          <div class="row">
+            <label>رقم العدد</label>
+            <input type="text" id="${key}-number-ar" placeholder="1" />
           </div>
-          <div class="actions">
-            <button class="btn btn-small btn-green" type="button" onclick="publishItem('${key}')">
-              <i class="ri-upload-cloud-line"></i>حفظ الإصدار
-            </button>
-            <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
-              <i class="ri-refresh-line"></i>مسح
-            </button>
+
+          <div class="row">
+            <label>عنوان العدد</label>
+            <input type="text" id="${key}-title-ar" placeholder="العدد الأول" />
+          </div>
+
+          <div class="row">
+            <label>وصف العدد</label>
+            <textarea id="${key}-short-ar" placeholder="وصف مختصر لهذا العدد"></textarea>
+          </div>
+
+          <div class="row">
+            <label>صورة الغلاف</label>
+            <input type="file" id="${key}-image" accept="image/*" />
           </div>
         </div>
-      `;
-    }
+
+        <div>
+          <div class="preview" id="${key}-preview"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;padding:12px">
+        <h3><i class="ri-file-list-3-line"></i>مقالات العدد</h3>
+        <div id="${key}-articles-wrap"></div>
+
+        <div class="actions">
+          <button class="btn btn-ghost btn-small" type="button" onclick="addEditionArticleRow('${key}')">
+            <i class="ri-add-line"></i>إضافة مقال
+          </button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-small btn-green" type="button" onclick="publishItem('${key}')">
+          <i class="ri-upload-cloud-line"></i>حفظ العدد
+        </button>
+        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
+          <i class="ri-refresh-line"></i>مسح
+        </button>
+      </div>
+    </div>
+  `;
+}
 
     function buildLiveForm(key){
       return `
@@ -856,6 +864,16 @@
       if (key === "editions" && el(`${key}-title-ar`)) {
         el(`${key}-title-ar`).value = `العدد ${getNextEditionNumber()}`;
       }
+      if (key === "editions") {
+  const numInput = el(`${key}-number-ar`);
+  const titleInput = el(`${key}-title-ar`);
+
+  if (numInput && !numInput.value) numInput.value = getNextEditionNumber();
+  if (titleInput && !titleInput.value) titleInput.value = `العدد ${getNextEditionNumber()}`;
+
+  const wrap = el(`${key}-articles-wrap`);
+  if (wrap && !wrap.children.length) addEditionArticleRow(key);
+}
 
       renderList(key);
     }
@@ -882,15 +900,14 @@
       return obj;
     }
 
-    async function uploadPdfToStorage(file, sectionKey, itemId){
-      const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
-      const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
-      const storageRef = ref(storage, filePath);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      return { url, path: filePath };
-    }
-
+async function uploadImageToStorage(file, sectionKey, itemId){
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
+  const filePath = `images/${sectionKey}/${itemId}-${safeName}`;
+  const storageRef = ref(storage, filePath);
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+  return { url, path: filePath };
+}
     function fileToDataURL(file){
       return new Promise((resolve, reject) => {
         const r = new FileReader();
@@ -910,7 +927,81 @@
         return [];
       }
     }
+function addEditionArticleRow(key, article = {}) {
+  const wrap = el(`${key}-articles-wrap`);
+  if (!wrap) return;
 
+  const rowId = uid();
+  const row = document.createElement("div");
+  row.className = "card";
+  row.style.marginTop = "10px";
+  row.dataset.rowId = rowId;
+
+  // ترقيم المقالات تلقائيًا بناءً على الموجود حاليًا
+  const count = wrap.children.length + 1;
+
+  row.innerHTML = `
+    <h4 style="margin-bottom:8px">المقال رقم ${count}</h4>
+    <div class="row">
+      <label>عنوان المقال</label>
+      <input type="text" class="edition-article-title" placeholder="عنوان المقال..." value="${esc(article.title || "")}" />
+    </div>
+    <div class="row">
+      <label>وصف المقال</label>
+      <textarea class="edition-article-description" placeholder="وصف مختصر للمقال...">${esc(article.description || "")}</textarea>
+    </div>
+    <div class="row">
+      <label>PDF المقال</label>
+      <input type="file" class="edition-article-file" accept="application/pdf" />
+      ${article.file ? `<div class="hint" style="margin-top:6px"><a href="${article.file}" target="_blank">فتح الملف الحالي</a></div>` : ""}
+    </div>
+    <div class="actions">
+      <button class="btn btn-red btn-small" type="button" onclick="this.closest('.card').remove()">
+        <i class="ri-delete-bin-line"></i>حذف هذا المقال
+      </button>
+    </div>
+  `;
+
+  if (article.file) row.dataset.file = article.file;
+  wrap.appendChild(row);
+}
+
+async function collectEditionArticles(key, issueId){
+  const wrap = el(`${key}-articles-wrap`);
+  if (!wrap) return [];
+
+  const rows = [...wrap.querySelectorAll(".card[data-row-id]")];
+  const articles = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const title = row.querySelector(".edition-article-title")?.value.trim() || "";
+    const description = row.querySelector(".edition-article-description")?.value.trim() || "";
+    const fileInput = row.querySelector(".edition-article-file");
+    let file = row.dataset.file || "";
+
+    if (!title) continue;
+
+    if (fileInput?.files?.[0]) {
+      const pdfFile = fileInput.files[0];
+      if (pdfFile.type !== "application/pdf") {
+        alert(`ملف المقال ${i + 1} يجب أن يكون PDF`);
+        return [];
+      }
+      setStatus(`جاري رفع PDF للمقال ${i + 1}...`);
+      const uploaded = await uploadPdfToStorage(pdfFile, `${key}/articles`, `${issueId}-${i + 1}`);
+      file = uploaded.url;
+    }
+
+    articles.push({
+      title,
+      description,
+      file
+    });
+  }
+
+  return articles;
+}
     async function saveItem(key){
       const cfg = getSectionConfig(key);
       if (!cfg) return;
@@ -937,60 +1028,40 @@
         articles: existing?.articles || []
       };
 
-      if (cfg.kind === "edition") {
-        const editionNo = state.editing.key === key && existing?.editionNumber ? existing.editionNumber : getNextEditionNumber();
-        obj.editionNumber = editionNo;
-        obj.title.ar = `العدد ${editionNo}`;
-        obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
-        obj.articles = parseArticlesJSON(el(`${key}-articles-json`)?.value || "");
+if (cfg.kind === "edition") {
+  obj.type = "edition";
+  obj.issueNumber = Number(el(`${key}-number-ar`)?.value.trim()) || getNextEditionNumber();
+  obj.editionNumber = obj.issueNumber;
+  obj.title.ar = el(`${key}-title-ar`)?.value.trim() || `العدد ${obj.issueNumber}`;
+  obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
 
-        const pdfInput = el(`${key}-pdf-file`);
-        if (pdfInput?.files?.[0]) {
-          const pdfFile = pdfInput.files[0];
-          if (pdfFile.type !== "application/pdf") return alert("يرجى اختيار ملف PDF فقط");
-          setStatus("جاري رفع PDF...");
-          const uploaded = await uploadPdfToStorage(pdfFile, key, currentId);
-          obj.file = uploaded.url;
-          obj.filePath = uploaded.path;
-        }
+  const imgInput = el(`${key}-image`);
+  if (imgInput?.files?.[0]) {
+    setStatus("جاري رفع صورة الغلاف...");
+    const uploadedImage = await uploadImageToStorage(imgInput.files[0], key, currentId);
+    obj.image = uploadedImage.url;
+    obj.imagePath = uploadedImage.path;
+  }
 
-        const imgInput = el(`${key}-image`);
-        if (imgInput?.files?.[0]) {
-          obj.image = await fileToDataURL(imgInput.files[0]);
-        }
-      } else if (cfg.kind === "live") {
-        const title = el(`${key}-title-ar`)?.value.trim();
-        if (!title) return alert("العنوان مطلوب");
-        obj.title.ar = title;
-        obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
-        obj.file = el(`${key}-live-link`)?.value.trim() || "";
-      } else {
-        const title = el(`${key}-title-ar`)?.value.trim();
-        if (!title) return alert("العنوان مطلوب");
+  obj.articles = await collectEditionArticles(key, currentId);
 
-        obj.title.ar = title;
-        obj.author.ar = el(`${key}-author-ar`)?.value.trim() || "";
-        obj.affiliation.ar = el(`${key}-aff-ar`)?.value.trim() || "";
-        obj.date.ar = el(`${key}-date-ar`)?.value.trim() || "";
-        obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
-        obj.full.ar = stripHtml(el(`${key}-full-ar-editor`)?.innerHTML || "");
-        obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
+  const editionsData = JSON.parse(localStorage.getItem("editions") || "[]");
+  const normalizedEdition = {
+    id: obj.id,
+    issueNumber: obj.issueNumber,
+    number: obj.issueNumber,
+    title: obj.title,
+    short: obj.short,
+    description: obj.short,
+    image: obj.image || "",
+    file: obj.file || "",
+    articles: obj.articles || []
+  };
 
-        const pdfInput = el(`${key}-pdf-file`);
-        if (pdfInput?.files?.[0]) {
-          const pdfFile = pdfInput.files[0];
-          if (pdfFile.type !== "application/pdf") return alert("يرجى اختيار ملف PDF فقط");
-          setStatus("جاري رفع PDF...");
-          const uploaded = await uploadPdfToStorage(pdfFile, key, currentId);
-          obj.file = uploaded.url;
-          obj.filePath = uploaded.path;
-        }
-
-        const imgInput = el(`${key}-image`);
-        if (imgInput?.files?.[0]) {
-          obj.image = await fileToDataURL(imgInput.files[0]);
-        }
-      }
+  const filtered = editionsData.filter(x => String(x.id) !== String(obj.id));
+  filtered.unshift(normalizedEdition);
+  localStorage.setItem("editions", JSON.stringify(filtered));
+}
 
       upsertLocal(key, obj);
 
@@ -1004,6 +1075,12 @@
       resetForm(key);
       renderList(key);
       setStatus(`تم حفظ: ${obj.title.ar}`);
+      if (key === "editions") {
+  const numInput = el(`${key}-number-ar`);
+  if (numInput) numInput.value = getNextEditionNumber();
+  const titleInput = el(`${key}-title-ar`);
+  if (titleInput) titleInput.value = `العدد ${getNextEditionNumber()}`;
+}
     }
 
     function loadForEdit(key, id){
@@ -1028,6 +1105,28 @@
       if (key === "editions" && el(`${key}-title-ar`)) {
         el(`${key}-title-ar`).value = `العدد ${item.editionNumber || ""}`;
       }
+    if (key === "editions") {
+  const item = state.bySection[key].find(x => String(x.id) === String(id));
+  if (item && el(`${key}-number-ar`)) {
+    el(`${key}-number-ar`).value = item.editionNumber || item.issueNumber || "";
+    el(`${key}-title-ar`).value = getByLang(item.title, "ar");
+  }
+  if (el(`${key}-articles-json`)) {
+    el(`${key}-articles-json`).value = JSON.stringify(item.articles || [], null, 2);
+  }
+}
+if (key === "editions") {
+  const item = state.bySection[key].find(x => String(x.id) === String(id));
+  if (!item) return;
+
+  if (el(`${key}-number-ar`)) el(`${key}-number-ar`).value = item.issueNumber || item.editionNumber || "";
+  if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar");
+  if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar");
+
+  const wrap = el(`${key}-articles-wrap`);
+  if (wrap) wrap.innerHTML = "";
+  (item.articles || []).forEach(article => addEditionArticleRow(key, article));
+}
     }
 
     async function deleteItemById(sectionKey, id){
@@ -1076,6 +1175,20 @@
       if (key === "editions" && el(`${key}-title-ar`)) {
         el(`${key}-title-ar`).value = `العدد ${getNextEditionNumber()}`;
       }
+      if (key === "editions") {
+  const numInput = el(`${key}-number-ar`);
+  const titleInput = el(`${key}-title-ar`);
+  const shortInput = el(`${key}-short-ar`);
+  const wrap = el(`${key}-articles-wrap`);
+
+  if (numInput) numInput.value = getNextEditionNumber();
+  if (titleInput) titleInput.value = `العدد ${getNextEditionNumber()}`;
+  if (shortInput) shortInput.value = "";
+  if (wrap) {
+    wrap.innerHTML = "";
+    addEditionArticleRow(key);
+  }
+}
     }
 
     function renderList(key){
@@ -1091,7 +1204,11 @@
         const s = getByLang(item.short, "ar").toLowerCase();
         const d = getByLang(item.details, "ar").toLowerCase();
         return t.includes(q) || s.includes(q) || d.includes(q);
+      const dateLabel = key === "editions" 
+  ? `العدد ${item.editionNumber || item.issueNumber || ""}` 
+  : (getByLang(item.date, "ar") || "");
       });
+    
 
       count.textContent = data.length;
 
@@ -1237,6 +1354,7 @@
         location.reload();
       });
     }
+
 
     window.showSection = showSection;
     window.resetForm = resetForm;
