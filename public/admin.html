@@ -899,7 +899,14 @@ function buildEditionForm(key){
       await setDoc(window.fs.doc(window.fs.db, "content", docIdValue), obj, { merge: true });
       return obj;
     }
-
+async function uploadPdfToStorage(file, sectionKey, itemId){
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
+  const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
+  const storageRef = ref(storage, filePath);
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+  return { url, path: filePath };
+}
 async function uploadImageToStorage(file, sectionKey, itemId){
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
   const filePath = `images/${sectionKey}/${itemId}-${safeName}`;
@@ -933,7 +940,7 @@ function addEditionArticleRow(key, article = {}) {
 
   const rowId = uid();
   const row = document.createElement("div");
-  row.className = "card";
+row.className = "card edition-article-row";
   row.style.marginTop = "10px";
   row.dataset.rowId = rowId;
 
@@ -956,7 +963,7 @@ function addEditionArticleRow(key, article = {}) {
       ${article.file ? `<div class="hint" style="margin-top:6px"><a href="${article.file}" target="_blank">فتح الملف الحالي</a></div>` : ""}
     </div>
     <div class="actions">
-      <button class="btn btn-red btn-small" type="button" onclick="this.closest('.card').remove()">
+      <button class="btn btn-red btn-small" type="button" onclick="this.closest('.edition-article-row').remove()"
         <i class="ri-delete-bin-line"></i>حذف هذا المقال
       </button>
     </div>
@@ -982,16 +989,26 @@ async function collectEditionArticles(key, issueId){
 
     if (!title) continue;
 
-    if (fileInput?.files?.[0]) {
-      const pdfFile = fileInput.files[0];
-      if (pdfFile.type !== "application/pdf") {
-        alert(`ملف المقال ${i + 1} يجب أن يكون PDF`);
-        return [];
-      }
-      setStatus(`جاري رفع PDF للمقال ${i + 1}...`);
-      const uploaded = await uploadPdfToStorage(pdfFile, `${key}/articles`, `${issueId}-${i + 1}`);
-      file = uploaded.url;
-    }
+if (fileInput?.files?.[0]) {
+  const pdfFile = fileInput.files[0];
+
+  if (!pdfFile.name.toLowerCase().endsWith(".pdf")) {
+    alert(`ملف المقال ${i + 1} يجب أن يكون PDF`);
+    return [];
+  }
+
+  setStatus(`جاري رفع PDF للمقال ${i + 1}...`);
+
+  try {
+    const uploaded = await uploadPdfToStorage(pdfFile, `${key}/articles`, `${issueId}-${i + 1}`);
+    file = uploaded.url;
+  } catch (err) {
+    console.error("PDF upload failed:", err);
+    alert(`فشل رفع PDF للمقال ${i + 1}`);
+    setStatus("فشل رفع PDF");
+    return [];
+  }
+}
 
     articles.push({
       title,
@@ -1356,13 +1373,14 @@ if (key === "editions") {
     }
 
 
-    window.showSection = showSection;
-    window.resetForm = resetForm;
-    window.loadForEdit = loadForEdit;
-    window.deleteItem = deleteItemById;
-    window.publishItem = saveItem;
+window.addEditionArticleRow = addEditionArticleRow;
+window.publishItem = saveItem;
+window.resetForm = resetForm;
+window.loadForEdit = loadForEdit;
+window.deleteItem = deleteItemById;
+window.showSection = showSection;
 
-    init();
+init();
   </script>
 </body>
 </html>
