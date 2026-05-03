@@ -747,7 +747,7 @@
   let collection, getDocs, doc, setDoc, deleteDoc, signOut, ref, uploadBytes, getDownloadURL, deleteObject;
 
   try {
-    const firebaseCore = await import("../firebase-init.js");
+const firebaseCore = await import("./firebase-init.js");
     db = firebaseCore.db;
     auth = firebaseCore.auth;
     storage = firebaseCore.storage;
@@ -817,7 +817,34 @@
     const node = el("status");
     if (node) node.textContent = msg;
   }
+async function syncLocalCacheToFirestore(){
+  const localItems = getContentCache().map(item => normalizeItem(item.section, item));
 
+  if (!localItems.length) {
+    setStatus("لا توجد بيانات محلية لرفعها.");
+    return;
+  }
+
+  if (!db || !doc || !setDoc) {
+    setStatus("Firestore غير متاح حاليًا.");
+    return;
+  }
+
+  setStatus("جارٍ رفع البيانات المحلية إلى Firestore...");
+
+  let success = 0;
+
+  for (const item of localItems) {
+    try {
+      await upsertFirestore(item.section, item);
+      success++;
+    } catch (e) {
+      console.error("Sync item failed:", item, e);
+    }
+  }
+
+  setStatus(`تم رفع ${success} عنصر من الكاش المحلي إلى Firestore.`);
+}
   function safeParse(v, fallback){
     try{
       const x = JSON.parse(v);
@@ -2187,7 +2214,13 @@ async function recoverAllData(){
 
     if (el("logoutBtn")) el("logoutBtn").addEventListener("click", logout);
     if (el("reloadBtn")) el("reloadBtn").addEventListener("click", reloadFromFirestore);
-    if (el("recoverBtn")) el("recoverBtn").addEventListener("click", recoverAllData);
+if (el("recoverBtn")) {
+  el("recoverBtn").addEventListener("click", async () => {
+    await recoverAllData();
+    await syncLocalCacheToFirestore();
+    await reloadFromFirestore();
+  });
+}
     if (el("exportBtn")) el("exportBtn").addEventListener("click", exportJSON);
     if (el("clearBtn")) el("clearBtn").addEventListener("click", clearLocalStorageOnly);
   }
