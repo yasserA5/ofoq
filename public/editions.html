@@ -817,7 +817,111 @@
       .hero{padding:60px 15px;}
       section{padding:35px 12px;}
     }
-  </style>
+ 
+ .editions-section{
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.issues-list{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  max-width:760px;
+  margin:0 auto;
+}
+
+.issue-item{
+  width:100%;
+  background:#fff;
+  border:1px solid #dbe5ea;
+  border-radius:18px;
+  padding:18px 20px;
+  box-shadow:0 8px 22px rgba(15,23,42,.05);
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.issue-item:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 30px rgba(15,23,42,.09);
+  border-color:#b8d7df;
+}
+
+.issue-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.issue-meta{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-width:0;
+  flex:1;
+}
+
+.issue-title{
+  font-size:clamp(28px,5vw,44px);
+  font-weight:800;
+  color:#111;
+  line-height:1.2;
+}
+
+.issue-sub{
+  font-size:14px;
+  color:#5b6770;
+  line-height:1.8;
+}
+
+.issue-arrow{
+  flex:0 0 auto;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#eef8fb;
+  color:#0d6b8c;
+  font-size:20px;
+  font-weight:800;
+}
+
+.issue-divider{
+  height:2px;
+  background:linear-gradient(90deg, transparent, #222, transparent);
+  opacity:.75;
+  margin-top:14px;
+}
+
+@media(max-width:700px){
+  .issue-item{
+    padding:16px 14px;
+    border-radius:14px;
+  }
+
+  .issue-line{
+    gap:10px;
+  }
+
+  .issue-title{
+    font-size:clamp(22px,8vw,32px);
+  }
+
+  .issue-sub{
+    font-size:13px;
+  }
+
+  .issue-arrow{
+    width:40px;
+    height:40px;
+    font-size:18px;
+  }
+}
+ </style>
 </head>
 
 
@@ -906,7 +1010,7 @@
 
 
   <div class="logo" onclick="goToHome()">
-    <img src="logo1.png"" alt="Logo">
+    <img src="logo1.png" alt="Logo">
   </div>
 
 
@@ -923,7 +1027,7 @@
       </div>
     </li>
     <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
-    <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
+    <li><a href="editions.html" class="active" id="navEditions">إصداراتنا</a></li>
     <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
     <li class="dropdown">
       <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
@@ -938,7 +1042,7 @@
     <li><a href="live.html" id="navLive">بث مباشر</a></li>
     <li><a href="rules.html" id="navRules">شروط النشر</a></li>
     <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+    <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
   </ul>
 
   <form class="nav-search" onsubmit="doSearch(event)">
@@ -974,9 +1078,9 @@
 </div>
 
 
-<section>
+<section class="editions-section">
   <h2 data-t="sec_editions_list">أحدث الإصدارات</h2>
-  <div class="grid" id="editionsGrid"></div>
+  <div class="issues-list" id="editionsGrid"></div>
 </section>
 
 <footer data-t="footer_text" style="
@@ -1113,13 +1217,14 @@ function toggleMenu(){
 }
 
 
-  function doSearch(e){
-    e.preventDefault();
-    const input=document.getElementById('navSearchInput');
-    const q=input ? input.value.trim() : "";
-    if(!q) return;
-    window.location.href='search.html?q='+encodeURIComponent(q);
-  }
+function doSearch(e){
+  e.preventDefault();
+  const desktopInput = document.getElementById('navSearchInput');
+  const mobileInput = document.getElementById('navSearchInputMobile');
+  const q = (desktopInput?.value || mobileInput?.value || '').trim();
+  if(!q) return;
+  window.location.href = 'search.html?q=' + encodeURIComponent(q);
+}
 
 
   function toggleLangMenu(){
@@ -1399,57 +1504,88 @@ function logout(){
   }
 
 
-  function renderEditions(){
-    const editionsData=JSON.parse(localStorage.getItem('editions')||'[]');
-    if(!editionsGrid) return;
+function getOrdinalIssueName(num, lang = currentLang){
+  const arMap = {
+    1:"العدد الأول",
+    2:"العدد الثاني",
+    3:"العدد الثالث",
+    4:"العدد الرابع",
+    5:"العدد الخامس",
+    6:"العدد السادس",
+    7:"العدد السابع",
+    8:"العدد الثامن",
+    9:"العدد التاسع",
+    10:"العدد العاشر"
+  };
 
-
-    editionsGrid.innerHTML='';
-    if(editionsData.length===0){
-      editionsGrid.innerHTML=`
-        <div class="empty-state">
-          <h3>${t('no_editions_title') || 'لا توجد إصدارات حالياً'}</h3>
-          <p>${t('no_editions_desc') || 'ستظهر هنا أحدث الإصدارات والكتب والمجلات بمجرد إضافتها من لوحة التحكم.'}</p>
-        </div>
-      `;
-      return;
-    }
-
-
-    editionsData.forEach((item)=>{
-      const card=document.createElement("article");
-      card.className="card";
-      if(item.id!=null) card.dataset.id=item.id;
-
-      const title = getAnyText(item.title) || 'بدون عنوان';
-      const authorName = getAnyText(item.author);
-      const descRaw = getAnyText(item.short || item.description) || '';
-      const desc = descRaw.length>220 ? descRaw.slice(0,220)+'…' : descRaw;
-
-      const imgHTML=item.image
-        ? `<div class="card-img-wrapper"><img src="${item.image}" class="card-image" alt="${title}" loading="lazy"></div>`
-        : '';
-
-      const authorHTML=authorName
-        ? `<div class="card-author">بقلم: ${authorName}</div>`
-        : '';
-
-
-      card.innerHTML=`
-        ${imgHTML}
-        <div class="card-body">
-          <h3>${title}</h3>
-          ${authorHTML}
-          <p>${desc}</p>
-        </div>
-        <div class="card-footer">
-          <span>إصدار</span>
-        </div>
-      `;
-      editionsGrid.appendChild(card);
-    });
+  if(lang === 'ar'){
+    return arMap[num] || `العدد ${num}`;
   }
 
+  if(lang === 'fr'){
+    return `Numéro ${num}`;
+  }
+
+  return `Issue ${num}`;
+}
+
+function renderEditions(){
+  const editionsData = JSON.parse(localStorage.getItem('editions') || '[]');
+  if(!editionsGrid) return;
+
+  editionsGrid.innerHTML = '';
+
+  if(!Array.isArray(editionsData) || editionsData.length === 0){
+    editionsGrid.innerHTML = `
+      <div class="empty-state">
+        <h3>${t('no_editions_title') || 'لا توجد إصدارات حالياً'}</h3>
+        <p>${t('no_editions_desc') || 'ستظهر هنا أحدث الإصدارات والكتب والمجلات بمجرد إضافتها من لوحة التحكم.'}</p>
+      </div>
+    `;
+    return;
+  }
+
+  editionsData.forEach((item, index) => {
+    const issueNumber = Number(item.issueNumber || item.number || index + 1);
+    const title = getAnyText(item.title) || getOrdinalIssueName(issueNumber, currentLang);
+    const desc =
+      getAnyText(item.short || item.description) ||
+      (currentLang === 'ar'
+        ? 'اضغط للدخول إلى هذا العدد واستعراض مقالاته.'
+        : currentLang === 'fr'
+        ? 'Cliquez pour ouvrir ce numéro et consulter ses articles.'
+        : 'Click to open this issue and view its articles.');
+
+    const articleCount = Array.isArray(item.articles) ? item.articles.length : null;
+
+    const subLine = articleCount !== null
+      ? (
+          currentLang === 'ar'
+            ? `يحتوي على ${articleCount} مقالات`
+            : currentLang === 'fr'
+            ? `${articleCount} articles`
+            : `${articleCount} articles`
+        )
+      : desc;
+
+    const card = document.createElement('article');
+    card.className = 'issue-item';
+    if(item.id != null) card.dataset.id = item.id;
+
+    card.innerHTML = `
+      <div class="issue-line">
+        <div class="issue-arrow">←</div>
+        <div class="issue-meta">
+          <h3 class="issue-title">${title}</h3>
+          <div class="issue-sub">${subLine}</div>
+        </div>
+      </div>
+      <div class="issue-divider"></div>
+    `;
+
+    editionsGrid.appendChild(card);
+  });
+}
 
   function openEditionById(id){
     if(!id)return;
@@ -1465,12 +1601,11 @@ function logout(){
   }
 
 
-  document.addEventListener('click',(e)=>{
-    const card=e.target.closest('.card');
-    if(!card||!card.dataset.id)return;
-    openEditionById(card.dataset.id);
-  });
-
+document.addEventListener('click', (e) => {
+  const item = e.target.closest('.issue-item');
+  if (!item || !item.dataset.id) return;
+  openEditionById(item.dataset.id);
+});
 
   function initMobileDropdowns(){
     document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{

@@ -1086,7 +1086,7 @@
       localStorage.setItem('selectedItem', JSON.stringify(selected));
       if (pageType === 'research') {
         const targetId = selected.docId || selected.id;
-        const targetUrl = 'research-view.html?id=' + encodeURIComponent(targetId);
+        const targetUrl = 'research-view?id=' + encodeURIComponent(targetId);
         if (targetId) {
           window.location.assign(targetUrl);
           return;
@@ -1455,7 +1455,7 @@ hero_sub_research:"Cliquez sur une carte de recherche pour voir le contenu compl
 
 function handleProtectedResearch(id){
   if (id) {
-    const targetUrl = 'research-view.html?id=' + encodeURIComponent(id);
+    const targetUrl = 'research-view?id=' + encodeURIComponent(id);
     window.location.assign(targetUrl);
   }
 }

@@ -21,6 +21,7 @@
       --muted:#94a3b8;
       --border: rgba(148,163,184,.26);
       --danger:#ef4444;
+      --warning:#f59e0b;
       --shadow: 0 18px 45px rgba(15,23,42,.65);
       --r:18px;
       --t: .18s ease;
@@ -188,6 +189,12 @@
       box-shadow:0 12px 26px rgba(34,197,94,.25);
     }
 
+    .btn-warn{
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color:#111827;
+      box-shadow:0 12px 26px rgba(245,158,11,.22);
+    }
+
     .err{
       margin-top:10px;
       display:none;
@@ -195,22 +202,22 @@
       font-size:13px;
     }
 
-    .app{
-      display:none;
-      min-height:100vh;
-      gap:14px;
-      padding:14px;
-      grid-template-columns: clamp(240px, 25vw, 290px) 1fr;
-      opacity:0;
-      transform: translateY(10px);
-      transition: opacity .24s ease, transform .24s ease;
-    }
+.app{
+  display:grid;
+  min-height:100vh;
+  gap:14px;
+  padding:14px;
+  grid-template-columns: clamp(240px, 25vw, 290px) 1fr;
+  opacity:1;
+  transform:none;
+  transition: opacity .24s ease, transform .24s ease;
+}
 
-    .app.visible{
-      opacity:1;
-      transform: translateY(0);
-      display:grid;
-    }
+.app.visible{
+  opacity:1;
+  transform:none;
+  display:grid;
+}
 
     .sidebar{
       background: rgba(15,23,42,.74);
@@ -392,6 +399,12 @@
       align-items:start;
     }
 
+    .grid-issues{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap:12px;
+    }
+
     .row{ margin-bottom:10px; }
 
     label{
@@ -405,7 +418,8 @@
     input[type="text"],
     input[type="url"],
     input[type="search"],
-    textarea{
+    textarea,
+    select{
       width:100%;
       padding:9px 10px;
       border-radius:12px;
@@ -423,7 +437,7 @@
       resize:vertical;
     }
 
-    input:focus, textarea:focus{
+    input:focus, textarea:focus, select:focus{
       border-color: var(--accent);
       box-shadow:0 0 0 1px rgba(56,189,248,.35);
       transform: translateY(-1px);
@@ -591,6 +605,82 @@
       white-space:pre-wrap;
     }
 
+    .issue-card{
+      background: var(--card2);
+      border:1px solid rgba(148,163,184,.35);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 12px 28px rgba(15,23,42,.72);
+    }
+
+    .issue-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:12px;
+    }
+
+    .issue-name{
+      margin:0;
+      font-size:20px;
+      color:#fff;
+      font-weight:900;
+    }
+
+    .issue-sub{
+      margin:4px 0 0;
+      font-size:12px;
+      color:#94a3b8;
+    }
+
+    .article-mini-list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .article-mini{
+      border:1px solid rgba(148,163,184,.22);
+      background: rgba(15,23,42,.8);
+      border-radius:14px;
+      padding:10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+
+    .article-mini h4{
+      margin:0 0 3px;
+      font-size:13px;
+      color:#e5f3ff;
+    }
+
+    .article-mini p{
+      margin:0;
+      font-size:11px;
+      color:#94a3b8;
+    }
+
+    .article-mini-actions{
+      display:flex;
+      gap:6px;
+      flex-shrink:0;
+    }
+
+    .split-line{
+      height:1px;
+      background: rgba(148,163,184,.18);
+      margin:12px 0;
+    }
+
+    .muted-note{
+      color:#94a3b8;
+      font-size:12px;
+    }
+
     @media (max-width: 980px){
       .app{ grid-template-columns: 1fr; padding:12px; }
       .sidebar{ flex-direction:row; gap:10px; align-items:flex-start; }
@@ -601,28 +691,7 @@
   </style>
 </head>
 <body>
-  <div id="lock" class="lock">
-    <form class="lock-card" id="loginForm" action="javascript:void(0);" method="post" autocomplete="off">
-      <h2 class="lock-title"><i class="ri-shield-user-line"></i> تسجيل دخول الإدارة</h2>
-      <p class="lock-desc">أدخل كود الإدارة وكلمة المرور لفتح لوحة التحكم.</p>
 
-      <div class="in">
-        <i class="ri-user-3-line"></i>
-<input id="adminCode" type="text" placeholder="كود الإدارة" autocomplete="off" />
-      </div>
-
-      <div class="in">
-        <i class="ri-lock-password-line"></i>
-        <input id="adminPass" type="password" placeholder="كلمة المرور" autocomplete="off" />
-      </div>
-
-      <button class="btn btn-primary" id="loginBtn" type="submit">
-        دخول <i class="ri-arrow-left-line"></i>
-      </button>
-
-      <div id="loginErr" class="err">بيانات الدخول غير صحيحة.</div>
-    </form>
-  </div>
 
   <div class="app" id="app">
     <aside class="sidebar">
@@ -635,13 +704,9 @@
       </div>
 
       <nav class="menu" id="menu" aria-label="الأقسام"></nav>
-
-      <div class="sidebar-footer">
-        <span>إدارة المحتوى واستعادة البيانات</span>
-        <button class="btn btn-ghost" id="logoutBtn" type="button">
-          <i class="ri-logout-circle-line"></i> خروج
-        </button>
-      </div>
+<div class="sidebar-footer">
+  <span>إدارة المحتوى واستعادة البيانات</span>
+</div>
     </aside>
 
     <main>
@@ -651,7 +716,7 @@
             <span class="badge"><i class="ri-layout-row-line"></i></span>
             <span id="sectionTitle">الأبحاث المحكمة</span>
           </h2>
-          <div class="subtitle">استرجاع البيانات من Firestore ثم إدارتها محليًا وعلى السحابة.</div>
+          <div class="subtitle">إدارة المحتوى محليًا وعلى Firestore مع دعم PDF وصور، وقسم خاص للإصدارات.</div>
         </div>
 
         <div class="controls">
@@ -676,28 +741,59 @@
   </div>
 
 <script type="module">
-  import { db, auth } from "./firebase-init.js";
-  import {
-    collection,
-    getDocs,
-    doc,
-    setDoc,
-    deleteDoc
-  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+  let db = null;
+  let auth = null;
+  let storage = null;
+  let collection, getDocs, doc, setDoc, deleteDoc, signOut, ref, uploadBytes, getDownloadURL, deleteObject;
 
+  try {
+    const firebaseCore = await import("../firebase-init.js");
+    db = firebaseCore.db;
+    auth = firebaseCore.auth;
+    storage = firebaseCore.storage;
 
+    const firestoreMod = await import("https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js");
+    collection = firestoreMod.collection;
+    getDocs = firestoreMod.getDocs;
+    doc = firestoreMod.doc;
+    setDoc = firestoreMod.setDoc;
+    deleteDoc = firestoreMod.deleteDoc;
+
+    const authMod = await import("https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js");
+    signOut = authMod.signOut;
+
+    const storageMod = await import("https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js");
+    ref = storageMod.ref;
+    uploadBytes = storageMod.uploadBytes;
+    getDownloadURL = storageMod.getDownloadURL;
+    deleteObject = storageMod.deleteObject;
+
+    console.log("Firebase loaded successfully");
+  } catch (err) {
+    console.warn("Firebase failed to load, admin will run in local mode only.", err);
+  }
+
+  const SECTION_ALIASES = {
+    "general-articles": "generalArticles",
+    "foreign-articles": "foreignArticles",
+    "special-politics": "specialPolitics",
+    "special-ir": "specialIR",
+    "special-admin-law": "specialAdminLaw",
+    "special-const-law": "specialConstLaw",
+    "special-public-policy": "specialPublicPolicy"
+  };
 
   const SECTIONS = [
     { key: "research", title: "الأبحاث المحكمة", icon: "ri-file-text-line", isLive: false },
     { key: "articles", title: "المقالات العلمية", icon: "ri-file-paper-line", isLive: false },
     { key: "files", title: "الملفات البحثية", icon: "ri-folder-3-line", isLive: false },
-    { key: "general-articles", title: "مقالات عامة", icon: "ri-newspaper-line", isLive: false },
-    { key: "foreign-articles", title: "مقالات أجنبية", icon: "ri-article-line", isLive: false },
-    { key: "special-politics", title: "تخصص: العلوم السياسية", icon: "ri-government-line", isLive: false },
-    { key: "special-ir", title: "تخصص: العلاقات الدولية", icon: "ri-global-line", isLive: false },
-    { key: "special-admin-law", title: "تخصص: القانون الإداري", icon: "ri-briefcase-4-line", isLive: false },
-    { key: "special-const-law", title: "تخصص: القانون الدستوري", icon: "ri-balance-line", isLive: false },
-    { key: "special-public-policy", title: "تخصص: السياسات العامة", icon: "ri-community-line", isLive: false },
+    { key: "generalArticles", title: "مقالات عامة", icon: "ri-newspaper-line", isLive: false },
+    { key: "foreignArticles", title: "مقالات أجنبية", icon: "ri-article-line", isLive: false },
+    { key: "specialPolitics", title: "تخصص: العلوم السياسية", icon: "ri-government-line", isLive: false },
+    { key: "specialIR", title: "تخصص: العلاقات الدولية", icon: "ri-global-line", isLive: false },
+    { key: "specialAdminLaw", title: "تخصص: القانون الإداري", icon: "ri-briefcase-4-line", isLive: false },
+    { key: "specialConstLaw", title: "تخصص: القانون الدستوري", icon: "ri-balance-line", isLive: false },
+    { key: "specialPublicPolicy", title: "تخصص: السياسات العامة", icon: "ri-community-line", isLive: false },
     { key: "editions", title: "الإصدارات", icon: "ri-book-open-line", isLive: false },
     { key: "activities", title: "الأنشطة", icon: "ri-calendar-2-line", isLive: false },
     { key: "talks", title: "الندوات/الحوارات", icon: "ri-voiceprint-line", isLive: false },
@@ -708,7 +804,9 @@
   const state = {
     bySection: {},
     currentSectionKey: "research",
-    editing: { key: null, id: null }
+    editing: { key: null, id: null },
+    editionsEditingIssueId: null,
+    editionsEditingArticleId: null
   };
 
   SECTIONS.forEach(s => state.bySection[s.key] = []);
@@ -716,7 +814,8 @@
   function el(id){ return document.getElementById(id); }
 
   function setStatus(msg){
-    el("status").textContent = msg;
+    const node = el("status");
+    if (node) node.textContent = msg;
   }
 
   function safeParse(v, fallback){
@@ -737,7 +836,7 @@
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
-      '"': "&quot;",
+      "\"": "&quot;",
       "'": "&#039;"
     }[m]));
   }
@@ -748,6 +847,12 @@
     return field[lang] || field.ar || field.fr || field.en || "";
   }
 
+  function stripHtml(html){
+    const div = document.createElement("div");
+    div.innerHTML = html || "";
+    return div.textContent || div.innerText || "";
+  }
+
   function getContentCache(){
     return safeParse(localStorage.getItem("content_cache"), []);
   }
@@ -756,14 +861,63 @@
     localStorage.setItem("content_cache", JSON.stringify(items));
   }
 
-  function stripHtml(html){
-    const div = document.createElement("div");
-    div.innerHTML = html || "";
-    return div.textContent || div.innerText || "";
+  function normalizeSectionKey(sectionKey){
+    if (!sectionKey) return "research";
+    return SECTION_ALIASES[sectionKey] || sectionKey;
   }
 
-  function normalizeItem(sectionKey, raw){
-    const fixedSection = sectionKey || raw.section || (raw.type === "live" ? "live" : "research");
+  function getOrdinalIssueName(num){
+    const arMap = {
+      1:"العدد الأول",
+      2:"العدد الثاني",
+      3:"العدد الثالث",
+      4:"العدد الرابع",
+      5:"العدد الخامس",
+      6:"العدد السادس",
+      7:"العدد السابع",
+      8:"العدد الثامن",
+      9:"العدد التاسع",
+      10:"العدد العاشر"
+    };
+    return arMap[num] || `العدد ${num}`;
+  }
+
+  function normalizeEditionItem(raw){
+    const issueNumber = Number(raw.issueNumber || raw.number || 1);
+    const issueId = String(raw.docId || raw.id || uid());
+    const articles = Array.isArray(raw.articles) ? raw.articles : [];
+
+    return {
+      id: issueId,
+      docId: issueId,
+      section: "editions",
+      issueNumber,
+      title: typeof raw.title === "object"
+        ? raw.title
+        : { ar: raw.title || getOrdinalIssueName(issueNumber), fr: "", en: "" },
+      short: typeof raw.short === "object"
+        ? raw.short
+        : { ar: raw.short || "", fr: "", en: "" },
+      image: raw.image || "",
+      file: raw.file || "",
+      filePath: raw.filePath || "",
+      articles: articles.map((a, index) => ({
+        id: String(a.id || uid()),
+        title: typeof a.title === "object" ? a.title : { ar: a.title || `المقال ${index + 1}`, fr: "", en: "" },
+        short: typeof a.short === "object" ? a.short : { ar: a.short || "", fr: "", en: "" },
+        file: a.file || a.pdf || a.pdfUrl || "",
+        filePath: a.filePath || "",
+        createdAt: Number(a.createdAt || Date.now()),
+        updatedAt: Number(a.updatedAt || a.createdAt || Date.now())
+      })),
+      createdAt: Number(raw.createdAt || Date.now()),
+      updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
+      status: raw.status || "published"
+    };
+  }
+
+  function normalizeStandardItem(sectionKey, raw){
+    const fixedSection = normalizeSectionKey(sectionKey || raw.section || (raw.type === "live" ? "live" : "research"));
     const normalizedId = String(raw.docId || raw.id || uid());
 
     return {
@@ -779,10 +933,17 @@
       date: typeof raw.date === "object" ? raw.date : { ar: raw.date || "", fr:"", en:"" },
       image: raw.image || "",
       file: raw.file || raw.link || "",
+      filePath: raw.filePath || "",
       createdAt: Number(raw.createdAt || Date.now()),
       updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
       status: raw.status || "published"
     };
+  }
+
+  function normalizeItem(sectionKey, raw){
+    const fixedSection = normalizeSectionKey(sectionKey || raw.section);
+    if (fixedSection === "editions") return normalizeEditionItem(raw);
+    return normalizeStandardItem(fixedSection, raw);
   }
 
   function rebuildDbFromCache(){
@@ -813,29 +974,69 @@
     requestAnimationFrame(() => el("lock").classList.remove("hidden"));
   }
 
-const ADMIN_CODE = "admin";
-const ADMIN_PASS = "ofouqaca12";
+  const ADMIN_CODE = "admin";
+  const ADMIN_PASS = "ofouqaca12";
 
-async function login(){
-  const code = el("adminCode")?.value.trim() || "";
-  const pass = el("adminPass")?.value || "";
-  const ok = code === ADMIN_CODE && pass === ADMIN_PASS;
+async function login() {
+  const codeInput = el("adminCode");
+  const passInput = el("adminPass");
+  const errBox = el("loginErr");
+  const loginBtn = el("loginBtn");
 
-  el("loginErr").style.display = ok ? "none" : "block";
-  if (!ok) return;
+  if (!codeInput || !passInput || !errBox) return;
 
-  sessionStorage.setItem("adminAuthed", "1");
-  setAppVisible();
-  await initAfterLogin();
+  const code = codeInput.value.trim();
+  const pass = passInput.value.trim();
+
+
+
+  try {
+    const ok =
+      code.toLowerCase() === ADMIN_CODE.toLowerCase() &&
+      pass === ADMIN_PASS;
+
+    if (!ok) {
+      errBox.style.display = "block";
+      errBox.textContent = "بيانات الدخول غير صحيحة";
+      return;
+    }
+
+    errBox.style.display = "none";
+
+    sessionStorage.setItem("adminAuthed", "1");
+
+    setAppVisible();
+
+    // IMPORTANT
+    await initAfterLogin();
+
+    setStatus("تم الدخول بنجاح.");
+
+  } catch (err) {
+    console.error("Login error:", err);
+
+    errBox.style.display = "block";
+    errBox.textContent = "حدث خطأ أثناء تسجيل الدخول";
+
+  } finally {
+    if (loginBtn) {
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = 'دخول <i class="ri-arrow-left-line"></i>';
+    }
+  }
 }
 
-  async function logout(){
-    await signOut(auth);
-    if (el("adminCode")) el("adminCode").value = "";
-    if (el("adminPass")) el("adminPass").value = "";
-    sessionStorage.removeItem("adminAuthed");
-    setLockVisible();
-  }
+
+async function logout(){
+  try {
+    if (auth && signOut) await signOut(auth);
+  } catch {}
+
+  if (el("adminCode")) el("adminCode").value = "";
+  if (el("adminPass")) el("adminPass").value = "";
+  sessionStorage.removeItem("adminAuthed");
+  setLockVisible();
+}
 
   function buildMenu(){
     const menu = el("menu");
@@ -861,7 +1062,7 @@ async function login(){
     return s ? s.title : "قسم";
   }
 
-  function buildFormHTML(key){
+  function buildStandardFormHTML(key){
     const cfg = SECTIONS.find(s => s.key === key);
     const isLive = !!cfg?.isLive;
 
@@ -930,8 +1131,8 @@ async function login(){
           </div>
           <div>
             <div class="row">
-              <label>رابط خارجي (PDF / رابط)</label>
-              <input type="url" id="${key}-file-url" placeholder="https://..." />
+              <label>رفع ملف PDF من الجهاز</label>
+              <input type="file" id="${key}-pdf-file" accept="application/pdf" />
             </div>
             <div class="row">
               <label>صورة</label>
@@ -952,7 +1153,106 @@ async function login(){
     `;
   }
 
+  function buildEditionsFormHTML(){
+    return `
+      <div class="card">
+        <h3><i class="ri-book-open-line"></i> إدارة الأعداد والمقالات</h3>
+
+        <div class="actions" style="margin-bottom:12px;">
+          <button class="btn btn-small btn-green" type="button" onclick="createNewIssue()">
+            <i class="ri-add-circle-line"></i> إضافة عدد جديد
+          </button>
+          <button class="btn btn-ghost btn-small" type="button" onclick="resetEditionArticleForm()">
+            <i class="ri-refresh-line"></i> تفريغ نموذج المقال
+          </button>
+        </div>
+
+        <div class="split-line"></div>
+
+        <div class="row">
+          <label>اختر العدد</label>
+          <select id="editions-issue-select"></select>
+        </div>
+
+        <div class="row">
+          <label>اسم العدد (تلقائي)</label>
+          <input type="text" id="editions-issue-name" readonly />
+        </div>
+
+        <div class="row">
+          <label>وصف مختصر للعدد</label>
+          <textarea id="editions-issue-short" placeholder="وصف مختصر لهذا العدد..."></textarea>
+        </div>
+
+        <div class="row">
+          <label>صورة العدد (اختياري)</label>
+          <input type="file" id="editions-issue-image" accept="image/*" />
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-small btn-warn" type="button" onclick="saveIssueMeta()">
+            <i class="ri-save-line"></i> حفظ بيانات العدد
+          </button>
+          <button class="btn btn-ghost btn-small" type="button" onclick="deleteCurrentIssue()">
+            <i class="ri-delete-bin-line"></i> حذف العدد الحالي
+          </button>
+        </div>
+
+        <div class="split-line"></div>
+
+        <h3 style="margin-top:0;"><i class="ri-file-list-3-line"></i> إضافة/تعديل مقال داخل العدد</h3>
+
+        <div class="row">
+          <label>عنوان المقال</label>
+          <input type="text" id="editions-article-title" placeholder="مثال: المقال 1: عنوان الدراسة" />
+        </div>
+
+        <div class="row">
+          <label>وصف مختصر للمقال</label>
+          <textarea id="editions-article-short" placeholder="وصف مختصر للمقال..."></textarea>
+        </div>
+
+        <div class="row">
+          <label>ملف PDF للمقال</label>
+          <input type="file" id="editions-article-pdf" accept="application/pdf" />
+        </div>
+
+        <div class="preview" id="editions-article-preview"></div>
+
+        <div class="actions">
+          <button class="btn btn-small btn-green" type="button" onclick="saveEditionArticle()">
+            <i class="ri-upload-cloud-line"></i> حفظ المقال
+          </button>
+          <button class="btn btn-ghost btn-small" type="button" onclick="resetEditionArticleForm()">
+            <i class="ri-eraser-line"></i> مسح المقال الحالي
+          </button>
+        </div>
+
+        <div class="muted-note" style="margin-top:10px;">
+          اسم العدد يولَّد تلقائيًا حسب الترتيب: العدد الأول، الثاني، الثالث...
+        </div>
+      </div>
+    `;
+  }
+
   function buildListHTML(key){
+    if (key === "editions") {
+      return `
+        <div class="card">
+          <div class="list-head">
+            <div class="left">
+              <h3 style="margin:0;"><i class="ri-stack-line"></i> الأعداد الحالية</h3>
+              <span class="pill" id="editions-count">0 عدد</span>
+            </div>
+            <div class="left">
+              <input type="search" id="editions-search" placeholder="بحث في الأعداد أو المقالات..." />
+            </div>
+          </div>
+          <div class="grid-issues" id="editions-list"></div>
+        </div>
+      `;
+    }
+
     return `
       <div class="card">
         <div class="list-head">
@@ -969,6 +1269,11 @@ async function login(){
     `;
   }
 
+  function buildFormHTML(key){
+    if (key === "editions") return buildEditionsFormHTML();
+    return buildStandardFormHTML(key);
+  }
+
   function showSection(key){
     state.currentSectionKey = key;
     setActiveMenu(key);
@@ -977,6 +1282,12 @@ async function login(){
 
     const content = el("content");
     content.innerHTML = buildFormHTML(key) + buildListHTML(key);
+
+    if (key === "editions") {
+      initEditionsSection();
+      renderEditionsList();
+      return;
+    }
 
     const searchInput = el(`${key}-search`);
     if (searchInput) {
@@ -987,9 +1298,48 @@ async function login(){
     const preview = el(`${key}-preview`);
     if (imgInput && preview) {
       imgInput.addEventListener("change", () => {
-        if (!imgInput.files || !imgInput.files[0]) return;
+        const item = state.editing.key === key && state.editing.id
+          ? (state.bySection[key] || []).find(x => String(x.id) === String(state.editing.id))
+          : null;
+
+        const existingImage = item?.image || "";
+        const existingPdf = item?.file || "";
+
+        if (!imgInput.files || !imgInput.files[0]) {
+          preview.innerHTML = buildPreviewHTML(existingImage, existingPdf);
+          return;
+        }
+
         const url = URL.createObjectURL(imgInput.files[0]);
-        preview.innerHTML = `<div>معاينة الصورة:</div><img src="${url}" alt="preview">`;
+        preview.innerHTML = `
+          ${existingPdf ? `<div style="margin-bottom:6px;">ملف PDF الحالي: <a href="${existingPdf}" target="_blank" style="color:#7dd3fc">فتح الملف</a></div>` : ""}
+          <div>معاينة الصورة:</div>
+          <img src="${url}" alt="preview">
+        `;
+      });
+    }
+
+    const pdfInput = el(`${key}-pdf-file`);
+    if (pdfInput && preview) {
+      pdfInput.addEventListener("change", () => {
+        const item = state.editing.key === key && state.editing.id
+          ? (state.bySection[key] || []).find(x => String(x.id) === String(state.editing.id))
+          : null;
+
+        const existingImage = item?.image || "";
+        const file = pdfInput.files?.[0];
+
+        let pdfLine = "";
+        if (file) {
+          pdfLine = `<div style="margin-bottom:6px;">ملف PDF المختار: ${esc(file.name)}</div>`;
+        } else if (item?.file) {
+          pdfLine = `<div style="margin-bottom:6px;">ملف PDF الحالي: <a href="${item.file}" target="_blank" style="color:#7dd3fc">فتح الملف</a></div>`;
+        }
+
+        preview.innerHTML = `
+          ${pdfLine}
+          ${existingImage ? `<div>الصورة الحالية:</div><img src="${existingImage}" alt="preview">` : ""}
+        `;
       });
     }
 
@@ -1005,6 +1355,43 @@ async function login(){
     });
   }
 
+  function buildPreviewHTML(imageUrl = "", pdfUrl = ""){
+    let out = "";
+    if (pdfUrl) {
+      out += `<div style="margin-bottom:6px;">ملف PDF الحالي: <a href="${pdfUrl}" target="_blank" style="color:#7dd3fc">فتح الملف</a></div>`;
+    }
+    if (imageUrl) {
+      out += `<div>الصورة الحالية:</div><img src="${imageUrl}" alt="preview">`;
+    }
+    return out;
+  }
+
+async function uploadPdfToStorage(file, sectionKey, itemId){
+  if (!storage || !ref || !uploadBytes || !getDownloadURL) {
+    throw new Error("Firebase Storage غير متاح الآن.");
+  }
+
+  const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+  const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
+  const storageRef = ref(storage, filePath);
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+  return { url, path: filePath };
+}
+
+async function uploadEditionArticlePdf(file, issueId, articleId){
+  if (!storage || !ref || !uploadBytes || !getDownloadURL) {
+    throw new Error("Firebase Storage غير متاح الآن.");
+  }
+
+  const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+  const filePath = `pdfs/editions/${issueId}/${articleId}-${safeName}`;
+  const storageRef = ref(storage, filePath);
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+  return { url, path: filePath };
+}
+
   function upsertLocal(sectionKey, obj){
     const all = getContentCache().map(item => normalizeItem(item.section, item));
     const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
@@ -1016,28 +1403,38 @@ async function login(){
     rebuildDbFromCache();
     state.editing = { key: null, id: null };
   }
-
-  async function upsertFirestore(sectionKey, obj){
-    const now = Date.now();
-    const docIdValue = String(obj.docId || obj.id || uid());
-
-    obj.id = docIdValue;
-    obj.docId = docIdValue;
-    obj.section = sectionKey;
-    obj.updatedAt = now;
-    if (!obj.createdAt) obj.createdAt = now;
-    if (!obj.status) obj.status = "published";
-
-    await setDoc(doc(db, "content", docIdValue), obj, { merge: true });
+async function upsertFirestore(sectionKey, obj){
+  if (!db || !doc || !setDoc) {
+    console.warn("Firestore unavailable, skipping remote save.");
     return obj;
   }
+
+  const now = Date.now();
+  const docIdValue = String(obj.docId || obj.id || uid());
+
+  obj.id = docIdValue;
+  obj.docId = docIdValue;
+  obj.section = sectionKey;
+  obj.updatedAt = now;
+  if (!obj.createdAt) obj.createdAt = now;
+  if (!obj.status) obj.status = "published";
+
+  await setDoc(doc(db, "content", docIdValue), obj, { merge: true });
+  return obj;
+}
 
   async function saveItem(key){
     const cfg = SECTIONS.find(s => s.key === key);
     if (!cfg) return;
 
+    if (key === "editions") {
+      alert("قسم الإصدارات له نموذج خاص. استخدم أزرار حفظ العدد أو حفظ المقال.");
+      return;
+    }
+
     const isLive = !!cfg.isLive;
     const currentId = state.editing.key === key && state.editing.id ? state.editing.id : uid();
+    const existing = (state.bySection[key] || []).find(x => String(x.id) === String(currentId));
 
     const obj = {
       id: currentId,
@@ -1049,8 +1446,9 @@ async function login(){
       author: { ar: "", fr: "", en: "" },
       affiliation: { ar: "", fr: "", en: "" },
       date: { ar: "", fr: "", en: "" },
-      image: "",
-      file: ""
+      image: existing?.image || "",
+      file: existing?.file || "",
+      filePath: existing?.filePath || ""
     };
 
     if (isLive) {
@@ -1074,12 +1472,21 @@ async function login(){
       obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
       obj.full.ar = stripHtml(el(`${key}-full-ar-editor`)?.innerHTML || "");
       obj.details.ar = el(`${key}-details-ar`)?.value.trim() || "";
-      obj.file = el(`${key}-file-url`)?.value.trim() || "";
+
+      const pdfInput = el(`${key}-pdf-file`);
+      if (pdfInput && pdfInput.files && pdfInput.files[0]) {
+        const pdfFile = pdfInput.files[0];
+        if (pdfFile.type !== "application/pdf") {
+          return alert("يرجى اختيار ملف PDF فقط");
+        }
+
+        setStatus("جارٍ رفع ملف PDF...");
+        const uploaded = await uploadPdfToStorage(pdfFile, key, currentId);
+        obj.file = uploaded.url;
+        obj.filePath = uploaded.path;
+      }
 
       const imgInput = el(`${key}-image`);
-      const existing = (state.bySection[key] || []).find(x => String(x.id) === String(currentId));
-      obj.image = existing?.image || "";
-
       if (imgInput && imgInput.files && imgInput.files[0]) {
         obj.image = await fileToDataURL(imgInput.files[0]);
       }
@@ -1100,6 +1507,11 @@ async function login(){
   }
 
   function loadForEdit(key, id){
+    if (key === "editions") {
+      selectIssueForEdit(id);
+      return;
+    }
+
     const item = (state.bySection[key] || []).find(x => String(x.id) === String(id));
     if (!item) return;
 
@@ -1112,18 +1524,25 @@ async function login(){
     if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar") || "";
     if (el(`${key}-details-ar`)) el(`${key}-details-ar`).value = getByLang(item.details, "ar") || "";
     if (el(`${key}-full-ar-editor`)) el(`${key}-full-ar-editor`).textContent = getByLang(item.full, "ar") || "";
-    if (el(`${key}-file-url`)) el(`${key}-file-url`).value = item.file || "";
     if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
 
     const p = el(`${key}-preview`);
     if (p) {
-      p.innerHTML = item.image ? `<div>الصورة الحالية:</div><img src="${item.image}" alt="preview">` : "";
+      p.innerHTML = buildPreviewHTML(item.image, item.file);
     }
   }
 
   async function deleteItemById(sectionKey, id){
+    if (sectionKey === "editions") {
+      state.editionsEditingIssueId = id;
+      await deleteCurrentIssue();
+      return;
+    }
+
     const ok = confirm("سيتم حذف العنصر. هل أنت متأكد؟");
     if (!ok) return;
+
+    const target = (state.bySection[sectionKey] || []).find(x => String(x.docId || x.id) === String(id));
 
     const all = getContentCache().map(item => normalizeItem(item.section, item));
     const filtered = all.filter(x => String(x.docId || x.id) !== String(id));
@@ -1137,13 +1556,21 @@ async function login(){
     } catch (e) {
       console.error("Firestore delete error:", e);
     }
+
+    try {
+      if (target?.filePath) {
+        await deleteObject(ref(storage, target.filePath));
+      }
+    } catch (e) {
+      console.error("Storage delete error:", e);
+    }
   }
 
   function resetForm(key){
     state.editing = { key: null, id: null };
 
     [
-      "title-ar","author-ar","aff-ar","date-ar","short-ar","details-ar","file-url","live-link"
+      "title-ar","author-ar","aff-ar","date-ar","short-ar","details-ar","live-link"
     ].forEach(name => {
       const node = el(`${key}-${name}`);
       if (node) node.value = "";
@@ -1154,6 +1581,9 @@ async function login(){
 
     const img = el(`${key}-image`);
     if (img) img.value = "";
+
+    const pdf = el(`${key}-pdf-file`);
+    if (pdf) pdf.value = "";
 
     const p = el(`${key}-preview`);
     if (p) p.innerHTML = "";
@@ -1204,7 +1634,7 @@ async function login(){
         ${imgHtml}
         <div class="item-body">
           <div class="item-title">${esc(title)}</div>
-          <div class="item-desc">${esc(desc || "—")}</div>
+          <div class="item-desc">${esc(desc)}</div>
           <div class="item-meta">
             <span>${esc(author)}</span>
             <span>${esc(dateLabel)}</span>
@@ -1215,43 +1645,483 @@ async function login(){
     });
   }
 
-  async function reloadFromFirestore(){
-    try {
-      setStatus("جارٍ تحميل المحتوى من Firestore...");
-      const snap = await getDocs(collection(db, "content"));
+  function getNextIssueNumber(){
+    const issues = state.bySection.editions || [];
+    if (!issues.length) return 1;
+    return Math.max(...issues.map(x => Number(x.issueNumber || 0))) + 1;
+  }
 
-      const all = [];
-      snap.forEach(docSnap => {
-        const raw = { docId: docSnap.id, ...docSnap.data() };
-        all.push(normalizeItem(raw.section, raw));
+  function getCurrentSelectedIssueId(){
+    const select = el("editions-issue-select");
+    return select?.value || "";
+  }
+
+  function getCurrentIssue(){
+    const issueId = state.editionsEditingIssueId || getCurrentSelectedIssueId();
+    return (state.bySection.editions || []).find(x => String(x.id) === String(issueId));
+  }
+
+  function refreshEditionSelect(selectedId = null){
+    const select = el("editions-issue-select");
+    const issues = state.bySection.editions || [];
+    if (!select) return;
+
+    select.innerHTML = "";
+
+    if (!issues.length) {
+      const op = document.createElement("option");
+      op.value = "";
+      op.textContent = "لا يوجد أي عدد بعد";
+      select.appendChild(op);
+      el("editions-issue-name").value = "";
+      el("editions-issue-short").value = "";
+      return;
+    }
+
+    issues
+      .slice()
+      .sort((a,b) => Number(a.issueNumber || 0) - Number(b.issueNumber || 0))
+      .forEach(issue => {
+        const op = document.createElement("option");
+        op.value = issue.id;
+        op.textContent = getByLang(issue.title, "ar") || getOrdinalIssueName(issue.issueNumber);
+        select.appendChild(op);
       });
 
-      setContentCache(all);
-      rebuildDbFromCache();
-      renderList(state.currentSectionKey);
-      setStatus(`تم استرجاع ${all.length} عنصر من Firestore.`);
-      return all;
-    } catch (e) {
-      console.error("Firestore load error:", e);
-      setStatus("تعذر تحميل المحتوى من Firestore.");
-      return [];
+    const finalId = selectedId || state.editionsEditingIssueId || issues[0].id;
+    select.value = finalId;
+    state.editionsEditingIssueId = finalId;
+    fillIssueMetaForm(finalId);
+  }
+
+  function fillIssueMetaForm(issueId){
+    const issue = (state.bySection.editions || []).find(x => String(x.id) === String(issueId));
+    const nameInput = el("editions-issue-name");
+    const shortInput = el("editions-issue-short");
+    const preview = el("editions-article-preview");
+
+    if (!issue) {
+      if (nameInput) nameInput.value = "";
+      if (shortInput) shortInput.value = "";
+      if (preview) preview.innerHTML = "";
+      return;
+    }
+
+    if (nameInput) nameInput.value = getByLang(issue.title, "ar") || getOrdinalIssueName(issue.issueNumber);
+    if (shortInput) shortInput.value = getByLang(issue.short, "ar") || "";
+    if (preview) preview.innerHTML = "";
+  }
+
+  function initEditionsSection(){
+    refreshEditionSelect();
+
+    const select = el("editions-issue-select");
+    const issueImage = el("editions-issue-image");
+    const articlePdf = el("editions-article-pdf");
+    const preview = el("editions-article-preview");
+    const search = el("editions-search");
+
+    if (select) {
+      select.addEventListener("change", () => {
+        state.editionsEditingIssueId = select.value || null;
+        state.editionsEditingArticleId = null;
+        fillIssueMetaForm(select.value);
+        resetEditionArticleForm(false);
+        renderEditionsList();
+      });
+    }
+
+    if (issueImage) {
+      issueImage.addEventListener("change", async () => {
+        const issue = getCurrentIssue();
+        if (!preview) return;
+
+        if (issueImage.files && issueImage.files[0]) {
+          const url = URL.createObjectURL(issueImage.files[0]);
+          preview.innerHTML = `<div>معاينة صورة العدد:</div><img src="${url}" alt="preview">`;
+        } else if (issue?.image) {
+          preview.innerHTML = `<div>الصورة الحالية للعدد:</div><img src="${issue.image}" alt="preview">`;
+        } else {
+          preview.innerHTML = "";
+        }
+      });
+    }
+
+    if (articlePdf) {
+      articlePdf.addEventListener("change", () => {
+        const file = articlePdf.files?.[0];
+        const issue = getCurrentIssue();
+        const article = issue?.articles?.find(a => String(a.id) === String(state.editionsEditingArticleId));
+
+        let out = "";
+        if (file) {
+          out += `<div style="margin-bottom:6px;">ملف PDF المختار: ${esc(file.name)}</div>`;
+        } else if (article?.file) {
+          out += `<div style="margin-bottom:6px;">ملف PDF الحالي: <a href="${article.file}" target="_blank" style="color:#7dd3fc">فتح الملف</a></div>`;
+        }
+        preview.innerHTML = out;
+      });
+    }
+
+    if (search) {
+      search.addEventListener("input", renderEditionsList);
     }
   }
 
-async function recoverAllData(){
-  setStatus("جارٍ استرجاع كل البيانات من Firestore والكاش المحلي...");
+  function resetEditionArticleForm(clearPreview = true){
+    state.editionsEditingArticleId = null;
+    const t = el("editions-article-title");
+    const s = el("editions-article-short");
+    const p = el("editions-article-pdf");
+    const prev = el("editions-article-preview");
 
+    if (t) t.value = "";
+    if (s) s.value = "";
+    if (p) p.value = "";
+    if (clearPreview && prev) prev.innerHTML = "";
+  }
+
+  async function createNewIssue(){
+    const nextNum = getNextIssueNumber();
+    const newIssue = normalizeEditionItem({
+      id: uid(),
+      issueNumber: nextNum,
+      title: { ar: getOrdinalIssueName(nextNum), fr: "", en: "" },
+      short: { ar: "", fr: "", en: "" },
+      articles: [],
+      image: "",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      status: "published"
+    });
+
+    upsertLocal("editions", newIssue);
+
+    try {
+      await upsertFirestore("editions", newIssue);
+    } catch (err) {
+      console.error("Edition create Firestore error:", err);
+      alert("تم إنشاء العدد محليًا لكن فشل حفظه في Firestore");
+    }
+
+    state.editionsEditingIssueId = newIssue.id;
+    refreshEditionSelect(newIssue.id);
+    renderEditionsList();
+    setStatus(`تم إنشاء ${getOrdinalIssueName(nextNum)} بنجاح.`);
+  }
+
+  async function saveIssueMeta(){
+    const issue = getCurrentIssue();
+    if (!issue) return alert("أنشئ عددًا أولًا أو اختر عددًا موجودًا.");
+
+    issue.short = { ar: el("editions-issue-short")?.value.trim() || "", fr:"", en:"" };
+    issue.title = { ar: getOrdinalIssueName(issue.issueNumber), fr:"", en:"" };
+    issue.updatedAt = Date.now();
+
+    const imageInput = el("editions-issue-image");
+    if (imageInput && imageInput.files && imageInput.files[0]) {
+      issue.image = await fileToDataURL(imageInput.files[0]);
+    }
+
+    upsertLocal("editions", issue);
+
+    try {
+      await upsertFirestore("editions", issue);
+    } catch (err) {
+      console.error("Issue meta Firestore error:", err);
+      alert("تم حفظ بيانات العدد محليًا لكن فشل الحفظ في Firestore");
+    }
+
+    refreshEditionSelect(issue.id);
+    renderEditionsList();
+    setStatus("تم حفظ بيانات العدد.");
+  }
+
+  async function saveEditionArticle(){
+    const issue = getCurrentIssue();
+    if (!issue) return alert("أنشئ عددًا أولًا أو اختر عددًا لإضافة المقال داخله.");
+
+    const title = el("editions-article-title")?.value.trim() || "";
+    const short = el("editions-article-short")?.value.trim() || "";
+    const pdfInput = el("editions-article-pdf");
+
+    if (!title) return alert("أدخل عنوان المقال أولًا.");
+
+    let article = issue.articles.find(a => String(a.id) === String(state.editionsEditingArticleId));
+    const isNew = !article;
+
+    if (!article) {
+      article = {
+        id: uid(),
+        title: { ar: "", fr:"", en:"" },
+        short: { ar: "", fr:"", en:"" },
+        file: "",
+        filePath: "",
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      };
+      issue.articles.unshift(article);
+    }
+
+    article.title.ar = title;
+    article.short.ar = short;
+    article.updatedAt = Date.now();
+
+    if (pdfInput && pdfInput.files && pdfInput.files[0]) {
+      const pdfFile = pdfInput.files[0];
+      if (pdfFile.type !== "application/pdf") {
+        return alert("يرجى اختيار ملف PDF فقط");
+      }
+      setStatus("جارٍ رفع PDF للمقال...");
+      const uploaded = await uploadEditionArticlePdf(pdfFile, issue.id, article.id);
+      article.file = uploaded.url;
+      article.filePath = uploaded.path;
+    }
+
+    if (!article.file) {
+      return alert("ارفع ملف PDF للمقال أول مرة على الأقل.");
+    }
+
+    issue.updatedAt = Date.now();
+    issue.title = { ar: getOrdinalIssueName(issue.issueNumber), fr:"", en:"" };
+
+    upsertLocal("editions", issue);
+
+    try {
+      await upsertFirestore("editions", issue);
+    } catch (err) {
+      console.error("Edition article Firestore error:", err);
+      alert("تم حفظ المقال محليًا لكن فشل الحفظ في Firestore");
+    }
+
+    state.editionsEditingIssueId = issue.id;
+    state.editionsEditingArticleId = isNew ? null : article.id;
+    refreshEditionSelect(issue.id);
+    renderEditionsList();
+    resetEditionArticleForm();
+    setStatus("تم حفظ المقال داخل العدد بنجاح.");
+  }
+
+  function selectIssueForEdit(issueId){
+    state.editionsEditingIssueId = issueId;
+    refreshEditionSelect(issueId);
+    renderEditionsList();
+  }
+
+  function editEditionArticle(issueId, articleId){
+    const issue = (state.bySection.editions || []).find(x => String(x.id) === String(issueId));
+    if (!issue) return;
+
+    const article = (issue.articles || []).find(a => String(a.id) === String(articleId));
+    if (!article) return;
+
+    state.editionsEditingIssueId = issueId;
+    state.editionsEditingArticleId = articleId;
+
+    refreshEditionSelect(issueId);
+
+    if (el("editions-article-title")) el("editions-article-title").value = getByLang(article.title, "ar") || "";
+    if (el("editions-article-short")) el("editions-article-short").value = getByLang(article.short, "ar") || "";
+    if (el("editions-article-pdf")) el("editions-article-pdf").value = "";
+
+    const prev = el("editions-article-preview");
+    if (prev) {
+      prev.innerHTML = article.file
+        ? `<div style="margin-bottom:6px;">ملف PDF الحالي: <a href="${article.file}" target="_blank" style="color:#7dd3fc">فتح الملف</a></div>`
+        : "";
+    }
+  }
+
+  async function removeEditionArticle(issueId, articleId){
+    const issue = (state.bySection.editions || []).find(x => String(x.id) === String(issueId));
+    if (!issue) return;
+
+    const ok = confirm("سيتم حذف هذا المقال من العدد. هل أنت متأكد؟");
+    if (!ok) return;
+
+    const target = (issue.articles || []).find(a => String(a.id) === String(articleId));
+    issue.articles = (issue.articles || []).filter(a => String(a.id) !== String(articleId));
+    issue.updatedAt = Date.now();
+
+    upsertLocal("editions", issue);
+
+    try {
+      await upsertFirestore("editions", issue);
+    } catch (err) {
+      console.error("Remove edition article Firestore error:", err);
+    }
+
+    try {
+      if (target?.filePath) {
+        await deleteObject(ref(storage, target.filePath));
+      }
+    } catch (e) {
+      console.error("Storage delete error:", e);
+    }
+
+    if (String(state.editionsEditingArticleId) === String(articleId)) {
+      resetEditionArticleForm();
+    }
+
+    refreshEditionSelect(issueId);
+    renderEditionsList();
+    setStatus("تم حذف المقال من العدد.");
+  }
+
+  async function deleteCurrentIssue(){
+    const issue = getCurrentIssue();
+    if (!issue) return alert("لا يوجد عدد محدد لحذفه.");
+
+    const ok = confirm(`سيتم حذف ${getByLang(issue.title, "ar") || "هذا العدد"} وكل مقالاته. هل أنت متأكد؟`);
+    if (!ok) return;
+
+    const all = getContentCache().map(item => normalizeItem(item.section, item));
+    const filtered = all.filter(x => String(x.docId || x.id) !== String(issue.id));
+    setContentCache(filtered);
+    rebuildDbFromCache();
+
+    try {
+      await deleteDoc(doc(db, "content", String(issue.id)));
+    } catch (e) {
+      console.error("Firestore delete issue error:", e);
+    }
+
+    try {
+      for (const article of (issue.articles || [])) {
+        if (article.filePath) {
+          await deleteObject(ref(storage, article.filePath));
+        }
+      }
+    } catch (e) {
+      console.error("Edition article storage delete error:", e);
+    }
+
+    state.editionsEditingIssueId = null;
+    state.editionsEditingArticleId = null;
+
+    refreshEditionSelect();
+    renderEditionsList();
+    resetEditionArticleForm();
+    setStatus("تم حذف العدد.");
+  }
+
+  function renderEditionsList(){
+    const list = el("editions-list");
+    const count = el("editions-count");
+    if (!list || !count) return;
+
+    const q = (el("editions-search")?.value || "").trim().toLowerCase();
+    let issues = (state.bySection.editions || []).slice();
+
+    issues = issues.filter(issue => {
+      const issueName = (getByLang(issue.title, "ar") || "").toLowerCase();
+      const issueShort = (getByLang(issue.short, "ar") || "").toLowerCase();
+      const articleText = (issue.articles || []).map(a =>
+        `${getByLang(a.title, "ar")} ${getByLang(a.short, "ar")}`.toLowerCase()
+      ).join(" ");
+
+      if (!q) return true;
+      return issueName.includes(q) || issueShort.includes(q) || articleText.includes(q);
+    });
+
+    issues.sort((a,b) => Number(a.issueNumber || 0) - Number(b.issueNumber || 0));
+    count.textContent = `${issues.length} عدد`;
+
+    if (!issues.length) {
+      list.innerHTML = `<div class="empty">لا توجد أعداد بعد. اضغط "إضافة عدد جديد".</div>`;
+      return;
+    }
+
+    list.innerHTML = "";
+
+    issues.forEach(issue => {
+      const wrap = document.createElement("div");
+      wrap.className = "issue-card";
+
+      const issueName = getByLang(issue.title, "ar") || getOrdinalIssueName(issue.issueNumber);
+      const issueShort = getByLang(issue.short, "ar") || "بدون وصف مختصر";
+      const articles = Array.isArray(issue.articles) ? issue.articles : [];
+
+      wrap.innerHTML = `
+        <div class="issue-top">
+          <div>
+            <h3 class="issue-name">${esc(issueName)}</h3>
+            <div class="issue-sub">${esc(issueShort)}</div>
+            <div class="issue-sub">عدد المقالات: ${articles.length}</div>
+          </div>
+          <div class="article-mini-actions">
+            <button class="mini" title="اختيار العدد" onclick="loadForEdit('editions','${issue.id}')"><i class="ri-pencil-line"></i></button>
+            <button class="mini danger" title="حذف العدد" onclick="deleteItem('editions','${issue.id}')"><i class="ri-delete-bin-line"></i></button>
+          </div>
+        </div>
+
+        <div class="split-line"></div>
+
+        <div class="article-mini-list">
+          ${
+            articles.length
+              ? articles.map((article, idx) => `
+                <div class="article-mini">
+                  <div>
+                    <h4>${esc(getByLang(article.title, "ar") || `المقال ${idx + 1}`)}</h4>
+                    <p>${esc(getByLang(article.short, "ar") || "بدون وصف")}</p>
+                  </div>
+                  <div class="article-mini-actions">
+                    <button class="mini" title="تعديل المقال" onclick="editEditionArticle('${issue.id}','${article.id}')"><i class="ri-edit-line"></i></button>
+                    <button class="mini danger" title="حذف المقال" onclick="removeEditionArticle('${issue.id}','${article.id}')"><i class="ri-delete-bin-line"></i></button>
+                  </div>
+                </div>
+              `).join("")
+              : `<div class="empty">لا توجد مقالات داخل هذا العدد بعد.</div>`
+          }
+        </div>
+      `;
+
+      list.appendChild(wrap);
+    });
+  }
+
+async function reloadFromFirestore(){
+  if (!db || !collection || !getDocs) {
+    setStatus("Firebase غير متاح حاليًا، يعمل الأدمن في الوضع المحلي فقط.");
+    return [];
+  }
+
+  try {
+    setStatus("جارٍ تحميل البيانات من Firestore...");
+    const snap = await getDocs(collection(db, "content"));
+    const all = [];
+    snap.forEach(docSnap => {
+      const raw = { docId: docSnap.id, ...docSnap.data() };
+      all.push(normalizeItem(raw.section, raw));
+    });
+
+    setContentCache(all);
+    rebuildDbFromCache();
+    showSection(state.currentSectionKey);
+    setStatus(`تم تحميل ${all.length} عنصر من Firestore.`);
+    return all;
+  } catch (e) {
+    console.error("Firestore load error:", e);
+    setStatus("فشل تحميل البيانات من Firestore.");
+    return [];
+  }
+}
+async function recoverAllData(){
+  setStatus("جارٍ استرجاع البيانات من Firestore والكاش المحلي...");
   let firestoreItems = [];
   let localItems = [];
 
-  try {
-    const snap = await getDocs(collection(db, "content"));
-    snap.forEach(docSnap => {
-      const raw = { docId: docSnap.id, ...docSnap.data() };
-      firestoreItems.push(normalizeItem(raw.section, raw));
-    });
-  } catch (e) {
-    console.error("Firestore load error:", e);
+  if (db && collection && getDocs) {
+    try {
+      const snap = await getDocs(collection(db, "content"));
+      snap.forEach(docSnap => {
+        const raw = { docId: docSnap.id, ...docSnap.data() };
+        firestoreItems.push(normalizeItem(raw.section, raw));
+      });
+    } catch (e) {
+      console.error("Firestore load error:", e);
+    }
   }
 
   try {
@@ -1274,81 +2144,86 @@ async function recoverAllData(){
     const oldUpdated = Number(existing.updatedAt || 0);
     const newUpdated = Number(item.updatedAt || 0);
 
-    if (newUpdated >= oldUpdated) {
-      mergedMap.set(id, item);
-    }
+    if (newUpdated >= oldUpdated) mergedMap.set(id, item);
   });
 
   const merged = Array.from(mergedMap.values());
-
   setContentCache(merged);
   rebuildDbFromCache();
   showSection(state.currentSectionKey);
-  setStatus(`تم استرجاع ${merged.length} عنصر إلى لوحة الإدارة.`);
+  setStatus(`تم دمج ${merged.length} عنصر.`);
 }
 
-function exportJSON(){
-  const out = {};
-  SECTIONS.forEach(s => out[s.key] = state.bySection[s.key] || []);
-  const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `site-data-${new Date().toISOString().slice(0,10)}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
+  function exportJSON(){
+    const out = {};
+    SECTIONS.forEach(s => out[s.key] = state.bySection[s.key]);
+
+    const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `site-data-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
 
   function clearLocalStorageOnly(){
-    const ok = confirm("سيتم حذف الكاش المحلي فقط. هل أنت متأكد؟");
+    const ok = confirm("سيتم مسح الكاش المحلي فقط. هل أنت متأكد؟");
     if (!ok) return;
+
     localStorage.removeItem("content_cache");
     SECTIONS.forEach(s => state.bySection[s.key] = []);
     showSection(state.currentSectionKey);
-    setStatus("تم حذف الكاش المحلي فقط.");
+    setStatus("تم مسح الكاش المحلي.");
   }
 
   async function initAfterLogin(){
     buildMenu();
     rebuildDbFromCache();
     showSection(state.currentSectionKey);
-await recoverAllData();
+    await recoverAllData();
+
+    if (el("logoutBtn")) el("logoutBtn").addEventListener("click", logout);
+    if (el("reloadBtn")) el("reloadBtn").addEventListener("click", reloadFromFirestore);
+    if (el("recoverBtn")) el("recoverBtn").addEventListener("click", recoverAllData);
+    if (el("exportBtn")) el("exportBtn").addEventListener("click", exportJSON);
+    if (el("clearBtn")) el("clearBtn").addEventListener("click", clearLocalStorageOnly);
   }
 
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", async function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      await login();
-      return false;
-    });
-  }
+window.addEventListener("load", async () => {
+  try {
+    const app = el("app");
+    if (app) {
+      app.style.display = "grid";
+      app.classList.add("visible");
+    }
 
-  el("logoutBtn").addEventListener("click", logout);
-  el("reloadBtn").addEventListener("click", reloadFromFirestore);
-el("recoverBtn").addEventListener("click", recoverAllData);
-  el("exportBtn").addEventListener("click", exportJSON);
-  el("clearBtn").addEventListener("click", clearLocalStorageOnly);
+    rebuildDbFromCache();
+    buildMenu();
+    showSection(state.currentSectionKey);
+    setStatus("جاهز.");
 
-window.addEventListener("load", () => {
-  rebuildDbFromCache();
-  if (sessionStorage.getItem("adminAuthed") === "1") {
-    setAppVisible();
-    initAfterLogin();
-  } else {
-    el("lock").style.display = "flex";
-    el("app").style.display = "none";
+    try {
+      await reloadFromFirestore();
+    } catch (e) {
+      console.warn("Firestore reload skipped:", e);
+      setStatus("تم فتح الأدمن محليًا بدون مزامنة Firestore.");
+    }
+  } catch (err) {
+    console.error("Startup error:", err);
+    const content = el("content");
+    if (content) {
+      content.innerHTML = `
+        <div class="card">
+          <h3>حدث خطأ أثناء تشغيل لوحة التحكم</h3>
+          <div class="muted-note">افتح Console لمعرفة السطر المسبب للمشكلة.</div>
+        </div>
+      `;
+    }
   }
 });
-
-  window.showSection = showSection;
-  window.resetForm = resetForm;
-  window.loadForEdit = loadForEdit;
-  window.deleteItem = deleteItemById;
-  window.publishItem = saveItem;
 </script>
 </body>
 </html>
