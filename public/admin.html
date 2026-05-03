@@ -915,6 +915,7 @@ async function uploadImageToStorage(file, sectionKey, itemId){
   const url = await getDownloadURL(storageRef);
   return { url, path: filePath };
 }
+console.log("currentUser", auth.currentUser);
     function fileToDataURL(file){
       return new Promise((resolve, reject) => {
         const r = new FileReader();
