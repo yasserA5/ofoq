@@ -39,185 +39,15 @@
       -webkit-font-smoothing:antialiased;
     }
 
-    .lock{
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      background: radial-gradient(circle at top, #0f172a 0%, #020617 55%, #000 100%);
-      z-index:9999;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      transition: opacity .24s ease, visibility .24s ease;
+    .app{
+      display:grid;
+      min-height:100vh;
+      gap:14px;
+      padding:14px;
+      grid-template-columns: clamp(240px, 25vw, 290px) 1fr;
+      opacity:1;
+      transform:none;
     }
-
-    .lock.hidden{
-      opacity:0;
-      visibility:hidden;
-    }
-
-    .lock-card{
-      width:min(420px, 100%);
-      background: linear-gradient(135deg, rgba(15,23,42,.94), rgba(15,23,42,.76));
-      border:1px solid rgba(148,163,184,.38);
-      border-radius:22px;
-      box-shadow: var(--shadow);
-      padding:22px 18px 18px;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .lock-card:before{
-      content:"";
-      position:absolute;
-      width:180px;
-      height:180px;
-      top:-70px;
-      left:-60px;
-      background: radial-gradient(circle, rgba(56,189,248,.35), transparent 60%);
-      opacity:.9;
-      pointer-events:none;
-    }
-
-    .lock-title{
-      margin:0 0 6px;
-      font-size:20px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      color:#e0f2fe;
-    }
-
-    .lock-title i{
-      color:#38bdf8;
-      font-size:22px;
-    }
-
-    .lock-desc{
-      margin:0 0 16px;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .in{
-      position:relative;
-      margin-bottom:10px;
-    }
-
-    .in i{
-      position:absolute;
-      left:12px;
-      top:50%;
-      transform:translateY(-50%);
-      color:#64748b;
-      font-size:18px;
-    }
-
-    .in input{
-      width:100%;
-      padding:10px 14px 10px 42px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.45);
-      background: rgba(15,23,42,.92);
-      color:var(--text);
-      outline:none;
-      transition: border-color var(--t), box-shadow var(--t), transform var(--t);
-      font-size:14px;
-    }
-
-    .in input:focus{
-      border-color: var(--accent);
-      box-shadow:0 0 0 1px rgba(56,189,248,.4);
-      transform: translateY(-1px);
-    }
-
-    .btn{
-      border:0;
-      border-radius:999px;
-      padding:10px 14px;
-      cursor:pointer;
-      font-weight:800;
-      font-size:14px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
-      user-select:none;
-      white-space:nowrap;
-    }
-
-    .btn-primary{
-      width:100%;
-      background: linear-gradient(135deg, var(--accent), #22c1c3);
-      color:#07101f;
-      box-shadow:0 12px 30px rgba(56,189,248,.33);
-    }
-
-    .btn-primary:hover{
-      filter: brightness(1.03);
-      transform: translateY(-1px);
-      box-shadow:0 16px 40px rgba(56,189,248,.44);
-    }
-
-    .btn-ghost{
-      background: rgba(15,23,42,.9);
-      border:1px solid rgba(148,163,184,.38);
-      color:var(--text);
-      box-shadow:0 8px 18px rgba(15,23,42,.6);
-      padding:6px 10px;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .btn-ghost:hover{
-      transform: translateY(-1px);
-      background: rgba(15,23,42,1);
-    }
-
-    .btn-small{
-      padding:7px 12px;
-      font-size:12px;
-      font-weight:900;
-    }
-
-    .btn-green{
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color:#04101f;
-      box-shadow:0 12px 26px rgba(34,197,94,.25);
-    }
-
-    .btn-warn{
-      background: linear-gradient(135deg, #f59e0b, #f97316);
-      color:#111827;
-      box-shadow:0 12px 26px rgba(245,158,11,.22);
-    }
-
-    .err{
-      margin-top:10px;
-      display:none;
-      color: var(--danger);
-      font-size:13px;
-    }
-
-.app{
-  display:grid;
-  min-height:100vh;
-  gap:14px;
-  padding:14px;
-  grid-template-columns: clamp(240px, 25vw, 290px) 1fr;
-  opacity:1;
-  transform:none;
-  transition: opacity .24s ease, transform .24s ease;
-}
-
-.app.visible{
-  opacity:1;
-  transform:none;
-  display:grid;
-}
 
     .sidebar{
       background: rgba(15,23,42,.74);
@@ -314,11 +144,6 @@
     .sidebar-footer{
       padding-top:10px;
       border-top:1px dashed rgba(148,163,184,.28);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      flex-wrap:wrap;
       color:#64748b;
       font-size:11px;
     }
@@ -370,6 +195,61 @@
       gap:8px;
       flex-wrap:wrap;
       align-items:center;
+    }
+
+    .btn{
+      border:0;
+      border-radius:999px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    .btn:hover{ transform: translateY(-1px); }
+
+    .btn-ghost{
+      background: rgba(15,23,42,.9);
+      border:1px solid rgba(148,163,184,.38);
+      color:var(--text);
+      box-shadow:0 8px 18px rgba(15,23,42,.6);
+      padding:7px 12px;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .btn-green{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#04101f;
+      box-shadow:0 12px 26px rgba(34,197,94,.25);
+      padding:7px 12px;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .btn-warn{
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color:#111827;
+      box-shadow:0 12px 26px rgba(245,158,11,.22);
+      padding:7px 12px;
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .btn-danger{
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color:#fff;
+      box-shadow:0 12px 26px rgba(239,68,68,.22);
+      padding:7px 12px;
+      font-size:12px;
+      font-weight:900;
     }
 
     .card{
@@ -691,8 +571,6 @@
   </style>
 </head>
 <body>
-
-
   <div class="app" id="app">
     <aside class="sidebar">
       <div class="brand">
@@ -704,9 +582,10 @@
       </div>
 
       <nav class="menu" id="menu" aria-label="الأقسام"></nav>
-<div class="sidebar-footer">
-  <span>إدارة المحتوى واستعادة البيانات</span>
-</div>
+
+      <div class="sidebar-footer">
+        <span>إدارة المحتوى واستعادة البيانات</span>
+      </div>
     </aside>
 
     <main>
@@ -720,17 +599,20 @@
         </div>
 
         <div class="controls">
-          <button class="btn btn-ghost btn-small" id="reloadBtn" type="button">
+          <button class="btn btn-ghost" id="reloadBtn" type="button">
             <i class="ri-refresh-line"></i> تحميل من Firestore
           </button>
-          <button class="btn btn-ghost btn-small" id="exportBtn" type="button">
+          <button class="btn btn-green" id="syncBtn" type="button">
+            <i class="ri-upload-cloud-line"></i> رفع المحلي إلى Firestore
+          </button>
+          <button class="btn btn-ghost" id="recoverBtn" type="button">
+            <i class="ri-history-line"></i> دمج المحلي مع Firestore
+          </button>
+          <button class="btn btn-ghost" id="exportBtn" type="button">
             <i class="ri-download-cloud-2-line"></i> تصدير JSON
           </button>
-          <button class="btn btn-ghost btn-small" id="clearBtn" type="button">
+          <button class="btn btn-danger" id="clearBtn" type="button">
             <i class="ri-database-2-line"></i> مسح الكاش المحلي
-          </button>
-          <button class="btn btn-small btn-green" id="recoverBtn" type="button">
-            <i class="ri-history-line"></i> استرجاع البيانات
           </button>
         </div>
       </div>
@@ -742,14 +624,12 @@
 
 <script type="module">
   let db = null;
-  let auth = null;
   let storage = null;
-  let collection, getDocs, doc, setDoc, deleteDoc, signOut, ref, uploadBytes, getDownloadURL, deleteObject;
+  let collection, getDocs, doc, setDoc, deleteDoc, ref, uploadBytes, getDownloadURL, deleteObject;
 
   try {
-const firebaseCore = await import("./firebase-init.js");
+    const firebaseCore = await import("./firebase-init.js");
     db = firebaseCore.db;
-    auth = firebaseCore.auth;
     storage = firebaseCore.storage;
 
     const firestoreMod = await import("https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js");
@@ -758,9 +638,6 @@ const firebaseCore = await import("./firebase-init.js");
     doc = firestoreMod.doc;
     setDoc = firestoreMod.setDoc;
     deleteDoc = firestoreMod.deleteDoc;
-
-    const authMod = await import("https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js");
-    signOut = authMod.signOut;
 
     const storageMod = await import("https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js");
     ref = storageMod.ref;
@@ -817,34 +694,7 @@ const firebaseCore = await import("./firebase-init.js");
     const node = el("status");
     if (node) node.textContent = msg;
   }
-async function syncLocalCacheToFirestore(){
-  const localItems = getContentCache().map(item => normalizeItem(item.section, item));
 
-  if (!localItems.length) {
-    setStatus("لا توجد بيانات محلية لرفعها.");
-    return;
-  }
-
-  if (!db || !doc || !setDoc) {
-    setStatus("Firestore غير متاح حاليًا.");
-    return;
-  }
-
-  setStatus("جارٍ رفع البيانات المحلية إلى Firestore...");
-
-  let success = 0;
-
-  for (const item of localItems) {
-    try {
-      await upsertFirestore(item.section, item);
-      success++;
-    } catch (e) {
-      console.error("Sync item failed:", item, e);
-    }
-  }
-
-  setStatus(`تم رفع ${success} عنصر من الكاش المحلي إلى Firestore.`);
-}
   function safeParse(v, fallback){
     try{
       const x = JSON.parse(v);
@@ -985,86 +835,6 @@ async function syncLocalCacheToFirestore(){
     });
   }
 
-  function setAppVisible(){
-    el("lock").classList.add("hidden");
-    setTimeout(() => { el("lock").style.display = "none"; }, 220);
-    const app = el("app");
-    app.style.display = "grid";
-    requestAnimationFrame(() => app.classList.add("visible"));
-  }
-
-  function setLockVisible(){
-    const app = el("app");
-    app.classList.remove("visible");
-    setTimeout(() => { app.style.display = "none"; }, 180);
-    el("lock").style.display = "flex";
-    requestAnimationFrame(() => el("lock").classList.remove("hidden"));
-  }
-
-  const ADMIN_CODE = "admin";
-  const ADMIN_PASS = "ofouqaca12";
-
-async function login() {
-  const codeInput = el("adminCode");
-  const passInput = el("adminPass");
-  const errBox = el("loginErr");
-  const loginBtn = el("loginBtn");
-
-  if (!codeInput || !passInput || !errBox) return;
-
-  const code = codeInput.value.trim();
-  const pass = passInput.value.trim();
-
-
-
-  try {
-    const ok =
-      code.toLowerCase() === ADMIN_CODE.toLowerCase() &&
-      pass === ADMIN_PASS;
-
-    if (!ok) {
-      errBox.style.display = "block";
-      errBox.textContent = "بيانات الدخول غير صحيحة";
-      return;
-    }
-
-    errBox.style.display = "none";
-
-    sessionStorage.setItem("adminAuthed", "1");
-
-    setAppVisible();
-
-    // IMPORTANT
-    await initAfterLogin();
-
-    setStatus("تم الدخول بنجاح.");
-
-  } catch (err) {
-    console.error("Login error:", err);
-
-    errBox.style.display = "block";
-    errBox.textContent = "حدث خطأ أثناء تسجيل الدخول";
-
-  } finally {
-    if (loginBtn) {
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = 'دخول <i class="ri-arrow-left-line"></i>';
-    }
-  }
-}
-
-
-async function logout(){
-  try {
-    if (auth && signOut) await signOut(auth);
-  } catch {}
-
-  if (el("adminCode")) el("adminCode").value = "";
-  if (el("adminPass")) el("adminPass").value = "";
-  sessionStorage.removeItem("adminAuthed");
-  setLockVisible();
-}
-
   function buildMenu(){
     const menu = el("menu");
     menu.innerHTML = "";
@@ -1110,10 +880,10 @@ async function logout(){
             <input type="url" id="${key}-live-link" placeholder="https://..." />
           </div>
           <div class="actions">
-            <button class="btn btn-small btn-green" type="button" onclick="publishItem('${key}')">
+            <button class="btn btn-green" type="button" onclick="publishItem('${key}')">
               <i class="ri-upload-cloud-line"></i> نشر
             </button>
-            <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
+            <button class="btn btn-ghost" type="button" onclick="resetForm('${key}')">
               <i class="ri-refresh-line"></i> تفريغ
             </button>
           </div>
@@ -1148,7 +918,7 @@ async function logout(){
               <textarea id="${key}-short-ar" placeholder="ملخص..."></textarea>
             </div>
             <div class="row">
-              <label>المحتوى الكامل (نص فقط حاليًا)</label>
+              <label>المحتوى الكامل</label>
               <div class="editor" id="${key}-full-ar-editor" contenteditable="true"></div>
             </div>
             <div class="row">
@@ -1167,10 +937,10 @@ async function logout(){
             </div>
             <div class="preview" id="${key}-preview"></div>
             <div class="actions">
-              <button class="btn btn-small btn-green" type="button" onclick="publishItem('${key}')">
+              <button class="btn btn-green" type="button" onclick="publishItem('${key}')">
                 <i class="ri-upload-cloud-line"></i> نشر
               </button>
-              <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">
+              <button class="btn btn-ghost" type="button" onclick="resetForm('${key}')">
                 <i class="ri-refresh-line"></i> تفريغ
               </button>
             </div>
@@ -1186,10 +956,10 @@ async function logout(){
         <h3><i class="ri-book-open-line"></i> إدارة الأعداد والمقالات</h3>
 
         <div class="actions" style="margin-bottom:12px;">
-          <button class="btn btn-small btn-green" type="button" onclick="createNewIssue()">
+          <button class="btn btn-green" type="button" onclick="createNewIssue()">
             <i class="ri-add-circle-line"></i> إضافة عدد جديد
           </button>
-          <button class="btn btn-ghost btn-small" type="button" onclick="resetEditionArticleForm()">
+          <button class="btn btn-ghost" type="button" onclick="resetEditionArticleForm()">
             <i class="ri-refresh-line"></i> تفريغ نموذج المقال
           </button>
         </div>
@@ -1217,10 +987,10 @@ async function logout(){
         </div>
 
         <div class="actions">
-          <button class="btn btn-small btn-warn" type="button" onclick="saveIssueMeta()">
+          <button class="btn btn-warn" type="button" onclick="saveIssueMeta()">
             <i class="ri-save-line"></i> حفظ بيانات العدد
           </button>
-          <button class="btn btn-ghost btn-small" type="button" onclick="deleteCurrentIssue()">
+          <button class="btn btn-danger" type="button" onclick="deleteCurrentIssue()">
             <i class="ri-delete-bin-line"></i> حذف العدد الحالي
           </button>
         </div>
@@ -1247,10 +1017,10 @@ async function logout(){
         <div class="preview" id="editions-article-preview"></div>
 
         <div class="actions">
-          <button class="btn btn-small btn-green" type="button" onclick="saveEditionArticle()">
+          <button class="btn btn-green" type="button" onclick="saveEditionArticle()">
             <i class="ri-upload-cloud-line"></i> حفظ المقال
           </button>
-          <button class="btn btn-ghost btn-small" type="button" onclick="resetEditionArticleForm()">
+          <button class="btn btn-ghost" type="button" onclick="resetEditionArticleForm()">
             <i class="ri-eraser-line"></i> مسح المقال الحالي
           </button>
         </div>
@@ -1393,31 +1163,31 @@ async function logout(){
     return out;
   }
 
-async function uploadPdfToStorage(file, sectionKey, itemId){
-  if (!storage || !ref || !uploadBytes || !getDownloadURL) {
-    throw new Error("Firebase Storage غير متاح الآن.");
+  async function uploadPdfToStorage(file, sectionKey, itemId){
+    if (!storage || !ref || !uploadBytes || !getDownloadURL) {
+      throw new Error("Firebase Storage غير متاح الآن.");
+    }
+
+    const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+    const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
+    const storageRef = ref(storage, filePath);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    return { url, path: filePath };
   }
 
-  const safeName = file.name.replace(/[^\w.\-]+/g, "_");
-  const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
-  const storageRef = ref(storage, filePath);
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return { url, path: filePath };
-}
+  async function uploadEditionArticlePdf(file, issueId, articleId){
+    if (!storage || !ref || !uploadBytes || !getDownloadURL) {
+      throw new Error("Firebase Storage غير متاح الآن.");
+    }
 
-async function uploadEditionArticlePdf(file, issueId, articleId){
-  if (!storage || !ref || !uploadBytes || !getDownloadURL) {
-    throw new Error("Firebase Storage غير متاح الآن.");
+    const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+    const filePath = `pdfs/editions/${issueId}/${articleId}-${safeName}`;
+    const storageRef = ref(storage, filePath);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    return { url, path: filePath };
   }
-
-  const safeName = file.name.replace(/[^\w.\-]+/g, "_");
-  const filePath = `pdfs/editions/${issueId}/${articleId}-${safeName}`;
-  const storageRef = ref(storage, filePath);
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return { url, path: filePath };
-}
 
   function upsertLocal(sectionKey, obj){
     const all = getContentCache().map(item => normalizeItem(item.section, item));
@@ -1430,32 +1200,33 @@ async function uploadEditionArticlePdf(file, issueId, articleId){
     rebuildDbFromCache();
     state.editing = { key: null, id: null };
   }
-async function upsertFirestore(sectionKey, obj){
-  if (!db || !doc || !setDoc) {
-    console.warn("Firestore unavailable, skipping remote save.");
+
+  async function upsertFirestore(sectionKey, obj){
+    if (!db || !doc || !setDoc) {
+      console.warn("Firestore unavailable, skipping remote save.");
+      return obj;
+    }
+
+    const now = Date.now();
+    const docIdValue = String(obj.docId || obj.id || uid());
+
+    obj.id = docIdValue;
+    obj.docId = docIdValue;
+    obj.section = sectionKey;
+    obj.updatedAt = now;
+    if (!obj.createdAt) obj.createdAt = now;
+    if (!obj.status) obj.status = "published";
+
+    await setDoc(doc(db, "content", docIdValue), obj, { merge: true });
     return obj;
   }
-
-  const now = Date.now();
-  const docIdValue = String(obj.docId || obj.id || uid());
-
-  obj.id = docIdValue;
-  obj.docId = docIdValue;
-  obj.section = sectionKey;
-  obj.updatedAt = now;
-  if (!obj.createdAt) obj.createdAt = now;
-  if (!obj.status) obj.status = "published";
-
-  await setDoc(doc(db, "content", docIdValue), obj, { merge: true });
-  return obj;
-}
 
   async function saveItem(key){
     const cfg = SECTIONS.find(s => s.key === key);
     if (!cfg) return;
 
     if (key === "editions") {
-      alert("قسم الإصدارات له نموذج خاص. استخدم أزرار حفظ العدد أو حفظ المقال.");
+      alert("قسم الإصدارات له نموذج خاص.");
       return;
     }
 
@@ -1554,9 +1325,7 @@ async function upsertFirestore(sectionKey, obj){
     if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
 
     const p = el(`${key}-preview`);
-    if (p) {
-      p.innerHTML = buildPreviewHTML(item.image, item.file);
-    }
+    if (p) p.innerHTML = buildPreviewHTML(item.image, item.file);
   }
 
   async function deleteItemById(sectionKey, id){
@@ -1579,13 +1348,13 @@ async function upsertFirestore(sectionKey, obj){
     renderList(sectionKey);
 
     try {
-      await deleteDoc(doc(db, "content", String(id)));
+      if (db && doc && deleteDoc) await deleteDoc(doc(db, "content", String(id)));
     } catch (e) {
       console.error("Firestore delete error:", e);
     }
 
     try {
-      if (target?.filePath) {
+      if (target?.filePath && storage && ref && deleteObject) {
         await deleteObject(ref(storage, target.filePath));
       }
     } catch (e) {
@@ -1596,9 +1365,7 @@ async function upsertFirestore(sectionKey, obj){
   function resetForm(key){
     state.editing = { key: null, id: null };
 
-    [
-      "title-ar","author-ar","aff-ar","date-ar","short-ar","details-ar","live-link"
-    ].forEach(name => {
+    ["title-ar","author-ar","aff-ar","date-ar","short-ar","details-ar","live-link"].forEach(name => {
       const node = el(`${key}-${name}`);
       if (node) node.value = "";
     });
@@ -1700,13 +1467,12 @@ async function upsertFirestore(sectionKey, obj){
       op.value = "";
       op.textContent = "لا يوجد أي عدد بعد";
       select.appendChild(op);
-      el("editions-issue-name").value = "";
-      el("editions-issue-short").value = "";
+      if (el("editions-issue-name")) el("editions-issue-name").value = "";
+      if (el("editions-issue-short")) el("editions-issue-short").value = "";
       return;
     }
 
-    issues
-      .slice()
+    issues.slice()
       .sort((a,b) => Number(a.issueNumber || 0) - Number(b.issueNumber || 0))
       .forEach(issue => {
         const op = document.createElement("option");
@@ -1979,7 +1745,7 @@ async function upsertFirestore(sectionKey, obj){
     }
 
     try {
-      if (target?.filePath) {
+      if (target?.filePath && storage && ref && deleteObject) {
         await deleteObject(ref(storage, target.filePath));
       }
     } catch (e) {
@@ -2008,14 +1774,14 @@ async function upsertFirestore(sectionKey, obj){
     rebuildDbFromCache();
 
     try {
-      await deleteDoc(doc(db, "content", String(issue.id)));
+      if (db && doc && deleteDoc) await deleteDoc(doc(db, "content", String(issue.id)));
     } catch (e) {
       console.error("Firestore delete issue error:", e);
     }
 
     try {
       for (const article of (issue.articles || [])) {
-        if (article.filePath) {
+        if (article.filePath && storage && ref && deleteObject) {
           await deleteObject(ref(storage, article.filePath));
         }
       }
@@ -2108,78 +1874,108 @@ async function upsertFirestore(sectionKey, obj){
     });
   }
 
-async function reloadFromFirestore(){
-  if (!db || !collection || !getDocs) {
-    setStatus("Firebase غير متاح حاليًا، يعمل الأدمن في الوضع المحلي فقط.");
-    return [];
-  }
+  async function reloadFromFirestore(){
+    if (!db || !collection || !getDocs) {
+      setStatus("Firebase غير متاح حاليًا، يعمل الأدمن في الوضع المحلي فقط.");
+      return [];
+    }
 
-  try {
-    setStatus("جارٍ تحميل البيانات من Firestore...");
-    const snap = await getDocs(collection(db, "content"));
-    const all = [];
-    snap.forEach(docSnap => {
-      const raw = { docId: docSnap.id, ...docSnap.data() };
-      all.push(normalizeItem(raw.section, raw));
-    });
-
-    setContentCache(all);
-    rebuildDbFromCache();
-    showSection(state.currentSectionKey);
-    setStatus(`تم تحميل ${all.length} عنصر من Firestore.`);
-    return all;
-  } catch (e) {
-    console.error("Firestore load error:", e);
-    setStatus("فشل تحميل البيانات من Firestore.");
-    return [];
-  }
-}
-async function recoverAllData(){
-  setStatus("جارٍ استرجاع البيانات من Firestore والكاش المحلي...");
-  let firestoreItems = [];
-  let localItems = [];
-
-  if (db && collection && getDocs) {
     try {
+      setStatus("جارٍ تحميل البيانات من Firestore...");
       const snap = await getDocs(collection(db, "content"));
+      const all = [];
       snap.forEach(docSnap => {
         const raw = { docId: docSnap.id, ...docSnap.data() };
-        firestoreItems.push(normalizeItem(raw.section, raw));
+        all.push(normalizeItem(raw.section, raw));
       });
+
+      setContentCache(all);
+      rebuildDbFromCache();
+      showSection(state.currentSectionKey);
+      setStatus(`تم تحميل ${all.length} عنصر من Firestore.`);
+      return all;
     } catch (e) {
       console.error("Firestore load error:", e);
+      setStatus("فشل تحميل البيانات من Firestore.");
+      return [];
     }
   }
 
-  try {
-    localItems = getContentCache().map(item => normalizeItem(item.section, item));
-  } catch (e) {
-    console.error("Local cache read error:", e);
+  async function recoverAllData(){
+    setStatus("جارٍ استرجاع البيانات من Firestore والكاش المحلي...");
+    let firestoreItems = [];
+    let localItems = [];
+
+    if (db && collection && getDocs) {
+      try {
+        const snap = await getDocs(collection(db, "content"));
+        snap.forEach(docSnap => {
+          const raw = { docId: docSnap.id, ...docSnap.data() };
+          firestoreItems.push(normalizeItem(raw.section, raw));
+        });
+      } catch (e) {
+        console.error("Firestore load error:", e);
+      }
+    }
+
+    try {
+      localItems = getContentCache().map(item => normalizeItem(item.section, item));
+    } catch (e) {
+      console.error("Local cache read error:", e);
+    }
+
+    const mergedMap = new Map();
+
+    [...localItems, ...firestoreItems].forEach(item => {
+      const id = String(item.docId || item.id || uid());
+      const existing = mergedMap.get(id);
+
+      if (!existing) {
+        mergedMap.set(id, item);
+        return;
+      }
+
+      const oldUpdated = Number(existing.updatedAt || 0);
+      const newUpdated = Number(item.updatedAt || 0);
+
+      if (newUpdated >= oldUpdated) mergedMap.set(id, item);
+    });
+
+    const merged = Array.from(mergedMap.values());
+    setContentCache(merged);
+    rebuildDbFromCache();
+    showSection(state.currentSectionKey);
+    setStatus(`تم دمج ${merged.length} عنصر.`);
   }
 
-  const mergedMap = new Map();
+  async function syncLocalCacheToFirestore(){
+    const localItems = getContentCache().map(item => normalizeItem(item.section, item));
 
-  [...localItems, ...firestoreItems].forEach(item => {
-    const id = String(item.docId || item.id || uid());
-    const existing = mergedMap.get(id);
-
-    if (!existing) {
-      mergedMap.set(id, item);
+    if (!localItems.length) {
+      setStatus("لا توجد بيانات محلية لرفعها.");
       return;
     }
 
-    const oldUpdated = Number(existing.updatedAt || 0);
-    const newUpdated = Number(item.updatedAt || 0);
+    if (!db || !doc || !setDoc) {
+      setStatus("Firestore غير متاح حاليًا.");
+      return;
+    }
 
-    if (newUpdated >= oldUpdated) mergedMap.set(id, item);
-  });
+    setStatus("جارٍ رفع البيانات المحلية إلى Firestore...");
 
-  const merged = Array.from(mergedMap.values());
-  setContentCache(merged);
-  rebuildDbFromCache();
-  showSection(state.currentSectionKey);
-  setStatus(`تم دمج ${merged.length} عنصر.`);
-}
+    let success = 0;
+
+    for (const item of localItems) {
+      try {
+        await upsertFirestore(item.section, item);
+        success++;
+      } catch (e) {
+        console.error("Sync item failed:", item, e);
+      }
+    }
+
+    setStatus(`تم رفع ${success} عنصر من الكاش المحلي إلى Firestore.`);
+  }
 
   function exportJSON(){
     const out = {};
@@ -2206,57 +2002,67 @@ async function recoverAllData(){
     setStatus("تم مسح الكاش المحلي.");
   }
 
-  async function initAfterLogin(){
-    buildMenu();
-    rebuildDbFromCache();
-    showSection(state.currentSectionKey);
-    await recoverAllData();
-
-    if (el("logoutBtn")) el("logoutBtn").addEventListener("click", logout);
+  function bindTopActions(){
     if (el("reloadBtn")) el("reloadBtn").addEventListener("click", reloadFromFirestore);
-if (el("recoverBtn")) {
-  el("recoverBtn").addEventListener("click", async () => {
-    await recoverAllData();
-    await syncLocalCacheToFirestore();
-    await reloadFromFirestore();
-  });
-}
+    if (el("recoverBtn")) {
+      el("recoverBtn").addEventListener("click", async () => {
+        await recoverAllData();
+        await syncLocalCacheToFirestore();
+        await reloadFromFirestore();
+      });
+    }
+    if (el("syncBtn")) {
+      el("syncBtn").addEventListener("click", async () => {
+        await syncLocalCacheToFirestore();
+        await reloadFromFirestore();
+      });
+    }
     if (el("exportBtn")) el("exportBtn").addEventListener("click", exportJSON);
     if (el("clearBtn")) el("clearBtn").addEventListener("click", clearLocalStorageOnly);
   }
 
-window.addEventListener("load", async () => {
-  try {
-    const app = el("app");
-    if (app) {
-      app.style.display = "grid";
-      app.classList.add("visible");
-    }
-
+  function initAdmin(){
     rebuildDbFromCache();
     buildMenu();
+    bindTopActions();
     showSection(state.currentSectionKey);
     setStatus("جاهز.");
-
-    try {
-      await reloadFromFirestore();
-    } catch (e) {
-      console.warn("Firestore reload skipped:", e);
-      setStatus("تم فتح الأدمن محليًا بدون مزامنة Firestore.");
-    }
-  } catch (err) {
-    console.error("Startup error:", err);
-    const content = el("content");
-    if (content) {
-      content.innerHTML = `
-        <div class="card">
-          <h3>حدث خطأ أثناء تشغيل لوحة التحكم</h3>
-          <div class="muted-note">افتح Console لمعرفة السطر المسبب للمشكلة.</div>
-        </div>
-      `;
-    }
   }
-});
+
+  window.publishItem = saveItem;
+  window.resetForm = resetForm;
+  window.loadForEdit = loadForEdit;
+  window.deleteItem = deleteItemById;
+  window.createNewIssue = createNewIssue;
+  window.saveIssueMeta = saveIssueMeta;
+  window.saveEditionArticle = saveEditionArticle;
+  window.resetEditionArticleForm = resetEditionArticleForm;
+  window.editEditionArticle = editEditionArticle;
+  window.removeEditionArticle = removeEditionArticle;
+  window.deleteCurrentIssue = deleteCurrentIssue;
+
+  window.addEventListener("load", async () => {
+    try {
+      initAdmin();
+      try {
+        await reloadFromFirestore();
+      } catch (e) {
+        console.warn("Firestore reload skipped:", e);
+        setStatus("تم فتح الأدمن محليًا بدون مزامنة Firestore.");
+      }
+    } catch (err) {
+      console.error("Startup error:", err);
+      const content = el("content");
+      if (content) {
+        content.innerHTML = `
+          <div class="card">
+            <h3>حدث خطأ أثناء تشغيل لوحة التحكم</h3>
+            <div class="muted-note">افتح Console لمعرفة السطر المسبب للمشكلة.</div>
+          </div>
+        `;
+      }
+    }
+  });
 </script>
 </body>
 </html>
