@@ -844,6 +844,128 @@
   letter-spacing:.3px;
 }
 
+.featured-slider{
+  padding:10px 20px 0;
+}
+
+.featured-shell{
+  max-width:1200px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  border-radius:24px;
+  box-shadow:0 20px 50px rgba(15,23,42,.14);
+  background:#0f172a;
+}
+
+.featured-track{
+  display:flex;
+  transition:transform .6s ease;
+  will-change:transform;
+}
+
+.featured-slide{
+  min-width:100%;
+  position:relative;
+  cursor:pointer;
+  color:#fff;
+}
+
+.featured-slide img{
+  width:100%;
+  height:clamp(260px,42vw,500px);
+  object-fit:cover;
+  display:block;
+  filter:brightness(.72);
+}
+
+.featured-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(2,6,23,.82),rgba(2,6,23,.25));
+  display:flex;
+  align-items:flex-end;
+  padding:clamp(20px,4vw,36px);
+}
+
+.featured-content{
+  max-width:650px;
+}
+
+.featured-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:12px;
+}
+
+.featured-title{
+  font-size:clamp(22px,4vw,40px);
+  font-weight:800;
+  line-height:1.3;
+  margin-bottom:10px;
+}
+
+.featured-desc{
+  font-size:clamp(13px,2vw,16px);
+  line-height:1.9;
+  color:rgba(255,255,255,.92);
+  margin-bottom:14px;
+}
+
+.featured-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 16px;
+  border-radius:12px;
+  background:#ffffff;
+  color:#0d6b8c;
+  font-weight:800;
+  font-size:14px;
+}
+
+.featured-dots{
+  position:absolute;
+  left:50%;
+  bottom:16px;
+  transform:translateX(-50%);
+  display:flex;
+  gap:8px;
+  z-index:3;
+}
+
+.featured-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:rgba(255,255,255,.4);
+  cursor:pointer;
+}
+
+.featured-dot.active{
+  background:#fff;
+}
+
+@media(max-width:768px){
+  .featured-slider{
+    padding:8px 14px 0;
+  }
+
+  .featured-overlay{
+    align-items:flex-end;
+    padding:18px;
+  }
+}
+
+</style>
+
   </style>
 </head>
 <body>
@@ -993,7 +1115,12 @@
 
 
 <section>
-
+<section class="featured-slider">
+  <div class="featured-shell">
+    <div class="featured-track" id="featuredTrack"></div>
+    <div class="featured-dots" id="featuredDots"></div>
+  </div>
+</section>
 
 
 
@@ -1186,7 +1313,7 @@ async function syncFirestoreToLocal() {
         if (Date.now() - t0 > timeoutMs) {
           return reject(new Error('fs not ready'));
         }
-        setTimeout(tick, 80);
+        setTimeout(tick, 60);
       }
 
       tick();
@@ -1197,16 +1324,17 @@ async function syncFirestoreToLocal() {
     const { db, collection, query, orderBy, getDocs } = window.fs;
     const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
-    for (const key of sections) {
-      const q = query(collection(db, key), orderBy('id', 'desc'));
-      const snap = await getDocs(q);
-      const data = snap.docs.map(doc => ({
-        docId: doc.id,
-        ...doc.data()
-      }));
-      localStorage.setItem(key, JSON.stringify(data));
-      console.log('synced', key, data.length);
-    }
+    await Promise.all(
+      sections.map(async (key) => {
+        const q = query(collection(db, key), orderBy('id', 'desc'));
+        const snap = await getDocs(q);
+        const data = snap.docs.map(doc => ({
+          docId: doc.id,
+          ...doc.data()
+        }));
+        localStorage.setItem(key, JSON.stringify(data));
+      })
+    );
 
     renderContent('research', 'researchGrid');
     renderContent('articles', 'articlesGrid');
@@ -1214,13 +1342,27 @@ async function syncFirestoreToLocal() {
     renderContent('activities', 'activitiesGrid');
     renderContent('training', 'academicGrid');
     renderTicker();
+    renderFeaturedSlider();
     updateStats();
   } catch (error) {
     console.error('Sync error:', error);
   }
 }
 
-window.addEventListener('load', syncFirestoreToLocal);
+window.addEventListener('DOMContentLoaded', () => {
+  renderContent('research', 'researchGrid');
+  renderContent('articles', 'articlesGrid');
+  renderContent('editions', 'editionsGrid');
+  renderContent('activities', 'activitiesGrid');
+  renderContent('training', 'academicGrid');
+  renderTicker();
+  renderFeaturedSlider();
+  updateStats();
+  updateHeader();
+  setLang(currentLang);
+  initMobileDropdowns();
+  syncFirestoreToLocal();
+});
 </script>
 <script>
 
@@ -1690,16 +1832,7 @@ function renderContent(storageKey, gridId) {
     });
   }
 
-window.addEventListener('DOMContentLoaded', () => {
-  renderContent('research', 'researchGrid');
-  renderContent('articles', 'articlesGrid');
-  renderContent('editions', 'editionsGrid');
-  renderContent('activities', 'activitiesGrid');
-  renderContent('training', 'academicGrid');
-  updateHeader();
-  setLang(currentLang);
-  initMobileDropdowns();
-});
+
 
 
 
@@ -1806,11 +1939,114 @@ function startTicker(count){
     applyTicker();
   }, 3000);
 }
+let featuredIndex = 0;
+let featuredTimer = null;
 
-</script>
-<script>
+function getFeaturedItems() {
+  const lang = getCurrentLang();
+  const sources = [
+    { key: 'research', label: currentLang === 'ar' ? 'بحث' : currentLang === 'fr' ? 'Recherche' : 'Research' },
+    { key: 'articles', label: currentLang === 'ar' ? 'مقال' : currentLang === 'fr' ? 'Article' : 'Article' },
+    { key: 'editions', label: currentLang === 'ar' ? 'إصدار' : currentLang === 'fr' ? 'Publication' : 'Edition' }
+  ];
 
+  const all = [];
+
+  sources.forEach(src => {
+    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+
+    arr.forEach((item, index) => {
+      const image = item.image || item.photo || '';
+      if (!image) return;
+
+      all.push({
+        storageKey: src.key,
+        index,
+        label: src.label,
+        title: getByLang(item.title, lang) || 'بدون عنوان',
+        desc:
+          getByLang(item.description, lang) ||
+          getByLang(item.short, lang) ||
+          getByLang(item.details, lang) ||
+          '',
+        image
+      });
+    });
+  });
+
+  return all.slice(0, 8);
+}
+
+function renderFeaturedSlider() {
+  const track = document.getElementById('featuredTrack');
+  const dots = document.getElementById('featuredDots');
+  if (!track || !dots) return;
+
+  const items = getFeaturedItems();
+
+  if (!items.length) {
+    track.innerHTML = `
+      <div class="featured-slide">
+        <img src="logo1222.jpeg" alt="Ofouq Academie">
+        <div class="featured-overlay">
+          <div class="featured-content">
+            <div class="featured-badge">منصة أفق</div>
+            <div class="featured-title">أضف محتوى من لوحة الإدارة</div>
+            <div class="featured-desc">عندما تضيف أبحاثاً أو مقالات أو إصدارات معها صور، سيظهر السلايدر هنا تلقائياً.</div>
+          </div>
+        </div>
+      </div>
+    `;
+    dots.innerHTML = '';
+    return;
+  }
+
+  track.innerHTML = items.map(item => `
+    <div class="featured-slide" onclick="goToPage('${item.storageKey}', ${item.index})">
+      <img src="${esc(item.image)}" alt="${esc(item.title)}">
+      <div class="featured-overlay">
+        <div class="featured-content">
+          <div class="featured-badge">${esc(item.label)}</div>
+          <div class="featured-title">${esc(item.title)}</div>
+          <div class="featured-desc">${esc(item.desc).slice(0, 180)}${item.desc.length > 180 ? '...' : ''}</div>
+          <div class="featured-link">عرض المحتوى</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  dots.innerHTML = items.map((_, i) =>
+    `<span class="featured-dot ${i === 0 ? 'active' : ''}" onclick="goFeatured(${i})"></span>`
+  ).join('');
+
+  featuredIndex = 0;
+  applyFeatured();
+  startFeatured(items.length);
+}
+
+function applyFeatured() {
+  const track = document.getElementById('featuredTrack');
+  if (!track) return;
+  track.style.transform = `translateX(-${featuredIndex * 100}%)`;
+
+  const dotsList = document.querySelectorAll('.featured-dot');
+  dotsList.forEach((dot, i) => dot.classList.toggle('active', i === featuredIndex));
+}
+
+function goFeatured(i) {
+  featuredIndex = i;
+  applyFeatured();
+}
+
+function startFeatured(count) {
+  if (featuredTimer) clearInterval(featuredTimer);
+  featuredTimer = setInterval(() => {
+    featuredIndex = (featuredIndex + 1) % count;
+    applyFeatured();
+  }, 4000);
+}
 </script>
+
 
 </body>
 </html>
