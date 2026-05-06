@@ -525,8 +525,40 @@ if (p) {
 }
 
 async function deleteItemById(sectionKey, id){
+  if (!confirm("هل تريد الحذف النهائي؟")) return;
 
+  const target = state.bySection[sectionKey].find(x => String(x.docId || x.id) === String(id));
+
+  const all = getContentCache().map(item => normalizeItem(item.section, item));
+  const filtered = all.filter(x => String(x.docId || x.id) !== String(id));
+  setContentCache(filtered);
+  rebuildDbFromCache();
+  renderList(sectionKey);
+
+  try {
+    await window.fs.deleteDoc(window.fs.doc(window.fs.db, "content", String(id)));
+  } catch (e) {
+    console.error("Firestore delete error:", e);
+    alert("فشل حذف المستند من Firestore");
+  }
+
+  try { if (target?.imagePath) await deleteObject(ref(storage, target.imagePath)); } catch (e) { console.error(e); }
+  try { if (target?.filePath) await deleteObject(ref(storage, target.filePath)); } catch (e) { console.error(e); }
+  try { if (target?.fullIssueFilePath) await deleteObject(ref(storage, target.fullIssueFilePath)); } catch (e) { console.error(e); }
+
+  if (Array.isArray(target?.articles)) {
+    for (const article of target.articles) {
+      try {
+        if (article?.filePath) await deleteObject(ref(storage, article.filePath));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
+  setStatus("تم الحذف");
 }
+
 
 function resetForm(key){
   state.editing = { key:null, id:null };

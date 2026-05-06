@@ -1092,203 +1092,291 @@
     user = null;
     location.reload();
   }
+const translations = {
+  ar:{
+    title:"العدد",
+    hero_desc:"استعراض مقالات هذا العدد مع إمكانية تحميل ملفات PDF مباشرة.",
+    issue_meta_articles:"مقالات هذا العدد",
+    no_issue:"العدد غير موجود",
+    no_issue_desc:"تعذر العثور على هذا العدد.",
+    no_articles:"لا توجد مقالات بعد",
+    no_articles_desc:"ستظهر مقالات هذا العدد هنا بعد إضافتها من لوحة الأدمن.",
+    download:"تحميل",
+    full_issue:"العدد كامل",
+    full_issue_desc:"تحميل العدد الكامل بصيغة PDF",
+    nav_home:"الرئيسية",
+    nav_research_peer:"أبحاث محكمة",
+    nav_articles_peer:"مقالات محكمة",
+    nav_files:"ملفات بحثية",
+    nav_foreign:"مقالات أجنبية",
+    nav_articles:"مقالات",
+    nav_editions:"إصداراتنا",
+    nav_activities:"أنشطتنا",
+    nav_live:"بث مباشر",
+    nav_board:"هيئة التحرير",
+    nav_rules:"شروط النشر",
+    nav_contact:"اتصل بنا",
+    nav_login:"تسجيل الدخول",
+    nav_join:"انضم إلينا",
+    nav_academic:"أكاديمي",
+    brand_name:"أفق",
+    brand_tagline:"منصة أكاديمية حديثة",
+    mobile_discover:"اكتشف",
+    sp_politics:"تخصص علوم سياسية",
+    sp_ir:"العلاقات الدولية",
+    sp_admin_law:"القانون الإداري",
+    sp_const_law:"القانون الدستوري",
+    sp_public_policy:"السياسات العمومية",
+    logout:"تسجيل الخروج"
+  },
+  en:{
+    title:"Issue",
+    hero_desc:"Browse this issue's articles and download PDF files directly.",
+    issue_meta_articles:"Articles in this issue",
+    no_issue:"Issue not found",
+    no_issue_desc:"This issue could not be found.",
+    no_articles:"No articles yet",
+    no_articles_desc:"Articles for this issue will appear here after being added from the admin dashboard.",
+    download:"Download",
+    full_issue:"Full issue",
+    full_issue_desc:"Download the complete issue as PDF",
+    nav_home:"Home",
+    nav_research_peer:"Peer-reviewed research",
+    nav_articles_peer:"Peer-reviewed articles",
+    nav_files:"Research files",
+    nav_foreign:"Foreign Articles",
+    nav_articles:"Articles",
+    nav_editions:"Our Publications",
+    nav_activities:"Activities",
+    nav_live:"Live",
+    nav_board:"Editorial Board",
+    nav_rules:"Submission Rules",
+    nav_contact:"Contact us",
+    nav_login:"Login",
+    nav_join:"Join us",
+    nav_academic:"Academic",
+    brand_name:"Ofouq",
+    brand_tagline:"Modern academic platform",
+    mobile_discover:"Discover",
+    sp_politics:"Political Science",
+    sp_ir:"International Relations",
+    sp_admin_law:"Administrative Law",
+    sp_const_law:"Constitutional Law",
+    sp_public_policy:"Public Policies",
+    logout:"Logout"
+  },
+  fr:{
+    title:"Numéro",
+    hero_desc:"Consultez les articles de ce numéro et téléchargez directement les PDF.",
+    issue_meta_articles:"Articles de ce numéro",
+    no_issue:"Numéro introuvable",
+    no_issue_desc:"Impossible de trouver ce numéro.",
+    no_articles:"Aucun article pour le moment",
+    no_articles_desc:"Les articles de ce numéro apparaîtront ici après ajout depuis le tableau de bord.",
+    download:"Télécharger",
+    full_issue:"Numéro complet",
+    full_issue_desc:"Télécharger le numéro complet en PDF",
+    nav_home:"Accueil",
+    nav_research_peer:"Recherches évaluées",
+    nav_articles_peer:"Articles évalués",
+    nav_files:"Dossiers de recherche",
+    nav_foreign:"Articles étrangers",
+    nav_articles:"Articles",
+    nav_editions:"Nos publications",
+    nav_activities:"Activités",
+    nav_live:"Direct",
+    nav_board:"Comité éditorial",
+    nav_rules:"Conditions de publication",
+    nav_contact:"Contactez-nous",
+    nav_login:"Connexion",
+    nav_join:"Rejoignez-nous",
+    nav_academic:"Académique",
+    brand_name:"Ofouq",
+    brand_tagline:"Plateforme académique moderne",
+    mobile_discover:"Découvrir",
+    sp_politics:"Science politique",
+    sp_ir:"Relations internationales",
+    sp_admin_law:"Droit administratif",
+    sp_const_law:"Droit constitutionnel",
+    sp_public_policy:"Politiques publiques",
+    logout:"Déconnexion"
+  }
+};
 
-  const translations = {
-    ar:{
-      title:"العدد",
-      hero_desc:"استعراض مقالات هذا العدد مع إمكانية تحميل ملفات PDF مباشرة.",
-      issue_meta_articles:"مقالات هذا العدد",
-      no_issue:"العدد غير موجود",
-      no_issue_desc:"تعذر العثور على هذا العدد.",
-      no_articles:"لا توجد مقالات بعد",
-      no_articles_desc:"ستظهر مقالات هذا العدد هنا بعد إضافتها من لوحة الأدمن.",
-      download:"تحميل",
-      nav_home:"الرئيسية",
-      nav_research_peer:"أبحاث محكمة",
-      nav_articles_peer:"مقالات محكمة",
-      nav_files:"ملفات بحثية",
-      nav_foreign:"مقالات أجنبية",
-      nav_articles:"مقالات",
-      nav_editions:"إصداراتنا",
-      nav_activities:"أنشطتنا",
-      nav_live:"بث مباشر",
-      nav_board:"هيئة التحرير",
-      nav_rules:"شروط النشر",
-      nav_contact:"اتصل بنا",
-      nav_login:"تسجيل الدخول",
-      nav_join:"انضم إلينا",
-      nav_academic:"أكاديمي",
-      brand_name:"أفق",
-      brand_tagline:"منصة أكاديمية حديثة",
-      mobile_discover:"اكتشف",
-      sp_politics:"تخصص علوم سياسية",
-      sp_ir:"العلاقات الدولية",
-      sp_admin_law:"القانون الإداري",
-      sp_const_law:"القانون الدستوري",
-      sp_public_policy:"السياسات العمومية",
-      logout:"تسجيل الخروج"
-    },
-    en:{
-      title:"Issue",
-      hero_desc:"Browse this issue's articles and download PDF files directly.",
-      issue_meta_articles:"Articles in this issue",
-      no_issue:"Issue not found",
-      no_issue_desc:"This issue could not be found.",
-      no_articles:"No articles yet",
-      no_articles_desc:"Articles for this issue will appear here after being added from the admin dashboard.",
-      download:"Download",
-      nav_home:"Home",
-      nav_research_peer:"Peer-reviewed research",
-      nav_articles_peer:"Peer-reviewed articles",
-      nav_files:"Research files",
-      nav_foreign:"Foreign Articles",
-      nav_articles:"Articles",
-      nav_editions:"Our Publications",
-      nav_activities:"Activities",
-      nav_live:"Live",
-      nav_board:"Editorial Board",
-      nav_rules:"Submission Rules",
-      nav_contact:"Contact us",
-      nav_login:"Login",
-      nav_join:"Join us",
-      nav_academic:"Academic",
-      brand_name:"Ofouq",
-      brand_tagline:"Modern academic platform",
-      mobile_discover:"Discover",
-      sp_politics:"Political Science",
-      sp_ir:"International Relations",
-      sp_admin_law:"Administrative Law",
-      sp_const_law:"Constitutional Law",
-      sp_public_policy:"Public Policies",
-      logout:"Logout"
-    },
-    fr:{
-      title:"Numéro",
-      hero_desc:"Consultez les articles de ce numéro et téléchargez directement les PDF.",
-      issue_meta_articles:"Articles de ce numéro",
-      no_issue:"Numéro introuvable",
-      no_issue_desc:"Impossible de trouver ce numéro.",
-      no_articles:"Aucun article pour le moment",
-      no_articles_desc:"Les articles de ce numéro apparaîtront ici après ajout depuis le tableau de bord.",
-      download:"Télécharger",
-      nav_home:"Accueil",
-      nav_research_peer:"Recherches évaluées",
-      nav_articles_peer:"Articles évalués",
-      nav_files:"Dossiers de recherche",
-      nav_foreign:"Articles étrangers",
-      nav_articles:"Articles",
-      nav_editions:"Nos publications",
-      nav_activities:"Activités",
-      nav_live:"Direct",
-      nav_board:"Comité éditorial",
-      nav_rules:"Conditions de publication",
-      nav_contact:"Contactez-nous",
-      nav_login:"Connexion",
-      nav_join:"Rejoignez-nous",
-      nav_academic:"Académique",
-      brand_name:"Ofouq",
-      brand_tagline:"Plateforme académique moderne",
-      mobile_discover:"Découvrir",
-      sp_politics:"Science politique",
-      sp_ir:"Relations internationales",
-      sp_admin_law:"Droit administratif",
-      sp_const_law:"Droit constitutionnel",
-      sp_public_policy:"Politiques publiques",
-      logout:"Déconnexion"
-    }
+let currentLang = localStorage.getItem('lang') || 'ar';
+
+function t(key){
+  return (translations[currentLang] || translations.ar)[key] || '';
+}
+
+function getTextByLang(field, lang = currentLang){
+  if (!field) return '';
+  if (typeof field === 'string') return field;
+  const v = field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
+  return (typeof v === 'string') ? v : '';
+}
+
+function getOrdinalIssueName(num, lang = currentLang){
+  const arMap = {
+    1:"العدد الأول",
+    2:"العدد الثاني",
+    3:"العدد الثالث",
+    4:"العدد الرابع",
+    5:"العدد الخامس",
+    6:"العدد السادس",
+    7:"العدد السابع",
+    8:"العدد الثامن",
+    9:"العدد التاسع",
+    10:"العدد العاشر"
   };
 
-  let currentLang = localStorage.getItem('lang') || 'ar';
+  if(lang === 'ar') return arMap[num] || `العدد ${num}`;
+  if(lang === 'fr') return `Numéro ${num}`;
+  return `Issue ${num}`;
+}
 
-  function t(key){
-    return (translations[currentLang] || translations.ar)[key] || '';
-  }
+function setLang(lang){
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
 
-  function getTextByLang(field, lang = currentLang){
-    if (!field) return '';
-    if (typeof field === 'string') return field;
-    const v = field?.[lang] ?? field?.ar ?? field?.fr ?? field?.en ?? '';
-    return (typeof v === 'string') ? v : '';
-  }
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
 
-  function getOrdinalIssueName(num, lang = currentLang){
-    const arMap = {
-      1:"العدد الأول",
-      2:"العدد الثاني",
-      3:"العدد الثالث",
-      4:"العدد الرابع",
-      5:"العدد الخامس",
-      6:"العدد السادس",
-      7:"العدد السابع",
-      8:"العدد الثامن",
-      9:"العدد التاسع",
-      10:"العدد العاشر"
-    };
+  const langCurrent = document.getElementById('langCurrent');
+  if(langCurrent) langCurrent.textContent = lang.toUpperCase();
 
-    if(lang === 'ar') return arMap[num] || `العدد ${num}`;
-    if(lang === 'fr') return `Numéro ${num}`;
-    return `Issue ${num}`;
-  }
+  document.querySelectorAll("[data-t]").forEach(el=>{
+    const key = el.getAttribute("data-t");
+    if(t(key)) el.textContent = t(key);
+  });
 
-  function setLang(lang){
-    currentLang = lang;
-    localStorage.setItem('lang', lang);
+  const titleEl = document.getElementById('t-title');
+  if(titleEl) titleEl.textContent = t('title');
 
-    document.documentElement.lang = lang;
-    document.documentElement.dir  = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
+  const heroDesc = document.getElementById('issueHeroDesc');
+  if(heroDesc) heroDesc.textContent = t('hero_desc');
 
-    const langCurrent = document.getElementById('langCurrent');
-    if(langCurrent) langCurrent.textContent = lang.toUpperCase();
+  renderIssuePage();
+}
 
-    document.querySelectorAll("[data-t]").forEach(el=>{
-      const key = el.getAttribute("data-t");
-      if(t(key)) el.textContent = t(key);
-    });
+function getQueryParam(name){
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
 
-    const titleEl = document.getElementById('t-title');
-    if(titleEl) titleEl.textContent = t('title');
-
-    const heroDesc = document.getElementById('issueHeroDesc');
-    if(heroDesc) heroDesc.textContent = t('hero_desc');
-
-    renderIssuePage();
-  }
-
-  function getQueryParam(name){
-    const params = new URLSearchParams(window.location.search);
-    return params.get(name);
-  }
-
-  function normalizeArticles(issue){
-    if (Array.isArray(issue?.articles)) return issue.articles;
-    if (Array.isArray(issue?.items)) return issue.items;
-    return [];
-  }
+function normalizeArticles(issue){
+  if (Array.isArray(issue?.articles)) return issue.articles;
+  if (Array.isArray(issue?.items)) return issue.items;
+  return [];
+}
 
 function renderIssuePage(){
+  const rawId = getQueryParam('id');
+  const editions = JSON.parse(localStorage.getItem('contentcache') || '[]')
+    .filter(item => item.section === 'editions');
 
+  const issue = editions.find(item => String(item?.id || item?.docId) === String(rawId));
+
+  const issueHeroTitle = document.getElementById('issueHeroTitle');
+  const issueTitle = document.getElementById('issueTitle');
+  const issueMeta = document.getElementById('issueMeta');
+  const articlesList = document.getElementById('articlesList');
+
+  if(!issue){
+    if(issueHeroTitle) issueHeroTitle.textContent = t('no_issue');
+    if(issueTitle) issueTitle.textContent = t('no_issue');
+    if(issueMeta) issueMeta.textContent = t('no_issue_desc');
+    if(articlesList){
+      articlesList.innerHTML = `
+        <div class="empty-state">
+          <h3>${t('no_issue')}</h3>
+          <p>${t('no_issue_desc')}</p>
+        </div>
+      `;
+    }
+    return;
   }
-const fullIssueUrl = issue.fullIssueFile || issue.file || '';
 
-if (fullIssueUrl) {
-  const fullRow = document.createElement('article');
-  fullRow.className = 'article-row';
-  fullRow.innerHTML = `
-    <div class="pdf-side">
-      <a class="pdf-btn" href="${fullIssueUrl}" download target="_blank" aria-label="${t('full_issue')} PDF">
-        <span>📘</span>
-      </a>
-      <div class="pdf-text">${t('download')}</div>
-    </div>
+  const issueNumber = Number(issue.issueNumber || issue.number || issue.editionNumber || 1);
+  const issueName = getTextByLang(issue.title) || getOrdinalIssueName(issueNumber, currentLang);
+  const articles = normalizeArticles(issue);
 
-    <div class="article-main">
-      <h3 class="article-name">${t('full_issue')}</h3>
-      <p class="article-desc">${t('full_issue_desc')}</p>
-    </div>
-  `;
+  document.title = issueName;
+  if(issueHeroTitle) issueHeroTitle.textContent = issueName;
+  if(issueTitle) issueTitle.textContent = issueName;
+  if(issueMeta){
+    issueMeta.textContent = articles.length
+      ? `${articles.length} - ${t('issue_meta_articles')}`
+      : t('no_articles_desc');
+  }
 
-  articlesList.appendChild(fullRow);
+  articlesList.innerHTML = '';
+
+  if(!articles.length && !issue.fullIssueFile){
+    articlesList.innerHTML = `
+      <div class="empty-state">
+        <h3>${t('no_articles')}</h3>
+        <p>${t('no_articles_desc')}</p>
+      </div>
+    `;
+    return;
+  }
+
+  articles.forEach((article, index) => {
+    const title =
+      getTextByLang(article.title) ||
+      getTextByLang(article.name) ||
+      (currentLang === 'ar' ? `المقال ${index + 1}` : `Article ${index + 1}`);
+
+    const desc =
+      getTextByLang(article.short) ||
+      getTextByLang(article.description) ||
+      (currentLang === 'ar' ? 'بدون وصف حالياً' : currentLang === 'fr' ? 'Sans description pour le moment' : 'No description yet');
+
+    const pdfUrl = article.file || article.pdf || article.pdfUrl || '#';
+
+    const row = document.createElement('article');
+    row.className = 'article-row';
+    row.innerHTML = `
+      <div class="pdf-side">
+        <a class="pdf-btn" href="${pdfUrl}" ${pdfUrl !== '#' ? 'download target="_blank"' : ''} aria-label="${t('download')} PDF">
+          <span>📄</span>
+        </a>
+        <div class="pdf-text">${t('download')}</div>
+      </div>
+
+      <div class="article-main">
+        <h3 class="article-name">${title}</h3>
+        <p class="article-desc">${desc}</p>
+      </div>
+    `;
+
+    articlesList.appendChild(row);
+  });
+
+  const fullIssueUrl = issue.fullIssueFile || issue.file || '';
+
+  if (fullIssueUrl) {
+    const fullRow = document.createElement('article');
+    fullRow.className = 'article-row';
+    fullRow.innerHTML = `
+      <div class="pdf-side">
+        <a class="pdf-btn" href="${fullIssueUrl}" download target="_blank" aria-label="${t('full_issue')} PDF">
+          <span>📘</span>
+        </a>
+        <div class="pdf-text">${t('download')}</div>
+      </div>
+
+      <div class="article-main">
+        <h3 class="article-name">${t('full_issue')}</h3>
+        <p class="article-desc">${t('full_issue_desc')}</p>
+      </div>
+    `;
+
+    articlesList.appendChild(fullRow);
+  }
 }
+
 async function waitForFS(timeoutMs = 8000) {
   return new Promise((resolve, reject) => {
     const start = Date.now();
@@ -1314,10 +1402,11 @@ async function syncContentFromFirestore() {
     console.error('Content sync failed:', error);
   }
 }
+
 window.addEventListener('DOMContentLoaded', async () => {
   updateHeader();
-  setLang(currentLang);
   await syncContentFromFirestore();
+  setLang(currentLang);
   renderIssuePage();
 });
 </script>

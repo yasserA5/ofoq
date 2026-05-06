@@ -1601,19 +1601,22 @@ card.innerHTML = `
   });
 }
 
-  function openEditionById(id){
-    if(!id)return;
-const editions = JSON.parse(localStorage.getItem('contentcache') || '[]')
-  .filter(item => item.section === 'editions');
-      const edition=editions.find(item=>String(item.id)===String(id));
-    if(edition){
-      localStorage.setItem('editionsView',JSON.stringify(edition));
-      showToast(t('toast_open_edition') || 'جاري فتح الإصدار...','info');
-      setTimeout(()=>{
-        window.location.href='editions-view.html?id='+encodeURIComponent(id);
-      },500);
-    }
+function openEditionById(id){
+  if(!id) return;
+
+  const editions = JSON.parse(localStorage.getItem('contentcache') || '[]')
+    .filter(item => item.section === 'editions');
+
+  const edition = editions.find(item => String(item.id || item.docId) === String(id));
+
+  if(edition){
+    localStorage.setItem('editionsView', JSON.stringify(edition));
+    showToast(t('toast_open_edition') || 'جاري فتح الإصدار...', 'info');
+    setTimeout(() => {
+      window.location.href = 'editions-view.html?id=' + encodeURIComponent(id);
+    }, 500);
   }
+}
 
 
 document.addEventListener('click', (e) => {
@@ -1632,36 +1635,8 @@ document.addEventListener('click', (e) => {
       });
     });
   }
-async function waitForFS(timeoutMs = 8000) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    function check() {
-      if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) return resolve();
-      if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
-      setTimeout(check, 60);
-    }
-    check();
-  });
-}
 
-async function syncEditionsFromFirestore() {
-  try {
-    await waitForFS();
 
-    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'content'));
-    const all = [];
-
-    snap.forEach(docSnap => {
-      all.push({ docId: docSnap.id, ...docSnap.data() });
-    });
-
-    localStorage.setItem('contentcache', JSON.stringify(all));
-    renderEditions();
-  } catch (error) {
-    console.error('Editions sync failed:', error);
-    renderEditions();
-  }
-}
 async function waitForFS(timeoutMs = 8000) {
   return new Promise((resolve, reject) => {
     const start = Date.now();
@@ -1694,9 +1669,9 @@ async function syncEditionsFromFirestore() {
 }
 window.addEventListener('DOMContentLoaded', async () => {
   updateHeader();
+  await syncEditionsFromFirestore();
   setLang(currentLang);
   renderEditions();
-  await syncEditionsFromFirestore();
   initMobileDropdowns();
 });
 </script>
