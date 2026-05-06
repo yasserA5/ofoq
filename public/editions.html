@@ -889,7 +889,15 @@
   font-size:20px;
   font-weight:800;
 }
-
+.issue-cover{
+  flex:0 0 auto;
+  width:72px;
+  height:96px;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid #dbe5ea;
+  box-shadow:0 8px 18px rgba(15,23,42,.10);
+}
 .issue-divider{
   height:2px;
   background:linear-gradient(90deg, transparent, #222, transparent);
@@ -1530,8 +1538,10 @@ function getOrdinalIssueName(num, lang = currentLang){
 }
 
 function renderEditions(){
-  const editionsData = JSON.parse(localStorage.getItem('editions') || '[]');
-  if(!editionsGrid) return;
+const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
+  .filter(item => item.section === 'editions')
+  .sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+    if(!editionsGrid) return;
 
   editionsGrid.innerHTML = '';
 
@@ -1572,16 +1582,20 @@ function renderEditions(){
     card.className = 'issue-item';
     if(item.id != null) card.dataset.id = item.id;
 
-    card.innerHTML = `
-      <div class="issue-line">
-        <div class="issue-arrow">←</div>
-        <div class="issue-meta">
-          <h3 class="issue-title">${title}</h3>
-          <div class="issue-sub">${subLine}</div>
-        </div>
-      </div>
-      <div class="issue-divider"></div>
-    `;
+const coverHtml = item.image
+  ? `<img src="${item.image}" alt="${title}" class="issue-cover">`
+  : `<div class="issue-arrow">→</div>`;
+
+card.innerHTML = `
+  <div class="issue-line">
+    ${coverHtml}
+    <div class="issue-meta">
+      <h3 class="issue-title">${title}</h3>
+      <div class="issue-sub">${subLine}</div>
+    </div>
+  </div>
+  <div class="issue-divider"></div>
+`;
 
     editionsGrid.appendChild(card);
   });
@@ -1589,8 +1603,9 @@ function renderEditions(){
 
   function openEditionById(id){
     if(!id)return;
-    const editions=JSON.parse(localStorage.getItem('editions')||'[]');
-    const edition=editions.find(item=>String(item.id)===String(id));
+const editions = JSON.parse(localStorage.getItem('contentcache') || '[]')
+  .filter(item => item.section === 'editions');
+      const edition=editions.find(item=>String(item.id)===String(id));
     if(edition){
       localStorage.setItem('editionsView',JSON.stringify(edition));
       showToast(t('toast_open_edition') || 'جاري فتح الإصدار...','info');
@@ -1617,14 +1632,73 @@ document.addEventListener('click', (e) => {
       });
     });
   }
-
-
-  window.addEventListener('DOMContentLoaded',()=>{
-    updateHeader();
-    setLang(currentLang);
-    renderEditions();
-    initMobileDropdowns();
+async function waitForFS(timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    function check() {
+      if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) return resolve();
+      if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
+      setTimeout(check, 60);
+    }
+    check();
   });
+}
+
+async function syncEditionsFromFirestore() {
+  try {
+    await waitForFS();
+
+    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'content'));
+    const all = [];
+
+    snap.forEach(docSnap => {
+      all.push({ docId: docSnap.id, ...docSnap.data() });
+    });
+
+    localStorage.setItem('contentcache', JSON.stringify(all));
+    renderEditions();
+  } catch (error) {
+    console.error('Editions sync failed:', error);
+    renderEditions();
+  }
+}
+async function waitForFS(timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    function check() {
+      if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) return resolve();
+      if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
+      setTimeout(check, 60);
+    }
+    check();
+  });
+}
+
+async function syncEditionsFromFirestore() {
+  try {
+    await waitForFS();
+
+    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'content'));
+    const all = [];
+
+    snap.forEach(docSnap => {
+      all.push({ docId: docSnap.id, ...docSnap.data() });
+    });
+
+    localStorage.setItem('contentcache', JSON.stringify(all));
+    renderEditions();
+  } catch (error) {
+    console.error('Editions sync failed:', error);
+    renderEditions();
+  }
+}
+window.addEventListener('DOMContentLoaded', async () => {
+  updateHeader();
+  setLang(currentLang);
+  renderEditions();
+  await syncEditionsFromFirestore();
+  initMobileDropdowns();
+});
 </script>
 
 

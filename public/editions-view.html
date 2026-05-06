@@ -960,7 +960,8 @@
     </div>
   </div>
 </footer>
-
+<script type="module" src="./firebase-init.js"></script>
+<script type="module" src="./firestore-bridge.js"></script>
 <script>
   function goToHome(){ window.location.href = 'index.html'; }
 
@@ -1264,94 +1265,61 @@
     return [];
   }
 
-  function renderIssuePage(){
-    const rawId = getQueryParam('id');
-    const editions = JSON.parse(localStorage.getItem('editions') || '[]');
-    const issue = editions.find(item => String(item?.id) === String(rawId));
+function renderIssuePage(){
 
-    const issueHeroTitle = document.getElementById('issueHeroTitle');
-    const issueTitle = document.getElementById('issueTitle');
-    const issueMeta = document.getElementById('issueMeta');
-    const articlesList = document.getElementById('articlesList');
-
-    if(!issue){
-      if(issueHeroTitle) issueHeroTitle.textContent = t('no_issue');
-      if(issueTitle) issueTitle.textContent = t('no_issue');
-      if(issueMeta) issueMeta.textContent = t('no_issue_desc');
-      if(articlesList){
-        articlesList.innerHTML = `
-          <div class="empty-state">
-            <h3>${t('no_issue')}</h3>
-            <p>${t('no_issue_desc')}</p>
-          </div>
-        `;
-      }
-      return;
-    }
-
-    const issueNumber = Number(issue.issueNumber || issue.number || 1);
-    const issueName = getTextByLang(issue.title) || getOrdinalIssueName(issueNumber, currentLang);
-    const articles = normalizeArticles(issue);
-
-    document.title = issueName;
-    if(issueHeroTitle) issueHeroTitle.textContent = issueName;
-    if(issueTitle) issueTitle.textContent = issueName;
-    if(issueMeta){
-      issueMeta.textContent = articles.length
-        ? `${articles.length} - ${t('issue_meta_articles')}`
-        : t('no_articles_desc');
-    }
-
-    if(!articles.length){
-      articlesList.innerHTML = `
-        <div class="empty-state">
-          <h3>${t('no_articles')}</h3>
-          <p>${t('no_articles_desc')}</p>
-        </div>
-      `;
-      return;
-    }
-
-    articlesList.innerHTML = '';
-
-    articles.forEach((article, index) => {
-      const title =
-        getTextByLang(article.title) ||
-        getTextByLang(article.name) ||
-        (currentLang === 'ar' ? `المقال ${index + 1}` : currentLang === 'fr' ? `Article ${index + 1}` : `Article ${index + 1}`);
-
-      const desc =
-        getTextByLang(article.short) ||
-        getTextByLang(article.description) ||
-        (currentLang === 'ar' ? 'بدون وصف حالياً' : currentLang === 'fr' ? 'Sans description pour le moment' : 'No description yet');
-
-      const pdfUrl = article.file || article.pdf || article.pdfUrl || '#';
-
-      const row = document.createElement('article');
-      row.className = 'article-row';
-      row.innerHTML = `
-        <div class="pdf-side">
-          <a class="pdf-btn" href="${pdfUrl}" ${pdfUrl !== '#' ? 'download target="_blank"' : ''} aria-label="${t('download')} PDF">
-            <span>📄</span>
-          </a>
-          <div class="pdf-text">${t('download')}</div>
-        </div>
-
-        <div class="article-main">
-          <h3 class="article-name">${title}</h3>
-          <p class="article-desc">${desc}</p>
-        </div>
-      `;
-
-      articlesList.appendChild(row);
-    });
   }
+const fullIssueUrl = issue.fullIssueFile || issue.file || '';
 
-  window.addEventListener('DOMContentLoaded', () => {
-    updateHeader();
-    setLang(currentLang);
-    renderIssuePage();
+if (fullIssueUrl) {
+  const fullRow = document.createElement('article');
+  fullRow.className = 'article-row';
+  fullRow.innerHTML = `
+    <div class="pdf-side">
+      <a class="pdf-btn" href="${fullIssueUrl}" download target="_blank" aria-label="${t('full_issue')} PDF">
+        <span>📘</span>
+      </a>
+      <div class="pdf-text">${t('download')}</div>
+    </div>
+
+    <div class="article-main">
+      <h3 class="article-name">${t('full_issue')}</h3>
+      <p class="article-desc">${t('full_issue_desc')}</p>
+    </div>
+  `;
+
+  articlesList.appendChild(fullRow);
+}
+async function waitForFS(timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    function check() {
+      if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) return resolve();
+      if (Date.now() - start > timeoutMs) return reject(new Error('Firestore not ready'));
+      setTimeout(check, 60);
+    }
+    check();
   });
+}
+
+async function syncContentFromFirestore() {
+  try {
+    await waitForFS();
+    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'content'));
+    const all = [];
+    snap.forEach(docSnap => {
+      all.push({ docId: docSnap.id, ...docSnap.data() });
+    });
+    localStorage.setItem('contentcache', JSON.stringify(all));
+  } catch (error) {
+    console.error('Content sync failed:', error);
+  }
+}
+window.addEventListener('DOMContentLoaded', async () => {
+  updateHeader();
+  setLang(currentLang);
+  await syncContentFromFirestore();
+  renderIssuePage();
+});
 </script>
 </body>
 </html>

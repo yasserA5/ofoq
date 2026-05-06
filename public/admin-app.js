@@ -72,13 +72,13 @@ function normalizeItem(sectionKey, raw){
     author: typeof raw.author === "object" ? raw.author : { ar: raw.author || "", fr:"", en:"" },
     affiliation: typeof raw.affiliation === "object" ? raw.affiliation : { ar: raw.affiliation || "", fr:"", en:"" },
     date: typeof raw.date === "object" ? raw.date : { ar: raw.date || "", fr:"", en:"" },
-    image: raw.image || "",
-    imagePath: raw.imagePath || "",
-    file: raw.file || raw.link || "",
-    filePath: raw.filePath || "",
-    fullIssueFile: raw.fullIssueFile || "",
+   image: raw.image || "",
+imagePath: raw.imagePath || "",
+file: raw.file || raw.link || "",
+filePath: raw.filePath || "",
+fullIssueFile: raw.fullIssueFile || "",
 fullIssueFilePath: raw.fullIssueFilePath || "",
-    issueNumber: Number(raw.issueNumber || raw.editionNumber || 0),
+issueNumber: Number(raw.issueNumber || raw.editionNumber || 0),
     editionNumber: Number(raw.editionNumber || raw.issueNumber || 0),
     articles: Array.isArray(raw.articles) ? raw.articles : [],
     createdAt: Number(raw.createdAt || Date.now()),
@@ -126,6 +126,7 @@ function buildEditionForm(key){
         </div>
         <div><div class="preview" id="${key}-preview"></div></div>
       </div>
+
       <div class="card" style="margin-top:14px">
         <h3>مقالات العدد</h3>
         <div id="${key}-articles-wrap"></div>
@@ -133,6 +134,7 @@ function buildEditionForm(key){
           <button class="btn btn-ghost btn-small" type="button" onclick="addEditionArticleRow('${key}')">إضافة مقال</button>
         </div>
       </div>
+
       <div class="actions">
         <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">حفظ العدد</button>
         <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">مسح</button>
@@ -140,7 +142,6 @@ function buildEditionForm(key){
     </div>
   `;
 }
-
 
 function buildLiveForm(key){
   return `
@@ -337,15 +338,17 @@ async function collectEditionArticles(key, issueId) {
     const fileInput = row.querySelector(".edition-article-file");
 
     let file = row.dataset.file || "";
+    let filePath = row.dataset.filePath || "";
 
     if (!title) continue;
 
     if (fileInput?.files?.[0]) {
       const uploaded = await uploadPdfToStorage(fileInput.files[0], `${key}-articles`, `${issueId}-${i + 1}`);
       file = uploaded.url;
+      filePath = uploaded.path;
     }
 
-    articles.push({ title, description, file });
+    articles.push({ title, description, file, filePath });
   }
 
   return articles;
@@ -384,8 +387,6 @@ async function saveItem(key){
     const obj = {
       id: currentId,
       docId: currentId,
-      fullIssueFile: existing?.fullIssueFile || "",
-fullIssueFilePath: existing?.fullIssueFilePath || "",
       section: key,
       type: cfg.kind,
       title: { ar:"", fr:"", en:"" },
@@ -399,6 +400,8 @@ fullIssueFilePath: existing?.fullIssueFilePath || "",
       imagePath: existing?.imagePath || "",
       file: existing?.file || "",
       filePath: existing?.filePath || "",
+      fullIssueFile: existing?.fullIssueFile || "",
+fullIssueFilePath: existing?.fullIssueFilePath || "",
       editionNumber: existing?.editionNumber || 0,
       issueNumber: existing?.issueNumber || 0,
       articles: existing?.articles || []
@@ -427,7 +430,9 @@ if (fullPdfInput?.files?.[0]) {
 
       obj.articles = await collectEditionArticles(key, currentId);
 
-      const editionsData = JSON.parse(localStorage.getItem("editions") || "[]");
+const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
+  .filter(item => item.section === 'editions')
+  .sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
       const filtered = editionsData.filter(x => String(x.id) !== String(obj.id));
       filtered.unshift({
         id: obj.id,
@@ -520,18 +525,7 @@ if (p) {
 }
 
 async function deleteItemById(sectionKey, id){
-  if (!confirm("هل تريد الحذف النهائي؟")) return;
-  const target = state.bySection[sectionKey].find(x => String(x.docId || x.id) === String(id));
-  const all = getContentCache().map(item => normalizeItem(item.section, item));
-  const filtered = all.filter(x => String(x.docId || x.id) !== String(id));
-  setContentCache(filtered);
-  rebuildDbFromCache();
-  renderList(sectionKey);
 
-  try { await window.fs.deleteDoc(window.fs.doc(window.fs.db, "content", String(id))); } catch (e) { console.error(e); }
-  try { if (target?.filePath) await deleteObject(ref(storage, target.filePath)); } catch (e) { console.error(e); }
-
-  setStatus("تم الحذف");
 }
 
 function resetForm(key){
