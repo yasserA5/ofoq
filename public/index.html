@@ -1301,7 +1301,16 @@ function esc(str) {
 }
 
 
-async function syncFirestoreToLocal() {
+let contentStore = {
+  research: [],
+  articles: [],
+  files: [],
+  editions: [],
+  activities: [],
+  training: []
+};
+
+async function loadFirestoreContent() {
   try {
     const waitForFS = (timeoutMs = 7000) => new Promise((resolve, reject) => {
       const t0 = Date.now();
@@ -1313,7 +1322,7 @@ async function syncFirestoreToLocal() {
         if (Date.now() - t0 > timeoutMs) {
           return reject(new Error('fs not ready'));
         }
-        setTimeout(tick, 60);
+        setTimeout(tick, 80);
       }
 
       tick();
@@ -1324,17 +1333,14 @@ async function syncFirestoreToLocal() {
     const { db, collection, query, orderBy, getDocs } = window.fs;
     const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
-    await Promise.all(
-      sections.map(async (key) => {
-        const q = query(collection(db, key), orderBy('id', 'desc'));
-        const snap = await getDocs(q);
-        const data = snap.docs.map(doc => ({
-          docId: doc.id,
-          ...doc.data()
-        }));
-        localStorage.setItem(key, JSON.stringify(data));
-      })
-    );
+    for (const key of sections) {
+      const q = query(collection(db, key), orderBy('id', 'desc'));
+      const snap = await getDocs(q);
+      contentStore[key] = snap.docs.map(doc => ({
+        docId: doc.id,
+        ...doc.data()
+      }));
+    }
 
     renderContent('research', 'researchGrid');
     renderContent('articles', 'articlesGrid');
@@ -1342,14 +1348,15 @@ async function syncFirestoreToLocal() {
     renderContent('activities', 'activitiesGrid');
     renderContent('training', 'academicGrid');
     renderTicker();
-    renderFeaturedSlider();
     updateStats();
   } catch (error) {
-    console.error('Sync error:', error);
+    console.error('Load error:', error);
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', loadFirestoreContent);
+  localStorage.setItem('research', '[]');
+
   renderContent('research', 'researchGrid');
   renderContent('articles', 'articlesGrid');
   renderContent('editions', 'editionsGrid');
@@ -1362,7 +1369,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setLang(currentLang);
   initMobileDropdowns();
   syncFirestoreToLocal();
-});
+
 </script>
 <script>
 
@@ -1484,7 +1491,7 @@ function renderContent(storageKey, gridId) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
 
-  const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+  const items = Array.isArray(contentStore[storageKey]) ? contentStore[storageKey] : [];
   const lang = getCurrentLang();
 
   grid.innerHTML = '';
@@ -1525,28 +1532,33 @@ function renderContent(storageKey, gridId) {
 }
 
 
-  function goToPage(pageType,index){
-    const list=JSON.parse(localStorage.getItem(pageType) || '[]');
-    const selected=list[index];
-    if(selected){localStorage.setItem('selectedItem',JSON.stringify(selected));}
-    const pageMap={
-      'research':'research.html',
-      'articles':'articles.html',
-      'files':'files.html',
-      'general-articles':'general-articles.html',
-      'editions':'editions.html',
-      'activities':'activities.html',
-      'training':'training.html'
-    };
-    window.location.href=pageMap[pageType] || 'index.html';
+function goToPage(pageType, index){
+  const list = Array.isArray(contentStore[pageType]) ? contentStore[pageType] : [];
+  const selected = list[index];
+
+  if (selected) {
+    sessionStorage.setItem('selectedItem', JSON.stringify(selected));
   }
 
+  const pageMap = {
+    'research':'research.html',
+    'articles':'articles.html',
+    'files':'files.html',
+    'general-articles':'general-articles.html',
+    'editions':'editions.html',
+    'activities':'activities.html',
+    'training':'training.html'
+  };
+
+  window.location.href = pageMap[pageType] || 'index.html';
+}
+
   // dynamic stats from localStorage
-  function updateStats(){
-    const research   = JSON.parse(localStorage.getItem('research')   || '[]');
-    const articles   = JSON.parse(localStorage.getItem('articles')   || '[]');
-    const users      = JSON.parse(localStorage.getItem('users')      || '[]');
-    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+function updateStats(){
+  const research   = Array.isArray(contentStore.research) ? contentStore.research : [];
+  const articles   = Array.isArray(contentStore.articles) ? contentStore.articles : [];
+  const users      = JSON.parse(localStorage.getItem('users') || '[]');
+  const activities = Array.isArray(contentStore.activities) ? contentStore.activities : [];
 
     const n1 = research.length;
     const n2 = articles.length;
@@ -1945,9 +1957,9 @@ let featuredTimer = null;
 function getFeaturedItems() {
   const lang = getCurrentLang();
   const sources = [
-    { key: 'research', label: currentLang === 'ar' ? 'بحث' : currentLang === 'fr' ? 'Recherche' : 'Research' },
     { key: 'articles', label: currentLang === 'ar' ? 'مقال' : currentLang === 'fr' ? 'Article' : 'Article' },
-    { key: 'editions', label: currentLang === 'ar' ? 'إصدار' : currentLang === 'fr' ? 'Publication' : 'Edition' }
+    { key: 'editions', label: currentLang === 'ar' ? 'إصدار' : currentLang === 'fr' ? 'Publication' : 'Edition' },
+    { key: 'activities', label: currentLang === 'ar' ? 'نشاط' : currentLang === 'fr' ? 'Activité' : 'Activity' }
   ];
 
   const all = [];
@@ -1957,18 +1969,28 @@ function getFeaturedItems() {
 
     arr.forEach((item, index) => {
       const image = item.image || item.photo || '';
-      if (!image) return;
+      const title = getByLang(item.title, lang) || '';
+      const desc =
+        getByLang(item.description, lang) ||
+        getByLang(item.short, lang) ||
+        getByLang(item.details, lang) ||
+        '';
+
+      const hasValidImage =
+        typeof image === 'string' &&
+        image.trim() &&
+        !image.includes('undefined') &&
+        !image.includes('null');
+
+      if (!title.trim()) return;
+      if (!hasValidImage) return;
 
       all.push({
         storageKey: src.key,
         index,
         label: src.label,
-        title: getByLang(item.title, lang) || 'بدون عنوان',
-        desc:
-          getByLang(item.description, lang) ||
-          getByLang(item.short, lang) ||
-          getByLang(item.details, lang) ||
-          '',
+        title,
+        desc,
         image
       });
     });
@@ -2003,7 +2025,7 @@ function renderFeaturedSlider() {
 
   track.innerHTML = items.map(item => `
     <div class="featured-slide" onclick="goToPage('${item.storageKey}', ${item.index})">
-      <img src="${esc(item.image)}" alt="${esc(item.title)}">
+<img src="${esc(item.image)}" alt="${esc(item.title)}" onerror="this.onerror=null;this.src='logo1222.jpeg';">
       <div class="featured-overlay">
         <div class="featured-content">
           <div class="featured-badge">${esc(item.label)}</div>
