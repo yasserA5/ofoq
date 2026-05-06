@@ -1,13 +1,25 @@
 import { app, auth } from "./firebase-init.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
 
 const storage = getStorage(app);
 
 await new Promise((resolve) => {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      location.href = "./login-admin.html";
+      return;
+    }
+    resolve();
+  });
+});
+
+await new Promise((resolve) => {
   if (window.fs && window.fs.db) return resolve();
   window.addEventListener("firestoreReady", resolve, { once: true });
 });
+
+// ... rest of your code here
 
 const SECTIONS = [
   { key:"research", title:"أبحاث محكمة", kind:"content" },
