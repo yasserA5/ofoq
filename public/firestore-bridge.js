@@ -4,10 +4,11 @@ import {
   collection,
   getDocs,
   getDoc,
+  setDoc,
+  deleteDoc,
   query,
   where,
-  doc,
-  orderBy
+  doc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 onAuthStateChanged(auth, (user) => {
@@ -16,13 +17,15 @@ onAuthStateChanged(auth, (user) => {
 
 window.fs = {
   db,
+  auth,
   collection,
   getDocs,
   getDoc,
+  setDoc,
+  deleteDoc,
   query,
   where,
-  doc,
-  orderBy
+  doc
 };
 
 window.dispatchEvent(new CustomEvent("firestoreReady"));

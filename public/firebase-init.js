@@ -1,4 +1,3 @@
-// firebase-init.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
@@ -13,9 +12,11 @@ const firebaseConfig = {
   appId: "1:479091527932:web:379085d6bac81b61f30779",
   measurementId: "G-V69EP1BSDW"
 };
+
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-
 export const auth = getAuth(app);
+
 onAuthStateChanged(auth, (user) => {
+  console.log("Auth user:", user ? user.uid : null);
 });
