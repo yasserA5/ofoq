@@ -1,7 +1,6 @@
 import { db, auth } from "./firebase-init.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
-  getFirestore,
   collection,
   getDocs,
   getDoc,
@@ -9,10 +8,10 @@ import {
   where,
   doc,
   orderBy
-}
- from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 onAuthStateChanged(auth, (user) => {
+  console.log("SAVE PAGE auth user:", user ? user.uid : null);
 });
 
 window.fs = {
@@ -26,4 +25,4 @@ window.fs = {
   orderBy
 };
 
-window.dispatchEvent(new CustomEvent('firestoreReady'));
+window.dispatchEvent(new CustomEvent("firestoreReady"));
