@@ -1204,7 +1204,8 @@
   </div>
 </footer>
 
-
+<script type="module" src="./firebase-init.js"></script>
+<script type="module" src="./firestore-bridge.js"></script>
 <script>
   function goToHome(){window.location.href='index.html';}
 
@@ -1580,8 +1581,9 @@ const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
 
     const card = document.createElement('article');
     card.className = 'issue-item';
-    if(item.id != null) card.dataset.id = item.id;
-
+if(item.id != null || item.docId != null) {
+  card.dataset.id = item.id || item.docId;
+}
 const coverHtml = item.image
   ? `<img src="${item.image}" alt="${title}" class="issue-cover">`
   : `<div class="issue-arrow">→</div>`;
@@ -1662,10 +1664,11 @@ async function syncEditionsFromFirestore() {
 
     localStorage.setItem('contentcache', JSON.stringify(all));
     renderEditions();
-  } catch (error) {
-    console.error('Editions sync failed:', error);
-    renderEditions();
-  }
+} catch (error) {
+  console.error('Editions sync failed:', error);
+  showToast('Firestore sync failed: ' + (error?.message || error), 'info');
+  renderEditions();
+}
 }
 window.addEventListener('DOMContentLoaded', async () => {
   updateHeader();
