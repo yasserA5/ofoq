@@ -1110,6 +1110,18 @@
       <button class="btn primary" onclick="location.href='register.html'" data-t="hero_cta_primary">ابدأ رحلتك البحثية الآن</button>
       <button class="btn" onclick="document.getElementById('research').scrollIntoView({behavior:'smooth'})" data-t="hero_cta_secondary">استكشف المحتوى العلمي</button>
     </div>
+      <div class="hero-side">
+    <div class="ticker">
+      <div class="ticker-head">
+        <h3>أحدث الإضافات</h3>
+      </div>
+      <div class="ticker-viewport">
+        <div class="ticker-track" id="tickerTrack"></div>
+      </div>
+      <div class="ticker-dots" id="tickerDots"></div>
+      <p class="ticker-hint">يتم تحديث هذا القسم تلقائياً</p>
+    </div>
+  </div>
 
 
 
@@ -1299,8 +1311,6 @@ function esc(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
-
-
 let contentStore = {
   research: [],
   articles: [],
@@ -1330,17 +1340,22 @@ async function loadFirestoreContent() {
 
     await waitForFS();
 
-    const { db, collection, query, orderBy, getDocs } = window.fs;
-    const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
+    const { db, collection, getDocs } = window.fs;
+const sections = ['research', 'files', 'editions', 'activities', 'training'];
 
-    for (const key of sections) {
-      const q = query(collection(db, key), orderBy('id', 'desc'));
-      const snap = await getDocs(q);
-      contentStore[key] = snap.docs.map(doc => ({
-        docId: doc.id,
-        ...doc.data()
-      }));
-    }
+for (const key of sections) {
+  const snap = await getDocs(collection(db, key));
+  contentStore[key] = snap.docs.map(doc => ({
+    docId: doc.id,
+    ...doc.data()
+  }));
+}
+
+const articlesSnap = await getDocs(collection(db, 'general-articles'));
+contentStore.articles = articlesSnap.docs.map(doc => ({
+  docId: doc.id,
+  ...doc.data()
+}));
 
     renderContent('research', 'researchGrid');
     renderContent('articles', 'articlesGrid');
@@ -1348,27 +1363,19 @@ async function loadFirestoreContent() {
     renderContent('activities', 'activitiesGrid');
     renderContent('training', 'academicGrid');
     renderTicker();
+    renderFeaturedSlider();
     updateStats();
+    setLang(currentLang);
   } catch (error) {
     console.error('Load error:', error);
   }
 }
 
-window.addEventListener('load', loadFirestoreContent);
-  localStorage.setItem('research', '[]');
-
-  renderContent('research', 'researchGrid');
-  renderContent('articles', 'articlesGrid');
-  renderContent('editions', 'editionsGrid');
-  renderContent('activities', 'activitiesGrid');
-  renderContent('training', 'academicGrid');
-  renderTicker();
-  renderFeaturedSlider();
-  updateStats();
+window.addEventListener('load', () => {
   updateHeader();
-  setLang(currentLang);
   initMobileDropdowns();
-  syncFirestoreToLocal();
+  loadFirestoreContent();
+});
 
 </script>
 <script>
@@ -1403,32 +1410,7 @@ function toggleLangMenu(){
   menu.style.display = getComputedStyle(menu).display === "none" ? "block" : "none";
 }
 
-function setLang(lang){
-  currentLang = lang;
-  localStorage.setItem("lang", lang);
 
-  const dict = translations[lang] || translations.ar;
-
-  document.documentElement.lang = lang;
-  document.documentElement.dir = (lang === "en" || lang === "fr") ? "ltr" : "rtl";
-
-  const titleEl = document.getElementById("t-title");
-  if(titleEl && dict.title) titleEl.textContent = dict.title;
-
-  document.querySelectorAll("#langCurrent").forEach(el=>{
-    el.textContent = lang.toUpperCase();
-  });
-
-  document.querySelectorAll("[data-t]").forEach(el=>{
-    const key = el.getAttribute("data-t");
-    if(dict[key] !== undefined){
-      el.textContent = dict[key];
-    }
-  });
-
-  const menu = document.getElementById("langMenu");
-  if(menu) menu.style.display = "none";
-}
 
 
   function doSearch(e){
@@ -1860,18 +1842,18 @@ function esc(str){
 
 function collectLatest() {
   const sources = [
-    { key: 'research', label: 'بحث' },
-    { key: 'articles', label: 'مقال' },
-    { key: 'files', label: 'ملف' },
-    { key: 'activities', label: 'نشاط' },
-    { key: 'editions', label: 'إصدار' }
+    { key: 'research', label: 'أبحاث' },
+    { key: 'articles', label: 'مقالات' },
+    { key: 'files', label: 'ملفات' },
+    { key: 'activities', label: 'أنشطة' },
+    { key: 'editions', label: 'إصدارات' }
   ];
 
   const all = [];
   const lang = getCurrentLang();
 
   sources.forEach(src => {
-    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+    const arr = Array.isArray(contentStore[src.key]) ? contentStore[src.key] : [];
 
     arr.forEach((item, idx) => {
       all.push({
@@ -1956,6 +1938,7 @@ let featuredTimer = null;
 
 function getFeaturedItems() {
   const lang = getCurrentLang();
+
   const sources = [
     { key: 'articles', label: currentLang === 'ar' ? 'مقال' : currentLang === 'fr' ? 'Article' : 'Article' },
     { key: 'editions', label: currentLang === 'ar' ? 'إصدار' : currentLang === 'fr' ? 'Publication' : 'Edition' },
@@ -1965,7 +1948,7 @@ function getFeaturedItems() {
   const all = [];
 
   sources.forEach(src => {
-    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+    const arr = Array.isArray(contentStore[src.key]) ? contentStore[src.key] : [];
 
     arr.forEach((item, index) => {
       const image = item.image || item.photo || '';
