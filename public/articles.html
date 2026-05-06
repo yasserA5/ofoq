@@ -1106,11 +1106,7 @@
             ...data
           };
 
-          const looksLikeArticle =
-            item.section === 'articles' ||
-            item.type === 'article' ||
-            item.category === 'articles' ||
-            !!item.title;
+          const looksLikeArticle = item.section === 'articles';
 
           if (looksLikeArticle) {
             all.push(item);
@@ -1148,7 +1144,10 @@
         Number(a.updatedAt || a.createdAt || a.id || 0)
       );
 
-      localStorage.setItem('articles', JSON.stringify(all));
+localStorage.setItem('contentcache', JSON.stringify([
+  ...JSON.parse(localStorage.getItem('contentcache') || '[]').filter(x => x.section !== 'articles'),
+  ...all
+]));
       console.log('SYNCED ARTICLES:', all);
       renderArticlesPeer();
     } catch (error) {
@@ -1164,7 +1163,8 @@
 
     let articlesData = [];
     try {
-      articlesData = JSON.parse(localStorage.getItem('articles') || '[]');
+articlesData = JSON.parse(localStorage.getItem('contentcache') || '[]')
+  .filter(item => item.section === 'articles');
     } catch (e) {
       articlesData = [];
     }

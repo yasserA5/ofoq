@@ -1080,8 +1080,9 @@
   }
 
   function goToPage(pageType, index) {
-    const list = JSON.parse(localStorage.getItem(pageType) || '[]');
-    const selected = list[index];
+const list = JSON.parse(localStorage.getItem('contentcache') || '[]')
+  .filter(item => item.section === pageType);
+      const selected = list[index];
     if (selected) {
       localStorage.setItem('selectedItem', JSON.stringify(selected));
       if (pageType === 'research') {
@@ -1106,10 +1107,11 @@
   }
 
   function updateStats() {
-    const research = JSON.parse(localStorage.getItem('research') || '[]');
-    const articles = JSON.parse(localStorage.getItem('articles') || '[]');
-    const editions = JSON.parse(localStorage.getItem('editions') || '[]');
-    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+const all = JSON.parse(localStorage.getItem('contentcache') || '[]');
+const research = all.filter(item => item.section === 'research');
+const articles = all.filter(item => item.section === 'articles');
+const editions = all.filter(item => item.section === 'editions');
+const activities = all.filter(item => item.section === 'activities');
 
     const stat1 = document.getElementById('stat1_number');
     const stat2 = document.getElementById('stat2_number');
@@ -1122,23 +1124,30 @@
     if (stat4) stat4.textContent = activities.length;
   }
 
-  async function syncFirestoreToLocal() {
-    try {
-      await waitForFS(); // من admin.html
-      const sections = ['research', 'articles', 'editions', 'activities'];
-      for (let sec of sections) {
-        const q = window.fs.query(window.fs.collection(window.fs.db, sec), 
-                   window.fs.orderBy('id', 'desc'));
-        const snap = await window.fs.getDocs(q);
-        const data = snap.docs.map(d => ({docId: d.id, ...d.data()}));
-        localStorage.setItem(sec, JSON.stringify(data));
-        renderContent(sec, sec + 'Grid');
-      }
-      updateStats();
-    } catch(e) {
-      console.error('Firestore sync failed:', e);
-    }
+async function syncFirestoreToLocal() {
+  try {
+    await waitForFS();
+
+    const contentCol = window.fs.collection(window.fs.db, 'content');
+    const snap = await window.fs.getDocs(contentCol);
+
+    const all = [];
+    snap.forEach(docSnap => {
+      const item = {
+        docId: docSnap.id,
+        ...docSnap.data()
+      };
+      all.push(item);
+    });
+
+    localStorage.setItem('contentcache', JSON.stringify(all));
+    renderResearch();
+    updateStats();
+  } catch (e) {
+    console.error('Firestore sync failed:', e);
+    renderResearch();
   }
+}
   
   window.addEventListener('load', syncFirestoreToLocal);
 </script>
@@ -1407,12 +1416,16 @@ hero_sub_research:"Cliquez sur une carte de recherche pour voir le contenu compl
   }
 
 
-  function renderResearch(){
-    if (!researchGrid) return;
+function renderResearch() {
+  if (!researchGrid) return;
 
-
-    const researchData = JSON.parse(localStorage.getItem('research') || '[]');
-
+  let researchData = [];
+  try {
+    researchData = JSON.parse(localStorage.getItem('contentcache') || '[]')
+      .filter(item => item.section === 'research');
+  } catch (e) {
+    researchData = [];
+  }
 
     researchGrid.innerHTML = '';
     if (researchData.length === 0) {
@@ -1434,8 +1447,13 @@ hero_sub_research:"Cliquez sur une carte de recherche pour voir le contenu compl
       const img = item.image || '';
       const date = getAnyText(item.date) || 'غير محدد';
       const source = getAnyText(item.journal || item.source) || '';
-      const descRaw = getAnyText(item.shortContent || item.short || item.description) || '';
-      const desc = descRaw.length > 220 ? descRaw.slice(0,220) + '…' : descRaw;
+const descRaw =
+  getAnyText(item.shortContent) ||
+  getAnyText(item.short) ||
+  getAnyText(item.description) ||
+  getAnyText(item.details) ||
+  '';
+        const desc = descRaw.length > 220 ? descRaw.slice(0,220) + '…' : descRaw;
 
 
       card.innerHTML = `
@@ -1484,12 +1502,13 @@ function handleProtectedResearch(id){
   }
 
 
-  window.addEventListener('DOMContentLoaded',()=>{
-    updateHeader();
-    setLang(currentLang);
-    initMobileDropdowns();
-    renderResearch();
-  });
+window.addEventListener('DOMContentLoaded', async () => {
+  updateHeader();
+  setLang(currentLang);
+  initMobileDropdowns();
+  renderResearch();
+  await syncFirestoreToLocal();
+});
 </script>
 
 

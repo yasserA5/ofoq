@@ -82,7 +82,8 @@ function normalizeItem(sectionKey, raw){
     createdAt: Number(raw.createdAt || Date.now()),
     updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
     status: raw.status || "published"
-  };
+  
+};
 }
 
 function rebuildDbFromCache(){
@@ -136,6 +137,10 @@ function buildEditionForm(key){
     </div>
   `;
 }
+<div class="row">
+  <label>PDF العدد كامل</label>
+  <input type="file" id="${key}-full-pdf-file" accept="application/pdf" />
+</div>
 
 function buildLiveForm(key){
   return `
@@ -276,35 +281,52 @@ async function uploadImageToStorage(file, sectionKey, itemId){
   return { url, path: filePath };
 }
 
-function addEditionArticleRow(key, article = {}){
+function addEditionArticleRow(key, article = {}) {
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return;
+
   const row = document.createElement("div");
   row.className = "card edition-article-row";
+  row.style.marginTop = "10px";
   row.dataset.rowId = uid();
   row.dataset.file = article.file || "";
+
   const count = wrap.children.length + 1;
 
   row.innerHTML = `
     <h4 style="margin-bottom:8px">المقال رقم ${count}</h4>
-    <div class="row"><label>عنوان المقال</label><input type="text" class="edition-article-title" value="${esc(article.title || "")}" /></div>
-    <div class="row"><label>وصف المقال</label><textarea class="edition-article-description">${esc(article.description || "")}</textarea></div>
+    <div class="row">
+      <label>عنوان المقال</label>
+      <input type="text" class="edition-article-title" placeholder="عنوان المقال..." value="${esc(article.title || "")}" />
+    </div>
+    <div class="row">
+      <label>وصف المقال</label>
+      <textarea class="edition-article-description" placeholder="وصف مختصر للمقال...">${esc(article.description || "")}</textarea>
+    </div>
     <div class="row">
       <label>PDF المقال</label>
       <input type="file" class="edition-article-file" accept="application/pdf" />
-      ${article.file ? `<div style="margin-top:6px"><a href="${article.file}" target="_blank">فتح الملف الحالي</a></div>` : ""}
+      ${article.file ? `<div class="hint" style="margin-top:6px"><a href="${article.file}" target="_blank">فتح الملف الحالي</a></div>` : ""}
     </div>
     <div class="actions">
-      <button class="btn btn-red btn-small" type="button" onclick="this.closest('.edition-article-row').remove()">حذف هذا المقال</button>
+      <button class="btn btn-red btn-small" type="button" onclick="this.closest('.edition-article-row').remove()">
+        <i class="ri-delete-bin-line"></i>حذف هذا المقال
+      </button>
     </div>
   `;
+
   wrap.appendChild(row);
 }
+async function collectEditionArticles(key, issueId) {
+  if (!auth.currentUser) {
+    alert("Please sign in first");
+    setStatus("You are not signed in");
+    return [];
+  }
 
-async function collectEditionArticles(key, issueId){
-  if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return [];
+
   const rows = [...wrap.querySelectorAll(".edition-article-row")];
   const articles = [];
 
@@ -313,14 +335,13 @@ async function collectEditionArticles(key, issueId){
     const title = row.querySelector(".edition-article-title")?.value.trim() || "";
     const description = row.querySelector(".edition-article-description")?.value.trim() || "";
     const fileInput = row.querySelector(".edition-article-file");
+
     let file = row.dataset.file || "";
 
     if (!title) continue;
 
     if (fileInput?.files?.[0]) {
-      const pdfFile = fileInput.files[0];
-      if (!pdfFile.name.toLowerCase().endsWith(".pdf")) throw new Error(`الملف ${i + 1} ليس PDF`);
-      const uploaded = await uploadPdfToStorage(pdfFile, `${key}-articles`, `${issueId}-${i + 1}`);
+      const uploaded = await uploadPdfToStorage(fileInput.files[0], `${key}-articles`, `${issueId}-${i + 1}`);
       file = uploaded.url;
     }
 
@@ -332,8 +353,18 @@ async function collectEditionArticles(key, issueId){
 
 function upsertLocal(sectionKey, obj){
   const all = getContentCache().map(item => normalizeItem(item.section, item));
-  const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
-  const filtered = all.filter(x => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
+const normalizedEdition = {
+  id: obj.id,
+  issueNumber: obj.issueNumber,
+  number: obj.issueNumber,
+  title: obj.title,
+  short: obj.short,
+  description: obj.short,
+  image: obj.image || "",
+  file: obj.file || "",
+  fullIssueFile: obj.fullIssueFile || "",
+  articles: obj.articles || []
+};  const filtered = all.filter(x => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
   filtered.unshift(normalized);
   setContentCache(filtered);
   rebuildDbFromCache();
@@ -363,6 +394,8 @@ async function saveItem(key){
     const obj = {
       id: currentId,
       docId: currentId,
+      fullIssueFile: existing?.fullIssueFile || "",
+fullIssueFilePath: existing?.fullIssueFilePath || "",
       section: key,
       type: cfg.kind,
       title: { ar:"", fr:"", en:"" },
@@ -394,6 +427,13 @@ async function saveItem(key){
         obj.image = uploadedImage.url;
         obj.imagePath = uploadedImage.path;
       }
+      const fullPdfInput = el(`${key}-full-pdf-file`);
+if (fullPdfInput?.files?.[0]) {
+  setStatus("جاري رفع PDF العدد الكامل...");
+  const uploadedFullPdf = await uploadPdfToStorage(fullPdfInput.files[0], `${key}-full`, currentId);
+  obj.fullIssueFile = uploadedFullPdf.url;
+  obj.fullIssueFilePath = uploadedFullPdf.path;
+}
 
       obj.articles = await collectEditionArticles(key, currentId);
 
@@ -468,8 +508,17 @@ function loadForEdit(key, id){
   if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
 
   const p = el(`${key}-preview`);
-  if (p) p.innerHTML = buildPreviewHTML(item.image, item.file);
+if (p) {
+  let previewHtml = buildPreviewHTML(item.image, item.file);
 
+  if (key === "editions" && item.fullIssueFile) {
+    previewHtml =
+      `<div style="margin-bottom:6px">PDF العدد الكامل: <a href="${item.fullIssueFile}" target="_blank" style="color:#7dd3fc">فتح الملف</a></div>` +
+      previewHtml;
+  }
+
+  p.innerHTML = previewHtml;
+}
   if (key === "editions") {
     if (el(`${key}-number-ar`)) el(`${key}-number-ar`).value = item.issueNumber || item.editionNumber || "";
     if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar");
@@ -507,6 +556,8 @@ function resetForm(key){
   if (img) img.value = "";
   const pdf = el(`${key}-pdf-file`);
   if (pdf) pdf.value = "";
+  const fullPdf = el(`${key}-full-pdf-file`);
+if (fullPdf) fullPdf.value = "";
   const preview = el(`${key}-preview`);
   if (preview) preview.innerHTML = "";
 
