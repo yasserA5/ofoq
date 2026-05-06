@@ -76,6 +76,8 @@ function normalizeItem(sectionKey, raw){
     imagePath: raw.imagePath || "",
     file: raw.file || raw.link || "",
     filePath: raw.filePath || "",
+    fullIssueFile: raw.fullIssueFile || "",
+fullIssueFilePath: raw.fullIssueFilePath || "",
     issueNumber: Number(raw.issueNumber || raw.editionNumber || 0),
     editionNumber: Number(raw.editionNumber || raw.issueNumber || 0),
     articles: Array.isArray(raw.articles) ? raw.articles : [],
@@ -120,6 +122,7 @@ function buildEditionForm(key){
           <div class="row"><label>عنوان العدد</label><input type="text" id="${key}-title-ar" /></div>
           <div class="row"><label>وصف العدد</label><textarea id="${key}-short-ar"></textarea></div>
           <div class="row"><label>صورة الغلاف</label><input type="file" id="${key}-image" accept="image/*" /></div>
+          <div class="row"><label>PDF العدد كامل</label><input type="file" id="${key}-full-pdf-file" accept="application/pdf" /></div>
         </div>
         <div><div class="preview" id="${key}-preview"></div></div>
       </div>
@@ -137,10 +140,7 @@ function buildEditionForm(key){
     </div>
   `;
 }
-<div class="row">
-  <label>PDF العدد كامل</label>
-  <input type="file" id="${key}-full-pdf-file" accept="application/pdf" />
-</div>
+
 
 function buildLiveForm(key){
   return `
@@ -353,18 +353,8 @@ async function collectEditionArticles(key, issueId) {
 
 function upsertLocal(sectionKey, obj){
   const all = getContentCache().map(item => normalizeItem(item.section, item));
-const normalizedEdition = {
-  id: obj.id,
-  issueNumber: obj.issueNumber,
-  number: obj.issueNumber,
-  title: obj.title,
-  short: obj.short,
-  description: obj.short,
-  image: obj.image || "",
-  file: obj.file || "",
-  fullIssueFile: obj.fullIssueFile || "",
-  articles: obj.articles || []
-};  const filtered = all.filter(x => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
+  const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
+  const filtered = all.filter(x => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
   filtered.unshift(normalized);
   setContentCache(filtered);
   rebuildDbFromCache();
