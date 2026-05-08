@@ -1664,14 +1664,13 @@ async function syncEditionsFromFirestore() {
   try {
     await waitForFS();
 
-    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'editions'));
-    const all = [];
-
-    snap.forEach(docSnap => {
-      all.push({ docId: docSnap.id, ...docSnap.data() });
-    });
-
-    localStorage.setItem('contentcache', JSON.stringify(all));
+const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'content'));
+const all = [];
+snap.forEach(docSnap => {
+  const raw = { docId: docSnap.id, ...docSnap.data() };
+  if (raw.section === 'editions') all.push(raw);
+});
+localStorage.setItem('contentcache', JSON.stringify(all));
     renderEditions();
 } catch (error) {
   console.error('Editions sync failed:', error);
