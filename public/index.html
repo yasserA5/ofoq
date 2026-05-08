@@ -681,6 +681,17 @@
       object-position:center;
       display:block;
     }
+    .card-img-fallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#eef6fb,#dbeafe);
+  color:#64748b;
+  font-size:14px;
+  font-weight:700;
+}
     .card-body{
       padding:14px 16px;
       display:flex;
@@ -863,7 +874,28 @@
   transition:transform .6s ease;
   will-change:transform;
 }
+.featured-shell{
+  max-width:1200px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  border-radius:24px;
+  box-shadow:0 20px 50px rgba(15,23,42,.14);
+  background:#0f172a;
+  touch-action:pan-y;
+  cursor:grab;
+}
 
+.featured-shell.dragging{
+  cursor:grabbing;
+}
+
+.featured-track{
+  display:flex;
+  transition:transform .6s ease;
+  will-change:transform;
+  user-select:none;
+}
 .featured-slide{
   min-width:100%;
   position:relative;
@@ -1321,20 +1353,33 @@ async function syncFirestoreToLocal() {
 
     await waitForFS();
 
-    const { db, collection, query, orderBy, getDocs } = window.fs;
+const { db, collection, query, orderBy, onSnapshot } = window.fs;
     const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
-    await Promise.all(
-      sections.map(async (key) => {
-        const q = query(collection(db, key), orderBy('id', 'desc'));
-        const snap = await getDocs(q);
-        const data = snap.docs.map(doc => ({
-          docId: doc.id,
-          ...doc.data()
-        }));
-        localStorage.setItem(key, JSON.stringify(data));
-      })
-    );
+sections.forEach((key) => {
+  const q = query(collection(db, key), orderBy('id', 'desc'));
+
+  onSnapshot(q, (snap) => {
+    const data = snap.docs.map(doc => ({
+      docId: doc.id,
+      ...doc.data()
+    }));
+
+    localStorage.setItem(key, JSON.stringify(data));
+
+    if (key === 'research') renderContent('research', 'researchGrid');
+    if (key === 'articles') renderContent('articles', 'articlesGrid');
+    if (key === 'editions') renderContent('editions', 'editionsGrid');
+    if (key === 'activities') renderContent('activities', 'activitiesGrid');
+    if (key === 'training') renderContent('training', 'academicGrid');
+
+    renderTicker();
+    renderFeaturedSlider();
+    updateStats();
+  }, (error) => {
+    console.error('Live sync error for ' + key, error);
+  });
+});
 
     renderContent('research', 'researchGrid');
     renderContent('articles', 'articlesGrid');
@@ -1505,11 +1550,29 @@ function renderContent(storageKey, gridId) {
       getByLang(item.short, lang) ||
       getByLang(item.details, lang) ||
       '';
-    const img = item.image || item.photo || '';
-
+const img =
+  item.image ||
+  item.photo ||
+  item.cover ||
+  item.thumbnail ||
+  item.previewImage ||
+  item.imageUrl ||
+  '';
     card.innerHTML = `
-      ${img ? `<div class="card-img-wrapper"><img src="${esc(img)}" alt="${esc(title)}" class="card-img"></div>` : ''}
-      <div class="card-body">
+${img
+  ? `<div class="card-img-wrapper">
+       <img
+         src="${esc(img)}"
+         alt="${esc(title)}"
+         class="card-img"
+         loading="lazy"
+         decoding="async"
+         onerror="this.closest('.card-img-wrapper').innerHTML='<div class=&quot;card-img-fallback&quot;>لا توجد صورة</div>'"
+       >
+     </div>`
+  : `<div class="card-img-wrapper"><div class="card-img-fallback">لا توجد صورة</div></div>`
+}
+        <div class="card-body">
         <h3>${esc(title)}</h3>
         <span class="card-author">${author ? 'بقلم: ' + esc(author) : ''}</span>
         <p>${esc(desc)}</p>
@@ -1941,6 +2004,12 @@ function startTicker(count){
 }
 let featuredIndex = 0;
 let featuredTimer = null;
+let featuredItemsCache = [];
+
+let isDraggingFeatured = false;
+let featuredStartX = 0;
+let featuredCurrentX = 0;
+let featuredDeltaX = 0;
 
 function getFeaturedItems() {
   const lang = getCurrentLang();
@@ -1956,8 +2025,16 @@ function getFeaturedItems() {
     const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
 
     arr.forEach((item, index) => {
-      const image = item.image || item.photo || '';
-      if (!image) return;
+      const image =
+  item.image ||
+  item.photo ||
+  item.cover ||
+  item.thumbnail ||
+  item.previewImage ||
+  item.imageUrl ||
+  '';
+
+if (!image || String(image).trim() === '') return;
 
       all.push({
         storageKey: src.key,
@@ -1998,8 +2075,17 @@ function renderFeaturedSlider() {
       </div>
     `;
     dots.innerHTML = '';
+    featuredItemsCache = items;
+featuredIndex = 0;
+applyFeatured();
+startFeatured(items.length);
+bindFeaturedDrag();
+    
     return;
+
+  
   }
+
 
   track.innerHTML = items.map(item => `
     <div class="featured-slide" onclick="goToPage('${item.storageKey}', ${item.index})">
@@ -2026,11 +2112,15 @@ function renderFeaturedSlider() {
 
 function applyFeatured() {
   const track = document.getElementById('featuredTrack');
-  if (!track) return;
-  track.style.transform = `translateX(-${featuredIndex * 100}%)`;
+  const dotsWrap = document.getElementById('featuredDots');
+  const shell = document.querySelector('.featured-shell');
+  if (!track || !dotsWrap || !shell) return;
 
-  const dotsList = document.querySelectorAll('.featured-dot');
-  dotsList.forEach((dot, i) => dot.classList.toggle('active', i === featuredIndex));
+  track.style.transform = `translateX(${-featuredIndex * shell.offsetWidth}px)`;
+
+  [...dotsWrap.children].forEach((dot, i) => {
+    dot.classList.toggle('active', i === featuredIndex);
+  });
 }
 
 function goFeatured(i) {
@@ -2040,10 +2130,77 @@ function goFeatured(i) {
 
 function startFeatured(count) {
   if (featuredTimer) clearInterval(featuredTimer);
+  if (count <= 1) return;
+
   featuredTimer = setInterval(() => {
     featuredIndex = (featuredIndex + 1) % count;
     applyFeatured();
   }, 4000);
+}
+function getClientX(e) {
+  if (e.touches && e.touches.length) return e.touches[0].clientX;
+  if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
+  return e.clientX;
+}
+
+function bindFeaturedDrag() {
+  const shell = document.querySelector('.featured-shell');
+  const track = document.getElementById('featuredTrack');
+  if (!shell || !track) return;
+
+  const startDrag = (e) => {
+    if ((e.type === 'mousedown' && e.button !== 0) || featuredItemsCache.length <= 1) return;
+
+    isDraggingFeatured = true;
+    featuredStartX = getClientX(e);
+    featuredCurrentX = featuredStartX;
+    featuredDeltaX = 0;
+
+    shell.classList.add('dragging');
+    track.style.transition = 'none';
+
+    if (featuredTimer) clearInterval(featuredTimer);
+  };
+
+  const moveDrag = (e) => {
+    if (!isDraggingFeatured) return;
+
+    featuredCurrentX = getClientX(e);
+    featuredDeltaX = featuredCurrentX - featuredStartX;
+
+    const base = -featuredIndex * shell.offsetWidth;
+    track.style.transform = `translateX(${base + featuredDeltaX}px)`;
+  };
+
+  const endDrag = () => {
+    if (!isDraggingFeatured) return;
+
+    const shellWidth = shell.offsetWidth;
+    const threshold = Math.max(60, shellWidth * 0.12);
+
+    isDraggingFeatured = false;
+    shell.classList.remove('dragging');
+    track.style.transition = 'transform .6s ease';
+
+    if (featuredDeltaX < -threshold) {
+      featuredIndex = (featuredIndex + 1) % featuredItemsCache.length;
+    } else if (featuredDeltaX > threshold) {
+      featuredIndex = (featuredIndex - 1 + featuredItemsCache.length) % featuredItemsCache.length;
+    }
+
+    applyFeatured();
+    startFeatured(featuredItemsCache.length);
+  };
+
+  shell.addEventListener('mousedown', startDrag);
+  shell.addEventListener('touchstart', startDrag, { passive: true });
+
+  window.addEventListener('mousemove', moveDrag);
+  window.addEventListener('touchmove', moveDrag, { passive: true });
+
+  window.addEventListener('mouseup', endDrag);
+  window.addEventListener('touchend', endDrag);
+  window.addEventListener('touchcancel', endDrag);
 }
 </script>
 

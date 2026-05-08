@@ -1540,7 +1540,6 @@ function getOrdinalIssueName(num, lang = currentLang){
 
 function renderEditions(){
 const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
-  .filter(item => item.section === 'editions')
   .sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
     if(!editionsGrid) return;
 
@@ -1550,7 +1549,7 @@ const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
     editionsGrid.innerHTML = `
       <div class="empty-state">
         <h3>${t('no_editions_title') || 'لا توجد إصدارات حالياً'}</h3>
-        <p>${t('no_editions_desc') || 'ستظهر هنا أحدث الإصدارات والكتب والمجلات بمجرد إضافتها من لوحة التحكم.'}</p>
+<p>${t('no_editions_desc') || 'ستظهر هنا أحدث الإصدارات والكتب والمجلات .'}</p>
       </div>
     `;
     return;
@@ -1567,17 +1566,27 @@ const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
         ? 'Cliquez pour ouvrir ce numéro et consulter ses articles.'
         : 'Click to open this issue and view its articles.');
 
-    const articleCount = Array.isArray(item.articles) ? item.articles.length : null;
+const articleCount = Array.isArray(item.articles) ? item.articles.length : 0;
 
-    const subLine = articleCount !== null
-      ? (
-          currentLang === 'ar'
-            ? `يحتوي على ${articleCount} مقالات`
-            : currentLang === 'fr'
-            ? `${articleCount} articles`
-            : `${articleCount} articles`
-        )
-      : desc;
+const hasFullIssuePdf = !!(
+  item.fullIssuePdf ||
+  item.fullPdf ||
+  item.issuePdf ||
+  item.pdf
+);
+
+let subLine = '';
+
+if (currentLang === 'ar') {
+  subLine = `يحتوي على ${articleCount} مقالات`;
+  if (hasFullIssuePdf) subLine += ' • العدد كامل';
+} else if (currentLang === 'fr') {
+  subLine = `${articleCount} articles`;
+  if (hasFullIssuePdf) subLine += ' • numéro complet';
+} else {
+  subLine = `${articleCount} articles`;
+  if (hasFullIssuePdf) subLine += ' • full issue';
+}
 
     const card = document.createElement('article');
     card.className = 'issue-item';
@@ -1655,7 +1664,7 @@ async function syncEditionsFromFirestore() {
   try {
     await waitForFS();
 
-    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'content'));
+    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, 'editions'));
     const all = [];
 
     snap.forEach(docSnap => {
