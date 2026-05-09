@@ -1337,75 +1337,89 @@ async function syncFirestoreToLocal() {
   try {
     const waitForFS = (timeoutMs = 7000) => new Promise((resolve, reject) => {
       const t0 = Date.now();
-
       function tick() {
-        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) {
-          return resolve();
-        }
-        if (Date.now() - t0 > timeoutMs) {
-          return reject(new Error('fs not ready'));
-        }
+        if (window.fs && window.fs.db && window.fs.collection && window.fs.onSnapshot) return resolve();
+        if (Date.now() - t0 > timeoutMs) return reject(new Error('fs not ready'));
         setTimeout(tick, 60);
       }
-
       tick();
     });
-
     await waitForFS();
 
-const { db, collection, query, orderBy, onSnapshot } = window.fs;
-    const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
+    const { db, collection, query, where, onSnapshot } = window.fs;
 
-sections.forEach((key) => {
-  const q = query(collection(db, key), orderBy('id', 'desc'));
+    const sectionMap = {
+      research:   'researchGrid',
+      articles:   'articlesGrid',
+      editions:   'editionsGrid',
+      activities: 'activitiesGrid',
+      training:   'academicGrid'
+    };
 
-  onSnapshot(q, (snap) => {
-    const data = snap.docs.map(doc => ({
-      docId: doc.id,
-      ...doc.data()
-    }));
+    const grouped = {};
 
-    localStorage.setItem(key, JSON.stringify(data));
+    function mergeAndRender() {
+      Object.keys(sectionMap).forEach(sec => {
+        localStorage.setItem(sec, JSON.stringify(grouped[sec] || []));
+      });
+      Object.entries(sectionMap).forEach(([sec, gridId]) => renderContent(sec, gridId));
+      renderTicker();
+      renderFeaturedSlider();
+      updateStats();
+    }
 
-    if (key === 'research') renderContent('research', 'researchGrid');
-    if (key === 'articles') renderContent('articles', 'articlesGrid');
-    if (key === 'editions') renderContent('editions', 'editionsGrid');
-    if (key === 'activities') renderContent('activities', 'activitiesGrid');
-    if (key === 'training') renderContent('training', 'academicGrid');
+    // Query content collection
+    const qContent = query(collection(db, 'content'), where('status', '==', 'published'));
+    onSnapshot(qContent, (snap) => {
+      // Clear only content-sourced entries before re-grouping
+      Object.keys(sectionMap).forEach(sec => { if (!grouped[sec]) grouped[sec] = []; });
+      // Reset content-sourced items (keep articles collection items separate)
+      const contentKeys = Object.keys(sectionMap);
+      contentKeys.forEach(sec => { grouped['_content_' + sec] = []; });
 
-    renderTicker();
-    renderFeaturedSlider();
-    updateStats();
-  }, (error) => {
-    console.error('Live sync error for ' + key, error);
-  });
-});
+      snap.docs.forEach(doc => {
+        const data = { docId: doc.id, ...doc.data() };
+        const sec = data.section || 'research';
+        if (!grouped['_content_' + sec]) grouped['_content_' + sec] = [];
+        grouped['_content_' + sec].push(data);
+      });
 
-    renderContent('research', 'researchGrid');
-    renderContent('articles', 'articlesGrid');
-    renderContent('editions', 'editionsGrid');
-    renderContent('activities', 'activitiesGrid');
-    renderContent('training', 'academicGrid');
-    renderTicker();
-    renderFeaturedSlider();
-    updateStats();
+      // Merge both sources
+      Object.keys(sectionMap).forEach(sec => {
+        grouped[sec] = [...(grouped['_content_' + sec] || []), ...(grouped['_articles_' + sec] || [])];
+      });
+
+      mergeAndRender();
+    }, (error) => console.error('content sync error:', error));
+
+    // Query legacy articles collection
+    const qArticles = query(collection(db, 'articles'));
+    onSnapshot(qArticles, (snap) => {
+      grouped['_articles_articles'] = snap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+
+      // Merge both sources
+      Object.keys(sectionMap).forEach(sec => {
+        grouped[sec] = [...(grouped['_content_' + sec] || []), ...(grouped['_articles_' + sec] || [])];
+      });
+
+      mergeAndRender();
+    }, (error) => console.error('articles sync error:', error));
+
   } catch (error) {
     console.error('Sync error:', error);
   }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  renderContent('research', 'researchGrid');
-  renderContent('articles', 'articlesGrid');
-  renderContent('editions', 'editionsGrid');
-  renderContent('activities', 'activitiesGrid');
-  renderContent('training', 'academicGrid');
-  renderTicker();
-  renderFeaturedSlider();
-  updateStats();
   updateHeader();
   setLang(currentLang);
   initMobileDropdowns();
+
+  ['researchGrid','articlesGrid','editionsGrid','activitiesGrid','academicGrid'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = `<div class="empty-state"><p>جاري التحميل...</p></div>`;
+  });
+
   syncFirestoreToLocal();
 });
 </script>
@@ -1588,21 +1602,39 @@ ${img
 }
 
 
-  function goToPage(pageType,index){
-    const list=JSON.parse(localStorage.getItem(pageType) || '[]');
-    const selected=list[index];
-    if(selected){localStorage.setItem('selectedItem',JSON.stringify(selected));}
-    const pageMap={
-      'research':'research.html',
-      'articles':'articles.html',
-      'files':'files.html',
-      'general-articles':'general-articles.html',
-      'editions':'editions.html',
-      'activities':'activities.html',
-      'training':'training.html'
-    };
-    window.location.href=pageMap[pageType] || 'index.html';
+  function goToPage(pageType, index){
+  const list = JSON.parse(localStorage.getItem(pageType) || '[]');
+  const selected = list[index];
+  if (!selected) return;
+  localStorage.setItem('selectedItem', JSON.stringify(selected));
+
+  const viewMap = {
+    'research':   'research-view.html',
+    'articles':   'articles-view.html',
+    'files':      'files-view.html',
+    'editions':   'editions-view.html',
+    'activities': 'activities-view.html',
+    'training':   'training-view.html'
+  };
+
+  const pageMap = {
+    'research':   'research.html',
+    'articles':   'articles.html',
+    'files':      'files.html',
+    'editions':   'editions.html',
+    'activities': 'activities.html',
+    'training':   'training.html'
+  };
+
+  const docId = selected.docId || selected.id;
+  const viewPage = viewMap[pageType];
+
+  if (viewPage && docId) {
+    window.location.href = `${viewPage}?docId=${encodeURIComponent(docId)}`;
+  } else {
+    window.location.href = pageMap[pageType] || 'index.html';
   }
+}
 
   // dynamic stats from localStorage
   function updateStats(){
@@ -2076,10 +2108,10 @@ function renderFeaturedSlider() {
     `;
     dots.innerHTML = '';
     featuredItemsCache = items;
-featuredIndex = 0;
-applyFeatured();
-startFeatured(items.length);
-bindFeaturedDrag();
+    featuredIndex = 0;
+    applyFeatured();
+    startFeatured(items.length);
+    bindFeaturedDrag();
     
     return;
 
@@ -2105,9 +2137,11 @@ bindFeaturedDrag();
     `<span class="featured-dot ${i === 0 ? 'active' : ''}" onclick="goFeatured(${i})"></span>`
   ).join('');
 
+  featuredItemsCache = items;
   featuredIndex = 0;
   applyFeatured();
   startFeatured(items.length);
+  bindFeaturedDrag();
 }
 
 function applyFeatured() {
