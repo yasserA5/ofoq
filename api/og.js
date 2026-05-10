@@ -96,7 +96,6 @@ module.exports = async (req, res) => {
   <meta name="twitter:title" content="${title}"/>
   <meta name="twitter:description" content="${desc}"/>
   <meta name="twitter:image" content="${image}"/>
-  <meta http-equiv="refresh" content="0;url=${url}"/>
 </head>
 <body></body>
 </html>`);
