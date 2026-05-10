@@ -1742,6 +1742,11 @@ window.displayItem = null;
 window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
   window.displayItem = await getResearchById();
+  if (window.displayItem) {
+    const docId = window.displayItem.docId || window.displayItem.id;
+    const newUrl = `/api/og?docId=${encodeURIComponent(docId)}&section=research`;
+    window.history.replaceState({}, '', newUrl);
+  }
   applyLang(savedLang);
 });
 </script>

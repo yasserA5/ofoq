@@ -1682,6 +1682,11 @@ async function getActivityById() {
 window.addEventListener('DOMContentLoaded', async () => {
   const savedLang = getCurrentLang();
   window.displayItem = await getActivityById();
+  if (window.displayItem) {
+    const docId = window.displayItem.docId || window.displayItem.id;
+    const newUrl = `/api/og?docId=${encodeURIComponent(docId)}&section=activities`;
+    window.history.replaceState({}, '', newUrl);
+  }
   applyLang(savedLang);
 });
 </script>
