@@ -5,7 +5,7 @@ if (!admin.apps.length) {
     credential: admin.credential.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
     }),
   });
 }
@@ -56,8 +56,8 @@ module.exports = async (req, res) => {
 
   const viewPage = pageMap[section] || "articles-view.html";
   const canonicalUrl = `https://ofouqacademie.com/${viewPage}?docId=${docId}`;
+  const ogUrl = `https://ofouqacademie.com/api/og?docId=${docId}&section=${section}`;
 
-  // Not a crawler — redirect to actual page
   if (!CRAWLERS.test(ua)) {
     res.redirect(302, canonicalUrl);
     return;
@@ -77,8 +77,12 @@ module.exports = async (req, res) => {
 
   const title = escAttr(getLang(data.title) || "أفق أكاديمي");
   const desc = escAttr(getLang(data.short) || getLang(data.description) || "");
-  const image = escAttr(data.image || "https://ofouqacademie.com/logo1.png");
-  const url = escAttr(canonicalUrl);
+  const rawImage = data.image || "";
+  const image = escAttr(
+    rawImage.startsWith("data:") || !rawImage
+      ? "https://ofouqacademie.com/logo1.png"
+      : rawImage
+  );
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(`<!DOCTYPE html>
@@ -89,7 +93,7 @@ module.exports = async (req, res) => {
   <meta property="og:title" content="${title}"/>
   <meta property="og:description" content="${desc}"/>
   <meta property="og:image" content="${image}"/>
-  <meta property="og:url" content="${url}"/>
+  <meta property="og:url" content="${escAttr(ogUrl)}"/>
   <meta property="og:type" content="article"/>
   <meta property="og:site_name" content="أفق أكاديمي"/>
   <meta name="twitter:card" content="summary_large_image"/>
