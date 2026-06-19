@@ -1266,56 +1266,29 @@
 
 <section id="research">
   <h2 data-t="sec_research">أحدث الأبحاث</h2>
-  <div class="grid" id="researchGrid">
-    <div class="empty-state">
-      <p data-t="empty_items">لا توجد عناصر حالياً</p>
-    </div>
-  </div>
+  <div class="grid" id="researchGrid"></div>
 </section>
 <section id="articles">
   <h2 data-t="secarticles">أحدث المقالات</h2>
-  <div class="grid" id="articlesGrid">
-    <div class="empty-state">
-      <p data-t="emptyitems">لا توجد عناصر بعد</p>
-    </div>
-  </div>
+  <div class="grid" id="articlesGrid"></div>
 </section>
 
 <section id="editions">
   <h2 data-t="sec_editions">إصداراتنا</h2>
-  <div class="grid" id="editionsGrid">
-    <div class="empty-state">
-      <p data-t="empty_items">لا توجد عناصر حالياً</p>
-    </div>
-  </div>
+  <div class="grid" id="editionsGrid"></div>
 </section>
 <section id="popular-research">
   <h2>الأكثر قراءة</h2>
-
-  <div class="grid" id="popularGrid">
-
-    <div class="feature-box">
-      سيتم عرض أكثر الأبحاث قراءة هنا
-    </div>
-
-  </div>
+  <div class="grid" id="popularGrid"></div>
 </section>
 <section id="activities">
   <h2 data-t="sec_activities">أنشطتنا وورش العمل</h2>
-  <div class="grid" id="activitiesGrid">
-    <div class="empty-state">
-      <p data-t="empty_items">لا توجد عناصر حالياً</p>
-    </div>
-  </div>
+  <div class="grid" id="activitiesGrid"></div>
 </section>
 
 <section id="academic">
   <h2 data-t="sec_academic">المحتوى الأكاديمي</h2>
-  <div class="grid" id="academicGrid">
-    <div class="empty-state">
-      <p data-t="empty_items">لا توجد عناصر حالياً</p>
-    </div>
-  </div>
+  <div class="grid" id="academicGrid"></div>
 </section>
 
 <section id="live">
@@ -1609,30 +1582,13 @@ sections.forEach((key) => {
 
     localStorage.setItem(key, JSON.stringify(data));
 
-    if (key === 'research') renderContent('research', 'researchGrid');
-    if (key === 'articles') renderContent('articles', 'articlesGrid');
-    if (key === 'editions') renderContent('editions', 'editionsGrid');
-    if (key === 'activities') renderContent('activities', 'activitiesGrid');
-    if (key === 'training') renderContent('training', 'academicGrid');
-
-    renderLatestIssue();
-    renderTicker();
-    renderFeaturedSlider();
-    updateStats();
+    refreshHomeSections();
   }, (error) => {
     console.error('Live sync error for ' + key, error);
   });
 });
 
-    renderContent('research', 'researchGrid');
-    renderContent('articles', 'articlesGrid');
-    renderContent('editions', 'editionsGrid');
-    renderContent('activities', 'activitiesGrid');
-    renderContent('training', 'academicGrid');
-    renderLatestIssue();
-    renderTicker();
-    renderFeaturedSlider();
-    updateStats();
+    refreshHomeSections();
   } catch (error) {
     console.error('Sync error:', error);
   }
@@ -1652,19 +1608,17 @@ document.addEventListener("click", e => {
   }
 });
 window.addEventListener('DOMContentLoaded', () => {
-  renderContent('research', 'researchGrid');
-  renderContent('articles', 'articlesGrid');
-  renderContent('editions', 'editionsGrid');
-  renderContent('activities', 'activitiesGrid');
-  renderContent('training', 'academicGrid');
-  renderLatestIssue();
-  renderTicker();
-  renderFeaturedSlider();
-  updateStats();
+  refreshHomeSections();
   updateHeader();
   setLang(currentLang);
   initMobileDropdowns();
   syncFirestoreToLocal();
+});
+
+window.addEventListener('storage', (event) => {
+  if (['research', 'articles', 'files', 'editions', 'activities', 'training'].includes(event.key)) {
+    refreshHomeSections();
+  }
 });
 </script>
 <script>
@@ -1724,6 +1678,8 @@ function setLang(lang){
 
   const menu = document.getElementById("langMenu");
   if(menu) menu.style.display = "none";
+
+  refreshHomeSections();
 }
 
 function searchSuggestions(){
@@ -1798,6 +1754,7 @@ function logout(){
 function renderContent(storageKey, gridId) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
+  const section = grid.closest('section');
 
   const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
   const lang = getCurrentLang();
@@ -1805,9 +1762,11 @@ function renderContent(storageKey, gridId) {
   grid.innerHTML = '';
 
   if (!items.length) {
-    grid.innerHTML = `<div class="empty-state"><p data-t="emptyitems">لا توجد عناصر بعد</p></div>`;
+    if (section) section.style.display = 'none';
     return;
   }
+
+  if (section) section.style.display = '';
 
   items.forEach((item, index) => {
     const card = document.createElement('div');
@@ -1857,6 +1816,120 @@ ${img
   });
 }
 
+function getContentImage(item) {
+  return item.image ||
+    item.photo ||
+    item.cover ||
+    item.thumbnail ||
+    item.previewImage ||
+    item.imageUrl ||
+    '';
+}
+
+function getContentDesc(item, lang = getCurrentLang()) {
+  return getByLang(item.description, lang) ||
+    getByLang(item.short, lang) ||
+    getByLang(item.details, lang) ||
+    '';
+}
+
+function getPopularityValue(item, fallback) {
+  const value =
+    item.views ??
+    item.reads ??
+    item.readCount ??
+    item.clicks ??
+    item.visits ??
+    item.popularity ??
+    item.count;
+
+  const numeric = Number(value);
+  return Number.isNaN(numeric) ? fallback : numeric;
+}
+
+function renderPopularContent() {
+  const grid = document.getElementById('popularGrid');
+  if (!grid) return;
+
+  const section = grid.closest('section');
+  const lang = getCurrentLang();
+  const sources = [
+    { key: 'research', label: lang === 'en' ? 'Research' : lang === 'fr' ? 'Recherche' : 'بحث' },
+    { key: 'articles', label: lang === 'en' ? 'Article' : lang === 'fr' ? 'Article' : 'مقال' },
+    { key: 'files', label: lang === 'en' ? 'File' : lang === 'fr' ? 'Dossier' : 'ملف' },
+    { key: 'editions', label: lang === 'en' ? 'Edition' : lang === 'fr' ? 'Publication' : 'إصدار' }
+  ];
+
+  const items = [];
+
+  sources.forEach(src => {
+    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+    arr.forEach((item, index) => {
+      const title = getByLang(item.title, lang) || '';
+      const desc = getContentDesc(item, lang);
+      if (!title.trim() && !desc.trim()) return;
+
+      items.push({
+        item,
+        index,
+        storageKey: src.key,
+        label: src.label,
+        title,
+        desc,
+        image: getContentImage(item),
+        score: getPopularityValue(item, arr.length - index)
+      });
+    });
+  });
+
+  grid.innerHTML = '';
+
+  if (!items.length) {
+    if (section) section.style.display = 'none';
+    return;
+  }
+
+  if (section) section.style.display = '';
+
+  items
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .forEach(entry => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        ${entry.image
+          ? `<div class="card-img-wrapper">
+               <img src="${esc(entry.image)}" alt="${esc(entry.title)}" class="card-img" loading="lazy" decoding="async" onerror="this.closest('.card-img-wrapper').remove()">
+             </div>`
+          : ''
+        }
+        <div class="card-body">
+          <h3>${esc(entry.title)}</h3>
+          ${entry.desc ? `<p>${esc(entry.desc)}</p>` : ''}
+        </div>
+        <div class="card-footer">
+          <span>${esc(entry.label)}</span>
+          <button class="card-btn" onclick="goToPage('${entry.storageKey}', ${entry.index})">عرض</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+}
+
+function refreshHomeSections() {
+  renderContent('research', 'researchGrid');
+  renderContent('articles', 'articlesGrid');
+  renderContent('editions', 'editionsGrid');
+  renderContent('activities', 'activitiesGrid');
+  renderContent('training', 'academicGrid');
+  renderLatestIssue();
+  renderPopularContent();
+  renderTicker();
+  renderFeaturedSlider();
+  updateStats();
+}
+
 function getEditionImage(item) {
   return item.image ||
     item.photo ||
@@ -1882,6 +1955,7 @@ function editionSortValue(item, fallback) {
     item.createdAt ||
     item.updatedAt ||
     item.date ||
+    item.id ||
     fallback;
 
   if (raw && typeof raw === 'object' && typeof raw.seconds === 'number') {
@@ -1913,15 +1987,18 @@ function isGenericIssueTitle(title) {
 function renderLatestIssue() {
   const hero = document.getElementById('latestIssueHeroContent');
   const current = document.getElementById('currentIssueContent');
+  const heroCard = document.getElementById('latestIssueHero');
+  const currentSection = document.getElementById('current-issue');
   if (!hero && !current) return;
 
   const latest = getLatestEdition();
   const lang = getCurrentLang();
 
   if (!latest) {
-    const emptyHtml = `<div class="empty-state"><p data-t="empty_items">لا توجد عناصر حالياً</p></div>`;
-    if (hero) hero.innerHTML = emptyHtml;
-    if (current) current.innerHTML = emptyHtml;
+    if (hero) hero.innerHTML = '';
+    if (current) current.innerHTML = '';
+    if (heroCard) heroCard.style.display = 'none';
+    if (currentSection) currentSection.style.display = 'none';
     return;
   }
 
@@ -1936,11 +2013,15 @@ function renderLatestIssue() {
   const download = getEditionDownload(item);
 
   if (!img && !desc && !download) {
-    const emptyHtml = `<div class="empty-state"><p data-t="empty_items">لا توجد عناصر حالياً</p></div>`;
-    if (hero) hero.innerHTML = emptyHtml;
-    if (current) current.innerHTML = emptyHtml;
+    if (hero) hero.innerHTML = '';
+    if (current) current.innerHTML = '';
+    if (heroCard) heroCard.style.display = 'none';
+    if (currentSection) currentSection.style.display = 'none';
     return;
   }
+
+  if (heroCard) heroCard.style.display = '';
+  if (currentSection) currentSection.style.display = '';
 
   const downloadAttrs = download ? `onclick="location.href='${esc(download)}'"` : 'disabled';
   const downloadLabel = lang === 'en' ? 'Download issue' : lang === 'fr' ? 'Télécharger le numéro' : 'تحميل العدد';
@@ -2271,8 +2352,7 @@ hero_sub:"بنية متكاملة للأبحاث والمقالات والملف
     const menu=document.getElementById("langMenu");
     if(menu) menu.style.display="none";
 
-    updateStats();
-    renderLatestIssue();
+    refreshHomeSections();
   }
 
   function initMobileDropdowns(){
@@ -2455,6 +2535,13 @@ function renderFeaturedSlider() {
   const track = document.getElementById('featuredTrack');
   const dots = document.getElementById('featuredDots');
   const section = document.getElementById('latest-publications');
+  if (section) section.style.display = 'none';
+  if (track) track.innerHTML = '';
+  if (dots) dots.innerHTML = '';
+  featuredItemsCache = [];
+  featuredIndex = 0;
+  if (featuredTimer) clearInterval(featuredTimer);
+  return;
   if (!track || !dots) return;
 
   const items = getFeaturedItems();
