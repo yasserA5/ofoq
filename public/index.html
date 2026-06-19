@@ -791,6 +791,15 @@
       color:#555;
     }
 
+    .current-issue-card{
+      text-align:center;
+    }
+
+    .current-issue-card .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
     .empty-state{
       text-align:center;
       padding:30px 20px;
@@ -1176,11 +1185,7 @@
   autocomplete="off"
 />
 
-<div id="searchSuggestions"></div>
-    <input type="search" id="navSearchInput" placeholder="ابحث..." />
-    <span>🔍</span>
-  </form>
-</nav>
+
 
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
@@ -1237,67 +1242,16 @@
 
 
 </div>
-
 <div class="hero-side">
-  <div class="ticker">
-    <div class="ticker-head">
-      <h3>آخر الإضافات</h3>
-    </div>
-
-    <div class="ticker-viewport">
-<div class="ticker-track" id="tickerTrack">
-
-  <div class="ticker-item">
-    <h4>مرحباً بكم في منصة أفق</h4>
-    <p>سيتم عرض أحدث الأبحاث والمقالات هنا.</p>
-  </div>
-
-</div>
-    </div>
-
-    <div class="ticker-dots" id="tickerDots"></div>
-
-    <p class="ticker-hint">
-      أحدث الأبحاث والمقالات والأنشطة
-    </p>
+  <div class="hero-card" id="latestIssueHero">
+    <div id="latestIssueHeroContent"></div>
   </div>
 </div>
 
-</section>
-<section id="featured-week">
 
-  <h2>بحث الأسبوع</h2>
-
-  <div class="feature-box">
-
-    <img
-      src="placeholder.jpg"
-      alt="Featured Research"
-      style="
-        width:100%;
-        max-height:350px;
-        object-fit:cover;
-        border-radius:12px;
-        margin-bottom:15px;
-      "
-    >
-
-    <h3>
-      عنوان البحث المميز
-    </h3>
-
-    <p>
-      ملخص قصير للبحث المميز لهذا الأسبوع.
-    </p>
-
-    <button class="btn primary">
-      قراءة البحث
-    </button>
-
-  </div>
 
 </section>
-<section class="featured-slider">
+<section id="latest-publications">
   <div class="featured-shell">
     <div class="featured-track" id="featuredTrack"></div>
     <div class="featured-dots" id="featuredDots"></div>
@@ -1307,21 +1261,7 @@
 <section id="current-issue">
   <h2>العدد الحالي</h2>
 
-  <div class="feature-box" style="text-align:center;">
-    <img src="cover.jpg" alt="Current Issue"
-         style="max-width:250px;border-radius:12px;margin-bottom:15px;">
-
-    <h3>العدد الأول - 2026</h3>
-
-    <p>
-      يضم مجموعة من الأبحاث المحكمة والمقالات العلمية
-      في العلوم السياسية والقانون والعلاقات الدولية.
-    </p>
-
-    <button class="btn primary">
-      تحميل العدد
-    </button>
-  </div>
+  <div class="feature-box current-issue-card" id="currentIssueContent"></div>
 </section>
 
 <section id="research">
@@ -1440,78 +1380,89 @@
     </div>
   </div>
 </section>
-<section id="featured-authors">
-  <h2>باحثون مميزون</h2>
+<section id="call-for-papers">
 
-  <div class="grid">
-
-    <div class="card">
-      <div class="card-body">
-        <h3>اسم الباحث</h3>
-        <p>متخصص في العلوم السياسية والعلاقات الدولية.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-body">
-        <h3>اسم الباحث</h3>
-        <p>باحث في القانون الدستوري والإداري.</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-<section id="newsletter">
-  <h2>اشترك في النشرة العلمية</h2>
+  <h2>انشر معنا</h2>
 
   <div class="feature-box">
 
+    <h3>
+      هل لديك بحث أو مقال علمي؟
+    </h3>
+
     <p>
-      احصل على أحدث الأبحاث والمقالات فور نشرها.
+      يمكنك إرسال أعمالك العلمية إلى هيئة التحرير
+      لمراجعتها وتحكيمها ونشرها.
     </p>
 
-    <form>
-      <input
-        type="email"
-        placeholder="البريد الإلكتروني"
-        style="
-          width:100%;
-          padding:12px;
-          border-radius:10px;
-          border:1px solid #ddd;
-          margin-bottom:10px;
-        "
-      >
+    <div style="margin-top:15px;">
 
-      <button class="btn primary">
-        اشتراك
-      </button>
+      <a href="rules.html" class="btn">
+        شروط النشر
+      </a>
 
-    </form>
+      <a href="contact.html" class="btn primary">
+        إرسال بحث
+      </a>
+
+    </div>
 
   </div>
+
 </section>
-<section id="trust">
-  <h2>أرقام المنصة</h2>
+<section id="publication-process">
 
-  <div class="stats">
+  <h2>كيف يتم النشر؟</h2>
 
-    <div class="stat-item">
-      <strong>1000+</strong>
-      <span>زائر شهرياً</span>
+  <div class="features-grid">
+
+    <div class="feature-box">
+      <h3>1</h3>
+      <p>إرسال البحث</p>
     </div>
 
-    <div class="stat-item">
-      <strong>200+</strong>
-      <span>بحث ومقال</span>
+    <div class="feature-box">
+      <h3>2</h3>
+      <p>الفحص الأولي</p>
     </div>
 
-    <div class="stat-item">
-      <strong>50+</strong>
-      <span>باحث مشارك</span>
+    <div class="feature-box">
+      <h3>3</h3>
+      <p>التحكيم العلمي</p>
+    </div>
+
+    <div class="feature-box">
+      <h3>4</h3>
+      <p>النشر الإلكتروني</p>
     </div>
 
   </div>
+
+</section>
+<section id="publication-fields">
+
+  <h2>مجالات النشر</h2>
+
+  <div class="features-grid">
+
+    <div class="feature-box">
+      <h3>العلوم السياسية</h3>
+    </div>
+
+    <div class="feature-box">
+      <h3>القانون العام</h3>
+    </div>
+
+    <div class="feature-box">
+      <h3>العلاقات الدولية</h3>
+    </div>
+
+    <div class="feature-box">
+      <h3>السياسات العمومية</h3>
+    </div>
+
+  </div>
+
 </section>
 <footer data-t="footer_text" style="
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
@@ -1664,6 +1615,7 @@ sections.forEach((key) => {
     if (key === 'activities') renderContent('activities', 'activitiesGrid');
     if (key === 'training') renderContent('training', 'academicGrid');
 
+    renderLatestIssue();
     renderTicker();
     renderFeaturedSlider();
     updateStats();
@@ -1677,6 +1629,7 @@ sections.forEach((key) => {
     renderContent('editions', 'editionsGrid');
     renderContent('activities', 'activitiesGrid');
     renderContent('training', 'academicGrid');
+    renderLatestIssue();
     renderTicker();
     renderFeaturedSlider();
     updateStats();
@@ -1704,6 +1657,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderContent('editions', 'editionsGrid');
   renderContent('activities', 'activitiesGrid');
   renderContent('training', 'academicGrid');
+  renderLatestIssue();
   renderTicker();
   renderFeaturedSlider();
   updateStats();
@@ -1901,6 +1855,109 @@ ${img
 
     grid.appendChild(card);
   });
+}
+
+function getEditionImage(item) {
+  return item.image ||
+    item.photo ||
+    item.cover ||
+    item.thumbnail ||
+    item.previewImage ||
+    item.imageUrl ||
+    '';
+}
+
+function getEditionDownload(item) {
+  return item.file ||
+    item.pdf ||
+    item.pdfUrl ||
+    item.downloadUrl ||
+    item.url ||
+    item.link ||
+    '';
+}
+
+function editionSortValue(item, fallback) {
+  const raw =
+    item.createdAt ||
+    item.updatedAt ||
+    item.date ||
+    fallback;
+
+  if (raw && typeof raw === 'object' && typeof raw.seconds === 'number') {
+    return raw.seconds * 1000;
+  }
+
+  const asNumber = Number(raw);
+  if (!Number.isNaN(asNumber)) return asNumber;
+
+  const asDate = Date.parse(raw);
+  if (!Number.isNaN(asDate)) return asDate;
+
+  return fallback;
+}
+
+function getLatestEdition() {
+  const editions = JSON.parse(localStorage.getItem('editions') || '[]');
+  if (!editions.length) return null;
+
+  return editions
+    .map((item, index) => ({ item, index, sortValue: editionSortValue(item, index) }))
+    .sort((a, b) => b.sortValue - a.sortValue)[0];
+}
+
+function isGenericIssueTitle(title) {
+  return /^العدد\s*\d+$/i.test(String(title).trim());
+}
+
+function renderLatestIssue() {
+  const hero = document.getElementById('latestIssueHeroContent');
+  const current = document.getElementById('currentIssueContent');
+  if (!hero && !current) return;
+
+  const latest = getLatestEdition();
+  const lang = getCurrentLang();
+
+  if (!latest) {
+    const emptyHtml = `<div class="empty-state"><p data-t="empty_items">لا توجد عناصر حالياً</p></div>`;
+    if (hero) hero.innerHTML = emptyHtml;
+    if (current) current.innerHTML = emptyHtml;
+    return;
+  }
+
+  const item = latest.item;
+  const title = getByLang(item.title, lang) || 'بدون عنوان';
+  const desc =
+    getByLang(item.description, lang) ||
+    getByLang(item.short, lang) ||
+    getByLang(item.details, lang) ||
+    '';
+  const img = getEditionImage(item);
+  const download = getEditionDownload(item);
+
+  if (!img && !desc && !download) {
+    const emptyHtml = `<div class="empty-state"><p data-t="empty_items">لا توجد عناصر حالياً</p></div>`;
+    if (hero) hero.innerHTML = emptyHtml;
+    if (current) current.innerHTML = emptyHtml;
+    return;
+  }
+
+  const downloadAttrs = download ? `onclick="location.href='${esc(download)}'"` : 'disabled';
+  const downloadLabel = lang === 'en' ? 'Download issue' : lang === 'fr' ? 'Télécharger le numéro' : 'تحميل العدد';
+
+  const imageHtml = img
+    ? `<img src="${esc(img)}" alt="${esc(title)}" style="width:100%;max-width:260px;border-radius:12px;margin-bottom:12px;object-fit:cover;" onerror="this.style.display='none'">`
+    : '';
+
+  const issueHtml = `
+    ${imageHtml}
+    ${title && !isGenericIssueTitle(title) ? `<h3>${esc(title)}</h3>` : ''}
+    ${desc ? `<p>${esc(desc)}</p>` : ''}
+    <button class="btn primary" ${downloadAttrs}>${downloadLabel}</button>
+  `;
+
+  if (hero) hero.innerHTML = issueHtml;
+  if (current) current.innerHTML = issueHtml;
 }
 
 
@@ -2215,6 +2272,7 @@ hero_sub:"بنية متكاملة للأبحاث والمقالات والملف
     if(menu) menu.style.display="none";
 
     updateStats();
+    renderLatestIssue();
   }
 
   function initMobileDropdowns(){
@@ -2343,6 +2401,7 @@ let isDraggingFeatured = false;
 let featuredStartX = 0;
 let featuredCurrentX = 0;
 let featuredDeltaX = 0;
+let featuredDragBound = false;
 
 function getFeaturedItems() {
   const lang = getCurrentLang();
@@ -2369,16 +2428,21 @@ function getFeaturedItems() {
 
 if (!image || String(image).trim() === '') return;
 
+      const title = getByLang(item.title, lang) || '';
+      const desc =
+        getByLang(item.description, lang) ||
+        getByLang(item.short, lang) ||
+        getByLang(item.details, lang) ||
+        '';
+
+      if (!title.trim() && !desc.trim()) return;
+
       all.push({
         storageKey: src.key,
         index,
         label: src.label,
-        title: getByLang(item.title, lang) || 'بدون عنوان',
-        desc:
-          getByLang(item.description, lang) ||
-          getByLang(item.short, lang) ||
-          getByLang(item.details, lang) ||
-          '',
+        title,
+        desc,
         image
       });
     });
@@ -2390,39 +2454,31 @@ if (!image || String(image).trim() === '') return;
 function renderFeaturedSlider() {
   const track = document.getElementById('featuredTrack');
   const dots = document.getElementById('featuredDots');
+  const section = document.getElementById('latest-publications');
   if (!track || !dots) return;
 
   const items = getFeaturedItems();
 
   if (!items.length) {
-    track.innerHTML = `
-      <div class="featured-slide">
-        <img src="logo1222.jpeg" alt="Ofouq Academie">
-        <div class="featured-overlay">
-          <div class="featured-content">
-            <div class="featured-badge">منصة أفق</div>
-            <div class="featured-title">أضف محتوى من لوحة الإدارة</div>
-            <div class="featured-desc">عندما تضيف أبحاثاً أو مقالات أو إصدارات معها صور، سيظهر السلايدر هنا تلقائياً.</div>
-          </div>
-        </div>
-      </div>
-    `;
+    if (section) section.style.display = 'none';
+    track.innerHTML = '';
     dots.innerHTML = '';
     featuredItemsCache = items;
-featuredIndex = 0;
-applyFeatured();
-startFeatured(items.length);
-bindFeaturedDrag();
+    featuredIndex = 0;
+    applyFeatured();
+    startFeatured(items.length);
+    bindFeaturedDrag();
     
     return;
 
   
   }
 
+  if (section) section.style.display = '';
 
   track.innerHTML = items.map(item => `
     <div class="featured-slide" onclick="goToPage('${item.storageKey}', ${item.index})">
-      <img src="${esc(item.image)}" alt="${esc(item.title)}">
+      <img src="${esc(item.image)}" alt="${esc(item.title)}" onerror="this.src='logo1222.jpeg'">
       <div class="featured-overlay">
         <div class="featured-content">
           <div class="featured-badge">${esc(item.label)}</div>
@@ -2438,7 +2494,9 @@ bindFeaturedDrag();
     `<span class="featured-dot ${i === 0 ? 'active' : ''}" onclick="goFeatured(${i})"></span>`
   ).join('');
 
+  featuredItemsCache = items;
   featuredIndex = 0;
+  bindFeaturedDrag();
   applyFeatured();
   startFeatured(items.length);
 }
@@ -2480,6 +2538,8 @@ function bindFeaturedDrag() {
   const shell = document.querySelector('.featured-shell');
   const track = document.getElementById('featuredTrack');
   if (!shell || !track) return;
+  if (featuredDragBound) return;
+  featuredDragBound = true;
 
   const startDrag = (e) => {
     if ((e.type === 'mousedown' && e.button !== 0) || featuredItemsCache.length <= 1) return;
@@ -2535,17 +2595,19 @@ function bindFeaturedDrag() {
   window.addEventListener('touchend', endDrag);
   window.addEventListener('touchcancel', endDrag);
 }
-const backTop = document.getElementById("backTop");
+window.addEventListener("DOMContentLoaded", () => {
+  const backTop = document.getElementById("backTop");
+  if (!backTop) return;
 
-window.addEventListener("scroll", () => {
-  backTop.style.display =
-    window.scrollY > 500 ? "block" : "none";
-});
+  window.addEventListener("scroll", () => {
+    backTop.style.display = window.scrollY > 500 ? "block" : "none";
+  });
 
-backTop.addEventListener("click", () => {
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
+  backTop.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   });
 });
 </script>
