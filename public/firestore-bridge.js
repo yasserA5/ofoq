@@ -8,9 +8,7 @@ import {
   deleteDoc,
   query,
   where,
-  doc,
-  orderBy,      
-  onSnapshot
+  doc
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 onAuthStateChanged(auth, (user) => {
@@ -27,9 +25,7 @@ window.fs = {
   deleteDoc,
   query,
   where,
-  doc,
-  orderBy,
-  onSnapshot
+  doc
 };
 
 window.dispatchEvent(new CustomEvent("firestoreReady"));

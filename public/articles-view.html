@@ -1798,12 +1798,6 @@ async function initPage() {
     }
   }
   window.displayItem = await getArticleById();
-  // Rewrite URL to OG-friendly version
-  if (window.displayItem) {
-    const docId = window.displayItem.docId || window.displayItem.id;
-    const newUrl = `/api/og?docId=${encodeURIComponent(docId)}&section=articles`;
-    window.history.replaceState({}, '', newUrl);
-  }
   applyLang(savedLang);
 }
 
