@@ -659,20 +659,16 @@
       grid-template-columns:repeat(auto-fit,minmax(clamp(230px,42vw,260px),1fr));
       gap:clamp(18px,4vw,24px);
     }
-.card{
-  padding:0;
-  border-radius:14px;
-  background:#fff;
-  box-shadow:0 2px 15px rgba(0,0,0,0.08);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  transition:.3s ease;
-}
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 15px 35px rgba(0,0,0,.12);
-}
+
+    .card{
+      padding:0;
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 2px 15px rgba(0,0,0,0.08);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
     .card-img-wrapper{
       width:100%;
       height:190px;
@@ -717,39 +713,6 @@
       color:#9ca3af;
       font-size:11px;
     }
-#quickMenu{
-  position:fixed;
-  left:20px;
-  bottom:20px;
-  width:55px;
-  height:55px;
-  border:none;
-  border-radius:50%;
-  background:var(--primary);
-  color:#fff;
-  font-size:22px;
-  cursor:pointer;
-  z-index:999;
-}
-
-#quickPanel{
-  position:fixed;
-  left:20px;
-  bottom:85px;
-  display:none;
-  flex-direction:column;
-  gap:8px;
-  z-index:999;
-}
-
-#quickPanel a{
-  background:#fff;
-  padding:10px 14px;
-  border-radius:10px;
-  text-decoration:none;
-  color:#0d6b8c;
-  box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
     .card-footer{
       padding:0 16px 12px 16px;
       display:flex;
@@ -768,7 +731,6 @@
       font-weight:600;
       font-size:12px;
     }
-    
 
     .features-grid{
       display:grid;
@@ -829,9 +791,7 @@
       section{padding:30px 16px;}
       .grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
     }
-    
-    /* ===== Mo
-    ving latest items (hero right box) ===== */
+    /* ===== Moving latest items (hero right box) ===== */
 .ticker{
   background:#ffffff;
   border-radius:18px;
@@ -941,14 +901,6 @@
   position:relative;
   cursor:pointer;
   color:#fff;
-  transition:.3s ease;
-}
-.featured-slide:hover img{
-  transform:scale(1.04);
-}
-
-.featured-slide img{
-  transition:.6s ease;
 }
 
 .featured-slide img{
@@ -1043,22 +995,7 @@
     padding:18px;
   }
 }
-#backTop{
-  position:fixed;
-  bottom:20px;
-  left:20px;
-  width:48px;
-  height:48px;
-  border:none;
-  border-radius:50%;
-  background:var(--primary);
-  color:#fff;
-  font-size:20px;
-  cursor:pointer;
-  display:none;
-  z-index:999;
-  box-shadow:0 8px 20px rgba(0,0,0,.15);
-}
+
 </style>
 
   </style>
@@ -1081,6 +1018,7 @@
     <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
   </div>
 
+  <form class="nav-sheet-search" onsubmit="doSearch(event)">
     <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
     <button type="submit">🔍</button>
   </form>
@@ -1169,14 +1107,7 @@
     <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
   </ul>
 
-<input
-  type="search"
-  id="navSearchInput"
-  placeholder="ابحث..."
-  autocomplete="off"
-/>
-
-<div id="searchSuggestions"></div>
+  <form class="nav-search" onsubmit="doSearch(event)">
     <input type="search" id="navSearchInput" placeholder="ابحث..." />
     <span>🔍</span>
   </form>
@@ -1207,27 +1138,6 @@
       بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات.
     </p>
 <div class="issn-badge">3119-6691</div>
-<div class="stats">
-  <div class="stat-item">
-    <strong id="stat1_number">0</strong>
-<span>📚 بحث محكّم</span>
-  </div>
-
-  <div class="stat-item">
-    <strong id="stat2_number">0</strong>
-<span>📝 مقال علمي</span>
-  </div>
-
-  <div class="stat-item">
-    <strong id="stat3_number">0</strong>
-<span>👥 أعضاء</span>
-  </div>
-
-  <div class="stat-item">
-    <strong id="stat4_number">0</strong>
-<span>🎓 أنشطة</span>
-  </div>
-</div>
     <div class="hero-actions">
       <button class="btn primary" onclick="location.href='register.html'" data-t="hero_cta_primary">ابدأ رحلتك البحثية الآن</button>
       <button class="btn" onclick="document.getElementById('research').scrollIntoView({behavior:'smooth'})" data-t="hero_cta_secondary">استكشف المحتوى العلمي</button>
@@ -1236,67 +1146,7 @@
 
 
 
-</div>
-
-<div class="hero-side">
-  <div class="ticker">
-    <div class="ticker-head">
-      <h3>آخر الإضافات</h3>
-    </div>
-
-    <div class="ticker-viewport">
-<div class="ticker-track" id="tickerTrack">
-
-  <div class="ticker-item">
-    <h4>مرحباً بكم في منصة أفق</h4>
-    <p>سيتم عرض أحدث الأبحاث والمقالات هنا.</p>
-  </div>
-
-</div>
-    </div>
-
-    <div class="ticker-dots" id="tickerDots"></div>
-
-    <p class="ticker-hint">
-      أحدث الأبحاث والمقالات والأنشطة
-    </p>
-  </div>
-</div>
-
-</section>
-<section id="featured-week">
-
-  <h2>بحث الأسبوع</h2>
-
-  <div class="feature-box">
-
-    <img
-      src="placeholder.jpg"
-      alt="Featured Research"
-      style="
-        width:100%;
-        max-height:350px;
-        object-fit:cover;
-        border-radius:12px;
-        margin-bottom:15px;
-      "
-    >
-
-    <h3>
-      عنوان البحث المميز
-    </h3>
-
-    <p>
-      ملخص قصير للبحث المميز لهذا الأسبوع.
-    </p>
-
-    <button class="btn primary">
-      قراءة البحث
-    </button>
-
-  </div>
-
-</section>
+<section>
 <section class="featured-slider">
   <div class="featured-shell">
     <div class="featured-track" id="featuredTrack"></div>
@@ -1304,25 +1154,7 @@
   </div>
 </section>
 
-<section id="current-issue">
-  <h2>العدد الحالي</h2>
 
-  <div class="feature-box" style="text-align:center;">
-    <img src="cover.jpg" alt="Current Issue"
-         style="max-width:250px;border-radius:12px;margin-bottom:15px;">
-
-    <h3>العدد الأول - 2026</h3>
-
-    <p>
-      يضم مجموعة من الأبحاث المحكمة والمقالات العلمية
-      في العلوم السياسية والقانون والعلاقات الدولية.
-    </p>
-
-    <button class="btn primary">
-      تحميل العدد
-    </button>
-  </div>
-</section>
 
 <section id="research">
   <h2 data-t="sec_research">أحدث الأبحاث</h2>
@@ -1349,17 +1181,7 @@
     </div>
   </div>
 </section>
-<section id="popular-research">
-  <h2>الأكثر قراءة</h2>
 
-  <div class="grid" id="popularGrid">
-
-    <div class="feature-box">
-      سيتم عرض أكثر الأبحاث قراءة هنا
-    </div>
-
-  </div>
-</section>
 <section id="activities">
   <h2 data-t="sec_activities">أنشطتنا وورش العمل</h2>
   <div class="grid" id="activitiesGrid">
@@ -1384,41 +1206,6 @@
     سيتم عرض البث المباشر هنا عند توفره.
   </p>
 </section>
-<section id="why-us">
-  <h2>لماذا منصة أفق؟</h2>
-
-  <div class="features-grid">
-
-    <div class="feature-box">
-      <h3>محتوى محكّم</h3>
-      <p>
-        أبحاث ومقالات علمية تخضع للمراجعة الأكاديمية.
-      </p>
-    </div>
-
-    <div class="feature-box">
-      <h3>متعدد اللغات</h3>
-      <p>
-        دعم العربية والفرنسية والإنجليزية.
-      </p>
-    </div>
-
-    <div class="feature-box">
-      <h3>وصول مفتوح</h3>
-      <p>
-        إتاحة المعرفة للباحثين والطلبة مجاناً.
-      </p>
-    </div>
-
-    <div class="feature-box">
-      <h3>تخصصات متنوعة</h3>
-      <p>
-        علوم سياسية وقانون وعلاقات دولية وسياسات عمومية.
-      </p>
-    </div>
-
-  </div>
-</section>
 <section id="how-to-start">
   <h2 data-t="sec_how">كيف تبدأ؟</h2>
   <div class="features-grid">
@@ -1440,79 +1227,7 @@
     </div>
   </div>
 </section>
-<section id="featured-authors">
-  <h2>باحثون مميزون</h2>
 
-  <div class="grid">
-
-    <div class="card">
-      <div class="card-body">
-        <h3>اسم الباحث</h3>
-        <p>متخصص في العلوم السياسية والعلاقات الدولية.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-body">
-        <h3>اسم الباحث</h3>
-        <p>باحث في القانون الدستوري والإداري.</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-<section id="newsletter">
-  <h2>اشترك في النشرة العلمية</h2>
-
-  <div class="feature-box">
-
-    <p>
-      احصل على أحدث الأبحاث والمقالات فور نشرها.
-    </p>
-
-    <form>
-      <input
-        type="email"
-        placeholder="البريد الإلكتروني"
-        style="
-          width:100%;
-          padding:12px;
-          border-radius:10px;
-          border:1px solid #ddd;
-          margin-bottom:10px;
-        "
-      >
-
-      <button class="btn primary">
-        اشتراك
-      </button>
-
-    </form>
-
-  </div>
-</section>
-<section id="trust">
-  <h2>أرقام المنصة</h2>
-
-  <div class="stats">
-
-    <div class="stat-item">
-      <strong>1000+</strong>
-      <span>زائر شهرياً</span>
-    </div>
-
-    <div class="stat-item">
-      <strong>200+</strong>
-      <span>بحث ومقال</span>
-    </div>
-
-    <div class="stat-item">
-      <strong>50+</strong>
-      <span>باحث مشارك</span>
-    </div>
-
-  </div>
-</section>
 <footer data-t="footer_text" style="
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
   padding: clamp(24px, 6vw, 40px) clamp(20px, 5vw, 40px);
@@ -1592,13 +1307,7 @@
     height: 4px; background: linear-gradient(90deg, transparent, var(--gold, #d4af37), transparent);
   "></div>
 </footer>
-<button id="quickMenu">⚡</button>
 
-<div id="quickPanel">
-  <a href="#research">📚 الأبحاث</a>
-  <a href="#academic">🎓 أكاديمي</a>
-  <a href="#contact">📩 تواصل</a>
-</div>
 <script type="module" src="/firestore-bridge.js"></script>
 <script>
 let currentLang = localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
@@ -1628,88 +1337,89 @@ async function syncFirestoreToLocal() {
   try {
     const waitForFS = (timeoutMs = 7000) => new Promise((resolve, reject) => {
       const t0 = Date.now();
-
       function tick() {
-        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) {
-          return resolve();
-        }
-        if (Date.now() - t0 > timeoutMs) {
-          return reject(new Error('fs not ready'));
-        }
+        if (window.fs && window.fs.db && window.fs.collection && window.fs.onSnapshot) return resolve();
+        if (Date.now() - t0 > timeoutMs) return reject(new Error('fs not ready'));
         setTimeout(tick, 60);
       }
-
       tick();
     });
-
     await waitForFS();
 
-const { db, collection, query, orderBy, onSnapshot } = window.fs;
-    const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
+    const { db, collection, query, where, onSnapshot } = window.fs;
 
-sections.forEach((key) => {
-  const q = query(collection(db, key), orderBy('id', 'desc'));
+    const sectionMap = {
+      research:   'researchGrid',
+      articles:   'articlesGrid',
+      editions:   'editionsGrid',
+      activities: 'activitiesGrid',
+      training:   'academicGrid'
+    };
 
-  onSnapshot(q, (snap) => {
-    const data = snap.docs.map(doc => ({
-      docId: doc.id,
-      ...doc.data()
-    }));
+    const grouped = {};
 
-    localStorage.setItem(key, JSON.stringify(data));
+    function mergeAndRender() {
+      Object.keys(sectionMap).forEach(sec => {
+        localStorage.setItem(sec, JSON.stringify(grouped[sec] || []));
+      });
+      Object.entries(sectionMap).forEach(([sec, gridId]) => renderContent(sec, gridId));
+      renderTicker();
+      renderFeaturedSlider();
+      updateStats();
+    }
 
-    if (key === 'research') renderContent('research', 'researchGrid');
-    if (key === 'articles') renderContent('articles', 'articlesGrid');
-    if (key === 'editions') renderContent('editions', 'editionsGrid');
-    if (key === 'activities') renderContent('activities', 'activitiesGrid');
-    if (key === 'training') renderContent('training', 'academicGrid');
+    // Query content collection
+    const qContent = query(collection(db, 'content'), where('status', '==', 'published'));
+    onSnapshot(qContent, (snap) => {
+      // Clear only content-sourced entries before re-grouping
+      Object.keys(sectionMap).forEach(sec => { if (!grouped[sec]) grouped[sec] = []; });
+      // Reset content-sourced items (keep articles collection items separate)
+      const contentKeys = Object.keys(sectionMap);
+      contentKeys.forEach(sec => { grouped['_content_' + sec] = []; });
 
-    renderTicker();
-    renderFeaturedSlider();
-    updateStats();
-  }, (error) => {
-    console.error('Live sync error for ' + key, error);
-  });
-});
+      snap.docs.forEach(doc => {
+        const data = { docId: doc.id, ...doc.data() };
+        const sec = data.section || 'research';
+        if (!grouped['_content_' + sec]) grouped['_content_' + sec] = [];
+        grouped['_content_' + sec].push(data);
+      });
 
-    renderContent('research', 'researchGrid');
-    renderContent('articles', 'articlesGrid');
-    renderContent('editions', 'editionsGrid');
-    renderContent('activities', 'activitiesGrid');
-    renderContent('training', 'academicGrid');
-    renderTicker();
-    renderFeaturedSlider();
-    updateStats();
+      // Merge both sources
+      Object.keys(sectionMap).forEach(sec => {
+        grouped[sec] = [...(grouped['_content_' + sec] || []), ...(grouped['_articles_' + sec] || [])];
+      });
+
+      mergeAndRender();
+    }, (error) => console.error('content sync error:', error));
+
+    // Query legacy articles collection
+    const qArticles = query(collection(db, 'articles'));
+    onSnapshot(qArticles, (snap) => {
+      grouped['_articles_articles'] = snap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+
+      // Merge both sources
+      Object.keys(sectionMap).forEach(sec => {
+        grouped[sec] = [...(grouped['_content_' + sec] || []), ...(grouped['_articles_' + sec] || [])];
+      });
+
+      mergeAndRender();
+    }, (error) => console.error('articles sync error:', error));
+
   } catch (error) {
     console.error('Sync error:', error);
   }
 }
-document.addEventListener("click", e => {
 
-  const btn = document.getElementById("quickMenu");
-  const panel = document.getElementById("quickPanel");
-
-  if(!btn || !panel) return;
-
-  if(e.target === btn){
-    panel.style.display =
-      panel.style.display === "flex"
-      ? "none"
-      : "flex";
-  }
-});
 window.addEventListener('DOMContentLoaded', () => {
-  renderContent('research', 'researchGrid');
-  renderContent('articles', 'articlesGrid');
-  renderContent('editions', 'editionsGrid');
-  renderContent('activities', 'activitiesGrid');
-  renderContent('training', 'academicGrid');
-  renderTicker();
-  renderFeaturedSlider();
-  updateStats();
   updateHeader();
   setLang(currentLang);
   initMobileDropdowns();
+
+  ['researchGrid','articlesGrid','editionsGrid','activitiesGrid','academicGrid'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = `<div class="empty-state"><p>جاري التحميل...</p></div>`;
+  });
+
   syncFirestoreToLocal();
 });
 </script>
@@ -1772,18 +1482,6 @@ function setLang(lang){
   if(menu) menu.style.display = "none";
 }
 
-function searchSuggestions(){
-  const box = document.getElementById("searchSuggestions");
-  if(!box) return;
-
-  box.style.position = "absolute";
-  box.style.top = "38px";
-  box.style.right = "0";
-  box.style.width = "100%";
-  box.style.background = "#fff";
-  box.style.borderRadius = "10px";
-  box.style.boxShadow = "0 10px 25px rgba(0,0,0,.1)";
-}
 
   function doSearch(e){
     e.preventDefault();
@@ -1904,21 +1602,38 @@ ${img
 }
 
 
-  function goToPage(pageType,index){
-    const list=JSON.parse(localStorage.getItem(pageType) || '[]');
-    const selected=list[index];
-    if(selected){localStorage.setItem('selectedItem',JSON.stringify(selected));}
-    const pageMap={
-      'research':'research.html',
-      'articles':'articles.html',
-      'files':'files.html',
-      'general-articles':'general-articles.html',
-      'editions':'editions.html',
-      'activities':'activities.html',
-      'training':'training.html'
-    };
-    window.location.href=pageMap[pageType] || 'index.html';
+  function goToPage(pageType, index){
+  const list = JSON.parse(localStorage.getItem(pageType) || '[]');
+  const selected = list[index];
+  if (!selected) return;
+  localStorage.setItem('selectedItem', JSON.stringify(selected));
+
+  const viewMap = {
+    'research':   'research-view.html',
+    'articles':   'articles-view.html',
+    'files':      'files-view.html',
+    'activities': 'activities-view.html',
+    'training':   'training-view.html'
+  };
+
+  const pageMap = {
+    'research':   'research.html',
+    'articles':   'articles.html',
+    'files':      'files.html',
+    'editions':   'editions.html',
+    'activities': 'activities.html',
+    'training':   'training.html'
+  };
+
+  const docId = selected.docId || selected.id;
+  const viewPage = viewMap[pageType];
+
+  if (viewPage && docId) {
+    window.location.href = `${viewPage}?docId=${encodeURIComponent(docId)}`;
+  } else {
+    window.location.href = pageMap[pageType] || 'index.html';
   }
+}
 
   // dynamic stats from localStorage
   function updateStats(){
@@ -1937,10 +1652,10 @@ ${img
     const el3 = document.getElementById('stat3_number');
     const el4 = document.getElementById('stat4_number');
 
-    animateCounter(el1,n1);
-animateCounter(el2,n2);
-animateCounter(el3,n3);
-animateCounter(el4,n4);
+    if(el1) el1.textContent = n1;
+    if(el2) el2.textContent = n2;
+    if(el3) el3.textContent = n3;
+    if(el4) el4.textContent = n4;
 
     const statsWrap = document.querySelector('.stats');
     if(statsWrap && n1 === 0 && n2 === 0 && n3 === 0 && n4 === 0){
@@ -1949,23 +1664,6 @@ animateCounter(el4,n4);
       statsWrap.style.display = 'flex';
     }
   }
-  function animateCounter(el,target){
-  if(!el) return;
-
-  let current = 0;
-  const step = Math.max(1, Math.ceil(target/40));
-
-  const timer = setInterval(()=>{
-    current += step;
-
-    if(current >= target){
-      current = target;
-      clearInterval(timer);
-    }
-
-    el.textContent = current;
-  },20);
-}
 
   const translations = {
     ar:{
@@ -2409,10 +2107,10 @@ function renderFeaturedSlider() {
     `;
     dots.innerHTML = '';
     featuredItemsCache = items;
-featuredIndex = 0;
-applyFeatured();
-startFeatured(items.length);
-bindFeaturedDrag();
+    featuredIndex = 0;
+    applyFeatured();
+    startFeatured(items.length);
+    bindFeaturedDrag();
     
     return;
 
@@ -2438,9 +2136,11 @@ bindFeaturedDrag();
     `<span class="featured-dot ${i === 0 ? 'active' : ''}" onclick="goFeatured(${i})"></span>`
   ).join('');
 
+  featuredItemsCache = items;
   featuredIndex = 0;
   applyFeatured();
   startFeatured(items.length);
+  bindFeaturedDrag();
 }
 
 function applyFeatured() {
@@ -2535,21 +2235,8 @@ function bindFeaturedDrag() {
   window.addEventListener('touchend', endDrag);
   window.addEventListener('touchcancel', endDrag);
 }
-const backTop = document.getElementById("backTop");
-
-window.addEventListener("scroll", () => {
-  backTop.style.display =
-    window.scrollY > 500 ? "block" : "none";
-});
-
-backTop.addEventListener("click", () => {
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-});
 </script>
 
-<button id="backTop">↑</button>
+
 </body>
 </html>
