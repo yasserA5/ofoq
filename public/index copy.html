@@ -1568,18 +1568,17 @@ async function syncFirestoreToLocal() {
 
     await waitForFS();
 
-const { db, collection, onSnapshot } = window.fs;
+const { db, collection, query, orderBy, onSnapshot } = window.fs;
     const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
 sections.forEach((key) => {
-  const q = collection(db, key);
+  const q = query(collection(db, key), orderBy('id', 'desc'));
 
   onSnapshot(q, (snap) => {
-    const data = snap.docs.map((doc, index) => ({
+    const data = snap.docs.map(doc => ({
       docId: doc.id,
-      _sortIndex: index,
       ...doc.data()
-    })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
+    }));
 
     localStorage.setItem(key, JSON.stringify(data));
 
@@ -1775,12 +1774,19 @@ function renderContent(storageKey, gridId) {
 
     const title = getByLang(item.title, lang) || 'بدون عنوان';
     const author = getByLang(item.author, lang) || '';
-    const desc = getContentDesc(item, lang);
-    const img = getContentImage(item);
-    const download = getDownloadLink(item);
-    const actionButton = download
-      ? `<button class="card-btn" onclick="downloadItem('${storageKey}', ${index})">تحميل</button>`
-      : `<button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>`;
+    const desc =
+      getByLang(item.description, lang) ||
+      getByLang(item.short, lang) ||
+      getByLang(item.details, lang) ||
+      '';
+const img =
+  item.image ||
+  item.photo ||
+  item.cover ||
+  item.thumbnail ||
+  item.previewImage ||
+  item.imageUrl ||
+  '';
     card.innerHTML = `
 ${img
   ? `<div class="card-img-wrapper">
@@ -1802,7 +1808,7 @@ ${img
       </div>
       <div class="card-footer">
         <span>${esc(storageKey)}</span>
-        ${actionButton}
+        <button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>
       </div>
     `;
 
@@ -1818,67 +1824,6 @@ function getContentImage(item) {
     item.previewImage ||
     item.imageUrl ||
     '';
-}
-
-function getDownloadLink(item) {
-  return item.file ||
-    item.fileUrl ||
-    item.pdf ||
-    item.pdfUrl ||
-    item.pdfFile ||
-    item.document ||
-    item.documentUrl ||
-    item.attachment ||
-    item.attachmentUrl ||
-    item.download ||
-    item.downloadUrl ||
-    item.contentFile ||
-    item.contentUrl ||
-    item.url ||
-    item.link ||
-    '';
-}
-
-function getSortValue(item, fallback = 0) {
-  const raw =
-    item.createdAt ||
-    item.updatedAt ||
-    item.date ||
-    item.publishedAt ||
-    item.id ||
-    fallback;
-
-  if (raw && typeof raw === 'object' && typeof raw.seconds === 'number') {
-    return raw.seconds * 1000;
-  }
-
-  const asNumber = Number(raw);
-  if (!Number.isNaN(asNumber)) return asNumber;
-
-  const asDate = Date.parse(raw);
-  if (!Number.isNaN(asDate)) return asDate;
-
-  return fallback;
-}
-
-function openDownload(url) {
-  const link = String(url || '').trim();
-  if (!link) return false;
-  window.open(link, '_blank', 'noopener');
-  return true;
-}
-
-function downloadItem(storageKey, index) {
-  const list = JSON.parse(localStorage.getItem(storageKey) || '[]');
-  const item = list[index];
-  if (!item) return;
-
-  const download = getDownloadLink(item);
-  if (download) {
-    openDownload(download);
-  } else {
-    goToPage(storageKey, index);
-  }
 }
 
 function getContentDesc(item, lang = getCurrentLang()) {
@@ -1932,7 +1877,6 @@ function renderPopularContent() {
         title,
         desc,
         image: getContentImage(item),
-        download: getDownloadLink(item),
         score: getPopularityValue(item, arr.length - index)
       });
     });
@@ -1966,10 +1910,7 @@ function renderPopularContent() {
         </div>
         <div class="card-footer">
           <span>${esc(entry.label)}</span>
-          ${entry.download
-            ? `<button class="card-btn" onclick="downloadItem('${entry.storageKey}', ${entry.index})">تحميل</button>`
-            : `<button class="card-btn" onclick="goToPage('${entry.storageKey}', ${entry.index})">عرض</button>`
-          }
+          <button class="card-btn" onclick="goToPage('${entry.storageKey}', ${entry.index})">عرض</button>
         </div>
       `;
       grid.appendChild(card);
@@ -2000,11 +1941,34 @@ function getEditionImage(item) {
 }
 
 function getEditionDownload(item) {
-  return getDownloadLink(item);
+  return item.file ||
+    item.pdf ||
+    item.pdfUrl ||
+    item.downloadUrl ||
+    item.url ||
+    item.link ||
+    '';
 }
 
 function editionSortValue(item, fallback) {
-  return getSortValue(item, fallback);
+  const raw =
+    item.createdAt ||
+    item.updatedAt ||
+    item.date ||
+    item.id ||
+    fallback;
+
+  if (raw && typeof raw === 'object' && typeof raw.seconds === 'number') {
+    return raw.seconds * 1000;
+  }
+
+  const asNumber = Number(raw);
+  if (!Number.isNaN(asNumber)) return asNumber;
+
+  const asDate = Date.parse(raw);
+  if (!Number.isNaN(asDate)) return asDate;
+
+  return fallback;
 }
 
 function getLatestEdition() {
@@ -2059,7 +2023,7 @@ function renderLatestIssue() {
   if (heroCard) heroCard.style.display = '';
   if (currentSection) currentSection.style.display = '';
 
-  const downloadAttrs = download ? `onclick="openDownload(decodeURIComponent('${encodeURIComponent(download)}'))"` : 'disabled';
+  const downloadAttrs = download ? `onclick="location.href='${esc(download)}'"` : 'disabled';
   const downloadLabel = lang === 'en' ? 'Download issue' : lang === 'fr' ? 'Télécharger le numéro' : 'تحميل العدد';
 
   const imageHtml = img
