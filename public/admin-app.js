@@ -3,9 +3,8 @@ import { supabase } from "./supabase-init.js";
 const { data: authData } = await supabase.auth.getUser();
 
 if (!authData?.user) {
-  location.href = "./login-admin.html";
+  location.href = "./login-page.html";
 }
-
 const currentUser = authData.user;
 // ... rest of your code here
 
@@ -481,7 +480,8 @@ if (!authData?.user) throw new Error("يجب تسجيل الدخول أولاً"
 
       const imgInput = el(`${key}-image`);
       if (imgInput?.files?.[0]) {
-        if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
+        const { data: authData } = await supabase.auth.getUser();
+if (!authData?.user) throw new Error("يجب تسجيل الدخول أولاً");
         const uploadedImage = await uploadImageToStorage(imgInput.files[0], key, currentId);
         obj.image = uploadedImage.url;
         obj.imagePath = uploadedImage.path;
@@ -627,7 +627,7 @@ function renderList(key){
   count.textContent = data.length;
 
   if (!data.length) {
-    list.innerHTML = `<div class="empty">لا توجد بيانات في هذا القسم حالياً.<br>أضف محتوى جديداً أو اضغط "تحميل Firestore".</div>`;
+list.innerHTML = `<div class="empty">لا توجد بيانات في هذا القسم حالياً.<br>أضف محتوى جديداً أو اضغط "تحميل Supabase".</div>`;
     return;
   }
 
@@ -717,6 +717,7 @@ async function recoverAllData(){
   showSection(state.currentSectionKey);
   setStatus(`تمت المزامنة: ${merged.length} عنصر`);
 }
+
 function exportJSON(){
   const out = {};
   SECTIONS.forEach(s => out[s.key] = state.bySection[s.key]);
@@ -730,7 +731,17 @@ function exportJSON(){
   a.remove();
   URL.revokeObjectURL(url);
 }
-async function init(){
+
+function clearLocalStorageOnly(){
+  if (!confirm("هل تريد مسح التخزين المحلي فقط؟")) return;
+  localStorage.removeItem("contentcache");
+  localStorage.removeItem("editions");
+  SECTIONS.forEach(s => state.bySection[s.key] = []);
+  showSection(state.currentSectionKey);
+  setStatus("تم مسح localStorage");
+}
+
+async function init() {
   buildMenu();
   rebuildDbFromCache();
   showSection(state.currentSectionKey);
@@ -741,33 +752,13 @@ async function init(){
   el("exportBtn").addEventListener("click", exportJSON);
   el("clearBtn").addEventListener("click", clearLocalStorageOnly);
   el("logoutBtn").addEventListener("click", async () => {
-    try { await supabase.auth.signOut(); } catch {}
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.error(e);
+    }
     location.reload();
   });
-}
-function clearLocalStorageOnly(){
-  if (!confirm("هل تريد مسح التخزين المحلي فقط؟")) return;
-  localStorage.removeItem("contentcache");
-  localStorage.removeItem("editions");
-  SECTIONS.forEach(s => state.bySection[s.key] = []);
-  showSection(state.currentSectionKey);
-  setStatus("تم مسح localStorage");
-}
-
-async function init(){
-  buildMenu();
-  rebuildDbFromCache();
-  showSection(state.currentSectionKey);
-  await recoverAllData();
-
-  el("reloadBtn").addEventListener("click", reloadFromFirestore);
-  el("recoverBtn").addEventListener("click", recoverAllData);
-  el("exportBtn").addEventListener("click", exportJSON);
-  el("clearBtn").addEventListener("click", clearLocalStorageOnly);
-el("logoutBtn").addEventListener("click", async () => {
-  try { await supabase.auth.signOut(); } catch {}
-  location.reload();
-});
 }
 
 window.addEditionArticleRow = addEditionArticleRow;

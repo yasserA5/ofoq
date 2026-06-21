@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل دخول الإدارة</title>
+  <style>
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#020b2d;
+      font-family:Arial,sans-serif;
+      color:#fff;
+    }
+    .box{
+      width:min(420px,92vw);
+      background:#0d1738;
+      padding:24px;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,.35);
+    }
+    h1{
+      margin:0 0 18px;
+      font-size:28px;
+      text-align:center;
+    }
+    form{
+      display:grid;
+      gap:12px;
+    }
+    input,button{
+      height:48px;
+      border:none;
+      border-radius:10px;
+      padding:0 14px;
+      font-size:16px;
+    }
+    input{
+      background:#eef2ff;
+    }
+    button{
+      background:#22c55e;
+      color:#08111f;
+      font-weight:700;
+      cursor:pointer;
+    }
+    #status{
+      margin-top:12px;
+      font-size:14px;
+      text-align:center;
+      color:#cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>تسجيل دخول الإدارة</h1>
+
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="البريد الإلكتروني" required />
+      <input id="password" type="password" placeholder="كلمة المرور" required />
+      <button type="submit">دخول</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <script type="module">
+    import { supabase } from "./supabase-init.js";
+
+    const form = document.getElementById("loginForm");
+    const statusEl = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      statusEl.textContent = "جاري تسجيل الدخول...";
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        statusEl.textContent = error.message;
+        return;
+      }
+
+      window.location.href = "./admin.html";
+    });
+  </script>
+</body>
+</html>
