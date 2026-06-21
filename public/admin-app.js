@@ -488,8 +488,9 @@ if (!authData?.user) throw new Error("يجب تسجيل الدخول أولاً"
       }
     }
 
-    upsertLocal(key, obj);
-await upsertSupabase(key, obj);
+   await upsertSupabase(key, obj);
+   await reloadFromSupabase();
+upsertLocal(key, obj);
     resetForm(key);
     renderList(key);
     setStatus(`تم حفظ: ${obj.title.ar || "عنصر جديد"}`);

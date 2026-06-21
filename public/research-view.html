@@ -1106,7 +1106,7 @@ img, video {
     </div>
   </div>
 </footer>
-<script type="module" src="./supabase-init.js"></script>
+<script type="module" src="supabase-bridge.js"></script>
 <script src="view-loader.js"></script>
 <script>
   document.addEventListener('contextmenu', function(e) {
@@ -1339,25 +1339,64 @@ async function getResearchById() {
   const rawId = getQueryParam("id");
   if (!rawId) return null;
 
-  const researchList = safeParse(localStorage.getItem("research"), []);
-  const contentCache = safeParse(localStorage.getItem("contentcache"), []);
+  const allData = safeParse(localStorage.getItem("research"), []);
+  if (Array.isArray(allData)) {
+    const localItem = allData.find(
+      i => String(i?.id) === String(rawId) || String(i?.docId) === String(rawId)
+    );
+    if (localItem) return localItem;
+  }
 
-  const combined = [
-    ...(Array.isArray(researchList) ? researchList : []),
-    ...(Array.isArray(contentCache)
-      ? contentCache.filter(item => item.section === "research")
-      : [])
-  ];
+  try {
+    const waitForSB = (timeoutMs = 5000) =>
+      new Promise((resolve, reject) => {
+        const start = Date.now();
+        function check() {
+          if (window.sb?.supabase) return resolve(window.sb.supabase);
+          if (Date.now() - start > timeoutMs) return reject(new Error("Supabase not ready"));
+          setTimeout(check, 50);
+        }
+        check();
+      });
 
-  const found = combined.find(item =>
-    String(item?.docId || "") === String(rawId) ||
-    String(item?.id || "") === String(rawId)
-  );
+    const supabase = await waitForSB();
 
-  if (found) return found;
+    let { data, error } = await supabase
+      .from("content")
+      .select("*")
+      .eq("section", "research")
+      .eq("id", rawId)
+      .maybeSingle();
 
-  console.error("Research not found for id:", rawId, combined);
-  return null;
+    if (error || !data) {
+      const fallback = await supabase
+        .from("content")
+        .select("*")
+        .eq("section", "research")
+        .eq("docId", rawId)
+        .maybeSingle();
+
+      data = fallback.data;
+      error = fallback.error;
+    }
+
+    if (error || !data) return null;
+
+    const item = data;
+    const updated = Array.isArray(allData) ? allData : [];
+    const index = updated.findIndex(
+      x => String(x?.docId) === String(item.docId) || String(x?.id) === String(item.id)
+    );
+
+    if (index >= 0) updated[index] = item;
+    else updated.unshift(item);
+
+    localStorage.setItem("research", JSON.stringify(updated));
+    return item;
+  } catch (err) {
+    console.error("Supabase fetch failed:", err);
+    return null;
+  }
 }
 
   function buildNotFound(lang){

@@ -1593,13 +1593,14 @@ async function syncSupabaseToLocal() {
       });
 
     const supabase = await waitForSB();
-    const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
+const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
-    for (const key of sections) {
-      const { data, error } = await supabase
-        .from(key)
-        .select('*')
-        .order('created_at', { ascending: false });
+for (const key of sections) {
+  const { data, error } = await supabase
+    .from('content')
+    .select('*')
+    .eq('section', key)
+    .order('updatedAt', { ascending: false });
 
       if (error) {
         console.error(`Load error for ${key}:`, error);
@@ -1619,28 +1620,33 @@ function subscribeSupabaseRealtime() {
   const supabase = window.sb?.supabase;
   if (!supabase) return;
 
-  const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
+const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
-  sections.forEach((table) => {
-    supabase
-      .channel(`public:${table}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table },
-        async () => {
-          const { data, error } = await supabase
-            .from(table)
-            .select('*')
-            .order('created_at', { ascending: false });
+supabase
+  .channel('public:content')
+  .on(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'content' },
+    async (payload) => {
+      const changedSection = payload?.new?.section || payload?.old?.section;
+      if (!sections.includes(changedSection)) return;
 
-          if (!error) {
-            localStorage.setItem(table, JSON.stringify(data || []));
-            refreshHomeSections();
-          }
-        }
-      )
-      .subscribe();
-  });
+      const { data, error } = await supabase
+        .from('content')
+        .select('*')
+        .eq('section', changedSection)
+        .order('updatedAt', { ascending: false });
+
+      if (!error) {
+        localStorage.setItem(
+          changedSection,
+          JSON.stringify((data || []).map(item => normalizeItem(item)))
+        );
+        refreshHomeSections();
+      }
+    }
+  )
+  .subscribe();
 }
 document.addEventListener("click", e => {
 
@@ -2048,7 +2054,7 @@ function refreshHomeSections() {
   renderContent('articles', 'articlesGrid');
   renderContent('editions', 'editionsGrid');
   renderContent('activities', 'activitiesGrid');
-  renderContent('training', 'academicGrid');
+renderMixedAcademicContent("academicGrid");
   renderLatestIssue();
   renderPopularContent();
   renderTicker();
@@ -2149,15 +2155,21 @@ function renderLatestIssue() {
     const list=JSON.parse(localStorage.getItem(pageType) || '[]');
     const selected=list[index];
     if(selected){localStorage.setItem('selectedItem',JSON.stringify(selected));}
-    const pageMap={
-      'research':'research.html',
-      'articles':'articles.html',
-      'files':'files.html',
-      'general-articles':'general-articles.html',
-      'editions':'editions.html',
-      'activities':'activities.html',
-      'training':'training.html'
-    };
+const pageMap = {
+  research: "research.html",
+  articles: "articles.html",
+  files: "files.html",
+  editions: "editions.html",
+  activities: "activities.html",
+  "special-politics": "special-politics.html",
+  "special-ir": "special-ir.html",
+  "special-admin-law": "special-admin-law.html",
+  "special-const-law": "special-const-law.html",
+  "special-public-policy": "special-public-policy.html",
+  live: "live.html",
+  "general-articles": "general-articles.html",
+  "articles-foreign": "articles-foreign.html"
+};
     window.location.href=pageMap[pageType] || 'index.html';
   }
 
@@ -2454,7 +2466,60 @@ hero_sub:"بنية متكاملة للأبحاث والمقالات والملف
 
     const menu=document.getElementById("langMenu");
     if(menu) menu.style.display="none";
+function renderMixedAcademicContent(gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
 
+  const keys = [
+    "special-politics",
+    "special-ir",
+    "special-admin-law",
+    "special-const-law",
+    "special-public-policy"
+  ];
+
+  const lang = getCurrentLang();
+  const items = keys.flatMap(key => {
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    return arr.map((item, index) => ({ item, key, index }));
+  });
+
+  grid.innerHTML = "";
+
+  if (!items.length) {
+    const section = grid.closest("section");
+    if (section) section.style.display = "none";
+    return;
+  }
+
+  const section = grid.closest("section");
+  if (section) section.style.display = "";
+
+  items.slice(0, 6).forEach(({ item, key, index }) => {
+    const title = getByLang(item.title, lang);
+    const desc = getContentDesc(item, lang);
+    const img = getContentImage(item);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-img-wrapper">
+        ${img
+          ? `<img src="${esc(img)}" alt="${esc(title)}" class="card-img" loading="lazy" decoding="async">`
+          : `<div class="card-img-fallback"></div>`
+        }
+      </div>
+      <div class="card-body">
+        <h3>${esc(title)}</h3>
+        <p>${esc(desc)}</p>
+      </div>
+      <div class="card-footer">
+        <span>${esc(key)}</span>
+        <button class="card-btn" onclick="goToPage('${key}', ${index})">عرض</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
     refreshHomeSections();
   }
 
