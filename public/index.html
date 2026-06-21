@@ -1595,6 +1595,23 @@ function getStoredItems(storageKey) {
   }, []);
 }
 
+function getContentCache() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('contentcache') || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn('Invalid contentcache:', error);
+    return [];
+  }
+}
+
+function getSectionItems(sectionName) {
+  return getContentCache()
+    .filter(item => item && item.section === sectionName)
+    .sort((a, b) =>
+      getSortValue(b, 0) - getSortValue(a, 0)
+    );
+}
 
 async function syncFirestoreToLocal() {
   try {
@@ -1809,7 +1826,10 @@ function renderContent(storageKey, gridId) {
   if (!grid) return;
   const section = grid.closest('section');
 
-  const items = getStoredItems(storageKey);
+const items =
+  storageKey === 'articles' ? getSectionItems('articles') :
+  storageKey === 'editions' ? getSectionItems('editions') :
+  getStoredItems(storageKey);
   const lang = getCurrentLang();
 
   grid.innerHTML = '';
@@ -1970,7 +1990,10 @@ function renderPopularContent() {
   const items = [];
 
   sources.forEach(src => {
-    const arr = getStoredItems(src.key);
+const arr =
+  src.key === 'articles' ? getSectionItems('articles') :
+  src.key === 'editions' ? getSectionItems('editions') :
+  getStoredItems(src.key);
     arr.forEach((item, index) => {
       const title = getByLang(item.title, lang) || '';
       const desc = getContentDesc(item, lang);
@@ -2060,7 +2083,7 @@ function editionSortValue(item, fallback) {
 }
 
 function getLatestEdition() {
-  const editions = getStoredItems('editions');
+  const editions = getSectionItems('editions');
   if (!editions.length) return null;
 
   return editions
@@ -2148,15 +2171,16 @@ function renderLatestIssue() {
 
   // dynamic stats from localStorage
   function updateStats(){
-    const research   = getStoredItems('research');
-    const articles   = getStoredItems('articles');
-    const users      = getStoredItems('users');
-    const activities = getStoredItems('activities');
+const research = getStoredItems('research');
+const articles = getSectionItems('articles');
+const users = getStoredItems('users');
+const activities = getStoredItems('activities');
+const editions = getSectionItems('editions');
 
-    const n1 = research.length;
-    const n2 = articles.length;
-    const n3 = users.length;
-    const n4 = activities.length;
+const n1 = research.length;
+const n2 = articles.length;
+const n3 = users.length;
+const n4 = editions.length;
 
     const el1 = document.getElementById('stat1_number');
     const el2 = document.getElementById('stat2_number');
@@ -2481,7 +2505,10 @@ function collectLatest() {
   const lang = getCurrentLang();
 
   sources.forEach(src => {
-    const arr = getStoredItems(src.key);
+const arr =
+  src.key === 'articles' ? getSectionItems('articles') :
+  src.key === 'editions' ? getSectionItems('editions') :
+  getStoredItems(src.key);
 
     arr.forEach((item, idx) => {
       all.push({
@@ -2582,7 +2609,10 @@ function getFeaturedItems() {
   const all = [];
 
   sources.forEach(src => {
-    const arr = getStoredItems(src.key);
+const arr =
+  src.key === 'articles' ? getSectionItems('articles') :
+  src.key === 'editions' ? getSectionItems('editions') :
+  getStoredItems(src.key);
 
     arr.forEach((item, index) => {
       const image =

@@ -1670,7 +1670,12 @@ snap.forEach(docSnap => {
   const raw = { docId: docSnap.id, ...docSnap.data() };
   if (raw.section === 'editions') all.push(raw);
 });
-localStorage.setItem('contentcache', JSON.stringify(all));
+const existing = JSON.parse(localStorage.getItem('contentcache') || '[]');
+
+localStorage.setItem('contentcache', JSON.stringify([
+  ...existing.filter(x => x.section !== 'editions'),
+  ...all
+]));
     renderEditions();
 } catch (error) {
   console.error('Editions sync failed:', error);
