@@ -322,11 +322,12 @@ function addEditionArticleRow(key, article = {}) {
   wrap.appendChild(row);
 }
 async function collectEditionArticles(key, issueId) {
-  if (!auth.currentUser) {
-    alert("Please sign in first");
-    setStatus("You are not signed in");
-    return [];
-  }
+const { data: authData } = await supabase.auth.getUser();
+if (!authData?.user) {
+  alert("Please sign in first");
+  setStatus("You are not signed in");
+  return [];
+}
 
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return [];
@@ -471,7 +472,8 @@ const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
 
       const pdfInput = el(`${key}-pdf-file`);
       if (pdfInput?.files?.[0]) {
-        if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
+const { data: authData } = await supabase.auth.getUser();
+if (!authData?.user) throw new Error("يجب تسجيل الدخول أولاً");
         const uploadedPdf = await uploadPdfToStorage(pdfInput.files[0], key, currentId);
         obj.file = uploadedPdf.url;
         obj.filePath = uploadedPdf.path;
@@ -545,12 +547,17 @@ async function deleteItemById(sectionKey, id){
   rebuildDbFromCache();
   renderList(sectionKey);
 
-  try {
-    await window.fs.deleteDoc(window.fs.doc(window.fs.db, "content", String(id)));
-  } catch (e) {
-    console.error("Firestore delete error:", e);
-    alert("فشل حذف المستند من Firestore");
-  }
+try {
+  const { error } = await supabase
+    .from("content")
+    .delete()
+    .eq("id", String(id));
+
+  if (error) throw error;
+} catch (e) {
+  console.error("Supabase delete error:", e);
+  alert("فشل حذف المستند من Supabase");
+}
 
 try { if (target?.imagePath) await supabase.storage.from('site-files').remove([target.imagePath]); } catch (e) { console.error(e); }
 try { if (target?.filePath) await supabase.storage.from('site-files').remove([target.filePath]); } catch (e) { console.error(e); }
@@ -676,25 +683,39 @@ async function reloadFromSupabase(){
   }
 }
 
-async function reloadFromSupabase(){
+async function recoverAllData(){
+  setStatus("جاري المزامنة بين Supabase و Local...");
+  let supabaseItems = [];
+  let localItems = [];
+
   try {
-    setStatus("جاري تحميل البيانات من Supabase...");
-    const { data, error } = await supabase
-      .from('content')
-      .select('*')
-      .order('updatedAt', { ascending: false });
-
+    const { data, error } = await supabase.from("content").select("*");
     if (error) throw error;
-
-    const all = (data || []).map(raw => normalizeItem(raw.section, raw));
-    setContentCache(all);
-    rebuildDbFromCache();
-    renderList(state.currentSectionKey);
-    setStatus(`تم تحميل ${all.length} عنصر من Supabase`);
+    supabaseItems = (data || []).map(raw => normalizeItem(raw.section, raw));
   } catch (e) {
     console.error(e);
-    setStatus("فشل تحميل Supabase");
   }
+
+  try {
+    localItems = getContentCache().map(item => normalizeItem(item.section, item));
+  } catch (e) {
+    console.error(e);
+  }
+
+  const mergedMap = new Map();
+  [...localItems, ...supabaseItems].forEach(item => {
+    const id = String(item.docId || item.id || uid());
+    const existing = mergedMap.get(id);
+    if (!existing || Number(item.updatedAt || 0) >= Number(existing.updatedAt || 0)) {
+      mergedMap.set(id, item);
+    }
+  });
+
+  const merged = Array.from(mergedMap.values());
+  setContentCache(merged);
+  rebuildDbFromCache();
+  showSection(state.currentSectionKey);
+  setStatus(`تمت المزامنة: ${merged.length} عنصر`);
 }
 function exportJSON(){
   const out = {};
@@ -709,7 +730,21 @@ function exportJSON(){
   a.remove();
   URL.revokeObjectURL(url);
 }
+async function init(){
+  buildMenu();
+  rebuildDbFromCache();
+  showSection(state.currentSectionKey);
+  await recoverAllData();
 
+  el("reloadBtn").addEventListener("click", reloadFromSupabase);
+  el("recoverBtn").addEventListener("click", recoverAllData);
+  el("exportBtn").addEventListener("click", exportJSON);
+  el("clearBtn").addEventListener("click", clearLocalStorageOnly);
+  el("logoutBtn").addEventListener("click", async () => {
+    try { await supabase.auth.signOut(); } catch {}
+    location.reload();
+  });
+}
 function clearLocalStorageOnly(){
   if (!confirm("هل تريد مسح التخزين المحلي فقط؟")) return;
   localStorage.removeItem("contentcache");
