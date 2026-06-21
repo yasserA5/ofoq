@@ -6,11 +6,7 @@ const storage = getStorage(app);
 
 await new Promise((resolve) => {
   onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      location.href = "./login-admin.html";
-      return;
-    }
-    resolve();
+    resolve(user || null);
   });
 });
 
@@ -224,7 +220,7 @@ function bindPreviewInputs(key){
     imgInput.addEventListener("change", () => {
       const file = imgInput.files?.[0];
       if (!file) return;
-      preview.innerHTML = buildPreviewHTML(URL.createObjectURL(file), "");
+preview.innerHTML = `<div><img src="${URL.createObjectURL(file)}" alt="preview"></div>`;
     });
   }
 
@@ -430,22 +426,15 @@ if (fullPdfInput?.files?.[0]) {
 
       obj.articles = await collectEditionArticles(key, currentId);
 
-const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
-  .filter(item => item.section === 'editions')
-  .sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
-      const filtered = editionsData.filter(x => String(x.id) !== String(obj.id));
-      filtered.unshift({
-        id: obj.id,
-        issueNumber: obj.issueNumber,
-        number: obj.issueNumber,
-        title: obj.title,
-        short: obj.short,
-        description: obj.short,
-        image: obj.image || "",
-        file: obj.file || "",
-        articles: obj.articles || []
-      });
-      localStorage.setItem("editions", JSON.stringify(filtered));
+const allCache = getContentCache().map(item => normalizeItem(item.section, item));
+const filteredCache = allCache.filter(x => String(x.docId || x.id) !== String(obj.id));
+filteredCache.unshift(normalizeItem("editions", {
+  ...obj,
+  section: "editions",
+  number: obj.issueNumber
+}));
+setContentCache(filteredCache);
+rebuildDbFromCache();
     } else if (cfg.kind === "live") {
       obj.title.ar = el(`${key}-title-ar`)?.value.trim() || "";
       obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
@@ -724,7 +713,17 @@ function clearLocalStorageOnly(){
   showSection(state.currentSectionKey);
   setStatus("تم مسح localStorage");
 }
-
+[
+  "issues",
+  "magazineIssues",
+  "publications",
+  "releases",
+  "articles",
+  "scientificArticles",
+  "peerArticles",
+  "peer-reviewed-articles",
+  "scholarlyArticles"
+].forEach(key => localStorage.removeItem(key));
 async function init(){
   buildMenu();
   rebuildDbFromCache();
