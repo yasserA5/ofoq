@@ -1526,7 +1526,7 @@ section h2 {
   <a href="#academic">🎓 أكاديمي</a>
   <a href="#contact">📩 تواصل</a>
 </div>
-<script type="module" src="/firestore-bridge.js"></script>
+<script type="module" src="supabase-bridge.js"></script>
 <script>
 let currentLang = localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
 
@@ -1550,52 +1550,97 @@ function esc(str) {
     .replace(/'/g, '&#039;');
 }
 
-
-async function syncFirestoreToLocal() {
+function normalizeItem(row) {
+  return {
+    ...row,
+    title: typeof row.title === 'object'
+      ? row.title
+      : {
+          ar: row.title_ar || row.title || '',
+          en: row.title_en || row.title || '',
+          fr: row.title_fr || row.title || ''
+        },
+    description: typeof row.description === 'object'
+      ? row.description
+      : {
+          ar: row.description_ar || row.description || row.short || row.details || '',
+          en: row.description_en || row.description || row.short || row.details || '',
+          fr: row.description_fr || row.description || row.short || row.details || ''
+        },
+    author: typeof row.author === 'object'
+      ? row.author
+      : {
+          ar: row.author_ar || row.author || '',
+          en: row.author_en || row.author || '',
+          fr: row.author_fr || row.author || ''
+        },
+    image: row.image || row.photo || row.cover || row.thumbnail || row.previewImage || row.imageUrl || row.image_url || '',
+    fileUrl: row.fileUrl || row.file_url || row.pdfUrl || row.pdf_url || row.documentUrl || row.document_url || row.attachmentUrl || row.attachment_url || row.downloadUrl || row.download_url || '',
+    createdAt: row.createdAt || row.created_at || row.updatedAt || row.updated_at || row.date || null
+  };
+}
+async function syncSupabaseToLocal() {
   try {
-    const waitForFS = (timeoutMs = 7000) => new Promise((resolve, reject) => {
-      const t0 = Date.now();
-
-      function tick() {
-        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) {
-          return resolve();
+    const waitForSB = (timeoutMs = 7000) =>
+      new Promise((resolve, reject) => {
+        const t0 = Date.now();
+        function tick() {
+          if (window.sb?.supabase) return resolve(window.sb.supabase);
+          if (Date.now() - t0 > timeoutMs) return reject(new Error('Supabase not ready'));
+          setTimeout(tick, 60);
         }
-        if (Date.now() - t0 > timeoutMs) {
-          return reject(new Error('fs not ready'));
-        }
-        setTimeout(tick, 60);
-      }
+        tick();
+      });
 
-      tick();
-    });
-
-    await waitForFS();
-
-const { db, collection, onSnapshot } = window.fs;
+    const supabase = await waitForSB();
     const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
 
-sections.forEach((key) => {
-  const q = collection(db, key);
+    for (const key of sections) {
+      const { data, error } = await supabase
+        .from(key)
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  onSnapshot(q, (snap) => {
-    const data = snap.docs.map((doc, index) => ({
-      docId: doc.id,
-      _sortIndex: index,
-      ...doc.data()
-    })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
+      if (error) {
+        console.error(`Load error for ${key}:`, error);
+        localStorage.setItem(key, JSON.stringify([]));
+        continue;
+      }
 
-    localStorage.setItem(key, JSON.stringify(data));
-
-    refreshHomeSections();
-  }, (error) => {
-    console.error('Live sync error for ' + key, error);
-  });
-});
+localStorage.setItem(key, JSON.stringify((data || []).map(normalizeItem)));
+    }
 
     refreshHomeSections();
   } catch (error) {
-    console.error('Sync error:', error);
+    console.error('Supabase sync error:', error);
   }
+}
+function subscribeSupabaseRealtime() {
+  const supabase = window.sb?.supabase;
+  if (!supabase) return;
+
+  const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
+
+  sections.forEach((table) => {
+    supabase
+      .channel(`public:${table}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table },
+        async () => {
+          const { data, error } = await supabase
+            .from(table)
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (!error) {
+            localStorage.setItem(table, JSON.stringify(data || []));
+            refreshHomeSections();
+          }
+        }
+      )
+      .subscribe();
+  });
 }
 document.addEventListener("click", e => {
 
@@ -1611,12 +1656,13 @@ document.addEventListener("click", e => {
       : "flex";
   }
 });
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   refreshHomeSections();
-  updateHeader();
   setLang(currentLang);
   initMobileDropdowns();
-  syncFirestoreToLocal();
+  await syncSupabaseToLocal();
+  await loadSupabaseUser();
+  subscribeSupabaseRealtime();
 });
 
 window.addEventListener('storage', (event) => {
@@ -1706,19 +1752,35 @@ function searchSuggestions(){
     if(!q) return;
     window.location.href='search.html?q='+encodeURIComponent(q);
   }
-let user = JSON.parse(
-  localStorage.getItem("user") ||
-  sessionStorage.getItem("user") ||
-  "null"
-);
+let user = null;
+
+async function loadSupabaseUser() {
+  const supabase = window.sb?.supabase;
+  if (!supabase) return;
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error('Auth user load error:', error);
+    user = null;
+    updateHeader();
+    return;
+  }
+
+  user = data.user || null;
+  updateHeader();
+}
 
 function updateHeader(){
   const headerActions = document.getElementById("headerActions");
   const mobileLogin = document.getElementById("mobileLogin");
   const mobileRegister = document.getElementById("mobileRegister");
 
-  if(user && user.loggedIn){
-    const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
+if (user) {
+const displayName =
+  user.user_metadata?.name ||
+  user.user_metadata?.username ||
+  user.email?.split('@')[0] ||
+  'User';
 
     headerActions.innerHTML = `
       <div class="lang-wrapper">
@@ -1747,13 +1809,15 @@ function updateHeader(){
 
 
 
-function logout(){
-  localStorage.removeItem("user");
-  sessionStorage.removeItem("user");
+async function logout() {
+  const supabase = window.sb?.supabase;
+  if (supabase) {
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error('Logout error:', error);
+  }
   user = null;
   location.reload();
 }
-
 
 function renderContent(storageKey, gridId) {
   const grid = document.getElementById(gridId);

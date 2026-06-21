@@ -1015,7 +1015,7 @@
   </div>
 </footer>
 
-<script type="module" src="/firestore-bridge.js"></script>
+<script type="module" src="./supabase-init.js"></script>
 <script>
   async function waitForFS(timeoutMs = 7000) {
     return new Promise((resolve, reject) => {
@@ -1124,32 +1124,34 @@ const activities = all.filter(item => item.section === 'activities');
     if (stat4) stat4.textContent = activities.length;
   }
 
-async function syncFirestoreToLocal() {
+async function syncSupabaseToLocal() {
   try {
-    await waitForFS();
+    const { data, error } = await supabase
+      .from('content')
+      .select('*')
+      .eq('section', 'research')
+      .order('updatedAt', { ascending: false });
 
-    const contentCol = window.fs.collection(window.fs.db, 'content');
-    const snap = await window.fs.getDocs(contentCol);
+    if (error) throw error;
 
-    const all = [];
-    snap.forEach(docSnap => {
-      const item = {
-        docId: docSnap.id,
-        ...docSnap.data()
-      };
-      all.push(item);
-    });
+    const all = (data || []).map(item => ({
+      ...item,
+      title: item.title || { ar: '', en: '', fr: '' },
+      author: item.author || { ar: '', en: '', fr: '' },
+      short: item.short || item.description || { ar: '', en: '', fr: '' },
+      details: item.details || { ar: '', en: '', fr: '' }
+    }));
 
     localStorage.setItem('contentcache', JSON.stringify(all));
     renderResearch();
     updateStats();
   } catch (e) {
-    console.error('Firestore sync failed:', e);
+    console.error('Supabase sync failed', e);
     renderResearch();
   }
 }
-  
-  window.addEventListener('load', syncFirestoreToLocal);
+
+window.addEventListener('load', syncSupabaseToLocal);
 </script>
 
 
@@ -1234,11 +1236,19 @@ function doSearch(e){
   }
 
 
-let user = JSON.parse(
-  localStorage.getItem("user") ||
-  sessionStorage.getItem("user") ||
-  "null"
-);
+let user = null;
+
+async function loadSupabaseUser() {
+  const { data } = await supabase.auth.getUser();
+  user = data.user || null;
+  updateHeader();
+}
+
+async function logout() {
+  await supabase.auth.signOut();
+  user = null;
+  location.reload();
+}
 
 function updateHeader(){
   const headerActions = document.getElementById("headerActions");
@@ -1506,8 +1516,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   updateHeader();
   setLang(currentLang);
   initMobileDropdowns();
-  renderResearch();
-  await syncFirestoreToLocal();
+  await loadSupabaseUser();
+  await syncSupabaseToLocal();
 });
 </script>
 

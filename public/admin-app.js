@@ -1,24 +1,12 @@
-import { app, auth } from "./firebase-init.js";
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
+import { supabase } from "./supabase-init.js";
 
-const storage = getStorage(app);
+const { data: authData } = await supabase.auth.getUser();
 
-await new Promise((resolve) => {
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      location.href = "./login-admin.html";
-      return;
-    }
-    resolve();
-  });
-});
+if (!authData?.user) {
+  location.href = "./login-admin.html";
+}
 
-await new Promise((resolve) => {
-  if (window.fs && window.fs.db) return resolve();
-  window.addEventListener("firestoreReady", resolve, { once: true });
-});
-
+const currentUser = authData.user;
 // ... rest of your code here
 
 const SECTIONS = [
@@ -267,21 +255,36 @@ function showSection(key){
 async function uploadPdfToStorage(file, sectionKey, itemId){
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
   const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
-  const storageRef = ref(storage, filePath);
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return { url, path: filePath };
+
+  const { error } = await supabase.storage
+    .from('site-files')
+    .upload(filePath, file, { upsert: true });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from('site-files')
+    .getPublicUrl(filePath);
+
+  return { url: data.publicUrl, path: filePath };
 }
 
 async function uploadImageToStorage(file, sectionKey, itemId){
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
   const filePath = `images/${sectionKey}/${itemId}-${safeName}`;
-  const storageRef = ref(storage, filePath);
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return { url, path: filePath };
-}
 
+  const { error } = await supabase.storage
+    .from('site-files')
+    .upload(filePath, file, { upsert: true });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from('site-files')
+    .getPublicUrl(filePath);
+
+  return { url: data.publicUrl, path: filePath };
+}
 function addEditionArticleRow(key, article = {}) {
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return;
@@ -363,16 +366,23 @@ function upsertLocal(sectionKey, obj){
   rebuildDbFromCache();
 }
 
-async function upsertFirestore(sectionKey, obj){
+async function upsertSupabase(sectionKey, obj){
   const now = Date.now();
   const docIdValue = String(obj.docId || obj.id || uid());
+
   obj.id = docIdValue;
   obj.docId = docIdValue;
   obj.section = sectionKey;
   obj.updatedAt = now;
   if (!obj.createdAt) obj.createdAt = now;
   if (!obj.status) obj.status = "published";
-  await window.fs.setDoc(window.fs.doc(window.fs.db, "content", docIdValue), obj, { merge: true });
+
+  const { error } = await supabase
+    .from('content')
+    .upsert([obj], { onConflict: 'id' });
+
+  if (error) throw error;
+
   return obj;
 }
 
@@ -477,7 +487,7 @@ const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
     }
 
     upsertLocal(key, obj);
-    await upsertFirestore(key, obj);
+await upsertSupabase(key, obj);
     resetForm(key);
     renderList(key);
     setStatus(`تم حفظ: ${obj.title.ar || "عنصر جديد"}`);
@@ -542,14 +552,14 @@ async function deleteItemById(sectionKey, id){
     alert("فشل حذف المستند من Firestore");
   }
 
-  try { if (target?.imagePath) await deleteObject(ref(storage, target.imagePath)); } catch (e) { console.error(e); }
-  try { if (target?.filePath) await deleteObject(ref(storage, target.filePath)); } catch (e) { console.error(e); }
-  try { if (target?.fullIssueFilePath) await deleteObject(ref(storage, target.fullIssueFilePath)); } catch (e) { console.error(e); }
+try { if (target?.imagePath) await supabase.storage.from('site-files').remove([target.imagePath]); } catch (e) { console.error(e); }
+try { if (target?.filePath) await supabase.storage.from('site-files').remove([target.filePath]); } catch (e) { console.error(e); }
+try { if (target?.fullIssueFilePath) await supabase.storage.from('site-files').remove([target.fullIssueFilePath]); } catch (e) { console.error(e); }
 
   if (Array.isArray(target?.articles)) {
     for (const article of target.articles) {
       try {
-        if (article?.filePath) await deleteObject(ref(storage, article.filePath));
+        if (article?.filePath) await supabase.storage.from('site-files').remove([article.filePath]);
       } catch (e) {
         console.error(e);
       }
@@ -645,63 +655,47 @@ function renderList(key){
   });
 }
 
-async function reloadFromFirestore(){
+async function reloadFromSupabase(){
   try {
-    setStatus("جاري تحميل البيانات من Firestore...");
-    const col = window.fs.collection(window.fs.db, "content");
-    const snap = await window.fs.getDocs(col);
-    const all = [];
-    snap.forEach(docSnap => {
-      const raw = { docId: docSnap.id, ...docSnap.data() };
-      all.push(normalizeItem(raw.section, raw));
-    });
+    setStatus("جاري تحميل البيانات من Supabase...");
+    const { data, error } = await supabase
+      .from('content')
+      .select('*')
+      .order('updatedAt', { ascending: false });
+
+    if (error) throw error;
+
+    const all = (data || []).map(raw => normalizeItem(raw.section, raw));
     setContentCache(all);
     rebuildDbFromCache();
     renderList(state.currentSectionKey);
-    setStatus(`تم تحميل ${all.length} عنصر من Firestore`);
+    setStatus(`تم تحميل ${all.length} عنصر من Supabase`);
   } catch (e) {
     console.error(e);
-    setStatus("فشل تحميل Firestore");
+    setStatus("فشل تحميل Supabase");
   }
 }
 
-async function recoverAllData(){
-  setStatus("جاري المزامنة بين Firestore و Local...");
-  let firestoreItems = [];
-  let localItems = [];
-
+async function reloadFromSupabase(){
   try {
-    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, "content"));
-    snap.forEach(docSnap => {
-      const raw = { docId: docSnap.id, ...docSnap.data() };
-      firestoreItems.push(normalizeItem(raw.section, raw));
-    });
+    setStatus("جاري تحميل البيانات من Supabase...");
+    const { data, error } = await supabase
+      .from('content')
+      .select('*')
+      .order('updatedAt', { ascending: false });
+
+    if (error) throw error;
+
+    const all = (data || []).map(raw => normalizeItem(raw.section, raw));
+    setContentCache(all);
+    rebuildDbFromCache();
+    renderList(state.currentSectionKey);
+    setStatus(`تم تحميل ${all.length} عنصر من Supabase`);
   } catch (e) {
     console.error(e);
+    setStatus("فشل تحميل Supabase");
   }
-
-  try {
-    localItems = getContentCache().map(item => normalizeItem(item.section, item));
-  } catch (e) {
-    console.error(e);
-  }
-
-  const mergedMap = new Map();
-  [...localItems, ...firestoreItems].forEach(item => {
-    const id = String(item.docId || item.id || uid());
-    const existing = mergedMap.get(id);
-    if (!existing || Number(item.updatedAt || 0) >= Number(existing.updatedAt || 0)) {
-      mergedMap.set(id, item);
-    }
-  });
-
-  const merged = Array.from(mergedMap.values());
-  setContentCache(merged);
-  rebuildDbFromCache();
-  showSection(state.currentSectionKey);
-  setStatus(`تمت المزامنة: ${merged.length} عنصر`);
 }
-
 function exportJSON(){
   const out = {};
   SECTIONS.forEach(s => out[s.key] = state.bySection[s.key]);
@@ -735,10 +729,10 @@ async function init(){
   el("recoverBtn").addEventListener("click", recoverAllData);
   el("exportBtn").addEventListener("click", exportJSON);
   el("clearBtn").addEventListener("click", clearLocalStorageOnly);
-  el("logoutBtn").addEventListener("click", async () => {
-    try { await signOut(auth); } catch {}
-    location.reload();
-  });
+el("logoutBtn").addEventListener("click", async () => {
+  try { await supabase.auth.signOut(); } catch {}
+  location.reload();
+});
 }
 
 window.addEditionArticleRow = addEditionArticleRow;
