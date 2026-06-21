@@ -1,24 +1,11 @@
-import { app, auth } from "./firebase-init.js";
-import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
+import { supabase } from "./supabase-init.js";
 
-const storage = getStorage(app);
+const { data: authData } = await supabase.auth.getUser();
 
-await new Promise((resolve) => {
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      location.href = "./login-admin.html";
-      return;
-    }
-    resolve();
-  });
-});
-
-await new Promise((resolve) => {
-  if (window.fs && window.fs.db) return resolve();
-  window.addEventListener("firestoreReady", resolve, { once: true });
-});
-
+if (!authData?.user) {
+  location.href = "./login-page.html";
+}
+const currentUser = authData.user;
 // ... rest of your code here
 
 const SECTIONS = [
@@ -267,21 +254,36 @@ function showSection(key){
 async function uploadPdfToStorage(file, sectionKey, itemId){
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
   const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
-  const storageRef = ref(storage, filePath);
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return { url, path: filePath };
+
+  const { error } = await supabase.storage
+    .from('site-files')
+    .upload(filePath, file, { upsert: true });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from('site-files')
+    .getPublicUrl(filePath);
+
+  return { url: data.publicUrl, path: filePath };
 }
 
 async function uploadImageToStorage(file, sectionKey, itemId){
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
   const filePath = `images/${sectionKey}/${itemId}-${safeName}`;
-  const storageRef = ref(storage, filePath);
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return { url, path: filePath };
-}
 
+  const { error } = await supabase.storage
+    .from('site-files')
+    .upload(filePath, file, { upsert: true });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from('site-files')
+    .getPublicUrl(filePath);
+
+  return { url: data.publicUrl, path: filePath };
+}
 function addEditionArticleRow(key, article = {}) {
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return;
@@ -319,11 +321,12 @@ function addEditionArticleRow(key, article = {}) {
   wrap.appendChild(row);
 }
 async function collectEditionArticles(key, issueId) {
-  if (!auth.currentUser) {
-    alert("Please sign in first");
-    setStatus("You are not signed in");
-    return [];
-  }
+const { data: authData } = await supabase.auth.getUser();
+if (!authData?.user) {
+  alert("Please sign in first");
+  setStatus("You are not signed in");
+  return [];
+}
 
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return [];
@@ -363,16 +366,23 @@ function upsertLocal(sectionKey, obj){
   rebuildDbFromCache();
 }
 
-async function upsertFirestore(sectionKey, obj){
+async function upsertSupabase(sectionKey, obj){
   const now = Date.now();
   const docIdValue = String(obj.docId || obj.id || uid());
+
   obj.id = docIdValue;
   obj.docId = docIdValue;
   obj.section = sectionKey;
   obj.updatedAt = now;
   if (!obj.createdAt) obj.createdAt = now;
   if (!obj.status) obj.status = "published";
-  await window.fs.setDoc(window.fs.doc(window.fs.db, "content", docIdValue), obj, { merge: true });
+
+  const { error } = await supabase
+    .from('content')
+    .upsert([obj], { onConflict: 'id' });
+
+  if (error) throw error;
+
   return obj;
 }
 
@@ -461,7 +471,8 @@ const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
 
       const pdfInput = el(`${key}-pdf-file`);
       if (pdfInput?.files?.[0]) {
-        if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
+const { data: authData } = await supabase.auth.getUser();
+if (!authData?.user) throw new Error("يجب تسجيل الدخول أولاً");
         const uploadedPdf = await uploadPdfToStorage(pdfInput.files[0], key, currentId);
         obj.file = uploadedPdf.url;
         obj.filePath = uploadedPdf.path;
@@ -469,15 +480,17 @@ const editionsData = JSON.parse(localStorage.getItem('contentcache') || '[]')
 
       const imgInput = el(`${key}-image`);
       if (imgInput?.files?.[0]) {
-        if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
+        const { data: authData } = await supabase.auth.getUser();
+if (!authData?.user) throw new Error("يجب تسجيل الدخول أولاً");
         const uploadedImage = await uploadImageToStorage(imgInput.files[0], key, currentId);
         obj.image = uploadedImage.url;
         obj.imagePath = uploadedImage.path;
       }
     }
 
-    upsertLocal(key, obj);
-    await upsertFirestore(key, obj);
+   await upsertSupabase(key, obj);
+   await reloadFromSupabase();
+upsertLocal(key, obj);
     resetForm(key);
     renderList(key);
     setStatus(`تم حفظ: ${obj.title.ar || "عنصر جديد"}`);
@@ -535,21 +548,26 @@ async function deleteItemById(sectionKey, id){
   rebuildDbFromCache();
   renderList(sectionKey);
 
-  try {
-    await window.fs.deleteDoc(window.fs.doc(window.fs.db, "content", String(id)));
-  } catch (e) {
-    console.error("Firestore delete error:", e);
-    alert("فشل حذف المستند من Firestore");
-  }
+try {
+  const { error } = await supabase
+    .from("content")
+    .delete()
+    .eq("id", String(id));
 
-  try { if (target?.imagePath) await deleteObject(ref(storage, target.imagePath)); } catch (e) { console.error(e); }
-  try { if (target?.filePath) await deleteObject(ref(storage, target.filePath)); } catch (e) { console.error(e); }
-  try { if (target?.fullIssueFilePath) await deleteObject(ref(storage, target.fullIssueFilePath)); } catch (e) { console.error(e); }
+  if (error) throw error;
+} catch (e) {
+  console.error("Supabase delete error:", e);
+  alert("فشل حذف المستند من Supabase");
+}
+
+try { if (target?.imagePath) await supabase.storage.from('site-files').remove([target.imagePath]); } catch (e) { console.error(e); }
+try { if (target?.filePath) await supabase.storage.from('site-files').remove([target.filePath]); } catch (e) { console.error(e); }
+try { if (target?.fullIssueFilePath) await supabase.storage.from('site-files').remove([target.fullIssueFilePath]); } catch (e) { console.error(e); }
 
   if (Array.isArray(target?.articles)) {
     for (const article of target.articles) {
       try {
-        if (article?.filePath) await deleteObject(ref(storage, article.filePath));
+        if (article?.filePath) await supabase.storage.from('site-files').remove([article.filePath]);
       } catch (e) {
         console.error(e);
       }
@@ -610,7 +628,7 @@ function renderList(key){
   count.textContent = data.length;
 
   if (!data.length) {
-    list.innerHTML = `<div class="empty">لا توجد بيانات في هذا القسم حالياً.<br>أضف محتوى جديداً أو اضغط "تحميل Firestore".</div>`;
+list.innerHTML = `<div class="empty">لا توجد بيانات في هذا القسم حالياً.<br>أضف محتوى جديداً أو اضغط "تحميل Supabase".</div>`;
     return;
   }
 
@@ -645,37 +663,36 @@ function renderList(key){
   });
 }
 
-async function reloadFromFirestore(){
+async function reloadFromSupabase(){
   try {
-    setStatus("جاري تحميل البيانات من Firestore...");
-    const col = window.fs.collection(window.fs.db, "content");
-    const snap = await window.fs.getDocs(col);
-    const all = [];
-    snap.forEach(docSnap => {
-      const raw = { docId: docSnap.id, ...docSnap.data() };
-      all.push(normalizeItem(raw.section, raw));
-    });
+    setStatus("جاري تحميل البيانات من Supabase...");
+    const { data, error } = await supabase
+      .from('content')
+      .select('*')
+      .order('updatedAt', { ascending: false });
+
+    if (error) throw error;
+
+    const all = (data || []).map(raw => normalizeItem(raw.section, raw));
     setContentCache(all);
     rebuildDbFromCache();
     renderList(state.currentSectionKey);
-    setStatus(`تم تحميل ${all.length} عنصر من Firestore`);
+    setStatus(`تم تحميل ${all.length} عنصر من Supabase`);
   } catch (e) {
     console.error(e);
-    setStatus("فشل تحميل Firestore");
+    setStatus("فشل تحميل Supabase");
   }
 }
 
 async function recoverAllData(){
-  setStatus("جاري المزامنة بين Firestore و Local...");
-  let firestoreItems = [];
+  setStatus("جاري المزامنة بين Supabase و Local...");
+  let supabaseItems = [];
   let localItems = [];
 
   try {
-    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, "content"));
-    snap.forEach(docSnap => {
-      const raw = { docId: docSnap.id, ...docSnap.data() };
-      firestoreItems.push(normalizeItem(raw.section, raw));
-    });
+    const { data, error } = await supabase.from("content").select("*");
+    if (error) throw error;
+    supabaseItems = (data || []).map(raw => normalizeItem(raw.section, raw));
   } catch (e) {
     console.error(e);
   }
@@ -687,7 +704,7 @@ async function recoverAllData(){
   }
 
   const mergedMap = new Map();
-  [...localItems, ...firestoreItems].forEach(item => {
+  [...localItems, ...supabaseItems].forEach(item => {
     const id = String(item.docId || item.id || uid());
     const existing = mergedMap.get(id);
     if (!existing || Number(item.updatedAt || 0) >= Number(existing.updatedAt || 0)) {
@@ -725,18 +742,22 @@ function clearLocalStorageOnly(){
   setStatus("تم مسح localStorage");
 }
 
-async function init(){
+async function init() {
   buildMenu();
   rebuildDbFromCache();
   showSection(state.currentSectionKey);
   await recoverAllData();
 
-  el("reloadBtn").addEventListener("click", reloadFromFirestore);
+  el("reloadBtn").addEventListener("click", reloadFromSupabase);
   el("recoverBtn").addEventListener("click", recoverAllData);
   el("exportBtn").addEventListener("click", exportJSON);
   el("clearBtn").addEventListener("click", clearLocalStorageOnly);
   el("logoutBtn").addEventListener("click", async () => {
-    try { await signOut(auth); } catch {}
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.error(e);
+    }
     location.reload();
   });
 }
