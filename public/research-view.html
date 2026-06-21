@@ -1336,10 +1336,10 @@ document.addEventListener('keydown', function(e) {
   }
 
 async function getResearchById() {
-  const rawId = getQueryParam("id");
+  const rawId = getQueryParam('id');
   if (!rawId) return null;
 
-  const allData = safeParse(localStorage.getItem("research"), []);
+  const allData = safeParse(localStorage.getItem('research'), []);
   if (Array.isArray(allData)) {
     const localItem = allData.find(
       i => String(i?.id) === String(rawId) || String(i?.docId) === String(rawId)
@@ -1353,7 +1353,7 @@ async function getResearchById() {
         const start = Date.now();
         function check() {
           if (window.sb?.supabase) return resolve(window.sb.supabase);
-          if (Date.now() - start > timeoutMs) return reject(new Error("Supabase not ready"));
+          if (Date.now() - start > timeoutMs) return reject(new Error('Supabase not ready'));
           setTimeout(check, 50);
         }
         check();
@@ -1362,27 +1362,33 @@ async function getResearchById() {
     const supabase = await waitForSB();
 
     let { data, error } = await supabase
-      .from("content")
-      .select("*")
-      .eq("section", "research")
-      .eq("id", rawId)
+      .from('research')
+      .select('*')
+      .eq('id', rawId)
       .maybeSingle();
 
     if (error || !data) {
       const fallback = await supabase
-        .from("content")
-        .select("*")
-        .eq("section", "research")
-        .eq("docId", rawId)
-        .maybeSingle();
+        .from('research')
+        .select('*')
+        .limit(500);
 
-      data = fallback.data;
-      error = fallback.error;
+      if (!fallback.error && Array.isArray(fallback.data)) {
+        data = fallback.data.find(
+          i => String(i?.id) === String(rawId) || String(i?.docId) === String(rawId)
+        ) || null;
+      }
     }
 
-    if (error || !data) return null;
+    if (!data) return null;
 
-    const item = data;
+    const item = {
+      ...data,
+      image: data.image || data.photo || data.cover || data.thumbnail || data.previewImage || data.imageUrl,
+      file: data.file || data.fileUrl || data.pdfUrl || data.documentUrl || data.attachmentUrl,
+      createdAt: data.createdAt || data.created_at || data.updatedAt || data.updated_at || data.date
+    };
+
     const updated = Array.isArray(allData) ? allData : [];
     const index = updated.findIndex(
       x => String(x?.docId) === String(item.docId) || String(x?.id) === String(item.id)
@@ -1391,14 +1397,13 @@ async function getResearchById() {
     if (index >= 0) updated[index] = item;
     else updated.unshift(item);
 
-    localStorage.setItem("research", JSON.stringify(updated));
+    localStorage.setItem('research', JSON.stringify(updated));
     return item;
   } catch (err) {
-    console.error("Supabase fetch failed:", err);
+    console.error('Supabase fetch failed:', err);
     return null;
   }
 }
-
   function buildNotFound(lang){
     const t = uiTexts[lang] || uiTexts.ar;
     return `
