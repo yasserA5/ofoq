@@ -1257,10 +1257,6 @@ section h2 {
     <div class="featured-dots" id="featuredDots"></div>
   </div>
 </section>
-<section id="editions">
-  <h2 data-t="seceditions"></h2>
-  <div class="grid" id="editionsGrid"></div>
-</section>
 <section id="current-issue">
   <h2>العدد الحالي</h2>
 
@@ -1550,6 +1546,55 @@ function esc(str) {
     .replace(/'/g, '&#039;');
 }
 
+const storageAliases = {
+  articles: ['articles', 'scientificArticles', 'peerArticles', 'peer-reviewed-articles', 'scholarlyArticles'],
+  editions: ['editions', 'issues', 'magazineIssues', 'publications', 'releases']
+};
+
+function parseStoredList(key) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn('Invalid localStorage data for ' + key, error);
+    return [];
+  }
+}
+
+function getItemIdentity(item, fallbackKey) {
+  if (!item || typeof item !== 'object') return fallbackKey;
+  return String(
+    item.docId ||
+    item.id ||
+    item.slug ||
+    item.uid ||
+    item._id ||
+    getByLang(item.title, 'ar') ||
+    getByLang(item.title, 'en') ||
+    getByLang(item.title, 'fr') ||
+    fallbackKey
+  );
+}
+
+function mergeItemLists(existing, incoming) {
+  const map = new Map();
+  [...existing, ...incoming].forEach((item, index) => {
+    const identity = getItemIdentity(item, 'item-' + index);
+    map.set(identity, { ...(map.get(identity) || {}), ...item });
+  });
+  return [...map.values()];
+}
+
+function getStorageKeys(storageKey) {
+  return storageAliases[storageKey] || [storageKey];
+}
+
+function getStoredItems(storageKey) {
+  return getStorageKeys(storageKey).reduce((items, key) => {
+    return mergeItemLists(items, parseStoredList(key));
+  }, []);
+}
+
 
 async function syncFirestoreToLocal() {
   try {
@@ -1572,7 +1617,7 @@ async function syncFirestoreToLocal() {
     await waitForFS();
 
 const { db, collection, onSnapshot } = window.fs;
-    const sections = ['research', 'articles', 'files', 'editions', 'activities', 'training'];
+    const sections = ['research', 'articles', 'files', 'editions', 'issues', 'publications', 'activities', 'training'];
 
 sections.forEach((key) => {
   const q = collection(db, key);
@@ -1584,7 +1629,10 @@ sections.forEach((key) => {
       ...doc.data()
     })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
 
-    localStorage.setItem(key, JSON.stringify(data));
+    const merged = mergeItemLists(getStoredItems(key), data)
+      .sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
+
+    localStorage.setItem(key, JSON.stringify(merged));
 
     refreshHomeSections();
   }, (error) => {
@@ -1620,7 +1668,8 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('storage', (event) => {
-  if (['research', 'articles', 'files', 'editions', 'activities', 'training'].includes(event.key)) {
+  const watchedKeys = ['research', 'files', 'activities', 'training', ...getStorageKeys('articles'), ...getStorageKeys('editions')];
+  if (watchedKeys.includes(event.key)) {
     refreshHomeSections();
   }
 });
@@ -1760,7 +1809,7 @@ function renderContent(storageKey, gridId) {
   if (!grid) return;
   const section = grid.closest('section');
 
-  const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+  const items = getStoredItems(storageKey);
   const lang = getCurrentLang();
 
   grid.innerHTML = '';
@@ -1872,7 +1921,7 @@ function openDownload(url) {
 }
 
 function downloadItem(storageKey, index) {
-  const list = JSON.parse(localStorage.getItem(storageKey) || '[]');
+  const list = getStoredItems(storageKey);
   const item = list[index];
   if (!item) return;
 
@@ -1921,7 +1970,7 @@ function renderPopularContent() {
   const items = [];
 
   sources.forEach(src => {
-    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+    const arr = getStoredItems(src.key);
     arr.forEach((item, index) => {
       const title = getByLang(item.title, lang) || '';
       const desc = getContentDesc(item, lang);
@@ -2011,7 +2060,7 @@ function editionSortValue(item, fallback) {
 }
 
 function getLatestEdition() {
-  const editions = JSON.parse(localStorage.getItem('editions') || '[]');
+  const editions = getStoredItems('editions');
   if (!editions.length) return null;
 
   return editions
@@ -2082,7 +2131,7 @@ function renderLatestIssue() {
 
 
   function goToPage(pageType,index){
-    const list=JSON.parse(localStorage.getItem(pageType) || '[]');
+    const list=getStoredItems(pageType);
     const selected=list[index];
     if(selected){localStorage.setItem('selectedItem',JSON.stringify(selected));}
     const pageMap={
@@ -2099,10 +2148,10 @@ function renderLatestIssue() {
 
   // dynamic stats from localStorage
   function updateStats(){
-    const research   = JSON.parse(localStorage.getItem('research')   || '[]');
-    const articles   = JSON.parse(localStorage.getItem('articles')   || '[]');
-    const users      = JSON.parse(localStorage.getItem('users')      || '[]');
-    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+    const research   = getStoredItems('research');
+    const articles   = getStoredItems('articles');
+    const users      = getStoredItems('users');
+    const activities = getStoredItems('activities');
 
     const n1 = research.length;
     const n2 = articles.length;
@@ -2432,7 +2481,7 @@ function collectLatest() {
   const lang = getCurrentLang();
 
   sources.forEach(src => {
-    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+    const arr = getStoredItems(src.key);
 
     arr.forEach((item, idx) => {
       all.push({
@@ -2533,7 +2582,7 @@ function getFeaturedItems() {
   const all = [];
 
   sources.forEach(src => {
-    const arr = JSON.parse(localStorage.getItem(src.key) || '[]');
+    const arr = getStoredItems(src.key);
 
     arr.forEach((item, index) => {
       const image =
