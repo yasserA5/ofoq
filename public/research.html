@@ -1014,7 +1014,6 @@
     </div>
   </div>
 </footer>
-
 <script type="module" src="./supabase-init.js"></script>
 <script>
   async function waitForFS(timeoutMs = 7000) {
@@ -1085,14 +1084,14 @@ const list = JSON.parse(localStorage.getItem('contentcache') || '[]')
       const selected = list[index];
     if (selected) {
       localStorage.setItem('selectedItem', JSON.stringify(selected));
-      if (pageType === 'research') {
-        const targetId = selected.docId || selected.id;
-        const targetUrl = 'research-view?id=' + encodeURIComponent(targetId);
-        if (targetId) {
-          window.location.assign(targetUrl);
-          return;
-        }
-      }
+if (pageType === "research") {
+  const targetId = selected.docId || selected.id;
+  const targetUrl = `./research-view.html?id=${encodeURIComponent(targetId)}`;
+  if (targetId) {
+    window.location.assign(targetUrl);
+    return;
+  }
+}
     }
     const pageMap = {
       research: 'research.html',
@@ -1482,10 +1481,9 @@ const descRaw =
   }
 
 function handleProtectedResearch(id){
-  if (id) {
-    const targetUrl = 'research-view?id=' + encodeURIComponent(id);
-    window.location.assign(targetUrl);
-  }
+  if (!id) return;
+  const targetUrl = `./research-view.html?id=${encodeURIComponent(id)}`;
+  window.location.assign(targetUrl);
 }
 
 
