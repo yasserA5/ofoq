@@ -2121,9 +2121,7 @@ function renderLatestIssue() {
     getByLang(item.details, lang) ||
     '';
   const img = getEditionImage(item);
-  const download = getEditionDownload(item);
-
-  if (!img && !desc && !download) {
+if (!img || !desc) {
     if (hero) hero.innerHTML = '';
     if (current) current.innerHTML = '';
     if (heroCard) heroCard.style.display = 'none';
@@ -2134,8 +2132,6 @@ function renderLatestIssue() {
   if (heroCard) heroCard.style.display = '';
   if (currentSection) currentSection.style.display = '';
 
-  const downloadAttrs = download ? `onclick="openDownload(decodeURIComponent('${encodeURIComponent(download)}'))"` : 'disabled';
-  const downloadLabel = lang === 'en' ? 'Download issue' : lang === 'fr' ? 'Télécharger le numéro' : 'تحميل العدد';
 
   const imageHtml = img
     ? `<img src="${esc(img)}" alt="${esc(title)}" style="width:100%;max-width:260px;border-radius:12px;margin-bottom:12px;object-fit:cover;" onerror="this.style.display='none'">`
@@ -2145,8 +2141,7 @@ function renderLatestIssue() {
     ${imageHtml}
     ${title && !isGenericIssueTitle(title) ? `<h3>${esc(title)}</h3>` : ''}
     ${desc ? `<p>${esc(desc)}</p>` : ''}
-    <button class="btn primary" ${downloadAttrs}>${downloadLabel}</button>
-  `;
+      `;
 
   if (hero) hero.innerHTML = issueHtml;
   if (current) current.innerHTML = issueHtml;
