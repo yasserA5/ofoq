@@ -272,7 +272,7 @@
     }
 
 
-  #menu-btn{
+#menu-btn{
   display:none;
   width:40px;
   height:40px;
@@ -280,12 +280,19 @@
   border:none;
   background:rgba(0,155,196,0.22);
   color:var(--primary-dark);
-  font-size:20px;
   cursor:pointer;
   align-items:center;
   justify-content:center;
+  flex-direction:column;
+  gap:3px;
 }
-
+#menu-btn span{
+  display:block;
+  width:18px;
+  height:2px;
+  background:var(--primary-dark);
+  border-radius:999px;
+}
 .nav-sheet-overlay{
   position:fixed;
   inset:0;

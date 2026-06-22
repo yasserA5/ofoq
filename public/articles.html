@@ -263,7 +263,7 @@
     .dropdown-academic .dropdown-content a{font-size:13px;}
 
 
-  #menu-btn{
+#menu-btn{
   display:none;
   width:40px;
   height:40px;
@@ -271,12 +271,19 @@
   border:none;
   background:rgba(0,155,196,0.22);
   color:var(--primary-dark);
-  font-size:20px;
   cursor:pointer;
   align-items:center;
   justify-content:center;
+  flex-direction:column;
+  gap:3px;
 }
-
+#menu-btn span{
+  display:block;
+  width:18px;
+  height:2px;
+  background:var(--primary-dark);
+  border-radius:999px;
+}
 .nav-sheet-overlay{
   position:fixed;
   inset:0;
@@ -839,7 +846,7 @@
 
 
   <div class="logo" onclick="goToHome()">
-    <img src="logo1.png"" alt="Logo">
+<img src="logo1.png" alt="Logo">
   </div>
 
 <nav>
@@ -1076,7 +1083,20 @@
     if (titleEl) titleEl.textContent = t('title');
     renderArticlesPeer();
   }
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('navSheetOverlay');
+  const btn = document.getElementById('menu-btn');
 
+  if (!menu || !overlay || !btn) return;
+
+  const isOpen = menu.classList.contains('show');
+
+  menu.classList.toggle('show', !isOpen);
+  overlay.classList.toggle('show', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+  document.body.style.overflow = !isOpen ? 'hidden' : '';
+}
   async function waitForFS(timeoutMs = 8000) {
     return new Promise((resolve, reject) => {
       const start = Date.now();
