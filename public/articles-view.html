@@ -1109,6 +1109,36 @@ img, video {
 <script type="module" src="/firestore-bridge.js"></script>
 <script src="view-loader.js"></script>
 <script>
+  async function copyArticleLink() {
+  const articleId =
+    window.displayItem?.docId ||
+    window.displayItem?.id;
+
+  if (!articleId) {
+    alert("لم يتم العثور على معرف المقال");
+    return;
+  }
+
+  const link =
+    window.location.origin +
+    "/articles-view.html?docId=" +
+    encodeURIComponent(articleId);
+
+  try {
+    await navigator.clipboard.writeText(link);
+
+    const btn = document.getElementById("copyLinkBtn");
+    if (btn) {
+      const oldText = btn.innerHTML;
+      btn.innerHTML = "✅ تم نسخ الرابط";
+      setTimeout(() => {
+        btn.innerHTML = oldText;
+      }, 2000);
+    }
+  } catch (err) {
+    alert(link);
+  }
+}
   document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
 });
@@ -1515,6 +1545,12 @@ async function getArticleById() {
             </div>
           </div>
         </section>
+
+<div style="margin-top:15px;">
+  <button class="btn primary" onclick="copyArticleLink()" id="copyLinkBtn">
+    🔗 نسخ رابط المقال
+  </button>
+</div>
 
         <div class="layout">
           <article class="article-card">
