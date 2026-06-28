@@ -1119,10 +1119,10 @@ img, video {
     return;
   }
 
-  const link =
-    window.location.origin +
-    "/articles-view.html?docId=" +
-    encodeURIComponent(articleId);
+const link =
+  window.location.origin +
+  "/api/share?docId=" +
+  encodeURIComponent(articleId);
 
   try {
     await navigator.clipboard.writeText(link);
