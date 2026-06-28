@@ -14,7 +14,7 @@ const db = admin.firestore();
 
 export default async function handler(req, res) {
   try {
-    const { docId } = req.query;
+const docId = req.query.docId || req.query.id;
 
     // منع القيم الفارغة
     if (!docId) {
