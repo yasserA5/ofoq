@@ -50,15 +50,12 @@ export default async function handler(req, res) {
 
     const ua = req.headers["user-agent"] || "";
 
-    const isBot =
-      ua.includes("facebookexternalhit") ||
-      ua.includes("Facebot") ||
-      ua.includes("WhatsApp") ||
-      ua.includes("Twitterbot");
+const isBot =
+  /facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|LinkedInBot|Discordbot|Slackbot/i.test(ua);
 
-    if (!isBot) {
-      return res.redirect(302, redirectUrl);
-    }
+if (!isBot) {
+  return res.redirect(302, redirectUrl);
+}
 
     res.setHeader("Content-Type", "text/html");
 
@@ -80,7 +77,11 @@ export default async function handler(req, res) {
 <meta name="twitter:image" content="${image}">
 </head>
 <body>
-Loading...
+<p>Redirecting...</p>
+
+<script>
+window.location.href = "${redirectUrl}";
+</script>
 </body>
 </html>
 `);
