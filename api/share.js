@@ -30,6 +30,8 @@ const docRef = db.collection("content").doc(docId);
 
     const article = snap.data();
 
+    console.log("ARTICLE DATA:", article);
+    
     const title = article.title || "Article";
     const description = article.summary || title;
     const image = article.image || "";
