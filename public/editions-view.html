@@ -921,10 +921,14 @@
 
 <main class="issue-page">
   <section class="issue-box">
-    <div class="issue-header">
-      <h2 class="issue-title" id="issueTitle">العدد</h2>
-      <div class="issue-info" id="issueMeta">...</div>
-    </div>
+<div class="issue-header">
+  <h2 class="issue-title" id="issueTitle">العدد</h2>
+  <div class="issue-info" id="issueMeta">...</div>
+
+  <button class="btn primary" onclick="shareIssue()" style="margin-top:15px;">
+    🔗 Share Issue
+  </button>
+</div>
 
     <div class="articles-list" id="articlesList"></div>
   </section>
@@ -1400,6 +1404,31 @@ async function syncContentFromFirestore() {
     localStorage.setItem('contentcache', JSON.stringify(all));
   } catch (error) {
     console.error('Content sync failed:', error);
+  }
+}
+
+async function shareIssue() {
+  const issueId = new URLSearchParams(window.location.search).get('id');
+
+  const shareUrl =
+    `${window.location.origin}/api/share?id=${issueId}`;
+
+  const title =
+    document.getElementById('issueTitle')?.textContent || document.title;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: title,
+        text: title,
+        url: shareUrl
+      });
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast('Link copied successfully', 'success');
+    }
+  } catch (err) {
+    console.error(err);
   }
 }
 
