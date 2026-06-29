@@ -925,7 +925,9 @@
       <h2 class="issue-title" id="issueTitle">العدد</h2>
       <div class="issue-info" id="issueMeta">...</div>
     </div>
-
+<button id="copyEditionLinkBtn" class="btn primary" style="margin-top:15px;">
+    🔗 نسخ رابط العدد
+</button>
     <div class="articles-list" id="articlesList"></div>
   </section>
 </main>
@@ -963,12 +965,7 @@
 <script type="module" src="./firebase-init.js"></script>
 <script type="module" src="./firestore-bridge.js"></script>
 <script>
-  const link =
-  window.location.origin +
-  "/api/share-edition?id=" +
-  encodeURIComponent(id);
 
-await navigator.clipboard.writeText(link);
   function goToHome(){ window.location.href = 'index.html'; }
 
   function toggleMenu(){
@@ -1276,12 +1273,21 @@ function normalizeArticles(issue){
   return [];
 }
 
-function renderIssuePage(){
-  const rawId = getQueryParam('id');
-  const editions = JSON.parse(localStorage.getItem('contentcache') || '[]')
-    .filter(item => item.section === 'editions');
+async function renderIssuePage() {
+    const rawId = getQueryParam('id');
+await waitForFS();
 
-  const issue = editions.find(item => String(item?.id || item?.docId) === String(rawId));
+const docRef = window.fs.doc(
+  window.fs.db,
+  "content",
+  rawId
+);
+
+const docSnap = await window.fs.getDoc(docRef);
+
+const issue = docSnap.exists()
+  ? { docId: docSnap.id, ...docSnap.data() }
+  : null;
 
   const issueHeroTitle = document.getElementById('issueHeroTitle');
   const issueTitle = document.getElementById('issueTitle');
@@ -1408,12 +1414,40 @@ async function syncContentFromFirestore() {
     console.error('Content sync failed:', error);
   }
 }
+async function copyEditionLink() {
+  const id = getQueryParam('id');
 
+  const link =
+    window.location.origin +
+    "/api/share-edition?id=" +
+    encodeURIComponent(id);
+
+  try {
+    await navigator.clipboard.writeText(link);
+
+    const btn = document.getElementById("copyEditionLinkBtn");
+    const oldText = btn.innerHTML;
+
+    btn.innerHTML = "✅ تم نسخ الرابط";
+
+    setTimeout(() => {
+      btn.innerHTML = oldText;
+    }, 2000);
+
+  } catch (err) {
+    alert(link);
+  }
+}
 window.addEventListener('DOMContentLoaded', async () => {
   updateHeader();
   await syncContentFromFirestore();
   setLang(currentLang);
-  renderIssuePage();
+await renderIssuePage();
+  const copyBtn = document.getElementById("copyEditionLinkBtn");
+
+if (copyBtn) {
+  copyBtn.addEventListener("click", copyEditionLink);
+}
 });
 </script>
 </body>
