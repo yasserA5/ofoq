@@ -48,6 +48,19 @@ const description =
     const shareUrl = `https://ofouqacademie.com/api/share?docId=${docId}`;
     const redirectUrl = `https://ofouqacademie.com/articles-view.html?docId=${docId}`;
 
+const ua = req.headers["user-agent"] || "";
+
+const isBot =
+  ua.includes("facebookexternalhit") ||
+  ua.includes("Facebot") ||
+  ua.includes("WhatsApp") ||
+  ua.includes("Twitterbot") ||
+  ua.includes("LinkedInBot");
+
+if (!isBot) {
+  return res.redirect(302, redirectUrl);
+}
+
     res.setHeader("Content-Type", "text/html");
 
     res.status(200).send(`
