@@ -1121,25 +1121,26 @@ img, video {
 
 const link =
   window.location.origin +
-  "/api/share?docId=" +
+  "/api/share?id=" +
   encodeURIComponent(articleId);
 
-  try {
-    await navigator.clipboard.writeText(link);
+try {
+  await navigator.clipboard.writeText(link);
 
-    const btn = document.getElementById("copyLinkBtn");
-    if (btn) {
-      const oldText = btn.innerHTML;
-      btn.innerHTML = "✅ تم نسخ الرابط";
-      setTimeout(() => {
-        btn.innerHTML = oldText;
-      }, 2000);
-    }
-  } catch (err) {
-    alert(link);
+  const btn = document.getElementById("copyLinkBtn");
+
+  if (btn) {
+    const oldText = btn.innerHTML;
+    btn.innerHTML = "✅ تم نسخ الرابط";
+
+    setTimeout(() => {
+      btn.innerHTML = oldText;
+    }, 2000);
   }
+} catch (err) {
+  alert(link);
 }
-  document.addEventListener('contextmenu', function(e) {
+document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
 });
 
