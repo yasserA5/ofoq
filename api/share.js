@@ -68,15 +68,12 @@ const description =
 <meta name="twitter:description" content="${description}">
 <meta name="twitter:image" content="${image}">
 
-<meta http-equiv="refresh" content="0; url=${redirectUrl}">
 </head>
 
 <body>
 <p>Redirecting...</p>
 
-<script>
-window.location.href = "${redirectUrl}";
-</script>
+
 </body>
 </html>
 `);
