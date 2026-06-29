@@ -31,10 +31,20 @@ const docRef = db.collection("content").doc(docId);
     const article = snap.data();
 
     console.log("ARTICLE DATA:", article);
-    
-    const title = article.title || "Article";
-    const description = article.summary || title;
-    const image = article.image || "";
+
+const title =
+  article.title?.ar ||
+  article.title?.en ||
+  article.title?.fr ||
+  "Article";
+
+const description =
+  article.short?.ar ||
+  article.short?.en ||
+  article.short?.fr ||
+  title;
+
+const image = article.image || "";
 
     const shareUrl = `https://ofouqacademie.com/api/share?docId=${docId}`;
     const redirectUrl = `https://ofouqacademie.com/articles-view.html?docId=${docId}`;
