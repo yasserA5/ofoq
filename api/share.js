@@ -43,8 +43,7 @@ const description =
   article.short?.en ||
   article.short?.fr ||
   title;
-
-const image = article.image || "";
+  const image = article.image || "";
 
     const shareUrl = `https://ofouqacademie.com/api/share?docId=${docId}`;
     const redirectUrl = `https://ofouqacademie.com/articles-view.html?docId=${docId}`;
