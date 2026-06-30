@@ -1409,13 +1409,17 @@ async function syncContentFromFirestore() {
 }
 
 async function shareIssue() {
-  const issueId = new URLSearchParams(window.location.search).get('id');
+  const issueId = new URLSearchParams(window.location.search).get("id");
 
   const shareUrl =
-    `${window.location.origin}/api/share?id=${issueId}`;
+    `${window.location.origin}/api/share-edition?id=${issueId}`;
 
-  navigator.clipboard.writeText(shareUrl);
-  showToast('Link copied successfully', 'success');
+  try {
+    await navigator.clipboard.writeText(shareUrl);
+    showToast("Link copied successfully", "success");
+  } catch {
+    showToast("Failed to copy link");
+  }
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
