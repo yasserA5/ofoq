@@ -773,6 +773,7 @@
       .nav-sheet,
       .nav-sheet-overlay{display:none}
     }
+    
   </style>
 </head>
 <body>
@@ -1413,23 +1414,8 @@ async function shareIssue() {
   const shareUrl =
     `${window.location.origin}/api/share?id=${issueId}`;
 
-  const title =
-    document.getElementById('issueTitle')?.textContent || document.title;
-
-  try {
-    if (navigator.share) {
-      await navigator.share({
-        title: title,
-        text: title,
-        url: shareUrl
-      });
-    } else {
-      await navigator.clipboard.writeText(shareUrl);
-      showToast('Link copied successfully', 'success');
-    }
-  } catch (err) {
-    console.error(err);
-  }
+  navigator.clipboard.writeText(shareUrl);
+  showToast('Link copied successfully', 'success');
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
