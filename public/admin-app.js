@@ -15,6 +15,10 @@ await new Promise((resolve) => {
   window.addEventListener("firestoreReady", resolve, { once: true });
 });
 
+async function ensureFreshAuth() {
+  if (!auth.currentUser) throw new Error("يجب تسجيل الدخول أولاً");
+  await auth.currentUser.getIdToken(true);
+}
 // ... rest of your code here
 
 const SECTIONS = [
@@ -379,7 +383,7 @@ async function saveItem(key){
   try {
     const currentId = state.editing.key === key && state.editing.id ? state.editing.id : uid();
     const existing = state.bySection[key].find(x => String(x.id) === String(currentId));
-
+await ensureFreshAuth();
     const obj = {
       id: currentId,
       docId: currentId,
@@ -523,7 +527,7 @@ async function deleteItemById(sectionKey, id){
   setContentCache(filtered);
   rebuildDbFromCache();
   renderList(sectionKey);
-
+await ensureFreshAuth();
   try {
     await window.fs.deleteDoc(window.fs.doc(window.fs.db, "content", String(id)));
   } catch (e) {
@@ -636,6 +640,7 @@ function renderList(key){
 
 async function reloadFromFirestore(){
   try {
+    await ensureFreshAuth();
     setStatus("جاري تحميل البيانات من Firestore...");
     const col = window.fs.collection(window.fs.db, "content");
     const snap = await window.fs.getDocs(col);
@@ -650,45 +655,52 @@ async function reloadFromFirestore(){
     setStatus(`تم تحميل ${all.length} عنصر من Firestore`);
   } catch (e) {
     console.error(e);
-    setStatus("فشل تحميل Firestore");
+    setStatus(`فشل تحميل Firestore: ${e.message || "Permission denied"}`);
   }
 }
 
 async function recoverAllData(){
-  setStatus("جاري المزامنة بين Firestore و Local...");
-  let firestoreItems = [];
-  let localItems = [];
-
   try {
-    const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, "content"));
-    snap.forEach(docSnap => {
-      const raw = { docId: docSnap.id, ...docSnap.data() };
-      firestoreItems.push(normalizeItem(raw.section, raw));
-    });
-  } catch (e) {
-    console.error(e);
-  }
+    await ensureFreshAuth();
+    setStatus("جاري المزامنة بين Firestore و Local...");
+    let firestoreItems = [];
+    let localItems = [];
 
-  try {
-    localItems = getContentCache().map(item => normalizeItem(item.section, item));
-  } catch (e) {
-    console.error(e);
-  }
-
-  const mergedMap = new Map();
-  [...localItems, ...firestoreItems].forEach(item => {
-    const id = String(item.docId || item.id || uid());
-    const existing = mergedMap.get(id);
-    if (!existing || Number(item.updatedAt || 0) >= Number(existing.updatedAt || 0)) {
-      mergedMap.set(id, item);
+    try {
+      const snap = await window.fs.getDocs(window.fs.collection(window.fs.db, "content"));
+      snap.forEach(docSnap => {
+        const raw = { docId: docSnap.id, ...docSnap.data() };
+        firestoreItems.push(normalizeItem(raw.section, raw));
+      });
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
-  });
 
-  const merged = Array.from(mergedMap.values());
-  setContentCache(merged);
-  rebuildDbFromCache();
-  showSection(state.currentSectionKey);
-  setStatus(`تمت المزامنة: ${merged.length} عنصر`);
+    try {
+      localItems = getContentCache().map(item => normalizeItem(item.section, item));
+    } catch (e) {
+      console.error(e);
+    }
+
+    const mergedMap = new Map();
+    [...localItems, ...firestoreItems].forEach(item => {
+      const id = String(item.docId || item.id || uid());
+      const existing = mergedMap.get(id);
+      if (!existing || Number(item.updatedAt || 0) >= Number(existing.updatedAt || 0)) {
+        mergedMap.set(id, item);
+      }
+    });
+
+    const merged = Array.from(mergedMap.values());
+    setContentCache(merged);
+    rebuildDbFromCache();
+    showSection(state.currentSectionKey);
+    setStatus(`تمت المزامنة: ${merged.length} عنصر`);
+  } catch (e) {
+    console.error(e);
+    setStatus(`Firestore sync failed: ${e.message || "Permission denied"}`);
+  }
 }
 
 function exportJSON(){
