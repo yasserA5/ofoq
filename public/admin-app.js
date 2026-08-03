@@ -1,7 +1,8 @@
 import { app, auth } from "./firebase-init.js";
 import {
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
   getStorage,
@@ -12,24 +13,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
 
 const storage = getStorage(app);
-
-const authReadyPromise = new Promise((resolve) => {
-  let resolved = false;
-  onAuthStateChanged(auth, (user) => {
-    if (!resolved) {
-      resolved = true;
-      resolve(user || null);
-    }
-  });
-});
-
-const firestoreReadyPromise = new Promise((resolve) => {
-  if (window.fs && window.fs.db) return resolve();
-  window.addEventListener("firestoreReady", () => resolve(), { once: true });
-});
-
-await authReadyPromise;
-await firestoreReadyPromise;
 
 const SECTIONS = [
   { key: "research", title: "أبحاث محكمة", kind: "content" },
@@ -50,8 +33,29 @@ const SECTIONS = [
 const state = {
   bySection: Object.fromEntries(SECTIONS.map((s) => [s.key, []])),
   currentSectionKey: "editions",
-  editing: { key: null, id: null }
+  editing: { key: null, id: null },
+  authResolved: false
 };
+
+const authReadyPromise = new Promise((resolve) => {
+  let done = false;
+  onAuthStateChanged(auth, (user) => {
+    updateAuthUI(user);
+    if (!done) {
+      done = true;
+      state.authResolved = true;
+      resolve(user || null);
+    }
+  });
+});
+
+const firestoreReadyPromise = new Promise((resolve) => {
+  if (window.fs && window.fs.db) return resolve();
+  window.addEventListener("firestoreReady", () => resolve(), { once: true });
+});
+
+await authReadyPromise;
+await firestoreReadyPromise;
 
 function el(id) {
   return document.getElementById(id);
@@ -59,6 +63,11 @@ function el(id) {
 
 function setStatus(msg) {
   const node = el("status");
+  if (node) node.textContent = msg || "";
+}
+
+function setLoginStatus(msg) {
+  const node = el("loginStatus");
   if (node) node.textContent = msg || "";
 }
 
@@ -119,16 +128,14 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function waitForCurrentUser(timeout = 7000) {
+async function waitForCurrentUser(timeout = 8000) {
   await authReadyPromise;
-
   if (auth.currentUser) return auth.currentUser;
 
-  const started = Date.now();
-  while (!auth.currentUser && Date.now() - started < timeout) {
+  const start = Date.now();
+  while (!auth.currentUser && Date.now() - start < timeout) {
     await sleep(150);
   }
-
   return auth.currentUser || null;
 }
 
@@ -140,14 +147,49 @@ async function ensureFreshAuth() {
 }
 
 function isPermissionError(err) {
-  const msg = String(err?.message || "").toLowerCase();
   const code = String(err?.code || "").toLowerCase();
+  const msg = String(err?.message || "").toLowerCase();
   return (
     code.includes("permission-denied") ||
-    msg.includes("permission-denied") ||
-    msg.includes("missing or insufficient permissions") ||
-    msg.includes("permission denied")
+    msg.includes("permission denied") ||
+    msg.includes("missing or insufficient permissions")
   );
+}
+
+function updateAuthUI(user) {
+  const authGate = el("authGate");
+  const adminApp = el("adminApp");
+  const userLabel = el("userEmail");
+
+  if (authGate) authGate.style.display = user ? "none" : "block";
+  if (adminApp) adminApp.style.display = user ? "block" : "none";
+  if (userLabel) userLabel.textContent = user?.email || "";
+
+  if (user) {
+    setLoginStatus("");
+    setStatus(`تم تسجيل الدخول: ${user.email || "Admin"}`);
+  } else {
+    setStatus("يرجى تسجيل الدخول");
+  }
+}
+
+async function loginAdmin() {
+  const email = el("loginEmail")?.value.trim() || "";
+  const password = el("loginPassword")?.value || "";
+
+  if (!email || !password) {
+    setLoginStatus("أدخل البريد الإلكتروني وكلمة المرور");
+    return;
+  }
+
+  try {
+    setLoginStatus("جاري تسجيل الدخول...");
+    await signInWithEmailAndPassword(auth, email, password);
+    setLoginStatus("");
+  } catch (err) {
+    console.error(err);
+    setLoginStatus(`فشل تسجيل الدخول: ${err.message || "بيانات غير صحيحة"}`);
+  }
 }
 
 function normalizeItem(sectionKey, raw) {
@@ -207,9 +249,9 @@ function buildMenu() {
 }
 
 function setActiveMenu(key) {
-  document
-    .querySelectorAll("#menu button")
-    .forEach((btn) => btn.classList.toggle("active", btn.dataset.key === key));
+  document.querySelectorAll("#menu button").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.key === key);
+  });
 }
 
 function buildEditionForm(key) {
@@ -363,18 +405,16 @@ function showSection(key) {
     contentNode.innerHTML = buildFormHTML(key) + buildListHTML(key);
 
     const searchInput = el(`${key}-search`);
-    if (searchInput) {
-      searchInput.addEventListener("input", () => renderList(key));
-    }
+    if (searchInput) searchInput.addEventListener("input", () => renderList(key));
 
     bindPreviewInputs(key);
 
     if (key === "editions") {
-      const nextNumber = getNextEditionNumber();
+      const next = getNextEditionNumber();
       const numInput = el(`${key}-number-ar`);
       const titleInput = el(`${key}-title-ar`);
-      if (numInput) numInput.value = nextNumber;
-      if (titleInput) titleInput.value = `العدد ${nextNumber}`;
+      if (numInput) numInput.value = next;
+      if (titleInput) titleInput.value = `العدد ${next}`;
       addEditionArticleRow(key);
     }
 
@@ -462,11 +502,7 @@ async function collectEditionArticles(key, issueId) {
     if (!title) continue;
 
     if (fileInput?.files?.[0]) {
-      const uploaded = await uploadPdfToStorage(
-        fileInput.files[0],
-        `${key}-articles`,
-        `${issueId}-${i + 1}`
-      );
+      const uploaded = await uploadPdfToStorage(fileInput.files[0], `${key}-articles`, `${issueId}-${i + 1}`);
       file = uploaded.url;
       filePath = uploaded.path;
     }
@@ -480,9 +516,7 @@ async function collectEditionArticles(key, issueId) {
 function upsertLocal(sectionKey, obj) {
   const all = getContentCache().map((item) => normalizeItem(item.section, item));
   const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
-  const filtered = all.filter(
-    (x) => String(x.docId || x.id) !== String(normalized.docId || normalized.id)
-  );
+  const filtered = all.filter((x) => String(x.docId || x.id) !== String(normalized.docId || normalized.id));
   filtered.unshift(normalized);
   setContentCache(filtered);
   rebuildDbFromCache();
@@ -493,7 +527,6 @@ async function upsertFirestore(sectionKey, obj) {
 
   const now = Date.now();
   const docIdValue = String(obj.docId || obj.id || uid());
-
   const payload = {
     ...obj,
     id: docIdValue,
@@ -520,12 +553,8 @@ async function saveItem(key) {
   try {
     await ensureFreshAuth();
 
-    const currentId =
-      state.editing.key === key && state.editing.id ? state.editing.id : uid();
-
-    const existing = state.bySection[key].find(
-      (x) => String(x.id) === String(currentId)
-    );
+    const currentId = state.editing.key === key && state.editing.id ? state.editing.id : uid();
+    const existing = state.bySection[key].find((x) => String(x.id) === String(currentId));
 
     const obj = {
       id: currentId,
@@ -555,21 +584,15 @@ async function saveItem(key) {
 
     if (cfg.kind === "edition") {
       obj.type = "edition";
-      obj.issueNumber =
-        Number(el(`${key}-number-ar`)?.value.trim()) || getNextEditionNumber();
+      obj.issueNumber = Number(el(`${key}-number-ar`)?.value.trim()) || getNextEditionNumber();
       obj.editionNumber = obj.issueNumber;
-      obj.title.ar =
-        el(`${key}-title-ar`)?.value.trim() || `العدد ${obj.issueNumber}`;
+      obj.title.ar = el(`${key}-title-ar`)?.value.trim() || `العدد ${obj.issueNumber}`;
       obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
 
       const imgInput = el(`${key}-image`);
       if (imgInput?.files?.[0]) {
         setStatus("جاري رفع صورة الغلاف...");
-        const uploadedImage = await uploadImageToStorage(
-          imgInput.files[0],
-          key,
-          currentId
-        );
+        const uploadedImage = await uploadImageToStorage(imgInput.files[0], key, currentId);
         obj.image = uploadedImage.url;
         obj.imagePath = uploadedImage.path;
       }
@@ -577,11 +600,7 @@ async function saveItem(key) {
       const fullPdfInput = el(`${key}-full-pdf-file`);
       if (fullPdfInput?.files?.[0]) {
         setStatus("جاري رفع PDF العدد الكامل...");
-        const uploadedFullPdf = await uploadPdfToStorage(
-          fullPdfInput.files[0],
-          `${key}-full`,
-          currentId
-        );
+        const uploadedFullPdf = await uploadPdfToStorage(fullPdfInput.files[0], `${key}-full`, currentId);
         obj.fullIssueFile = uploadedFullPdf.url;
         obj.fullIssueFilePath = uploadedFullPdf.path;
       }
@@ -614,11 +633,7 @@ async function saveItem(key) {
       const imgInput = el(`${key}-image`);
       if (imgInput?.files?.[0]) {
         setStatus("جاري رفع الصورة...");
-        const uploadedImage = await uploadImageToStorage(
-          imgInput.files[0],
-          key,
-          currentId
-        );
+        const uploadedImage = await uploadImageToStorage(imgInput.files[0], key, currentId);
         obj.image = uploadedImage.url;
         obj.imagePath = uploadedImage.path;
       }
@@ -633,8 +648,8 @@ async function saveItem(key) {
   } catch (err) {
     console.error(err);
     if (isPermissionError(err)) {
-      setStatus("فشل الحفظ: ليس لديك صلاحية Firestore/Storage");
-      alert("فشل الحفظ: تحقق من Firebase Auth وFirestore Rules وStorage Rules");
+      setStatus("فشل الحفظ: ليست لديك صلاحية للوصول إلى Firestore/Storage");
+      alert("فشل الحفظ: تحقق من Firebase Authentication وFirestore Rules وStorage Rules");
       return;
     }
     setStatus(err.message || "حدث خطأ أثناء الحفظ");
@@ -660,27 +675,18 @@ function loadForEdit(key, id) {
   const p = el(`${key}-preview`);
   if (p) {
     let previewHtml = buildPreviewHTML(item.image, item.file);
-
     if (key === "editions" && item.fullIssueFile) {
       previewHtml =
         `<div style="margin-bottom:6px">PDF العدد الكامل: <a href="${item.fullIssueFile}" target="_blank" rel="noopener noreferrer" style="color:#7dd3fc">فتح الملف</a></div>` +
         previewHtml;
     }
-
     p.innerHTML = previewHtml;
   }
 
   if (key === "editions") {
-    if (el(`${key}-number-ar`)) {
-      el(`${key}-number-ar`).value = item.issueNumber || item.editionNumber || "";
-    }
-    if (el(`${key}-title-ar`)) {
-      el(`${key}-title-ar`).value = getByLang(item.title, "ar");
-    }
-    if (el(`${key}-short-ar`)) {
-      el(`${key}-short-ar`).value = getByLang(item.short, "ar");
-    }
-
+    if (el(`${key}-number-ar`)) el(`${key}-number-ar`).value = item.issueNumber || item.editionNumber || "";
+    if (el(`${key}-title-ar`)) el(`${key}-title-ar`).value = getByLang(item.title, "ar");
+    if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar");
     const wrap = el(`${key}-articles-wrap`);
     if (wrap) wrap.innerHTML = "";
     (item.articles || []).forEach((article) => addEditionArticleRow(key, article));
@@ -690,9 +696,7 @@ function loadForEdit(key, id) {
 async function deleteItemById(sectionKey, id) {
   if (!confirm("هل تريد الحذف النهائي؟")) return;
 
-  const target = state.bySection[sectionKey].find(
-    (x) => String(x.docId || x.id) === String(id)
-  );
+  const target = state.bySection[sectionKey].find((x) => String(x.docId || x.id) === String(id));
 
   const all = getContentCache().map((item) => normalizeItem(item.section, item));
   const filtered = all.filter((x) => String(x.docId || x.id) !== String(id));
@@ -710,17 +714,13 @@ async function deleteItemById(sectionKey, id) {
     } catch (e) {
       console.error(e);
     }
-
     try {
       if (target?.filePath) await deleteObject(ref(storage, target.filePath));
     } catch (e) {
       console.error(e);
     }
-
     try {
-      if (target?.fullIssueFilePath) {
-        await deleteObject(ref(storage, target.fullIssueFilePath));
-      }
+      if (target?.fullIssueFilePath) await deleteObject(ref(storage, target.fullIssueFilePath));
     } catch (e) {
       console.error(e);
     }
@@ -737,10 +737,10 @@ async function deleteItemById(sectionKey, id) {
 
     setStatus("تم الحذف");
   } catch (err) {
-    console.error("Delete error:", err);
+    console.error(err);
     if (isPermissionError(err)) {
-      setStatus("فشل الحذف: ليس لديك صلاحية Firestore/Storage");
-      alert("فشل الحذف: تحقق من Firebase Auth وFirestore Rules وStorage Rules");
+      setStatus("فشل الحذف: ليست لديك صلاحية");
+      alert("فشل الحذف: تحقق من Firebase Rules");
       return;
     }
     setStatus(err.message || "فشل الحذف");
@@ -772,15 +772,16 @@ function resetForm(key) {
   if (preview) preview.innerHTML = "";
 
   if (key === "editions") {
-    const nextNumber = getNextEditionNumber();
+    const next = getNextEditionNumber();
     const numInput = el(`${key}-number-ar`);
     const titleInput = el(`${key}-title-ar`);
     const shortInput = el(`${key}-short-ar`);
     const wrap = el(`${key}-articles-wrap`);
 
-    if (numInput) numInput.value = nextNumber;
-    if (titleInput) titleInput.value = `العدد ${nextNumber}`;
+    if (numInput) numInput.value = next;
+    if (titleInput) titleInput.value = `العدد ${next}`;
     if (shortInput) shortInput.value = "";
+
     if (wrap) {
       wrap.innerHTML = "";
       addEditionArticleRow(key);
@@ -797,9 +798,11 @@ function renderList(key) {
   const data = state.bySection[key].filter((item) => {
     if (item.section !== key) return false;
     if (!q) return true;
+
     const t = getByLang(item.title, "ar").toLowerCase();
     const s = getByLang(item.short, "ar").toLowerCase();
     const d = getByLang(item.details, "ar").toLowerCase();
+
     return t.includes(q) || s.includes(q) || d.includes(q);
   });
 
@@ -817,10 +820,9 @@ function renderList(key) {
     const descBase = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
     const desc = descBase.length > 120 ? `${descBase.slice(0, 120)}...` : descBase;
     const author = getByLang(item.author, "ar") || "";
-    const dateLabel =
-      key === "editions"
-        ? `العدد ${item.editionNumber || item.issueNumber || ""}`
-        : getByLang(item.date, "ar") || "";
+    const dateLabel = key === "editions"
+      ? `العدد ${item.editionNumber || item.issueNumber || ""}`
+      : getByLang(item.date, "ar") || "";
 
     const imgHtml = item.image
       ? `<img src="${item.image}" alt="img" />`
@@ -828,12 +830,7 @@ function renderList(key) {
 
     const articlesHtml =
       key === "editions" && Array.isArray(item.articles) && item.articles.length
-        ? `<div style="margin-top:8px">${item.articles
-            .map(
-              (a) =>
-                `<span style="display:inline-block;margin:4px;padding:5px 9px;border-radius:999px;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.25)">${esc(a.title || "مقال")}</span>`
-            )
-            .join("")}</div>`
+        ? `<div style="margin-top:8px">${item.articles.map((a) => `<span style="display:inline-block;margin:4px;padding:5px 9px;border-radius:999px;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.25)">${esc(a.title || "مقال")}</span>`).join("")}</div>`
         : "";
 
     const wrap = document.createElement("div");
@@ -891,7 +888,6 @@ async function recoverAllData() {
     let firestoreItems = [];
 
     const user = await waitForCurrentUser(2500);
-
     if (user) {
       try {
         await user.getIdToken(true);
@@ -948,7 +944,6 @@ function exportJSON() {
   const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-
   a.href = url;
   a.download = `site-data-${new Date().toISOString().slice(0, 10)}.json`;
   document.body.appendChild(a);
@@ -986,8 +981,20 @@ function clearLocalStorageOnly() {
 async function init() {
   buildMenu();
   rebuildDbFromCache();
-  showSection(state.currentSectionKey);
-  await recoverAllData();
+
+  if (auth.currentUser) {
+    showSection(state.currentSectionKey);
+    await recoverAllData();
+  }
+
+  el("loginBtn")?.addEventListener("click", loginAdmin);
+
+  const loginPassword = el("loginPassword");
+  if (loginPassword) {
+    loginPassword.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loginAdmin();
+    });
+  }
 
   el("reloadBtn")?.addEventListener("click", reloadFromFirestore);
   el("recoverBtn")?.addEventListener("click", recoverAllData);
@@ -1001,6 +1008,15 @@ async function init() {
       console.error(e);
     }
     location.reload();
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    updateAuthUI(user);
+    if (user) {
+      rebuildDbFromCache();
+      showSection(state.currentSectionKey);
+      await recoverAllData();
+    }
   });
 }
 
