@@ -610,6 +610,17 @@
       background:#000;
     }
 
+    .live-video.is-loading::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+      background-size:200% 100%;
+      animation:shimmer 1.3s infinite;
+      pointer-events:none;
+    }
+
     .live-overlay{
       position:absolute;
       inset:0;
@@ -854,6 +865,11 @@
       to{transform:translateX(-100%);opacity:0}
     }
 
+    @keyframes shimmer{
+      0%{background-position:200% 0}
+      100%{background-position:-200% 0}
+    }
+
     .toast.removing{animation:slideOut 0.3s ease-in-out}
 
     @media(max-width:1100px){
@@ -1032,7 +1048,7 @@
       <span id="liveStatusText" data-t="hero_live_badge">🔴 البث المباشر الآن</span>
     </div>
     <h1 data-t="hero_title_live">البث الحي</h1>
-    <p data-t="hero_sub_live">تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة عبر YouTube وFacebook وTwitch وKick وX وInstagram</p>
+    <p data-t="hero_sub_live">تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة عبر YouTube وFacebook وTwitch وKick وX وInstagram وTikTok</p>
     <div class="issn-badge">3119-6691</div>
   </div>
 
@@ -1152,7 +1168,7 @@ const translations = {
     hero_live_badge:"🔴 البث المباشر الآن",
     hero_idle_badge:"⚪ لا يوجد بث حالياً",
     hero_title_live:"البث الحي",
-    hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة عبر YouTube وFacebook وTwitch وKick وX وInstagram",
+    hero_sub_live:"تابع معنا الآن الفعاليات والحوارات والندوات العلمية مباشرة عبر YouTube وFacebook وTwitch وKick وX وInstagram وTikTok",
     sec_live_multi:"بثوث مباشرة أخرى الآن",
     sec_live_next:"البث القادم",
     sec_live_ended:"الإعادات السابقة",
@@ -1199,7 +1215,7 @@ const translations = {
     hero_live_badge:"🔴 Live now",
     hero_idle_badge:"⚪ Nothing live right now",
     hero_title_live:"Live Stream",
-    hero_sub_live:"Follow our live events, seminars and talks on YouTube, Facebook, Twitch, Kick, X and Instagram.",
+    hero_sub_live:"Follow our live events, seminars and talks on YouTube, Facebook, Twitch, Kick, X, Instagram and TikTok.",
     sec_live_multi:"Also live right now",
     sec_live_next:"Upcoming Live",
     sec_live_ended:"Previous Replays",
@@ -1246,7 +1262,7 @@ const translations = {
     hero_live_badge:"🔴 En direct",
     hero_idle_badge:"⚪ Aucun direct pour le moment",
     hero_title_live:"Diffusion en direct",
-    hero_sub_live:"Suivez nos événements, séminaires et conférences en direct sur YouTube, Facebook, Twitch, Kick, X et Instagram.",
+    hero_sub_live:"Suivez nos événements, séminaires et conférences en direct sur YouTube, Facebook, Twitch, Kick, X, Instagram et TikTok.",
     sec_live_multi:"Autres directs en ce moment",
     sec_live_next:"Prochains directs",
     sec_live_ended:"Rediffusions précédentes",
@@ -1326,10 +1342,14 @@ window.copyToClipboard = copyToClipboard;
 /* ============================================================
    Platform detection + embed builder
    Supports: YouTube, Facebook, Twitch (channel/vod/clip),
-   Kick (channel/vod), X/Twitter, Instagram, Vimeo, Dailymotion,
-   direct video files, and a safe generic fallback for anything
-   else (unlisted platforms still get a working "watch" + "copy
-   link" card instead of a broken embed).
+   Kick (channel/vod), X/Twitter, Instagram, TikTok, Vimeo,
+   Dailymotion, direct video files, and a safe generic fallback
+   for anything else (unlisted platforms still get a working
+   "watch" + "copy link" card instead of a broken embed).
+
+   NOTE: this table + detectPlatform() is intentionally kept in
+   sync with the copy in admin-app.js, so a link previews the
+   same way in the dashboard as it will on the live page.
    ============================================================ */
 const PLATFORM_META = {
   youtube:     { label:"YouTube",    icon:"▶️", bg:"rgba(255,0,0,.18)",     color:"#ff6b6b" },
@@ -1338,6 +1358,7 @@ const PLATFORM_META = {
   kick:        { label:"Kick",       icon:"🟢", bg:"rgba(83,252,25,.16)",  color:"#8dffb0" },
   twitter:     { label:"X (Twitter)",icon:"✖️", bg:"rgba(255,255,255,.12)",color:"#e5e7eb" },
   instagram:   { label:"Instagram",  icon:"📸", bg:"rgba(225,48,108,.2)",  color:"#f9a8d4" },
+  tiktok:      { label:"TikTok",     icon:"🎵", bg:"rgba(255,255,255,.12)",color:"#e5e7eb" },
   vimeo:       { label:"Vimeo",      icon:"🎬", bg:"rgba(26,183,234,.2)",  color:"#7fd8f7" },
   dailymotion: { label:"Dailymotion",icon:"🎞️", bg:"rgba(0,131,226,.2)",   color:"#7fc4f7" },
   video:       { label:"فيديو",      icon:"🎥", bg:"rgba(236,72,153,.18)", color:"#f9a8d4" },
@@ -1422,6 +1443,11 @@ function detectPlatform(rawUrl){
     return { platform:"instagram", aspect:"aspect-auto" };
   }
 
+  // TikTok video/live
+  if(/tiktok\.com\/(?:@[^\/]+\/(?:video|live)\/\d+|t\/[a-zA-Z0-9]+)/i.test(url) || /vm\.tiktok\.com\//i.test(url)){
+    return { platform:"tiktok", aspect:"aspect-9-16" };
+  }
+
   // Direct video file
   if(/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)){
     return { platform:"video", aspect:"aspect-16-9", embedUrl:url };
@@ -1429,11 +1455,12 @@ function detectPlatform(rawUrl){
 
   return { platform:"unknown", aspect:"aspect-auto", embedUrl:"" };
 }
+window.detectPlatform = detectPlatform;
 
 /* ------------------------------------------------------------
    Lazy-load third-party embed scripts only when actually needed
-   (avoids loading the Facebook / X / Instagram SDKs on every
-   page view when nothing on the page uses them)
+   (avoids loading the Facebook / X / Instagram / TikTok SDKs on
+   every page view when nothing on the page uses them)
    ------------------------------------------------------------ */
 const _loadedScripts = {};
 function loadScriptOnce(src, globalCheck){
@@ -1465,6 +1492,9 @@ function loadTwitterWidgets(){
 }
 function loadInstagramEmbed(){
   return loadScriptOnce("https://www.instagram.com/embed.js", () => !!window.instgrm);
+}
+function loadTikTokEmbed(){
+  return loadScriptOnce("https://www.tiktok.com/embed.js", () => false);
 }
 
 /* ------------------------------------------------------------
@@ -1519,6 +1549,11 @@ function buildMediaHTML(item, safeUrl, det, container){
       return `<blockquote class="instagram-media" data-instgrm-permalink="${safeUrl}"
         data-instgrm-version="14" style="width:100%;"></blockquote>`;
 
+    case "tiktok":
+      loadTikTokEmbed();
+      return `<blockquote class="tiktok-embed" cite="${safeUrl}" style="max-width:100%;min-width:100%;">
+        <section><a target="_blank" rel="noopener" href="${safeUrl}">${title}</a></section></blockquote>`;
+
     default:
       return `
         <div class="live-overlay" style="position:static;background:transparent;">
@@ -1539,11 +1574,11 @@ function needsFallbackLink(platform){
 }
 
 /* ============================================================
-   Data source — reads whatever the admin dashboard has written
-   to localStorage under "live" (or the legacy "liveStreams" key),
-   same pattern the rest of the site uses for research/articles/
-   editions. Falls back to a single demo entry if nothing is set
-   yet, so the page never looks broken.
+   Data source — reads whatever admin.html / admin-app.js has
+   written to localStorage under the "live" key (legacy
+   "liveStreams" key from older data is still merged in for
+   backward compatibility). Falls back to a single demo entry
+   if nothing is set yet, so the page never looks broken.
    ============================================================ */
 function readStoredArray(key){
   try{
@@ -1730,7 +1765,9 @@ function renderLive(){
   }
 
   // Ended / replays — populated automatically the moment an item's
-  // status is "ended" in the stored data; no separate copy step.
+  // status is switched to "ended" from the admin panel; the same
+  // record simply moves from the live list to this one, so nothing
+  // extra needs to be copied or re-uploaded.
   endedStreams.innerHTML = "";
   if(ended.length){
     ended.forEach(item => endedStreams.appendChild(buildCard({ item, mode:"ended" })));
@@ -1839,12 +1876,32 @@ window.setLang = function(lang){
 };
 
 /* ============================================================
-   Keep the page live-updated: cross-tab admin edits (storage
-   event) and same-tab edits when the user returns to this tab.
+   Live sync with admin.html:
+   1) "storage" fires automatically in every OTHER open tab the
+      instant admin-app.js writes to localStorage — this is what
+      makes an added URL "pop up live" here without a refresh.
+   2) BroadcastChannel is a faster/more reliable same-origin
+      companion to (1) — some browsers throttle storage events,
+      BroadcastChannel does not.
+   3) focus / visibilitychange are a safety net for the case the
+      browser missed both of the above (e.g. tab was frozen).
+   Note: all three only sync tabs on the SAME browser/device —
+   they cannot push admin changes to other visitors' machines
+   without a real backend behind localStorage.
    ============================================================ */
 window.addEventListener("storage", (event) => {
   if(event.key === "live" || event.key === "liveStreams") renderLive();
 });
+
+try{
+  const liveSyncChannel = new BroadcastChannel("ofouq-live-sync");
+  liveSyncChannel.onmessage = (event) => {
+    if(event?.data?.type === "live-updated") renderLive();
+  };
+} catch(e){
+  // BroadcastChannel unsupported (very old browsers) — storage event above still covers it
+}
+
 window.addEventListener("focus", () => renderLive());
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "visible") renderLive();
