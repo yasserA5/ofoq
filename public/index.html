@@ -839,8 +839,7 @@ section h2 {
       .grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
     }
     
-    /* ===== Mo
-    ving latest items (hero right box) ===== */
+    /* ===== Moving latest items (hero right box) ===== */
 .ticker{
   background:#ffffff;
   border-radius:18px;
@@ -908,21 +907,6 @@ section h2 {
   padding:10px 20px 0;
 }
 
-.featured-shell{
-  max-width:1200px;
-  margin:0 auto;
-  position:relative;
-  overflow:hidden;
-  border-radius:24px;
-  box-shadow:0 20px 50px rgba(15,23,42,.14);
-  background:#0f172a;
-}
-
-.featured-track{
-  display:flex;
-  transition:transform .6s ease;
-  will-change:transform;
-}
 .featured-shell{
   max-width:1200px;
   margin:0 auto;
@@ -1067,12 +1051,381 @@ section h2 {
   display:none;
   z-index:999;
   box-shadow:0 8px 20px rgba(0,0,0,.15);
+  transition:transform .2s ease, box-shadow .2s ease;
 }
-</style>
+#backTop:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.22);}
 
-  </style>
+/* ===== Motion ===== */
+@media (prefers-reduced-motion: no-preference){
+  .reveal{
+    opacity:0;
+    transform:translateY(22px);
+    transition:opacity .6s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1);
+  }
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+  .reveal-stagger > *{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .55s ease, transform .55s ease;
+  }
+  .reveal-stagger.in-view > *{opacity:1;transform:translateY(0);}
+  .reveal-stagger.in-view > *:nth-child(1){transition-delay:.03s;}
+  .reveal-stagger.in-view > *:nth-child(2){transition-delay:.09s;}
+  .reveal-stagger.in-view > *:nth-child(3){transition-delay:.15s;}
+  .reveal-stagger.in-view > *:nth-child(4){transition-delay:.21s;}
+  .reveal-stagger.in-view > *:nth-child(5){transition-delay:.27s;}
+  .reveal-stagger.in-view > *:nth-child(6){transition-delay:.33s;}
+}
+
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(24px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes floatSoft{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
+}
+@keyframes pulseRing{
+  0%{box-shadow:0 0 0 0 rgba(0,155,196,.35);}
+  70%{box-shadow:0 0 0 10px rgba(0,155,196,0);}
+  100%{box-shadow:0 0 0 0 rgba(0,155,196,0);}
+}
+@keyframes shimmer{
+  0%{background-position:-200% 0;}
+  100%{background-position:200% 0;}
+}
+@keyframes marquee{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+
+.hero-badge{animation:fadeInUp .6s ease both;}
+.hero-main h1{animation:fadeInUp .7s ease .08s both;}
+.hero-main p{animation:fadeInUp .7s ease .14s both;}
+.issn-badge{animation:fadeInUp .7s ease .2s both;}
+.hero-actions{animation:fadeInUp .7s ease .26s both;}
+.stats{animation:fadeInUp .7s ease .32s both;}
+.hero-side{animation:fadeInUp .8s ease .3s both;}
+.hero-side .hero-card{animation:floatSoft 6s ease-in-out infinite;}
+
+header{transition:box-shadow .25s ease, padding .25s ease;}
+header.scrolled{box-shadow:0 6px 20px rgba(0,0,0,.09);}
+
+.logo img{transition:transform .35s ease;}
+
+.stat-item{transition:transform .25s ease, box-shadow .25s ease;}
+.stat-item:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(13,107,140,.14);}
+
+.feature-box{transition:transform .3s ease, box-shadow .3s ease;}
+.feature-box:hover{transform:translateY(-5px);box-shadow:0 14px 28px rgba(15,23,42,.1);}
+
+.card-img{transition:transform .5s ease;}
+.card:hover .card-img{transform:scale(1.06);}
+
+.card-btn{transition:transform .2s ease, background .2s ease;}
+.card-btn:hover{transform:translateY(-2px);background:var(--primary-dark);}
+
+.btn.primary{position:relative;overflow:hidden;}
+.btn.primary::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.35),transparent);
+  background-size:200% 100%;
+  animation:shimmer 3.2s linear infinite;
+}
+
+.pill-circle{animation:pulseRing 2.6s ease-out infinite;}
+
+section h2{
+  animation:fadeInUp .6s ease both;
+}
+
+/* ===== Journal-at-a-glance strip ===== */
+.glance{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:14px;
+}
+.glance-item{
+  background:#ffffff;
+  border:1px solid #e7edf1;
+  border-radius:16px;
+  padding:16px 14px;
+  text-align:center;
+  box-shadow:0 2px 12px rgba(15,23,42,.05);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.glance-item:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(13,107,140,.12);}
+.glance-item .g-icon{font-size:22px;margin-bottom:6px;}
+.glance-item strong{display:block;font-size:14px;color:#0d6b8c;margin-bottom:2px;}
+.glance-item span{font-size:12px;color:#6b7280;}
+
+/* ===== Indexing / abstracting strip ===== */
+.index-strip{
+  background:linear-gradient(135deg,#f6fbff,var(--primary-soft));
+  border-radius:20px;
+  padding:20px;
+}
+.index-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin-top:12px;
+}
+.index-badge{
+  background:#ffffff;
+  border:1px solid #d7edf4;
+  color:#0d6b8c;
+  font-weight:800;
+  font-size:12.5px;
+  padding:8px 16px;
+  border-radius:999px;
+  box-shadow:0 4px 12px rgba(13,107,140,.06);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.index-badge:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 10px 20px rgba(13,107,140,.14);}
+
+/* ===== Key dates timeline ===== */
+.dates-rail{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
+}
+.date-card{
+  position:relative;
+  background:#fff;
+  border-radius:16px;
+  padding:16px 18px 16px 16px;
+  border-inline-start:4px solid var(--primary);
+  box-shadow:0 2px 14px rgba(0,0,0,.06);
+  transition:transform .25s ease;
+}
+.date-card:hover{transform:translateX(-4px);}
+.date-card .d-label{font-size:12px;color:#6b7280;margin-bottom:4px;}
+.date-card .d-title{font-size:14.5px;font-weight:800;color:#0f172a;}
+
+/* ===== Latest-content marquee ===== */
+.journal-strip{
+  overflow:hidden;
+  background:#0f172a;
+  border-radius:16px;
+  padding:12px 0;
+}
+.journal-strip-track{
+  display:flex;
+  width:max-content;
+  gap:36px;
+  animation:marquee 26s linear infinite;
+  color:#e6f3ff;
+  font-size:13px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.journal-strip-track span{opacity:.9;}
+.journal-strip:hover .journal-strip-track{animation-play-state:paused;}
+
+/* ===== Academic tracks showcase ===== */
+.tracks-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+.track-card{
+  display:block;
+  text-decoration:none;
+  background:#ffffff;
+  border:1px solid #e7edf1;
+  border-radius:18px;
+  padding:20px 18px;
+  box-shadow:0 2px 14px rgba(0,0,0,.05);
+  transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.track-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 16px 30px rgba(13,107,140,.14);
+  border-color:rgba(0,155,196,.35);
+}
+.track-card .tr-icon{
+  width:46px;height:46px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-soft);
+  font-size:20px;margin-bottom:12px;
+  transition:transform .3s ease;
+}
+.track-card:hover .tr-icon{transform:rotate(-6deg) scale(1.06);}
+.track-card h3{color:#0d6b8c;font-size:15px;margin-bottom:6px;}
+.track-card p{color:#666;font-size:12.5px;line-height:1.6;margin-bottom:10px;}
+.track-card .tr-link{color:var(--primary-dark);font-size:12.5px;font-weight:800;}
+
+/* ===== Editorial board teaser ===== */
+.board-banner{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  background:linear-gradient(135deg,#0f172a,#0d6b8c);
+  color:#fff;
+  border-radius:22px;
+  padding:clamp(22px,4vw,34px);
+}
+.board-banner h3{font-size:clamp(17px,2.6vw,22px);margin-bottom:8px;}
+.board-banner p{color:rgba(255,255,255,.85);font-size:13.5px;max-width:480px;}
+.board-banner .btn.primary{background:#fff;color:#0d6b8c;box-shadow:none;}
+.board-banner .btn.primary::after{display:none;}
+
+/* ===== FAQ ===== */
+.faq-list{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+.faq-item{
+  background:#fff;
+  border:1px solid #e7edf1;
+  border-radius:14px;
+  overflow:hidden;
+}
+.faq-q{
+  width:100%;
+  text-align:right;
+  background:transparent;
+  border:none;
+  padding:15px 18px;
+  font-family:inherit;
+  font-size:14.5px;
+  font-weight:800;
+  color:#0f172a;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.faq-q .faq-arrow{transition:transform .3s ease;color:#0d6b8c;font-size:12px;flex-shrink:0;}
+.faq-item.open .faq-q .faq-arrow{transform:rotate(180deg);}
+.faq-a{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .35s ease, padding .35s ease;
+  padding:0 18px;
+  color:#555;
+  font-size:13.5px;
+  line-height:1.8;
+}
+.faq-item.open .faq-a{padding:0 18px 16px;}
+
+/* ===== Newsletter ===== */
+.newsletter-box{
+  background:var(--primary-soft);
+  border-radius:22px;
+  padding:clamp(22px,4vw,34px);
+  text-align:center;
+}
+.newsletter-box h3{font-size:clamp(16px,2.4vw,20px);color:#064b63;margin-bottom:8px;}
+.newsletter-box p{color:#4b5c63;font-size:13.5px;margin-bottom:16px;}
+.newsletter-form{
+  display:flex;
+  gap:8px;
+  max-width:420px;
+  margin:0 auto;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.newsletter-form input{
+  flex:1;
+  min-width:200px;
+  padding:11px 16px;
+  border-radius:999px;
+  border:1px solid #cbd5e1;
+  font-family:inherit;
+  font-size:13.5px;
+  outline:none;
+}
+.newsletter-form input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,155,196,.15);}
+.newsletter-msg{margin-top:10px;font-size:12.5px;color:#0d6b8c;font-weight:700;min-height:16px;}
+
+/* ===== Scroll progress bar ===== */
+#scrollProgress{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--gold));
+  width:0%;
+  z-index:2000;
+  transition:width .1s linear;
+}
+
+/* ===== Ethics section ===== */
+.ethics-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+.ethics-box{
+  background:#ffffff;
+  border-radius:16px;
+  padding:16px 18px;
+  box-shadow:0 2px 14px rgba(0,0,0,.06);
+  border-inline-start:4px solid var(--gold);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.ethics-box:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.1);}
+.ethics-box h3{font-size:14.5px;color:#0f172a;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.ethics-box p{font-size:12.5px;color:#666;line-height:1.7;}
+
+/* ===== Archive CTA banner ===== */
+.archive-banner{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  background:#fff;
+  border:1px dashed rgba(0,155,196,.4);
+  border-radius:20px;
+  padding:20px 24px;
+}
+.archive-banner h3{font-size:15.5px;color:#064b63;margin-bottom:4px;}
+.archive-banner p{font-size:12.5px;color:#6b7280;}
+
+/* ===== Share row ===== */
+.share-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px;}
+.share-btn{
+  border:1px solid #e2e8f0;
+  background:#fff;
+  color:#0d6b8c;
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:12.5px;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .2s ease, background .2s ease;
+}
+.share-btn:hover{transform:translateY(-2px);background:var(--primary-soft);}
+
+/* ===== Contact strip ===== */
+.contact-strip{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px;
+}
+.contact-item{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,.05);
+  text-decoration:none;
+  color:#12313c;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.contact-item:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(13,107,140,.12);}
+.contact-item .c-icon{font-size:22px;margin-bottom:6px;}
+.contact-item strong{display:block;font-size:13.5px;margin-bottom:2px;}
+.contact-item span{font-size:11.5px;color:#6b7280;}
+</style>
 </head>
 <body>
+<div id="scrollProgress"></div>
 <!-- MOBILE MENU -->
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
@@ -1090,6 +1443,7 @@ section h2 {
     <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
   </div>
 
+  <form class="nav-sheet-search" onsubmit="doSearchMobile(event)">
     <input type="search" id="navSearchInputMobile" placeholder="ابحث في المنصة..." data-ph="search_placeholder_long">
     <button type="submit">🔍</button>
   </form>
@@ -1178,14 +1532,15 @@ section h2 {
     <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
   </ul>
 
-<input
-  type="search"
-  id="navSearchInput"
-  placeholder="ابحث..."
-  autocomplete="off"
-/>
-
-
+  <form class="nav-search" onsubmit="doSearch(event)">
+    <input
+      type="search"
+      id="navSearchInput"
+      placeholder="ابحث..."
+      autocomplete="off"
+    />
+    <span>🔍</span>
+  </form>
 
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
@@ -1201,6 +1556,7 @@ section h2 {
     <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
     <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
   </div>
+</nav>
 </header>
 
 <section class="hero">
@@ -1251,55 +1607,125 @@ section h2 {
 
 
 </section>
-<section id="latest-publications">
-  <div class="featured-shell">
-    <div class="featured-track" id="featuredTrack"></div>
-    <div class="featured-dots" id="featuredDots"></div>
+
+<section id="journal-glance" class="reveal">
+  <h2 data-t="sec_glance">المجلة في سطور</h2>
+  <div class="glance reveal-stagger">
+    <div class="glance-item">
+      <div class="g-icon">🗓️</div>
+      <strong data-t="glance_freq_v">فصلية</strong>
+      <span data-t="glance_freq">دورية الإصدار</span>
+    </div>
+    <div class="glance-item">
+      <div class="g-icon">⏱️</div>
+      <strong data-t="glance_review_v">4-6 أسابيع</strong>
+      <span data-t="glance_review">متوسط مدة التحكيم</span>
+    </div>
+    <div class="glance-item">
+      <div class="g-icon">🌍</div>
+      <strong data-t="glance_lang_v">عربي · إنجليزي · فرنسي</strong>
+      <span data-t="glance_lang">لغات النشر</span>
+    </div>
+    <div class="glance-item">
+      <div class="g-icon">🔓</div>
+      <strong data-t="glance_access_v">وصول مفتوح</strong>
+      <span data-t="glance_access">سياسة النشر</span>
+    </div>
+    <div class="glance-item">
+      <div class="g-icon">🧾</div>
+      <strong>ISSN 3119-6691</strong>
+      <span data-t="glance_issn">رقم التسجيل الدولي</span>
+    </div>
   </div>
 </section>
-<section id="current-issue">
+
+<section id="key-dates" class="reveal">
+  <h2 data-t="sec_dates">مواعيد مهمة</h2>
+  <div class="dates-rail reveal-stagger">
+    <div class="date-card">
+      <div class="d-label" data-t="date1_label">آخر أجل لاستقبال الأبحاث</div>
+      <div class="d-title" data-t="date1_value">مفتوح على مدار السنة</div>
+    </div>
+    <div class="date-card">
+      <div class="d-label" data-t="date2_label">إشعار القبول الأولي</div>
+      <div class="d-title" data-t="date2_value">خلال أسبوعين من الإرسال</div>
+    </div>
+    <div class="date-card">
+      <div class="d-label" data-t="date3_label">صدور العدد القادم</div>
+      <div class="d-title" data-t="date3_value">يُعلن عبر صفحة إصداراتنا</div>
+    </div>
+  </div>
+</section>
+
+<section id="indexing" class="reveal">
+  <div class="index-strip">
+    <h2 style="margin-bottom:6px;" data-t="sec_index">الفهرسة والأرشفة</h2>
+    <p style="color:#4b5c63;font-size:14px;" data-t="index_text">نعمل على إدراج المجلة ضمن قواعد الفهرسة والأرشفة العلمية المعتمدة لتوسيع أثر الأبحاث المنشورة.</p>
+    <div class="index-badges">
+      <span class="index-badge" data-t="idx_crossref">Crossref (قيد الإجراء)</span>
+      <span class="index-badge" data-t="idx_doaj">DOAJ (قيد الإجراء)</span>
+      <span class="index-badge" data-t="idx_scholar">Google Scholar</span>
+      <span class="index-badge" data-t="idx_issn">ISSN مسجّل</span>
+    </div>
+  </div>
+</section>
+
+<section id="journal-ticker" class="reveal" style="padding-top:0;padding-bottom:0;">
+  <div class="journal-strip">
+    <div class="journal-strip-track" id="journalStripTrack"></div>
+  </div>
+</section>
+
+<section id="current-issue" class="reveal">
   <h2>العدد الحالي</h2>
 
   <div class="feature-box current-issue-card" id="currentIssueContent"></div>
 </section>
 
-<section id="research">
+<section id="research" class="reveal">
   <h2 data-t="sec_research">أحدث الأبحاث</h2>
-  <div class="grid" id="researchGrid"></div>
+  <div class="grid reveal-stagger" id="researchGrid"></div>
 </section>
-<section id="articles">
+<section id="articles" class="reveal">
   <h2 data-t="secarticles">أحدث المقالات</h2>
-  <div class="grid" id="articlesGrid"></div>
+  <div class="grid reveal-stagger" id="articlesGrid"></div>
 </section>
 
-<section id="editions">
+<section id="editions" class="reveal">
   <h2 data-t="sec_editions">إصداراتنا</h2>
-  <div class="grid" id="editionsGrid"></div>
+  <div class="grid reveal-stagger" id="editionsGrid"></div>
+  <div class="archive-banner reveal" style="margin-top:18px;">
+    <div>
+      <h3 data-t="archive_title">تصفح الأرشيف الكامل</h3>
+      <p data-t="archive_text">اطّلع على جميع الأعداد والإصدارات السابقة للمجلة بترتيب زمني.</p>
+    </div>
+    <a href="editions.html" class="btn primary" data-t="archive_cta">تصفح جميع الإصدارات</a>
+  </div>
 </section>
-<section id="popular-research">
+<section id="popular-research" class="reveal">
   <h2>الأكثر قراءة</h2>
-  <div class="grid" id="popularGrid"></div>
+  <div class="grid reveal-stagger" id="popularGrid"></div>
 </section>
-<section id="activities">
+<section id="activities" class="reveal">
   <h2 data-t="sec_activities">أنشطتنا وورش العمل</h2>
-  <div class="grid" id="activitiesGrid"></div>
+  <div class="grid reveal-stagger" id="activitiesGrid"></div>
 </section>
 
-<section id="academic">
+<section id="academic" class="reveal">
   <h2 data-t="sec_academic">المحتوى الأكاديمي</h2>
-  <div class="grid" id="academicGrid"></div>
+  <div class="grid reveal-stagger" id="academicGrid"></div>
 </section>
 
-<section id="live">
+<section id="live" class="reveal">
   <h2 data-t="sec_live">البث المباشر</h2>
   <p style="font-size:clamp(16px,3.2vw,20px); color:#444;" data-t="live_text">
     سيتم عرض البث المباشر هنا عند توفره.
   </p>
 </section>
-<section id="why-us">
+<section id="why-us" class="reveal">
   <h2>لماذا منصة أفق؟</h2>
 
-  <div class="features-grid">
+  <div class="features-grid reveal-stagger">
 
     <div class="feature-box">
       <h3>محتوى محكّم</h3>
@@ -1323,17 +1749,53 @@ section h2 {
     </div>
 
     <div class="feature-box">
-      <h3>تخصصات متنوعة</h3>
-      <p>
+      <h3 data-t="f4_t">تخصصات متنوعة</h3>
+      <p data-t="f4_d">
         علوم سياسية وقانون وعلاقات دولية وسياسات عمومية.
       </p>
     </div>
 
   </div>
 </section>
-<section id="how-to-start">
+
+<section id="academic-tracks" class="reveal">
+  <h2 data-t="sec_tracks">المسارات الأكاديمية</h2>
+  <div class="tracks-grid reveal-stagger">
+    <a href="special-politics.html" class="track-card">
+      <div class="tr-icon">🏛️</div>
+      <h3 data-t="tr1_t">تخصص العلوم السياسية</h3>
+      <p data-t="tr1_d">تحليل الأنظمة السياسية والأحزاب والانتخابات.</p>
+      <span class="tr-link" data-t="tr_link">استعرض المسار ←</span>
+    </a>
+    <a href="special-ir.html" class="track-card">
+      <div class="tr-icon">🌐</div>
+      <h3 data-t="tr2_t">تخصص العلاقات الدولية</h3>
+      <p data-t="tr2_d">نظريات العلاقات الدولية والفاعلون الدوليون.</p>
+      <span class="tr-link" data-t="tr_link">استعرض المسار ←</span>
+    </a>
+    <a href="special-admin-law.html" class="track-card">
+      <div class="tr-icon">⚖️</div>
+      <h3 data-t="tr3_t">تخصص القانون الإداري</h3>
+      <p data-t="tr3_d">تنظيم الإدارة العمومية والرقابة على أعمالها.</p>
+      <span class="tr-link" data-t="tr_link">استعرض المسار ←</span>
+    </a>
+    <a href="special-const-law.html" class="track-card">
+      <div class="tr-icon">📜</div>
+      <h3 data-t="tr4_t">تخصص القانون الدستوري</h3>
+      <p data-t="tr4_d">بنية الدساتير والمؤسسات العليا في الدولة.</p>
+      <span class="tr-link" data-t="tr_link">استعرض المسار ←</span>
+    </a>
+    <a href="special-public-policy.html" class="track-card">
+      <div class="tr-icon">📊</div>
+      <h3 data-t="tr5_t">تخصص السياسات العمومية</h3>
+      <p data-t="tr5_d">تصميم وتقييم السياسات والبرامج الحكومية.</p>
+      <span class="tr-link" data-t="tr_link">استعرض المسار ←</span>
+    </a>
+  </div>
+</section>
+<section id="how-to-start" class="reveal">
   <h2 data-t="sec_how">كيف تبدأ؟</h2>
-  <div class="features-grid">
+  <div class="features-grid reveal-stagger">
     <div class="feature-box">
       <h3 data-t="how_step1_title">١. إنشاء حساب</h3>
       <p data-t="how_step1_text">قم بإنشاء حساب جديد من صفحة التسجيل حتى تتمكن من حفظ الدورات والمقالات التي تهمك ومتابعة تقدمك.</p>
@@ -1352,7 +1814,7 @@ section h2 {
     </div>
   </div>
 </section>
-<section id="call-for-papers">
+<section id="call-for-papers" class="reveal">
 
   <h2>انشر معنا</h2>
 
@@ -1382,11 +1844,11 @@ section h2 {
   </div>
 
 </section>
-<section id="publication-process">
+<section id="publication-process" class="reveal">
 
   <h2>كيف يتم النشر؟</h2>
 
-  <div class="features-grid">
+  <div class="features-grid reveal-stagger">
 
     <div class="feature-box">
       <h3>1</h3>
@@ -1411,11 +1873,11 @@ section h2 {
   </div>
 
 </section>
-<section id="publication-fields">
+<section id="publication-fields" class="reveal">
 
   <h2>مجالات النشر</h2>
 
-  <div class="features-grid">
+  <div class="features-grid reveal-stagger">
 
     <div class="feature-box">
       <h3>العلوم السياسية</h3>
@@ -1436,6 +1898,128 @@ section h2 {
   </div>
 
 </section>
+
+<section id="ethics" class="reveal">
+  <h2 data-t="sec_ethics">أخلاقيات النشر</h2>
+  <div class="ethics-grid reveal-stagger">
+    <div class="ethics-box">
+      <h3>🔍 <span data-t="eth1_t">النزاهة العلمية</span></h3>
+      <p data-t="eth1_d">يلتزم الباحثون بالأمانة العلمية والإشارة الدقيقة إلى جميع المصادر المستخدمة في أعمالهم.</p>
+    </div>
+    <div class="ethics-box">
+      <h3>⚖️ <span data-t="eth2_t">تضارب المصالح</span></h3>
+      <p data-t="eth2_d">يجب الإفصاح عن أي تضارب محتمل في المصالح قد يؤثر على موضوعية البحث أو تقييمه.</p>
+    </div>
+    <div class="ethics-box">
+      <h3>👥 <span data-t="eth3_t">حقوق التأليف</span></h3>
+      <p data-t="eth3_d">تُنسب المشاركة في البحث إلى كل من ساهم فعلياً في التصور أو التنفيذ أو الكتابة.</p>
+    </div>
+    <div class="ethics-box">
+      <h3>🛡️ <span data-t="eth4_t">سرية التحكيم</span></h3>
+      <p data-t="eth4_d">تخضع الأبحاث لتحكيم مزدوج التعمية يحفظ سرية هوية الباحث والمحكّمين.</p>
+    </div>
+  </div>
+</section>
+
+<section id="board-teaser" class="reveal">
+  <div class="board-banner">
+    <div>
+      <h3 data-t="board_title">تعرّف على هيئة التحرير</h3>
+      <p data-t="board_text">فريق أكاديمي يشرف على تحكيم الأبحاث ومراجعتها وضمان جودتها العلمية قبل النشر.</p>
+    </div>
+    <a href="editorial-board.html" class="btn primary" data-t="board_cta">هيئة التحرير</a>
+  </div>
+</section>
+
+<section id="faq" class="reveal">
+  <h2 data-t="sec_faq">أسئلة شائعة</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" type="button" onclick="toggleFaq(this)">
+        <span data-t="faq5_q">هل تُفحص الأبحاث للتأكد من خلوها من الانتحال العلمي؟</span>
+        <span class="faq-arrow">▾</span>
+      </button>
+      <div class="faq-a" data-t="faq5_a">نعم، تخضع جميع الأعمال المرسلة لفحص أولي للكشف عن الانتحال العلمي قبل إحالتها للتحكيم.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button" onclick="toggleFaq(this)">
+        <span data-t="faq6_q">كيف أتابع حالة البحث بعد إرساله؟</span>
+        <span class="faq-arrow">▾</span>
+      </button>
+      <div class="faq-a" data-t="faq6_a">يمكنك التواصل مع هيئة التحرير عبر صفحة اتصل بنا للاستفسار عن حالة بحثك في أي وقت.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button" onclick="toggleFaq(this)">
+        <span data-t="faq7_q">هل هناك نموذج تنسيق مُلزم للأبحاث؟</span>
+        <span class="faq-arrow">▾</span>
+      </button>
+      <div class="faq-a" data-t="faq7_a">نعم، يرجى الاطلاع على صفحة شروط النشر لمعرفة التنسيق والمعايير المطلوبة قبل الإرسال.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button" onclick="toggleFaq(this)">
+        <span data-t="faq2_q">كم تستغرق عملية التحكيم؟</span>
+        <span class="faq-arrow">▾</span>
+      </button>
+      <div class="faq-a" data-t="faq2_a">يستغرق التحكيم العلمي عادة ما بين 4 و6 أسابيع من تاريخ استلام البحث.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button" onclick="toggleFaq(this)">
+        <span data-t="faq3_q">بأي لغات يمكن إرسال الأبحاث؟</span>
+        <span class="faq-arrow">▾</span>
+      </button>
+      <div class="faq-a" data-t="faq3_a">تقبل المجلة الأبحاث والمقالات باللغات العربية والإنجليزية والفرنسية.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button" onclick="toggleFaq(this)">
+        <span data-t="faq4_q">كيف أرسل بحثي للنشر؟</span>
+        <span class="faq-arrow">▾</span>
+      </button>
+      <div class="faq-a" data-t="faq4_a">يمكنك الاطلاع على شروط النشر ثم إرسال عملك عبر صفحة اتصل بنا.</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact-strip" class="reveal">
+  <h2 data-t="sec_contact_strip">تواصل معنا</h2>
+  <div class="contact-strip reveal-stagger">
+    <a href="contact.html" class="contact-item">
+      <div class="c-icon">✉️</div>
+      <strong data-t="c1_t">راسلنا</strong>
+      <span data-t="c1_d">للاستفسارات ومراسلة هيئة التحرير</span>
+    </a>
+    <a href="rules.html" class="contact-item">
+      <div class="c-icon">📋</div>
+      <strong data-t="c2_t">شروط النشر</strong>
+      <span data-t="c2_d">قبل إرسال عملك للنشر</span>
+    </a>
+    <a href="editorial-board.html" class="contact-item">
+      <div class="c-icon">🎓</div>
+      <strong data-t="c3_t">هيئة التحرير</strong>
+      <span data-t="c3_d">تعرّف على فريق المراجعة</span>
+    </a>
+    <a href="live.html" class="contact-item">
+      <div class="c-icon">🔴</div>
+      <strong data-t="c4_t">بث مباشر</strong>
+      <span data-t="c4_d">تابع فعالياتنا أولاً بأول</span>
+    </a>
+  </div>
+  <div class="share-row">
+    <button class="share-btn" type="button" onclick="sharePage()">🔗 <span data-t="share_link">مشاركة الصفحة</span></button>
+    <button class="share-btn" type="button" onclick="copyPageLink()">📋 <span data-t="copy_link">نسخ الرابط</span></button>
+  </div>
+</section>
+
+<section id="newsletter" class="reveal">
+  <div class="newsletter-box">
+    <h3 data-t="news_title">اشترك في نشرتنا العلمية</h3>
+    <p data-t="news_text">تصلك إشعارات عند صدور عدد جديد أو نشر أبحاث ضمن تخصصك.</p>
+    <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+      <input type="email" id="newsletterEmail" placeholder="بريدك الإلكتروني" data-ph="news_placeholder" required>
+      <button type="submit" class="btn primary" data-t="news_cta">اشترك</button>
+    </form>
+    <div class="newsletter-msg" id="newsletterMsg"></div>
+  </div>
+</section>
 <footer data-t="footer_text" style="
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
   padding: clamp(24px, 6vw, 40px) clamp(20px, 5vw, 40px);
@@ -1450,7 +2034,6 @@ section h2 {
     max-width: 1200px; margin: 0 auto;
     position: relative; z-index: 2;
   ">
-    <!-- CC License Elegant -->
     <div style="
       display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
       gap: 12px 20px; margin-bottom: 12px; font-weight: 600;
@@ -1485,7 +2068,6 @@ section h2 {
   <span>3119-6691</span>
 </div>
 
-    <!-- License Link + Icons -->
     <div style="
       display: flex; align-items: center; justify-content: center;
       gap: 8px; padding: 12px 20px;
@@ -1498,9 +2080,9 @@ section h2 {
         display: flex; align-items: center; gap: 6px;
       ">
         Creative Commons Attribution-NonCommercial 4.0 International
-        <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width: 18px; height: 18px; opacity: 0.9;">
-        <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width: 18px; height: 18px; opacity: 0.9;">
-        <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width: 18px; height: 18px; opacity: 0.9;">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style="width: 18px; height: 18px; opacity: 0.9;" loading="lazy">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style="width: 18px; height: 18px; opacity: 0.9;" loading="lazy">
+        <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style="width: 18px; height: 18px; opacity: 0.9;" loading="lazy">
       </a>
     </div>
     
@@ -1509,7 +2091,6 @@ section h2 {
     </small>
   </div>
   
-  <!-- Decorative gold line -->
   <div style="
     position: absolute; top: 0; left: 0; right: 0;
     height: 4px; background: linear-gradient(90deg, transparent, var(--gold, #d4af37), transparent);
@@ -1522,8 +2103,14 @@ section h2 {
   <a href="#academic">🎓 أكاديمي</a>
   <a href="#contact">📩 تواصل</a>
 </div>
+
+<button id="backTop">↑</button>
+
 <script type="module" src="/firestore-bridge.js"></script>
 <script>
+/* ============================================================
+   State + storage helpers
+   ============================================================ */
 let currentLang = localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
 
 function getCurrentLang() {
@@ -1608,307 +2195,7 @@ function getContentCache() {
 function getSectionItems(sectionName) {
   return getContentCache()
     .filter(item => item && item.section === sectionName)
-    .sort((a, b) =>
-      getSortValue(b, 0) - getSortValue(a, 0)
-    );
-}
-
-async function syncFirestoreToLocal() {
-  try {
-    const waitForFS = (timeoutMs = 7000) => new Promise((resolve, reject) => {
-      const t0 = Date.now();
-
-      function tick() {
-        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) {
-          return resolve();
-        }
-        if (Date.now() - t0 > timeoutMs) {
-          return reject(new Error('fs not ready'));
-        }
-        setTimeout(tick, 60);
-      }
-
-      tick();
-    });
-
-    await waitForFS();
-
-const { db, collection, onSnapshot } = window.fs;
-    const sections = ['research', 'articles', 'files', 'editions', 'issues', 'publications', 'activities', 'training'];
-
-sections.forEach((key) => {
-  const q = collection(db, key);
-
-  onSnapshot(q, (snap) => {
-    const data = snap.docs.map((doc, index) => ({
-      docId: doc.id,
-      _sortIndex: index,
-      ...doc.data()
-    })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
-
-    const merged = mergeItemLists(getStoredItems(key), data)
-      .sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
-
-    localStorage.setItem(key, JSON.stringify(merged));
-
-    refreshHomeSections();
-  }, (error) => {
-    console.error('Live sync error for ' + key, error);
-  });
-});
-
-    refreshHomeSections();
-  } catch (error) {
-    console.error('Sync error:', error);
-  }
-}
-document.addEventListener("click", e => {
-
-  const btn = document.getElementById("quickMenu");
-  const panel = document.getElementById("quickPanel");
-
-  if(!btn || !panel) return;
-
-  if(e.target === btn){
-    panel.style.display =
-      panel.style.display === "flex"
-      ? "none"
-      : "flex";
-  }
-});
-window.addEventListener('DOMContentLoaded', () => {
-  refreshHomeSections();
-  updateHeader();
-  setLang(currentLang);
-  initMobileDropdowns();
-  syncFirestoreToLocal();
-});
-
-window.addEventListener('storage', (event) => {
-  const watchedKeys = ['research', 'files', 'activities', 'training', ...getStorageKeys('articles'), ...getStorageKeys('editions')];
-  if (watchedKeys.includes(event.key)) {
-    refreshHomeSections();
-  }
-});
-</script>
-<script>
-
-
-  function goToHome(){window.location.href='index.html';}
-
-
-function toggleMenu(){
-  const menu = document.getElementById("mobileMenu");
-  const overlay = document.getElementById("navSheetOverlay");
-  const btn = document.getElementById("menu-btn");
-
-  if(!menu || !overlay) return;
-
-  const isOpen = menu.classList.contains("show");
-
-  menu.classList.toggle("show", !isOpen);
-  overlay.classList.toggle("show", !isOpen);
-
-  document.body.style.overflow = isOpen ? "" : "hidden";
-
-  if(btn){
-    btn.textContent = isOpen ? "☰" : "✕";
-  }
-}
-
-
-function toggleLangMenu(){
-  const menu = document.getElementById("langMenu");
-  if(!menu) return;
-  menu.style.display = getComputedStyle(menu).display === "none" ? "block" : "none";
-}
-
-function setLang(lang){
-  currentLang = lang;
-  localStorage.setItem("lang", lang);
-
-  const dict = translations[lang] || translations.ar;
-
-  document.documentElement.lang = lang;
-  document.documentElement.dir = (lang === "en" || lang === "fr") ? "ltr" : "rtl";
-
-  const titleEl = document.getElementById("t-title");
-  if(titleEl && dict.title) titleEl.textContent = dict.title;
-
-  document.querySelectorAll("#langCurrent").forEach(el=>{
-    el.textContent = lang.toUpperCase();
-  });
-
-  document.querySelectorAll("[data-t]").forEach(el=>{
-    const key = el.getAttribute("data-t");
-    if(dict[key] !== undefined){
-      el.textContent = dict[key];
-    }
-  });
-
-  const menu = document.getElementById("langMenu");
-  if(menu) menu.style.display = "none";
-
-  refreshHomeSections();
-}
-
-function searchSuggestions(){
-  const box = document.getElementById("searchSuggestions");
-  if(!box) return;
-
-  box.style.position = "absolute";
-  box.style.top = "38px";
-  box.style.right = "0";
-  box.style.width = "100%";
-  box.style.background = "#fff";
-  box.style.borderRadius = "10px";
-  box.style.boxShadow = "0 10px 25px rgba(0,0,0,.1)";
-}
-
-  function doSearch(e){
-    e.preventDefault();
-    const input=document.getElementById('navSearchInput');
-    const q=input ? input.value.trim() : "";
-    if(!q) return;
-    window.location.href='search.html?q='+encodeURIComponent(q);
-  }
-let user = JSON.parse(
-  localStorage.getItem("user") ||
-  sessionStorage.getItem("user") ||
-  "null"
-);
-
-function updateHeader(){
-  const headerActions = document.getElementById("headerActions");
-  const mobileLogin = document.getElementById("mobileLogin");
-  const mobileRegister = document.getElementById("mobileRegister");
-
-  if(user && user.loggedIn){
-    const displayName = user.name || user.username || (user.email ? user.email.split("@")[0] : "مستخدم");
-
-    headerActions.innerHTML = `
-      <div class="lang-wrapper">
-        <button class="lang-toggle" onclick="toggleLangMenu()">
-          <span id="langCurrent">AR</span>
-        </button>
-        <div class="lang-menu" id="langMenu">
-          <button onclick="setLang('ar')">العربية</button>
-          <button onclick="setLang('en')">English</button>
-          <button onclick="setLang('fr')">Français</button>
-        </div>
-      </div>
-      <span style="margin-right:8px;font-size:12px;">${displayName}</span>
-      <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
-    `;
-
-    if(mobileLogin){
-      mobileLogin.innerHTML = `<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
-    }
-
-    if(mobileRegister){
-      mobileRegister.style.display = "none";
-    }
-  }
-}
-
-
-
-function logout(){
-  localStorage.removeItem("user");
-  sessionStorage.removeItem("user");
-  user = null;
-  location.reload();
-}
-
-
-function renderContent(storageKey, gridId) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-  const section = grid.closest('section');
-
-const items =
-  storageKey === 'articles' ? getSectionItems('articles') :
-  storageKey === 'editions' ? getSectionItems('editions') :
-  getStoredItems(storageKey);
-  const lang = getCurrentLang();
-
-  grid.innerHTML = '';
-
-  if (!items.length) {
-    if (section) section.style.display = 'none';
-    return;
-  }
-
-  if (section) section.style.display = '';
-
-  items.forEach((item, index) => {
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    const title = getByLang(item.title, lang) || 'بدون عنوان';
-    const author = getByLang(item.author, lang) || '';
-    const desc = getContentDesc(item, lang);
-    const img = getContentImage(item);
-    const download = getDownloadLink(item);
-    const actionButton = download
-      ? `<button class="card-btn" onclick="downloadItem('${storageKey}', ${index})">تحميل</button>`
-      : `<button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>`;
-    card.innerHTML = `
-${img
-  ? `<div class="card-img-wrapper">
-       <img
-         src="${esc(img)}"
-         alt="${esc(title)}"
-         class="card-img"
-         loading="lazy"
-         decoding="async"
-         onerror="this.closest('.card-img-wrapper').innerHTML='<div class=&quot;card-img-fallback&quot;>لا توجد صورة</div>'"
-       >
-     </div>`
-  : `<div class="card-img-wrapper"><div class="card-img-fallback">لا توجد صورة</div></div>`
-}
-        <div class="card-body">
-        <h3>${esc(title)}</h3>
-        <span class="card-author">${author ? 'بقلم: ' + esc(author) : ''}</span>
-        <p>${esc(desc)}</p>
-      </div>
-      <div class="card-footer">
-        <span>${esc(storageKey)}</span>
-        ${actionButton}
-      </div>
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
-function getContentImage(item) {
-  return item.image ||
-    item.photo ||
-    item.cover ||
-    item.thumbnail ||
-    item.previewImage ||
-    item.imageUrl ||
-    '';
-}
-
-function getDownloadLink(item) {
-  return item.file ||
-    item.fileUrl ||
-    item.pdf ||
-    item.pdfUrl ||
-    item.pdfFile ||
-    item.document ||
-    item.documentUrl ||
-    item.attachment ||
-    item.attachmentUrl ||
-    item.download ||
-    item.downloadUrl ||
-    item.contentFile ||
-    item.contentUrl ||
-    item.url ||
-    item.link ||
-    '';
+    .sort((a, b) => getSortValue(b, 0) - getSortValue(a, 0));
 }
 
 function getSortValue(item, fallback = 0) {
@@ -1933,6 +2220,303 @@ function getSortValue(item, fallback = 0) {
   return fallback;
 }
 
+/* ============================================================
+   Firestore live sync (debounced re-render to avoid thrashing
+   when several collections resolve back to back)
+   ============================================================ */
+let refreshQueued = false;
+function queueRefresh() {
+  if (refreshQueued) return;
+  refreshQueued = true;
+  requestAnimationFrame(() => {
+    refreshQueued = false;
+    refreshHomeSections();
+  });
+}
+
+async function syncFirestoreToLocal() {
+  try {
+    const waitForFS = (timeoutMs = 7000) => new Promise((resolve, reject) => {
+      const t0 = Date.now();
+      function tick() {
+        if (window.fs && window.fs.db && window.fs.collection && window.fs.getDocs) {
+          return resolve();
+        }
+        if (Date.now() - t0 > timeoutMs) {
+          return reject(new Error('fs not ready'));
+        }
+        setTimeout(tick, 60);
+      }
+      tick();
+    });
+
+    await waitForFS();
+
+    const { db, collection, onSnapshot } = window.fs;
+    const sections = ['research', 'articles', 'files', 'editions', 'issues', 'publications', 'activities', 'training'];
+
+    sections.forEach((key) => {
+      const q = collection(db, key);
+      onSnapshot(q, (snap) => {
+        const data = snap.docs.map((doc, index) => ({
+          docId: doc.id,
+          _sortIndex: index,
+          ...doc.data()
+        })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
+
+        const merged = mergeItemLists(getStoredItems(key), data)
+          .sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
+
+        localStorage.setItem(key, JSON.stringify(merged));
+        queueRefresh();
+      }, (error) => {
+        console.error('Live sync error for ' + key, error);
+      });
+    });
+
+    refreshHomeSections();
+  } catch (error) {
+    console.error('Sync error:', error);
+  }
+}
+
+/* ============================================================
+   Quick actions FAB + back-to-top (single scroll listener,
+   passive + rAF-throttled)
+   ============================================================ */
+document.addEventListener('click', e => {
+  const btn = document.getElementById('quickMenu');
+  const panel = document.getElementById('quickPanel');
+  const langMenu = document.getElementById('langMenu');
+  const langWrapper = e.target.closest('.lang-wrapper');
+
+  if (btn && panel && e.target === btn) {
+    panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+  } else if (panel && panel.style.display === 'flex' && !panel.contains(e.target) && e.target !== btn) {
+    panel.style.display = 'none';
+  }
+
+  // close the language menu when clicking anywhere outside it
+  if (langMenu && !langWrapper && getComputedStyle(langMenu).display !== 'none') {
+    langMenu.style.display = 'none';
+  }
+});
+
+let scrollTicking = false;
+window.addEventListener('scroll', () => {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => {
+    const backTop = document.getElementById('backTop');
+    if (backTop) backTop.style.display = window.scrollY > 500 ? 'block' : 'none';
+    document.querySelector('header')?.classList.toggle('scrolled', window.scrollY > 8);
+
+    const progress = document.getElementById('scrollProgress');
+    if (progress) {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+    }
+    scrollTicking = false;
+  });
+}, { passive: true });
+
+/* ============================================================
+   Share / copy link
+   ============================================================ */
+async function sharePage() {
+  const shareData = { title: document.title, url: window.location.href };
+  if (navigator.share) {
+    try { await navigator.share(shareData); } catch (error) { /* user cancelled */ }
+  } else {
+    copyPageLink();
+  }
+}
+
+async function copyPageLink() {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    const lang = getCurrentLang();
+    alert(lang === 'en' ? 'Link copied!' : lang === 'fr' ? 'Lien copié !' : 'تم نسخ الرابط!');
+  } catch (error) {
+    console.warn('Clipboard write failed:', error);
+  }
+}
+
+/* ============================================================
+   Scroll-reveal motion (IntersectionObserver, respects
+   prefers-reduced-motion via the CSS side)
+   ============================================================ */
+let revealObserver = null;
+function initReveal() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => el.classList.add('in-view'));
+    return;
+  }
+  if (!revealObserver) {
+    revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  }
+  document.querySelectorAll('.reveal:not(.in-view), .reveal-stagger:not(.in-view)').forEach(el => {
+    revealObserver.observe(el);
+  });
+}
+
+/* ============================================================
+   Latest-content marquee strip
+   ============================================================ */
+function renderJournalStrip() {
+  const track = document.getElementById('journalStripTrack');
+  if (!track) return;
+  const lang = getCurrentLang();
+  const sources = ['research', 'articles', 'editions', 'activities'];
+  const titles = [];
+
+  sources.forEach(key => {
+    getItemsForKey(key).slice(0, 6).forEach(item => {
+      const t = getByLang(item.title, lang);
+      if (t && t.trim()) titles.push(t.trim());
+    });
+  });
+
+  if (!titles.length) {
+    track.innerHTML = '';
+    track.closest('section').style.display = 'none';
+    return;
+  }
+  track.closest('section').style.display = '';
+
+  const loopTitles = [...titles, ...titles];
+  track.innerHTML = loopTitles.map(t => `<span>✦ ${esc(t)}</span>`).join('');
+}
+
+document.getElementById('backTop')?.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  refreshHomeSections();
+  updateHeader();
+  setLang(currentLang);
+  initMobileDropdowns();
+  syncFirestoreToLocal();
+  bindFeaturedDrag();
+  initReveal();
+});
+
+window.addEventListener('storage', (event) => {
+  const watchedKeys = ['research', 'files', 'activities', 'training', ...getStorageKeys('articles'), ...getStorageKeys('editions')];
+  if (watchedKeys.includes(event.key)) {
+    queueRefresh();
+  }
+});
+
+/* ============================================================
+   Navigation / header
+   ============================================================ */
+function goToHome() { window.location.href = 'index.html'; }
+
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('navSheetOverlay');
+  const btn = document.getElementById('menu-btn');
+  if (!menu || !overlay) return;
+
+  const isOpen = menu.classList.contains('show');
+  menu.classList.toggle('show', !isOpen);
+  overlay.classList.toggle('show', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+  if (btn) btn.textContent = isOpen ? '☰' : '✕';
+}
+
+function toggleLangMenu() {
+  const menu = document.getElementById('langMenu');
+  if (!menu) return;
+  menu.style.display = getComputedStyle(menu).display === 'none' ? 'block' : 'none';
+}
+
+function runSearch(query) {
+  const q = String(query || '').trim();
+  if (!q) return;
+  window.location.href = 'search.html?q=' + encodeURIComponent(q);
+}
+
+function doSearch(e) {
+  e.preventDefault();
+  runSearch(document.getElementById('navSearchInput')?.value);
+}
+
+function doSearchMobile(e) {
+  e.preventDefault();
+  runSearch(document.getElementById('navSearchInputMobile')?.value);
+}
+
+let user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || 'null');
+
+function updateHeader() {
+  const headerActions = document.getElementById('headerActions');
+  const mobileLogin = document.getElementById('mobileLogin');
+  const mobileRegister = document.getElementById('mobileRegister');
+  if (!headerActions || !user || !user.loggedIn) return;
+
+  const displayName = user.name || user.username || (user.email ? user.email.split('@')[0] : 'مستخدم');
+
+  headerActions.innerHTML = `
+    <div class="lang-wrapper">
+      <button class="lang-toggle" onclick="toggleLangMenu()">
+        <span id="langCurrent">AR</span>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('fr')">Français</button>
+      </div>
+    </div>
+    <span style="margin-right:8px;font-size:12px;">${esc(displayName)}</span>
+    <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
+  `;
+
+  if (mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
+  if (mobileRegister) mobileRegister.style.display = 'none';
+}
+
+function logout() {
+  localStorage.removeItem('user');
+  sessionStorage.removeItem('user');
+  user = null;
+  location.reload();
+}
+
+/* ============================================================
+   Content rendering (research / articles / editions / etc.)
+   ============================================================ */
+function getContentImage(item) {
+  return item.image || item.photo || item.cover || item.thumbnail || item.previewImage || item.imageUrl || '';
+}
+
+function getDownloadLink(item) {
+  return item.file || item.fileUrl || item.pdf || item.pdfUrl || item.pdfFile ||
+    item.document || item.documentUrl || item.attachment || item.attachmentUrl ||
+    item.download || item.downloadUrl || item.contentFile || item.contentUrl ||
+    item.url || item.link || '';
+}
+
+function getContentDesc(item, lang = getCurrentLang()) {
+  return getByLang(item.description, lang) || getByLang(item.short, lang) || getByLang(item.details, lang) || '';
+}
+
+function getItemsForKey(storageKey) {
+  return (storageKey === 'articles' || storageKey === 'editions')
+    ? getSectionItems(storageKey)
+    : getStoredItems(storageKey);
+}
+
 function openDownload(url) {
   const link = String(url || '').trim();
   if (!link) return false;
@@ -1941,35 +2525,83 @@ function openDownload(url) {
 }
 
 function downloadItem(storageKey, index) {
-  const list = getStoredItems(storageKey);
-  const item = list[index];
+  const item = getStoredItems(storageKey)[index];
   if (!item) return;
-
   const download = getDownloadLink(item);
-  if (download) {
-    openDownload(download);
-  } else {
-    goToPage(storageKey, index);
-  }
+  download ? openDownload(download) : goToPage(storageKey, index);
 }
 
-function getContentDesc(item, lang = getCurrentLang()) {
-  return getByLang(item.description, lang) ||
-    getByLang(item.short, lang) ||
-    getByLang(item.details, lang) ||
-    '';
+function goToPage(pageType, index) {
+  const selected = getStoredItems(pageType)[index];
+  if (selected) localStorage.setItem('selectedItem', JSON.stringify(selected));
+
+  const pageMap = {
+    research: 'research.html',
+    articles: 'articles.html',
+    files: 'files.html',
+    'general-articles': 'general-articles.html',
+    editions: 'editions.html',
+    activities: 'activities.html',
+    training: 'training.html'
+  };
+  window.location.href = pageMap[pageType] || 'index.html';
+}
+
+function renderContent(storageKey, gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  const section = grid.closest('section');
+  const items = getItemsForKey(storageKey);
+  const lang = getCurrentLang();
+
+  if (!items.length) {
+    grid.innerHTML = '';
+    if (section) section.style.display = 'none';
+    return;
+  }
+  if (section) section.style.display = '';
+
+  const frag = document.createDocumentFragment();
+
+  items.forEach((item, index) => {
+    const title = getByLang(item.title, lang) || 'بدون عنوان';
+    const author = getByLang(item.author, lang) || '';
+    const desc = getContentDesc(item, lang);
+    const img = getContentImage(item);
+    const download = getDownloadLink(item);
+    const actionButton = download
+      ? `<button class="card-btn" onclick="downloadItem('${storageKey}', ${index})">تحميل</button>`
+      : `<button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>`;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      ${img
+        ? `<div class="card-img-wrapper">
+             <img src="${esc(img)}" alt="${esc(title)}" class="card-img" loading="lazy" decoding="async"
+               onerror="this.closest('.card-img-wrapper').innerHTML='<div class=&quot;card-img-fallback&quot;>لا توجد صورة</div>'">
+           </div>`
+        : `<div class="card-img-wrapper"><div class="card-img-fallback">لا توجد صورة</div></div>`
+      }
+      <div class="card-body">
+        <h3>${esc(title)}</h3>
+        <span class="card-author">${author ? 'بقلم: ' + esc(author) : ''}</span>
+        <p>${esc(desc)}</p>
+      </div>
+      <div class="card-footer">
+        <span>${esc(storageKey)}</span>
+        ${actionButton}
+      </div>
+    `;
+    frag.appendChild(card);
+  });
+
+  grid.innerHTML = '';
+  grid.appendChild(frag);
 }
 
 function getPopularityValue(item, fallback) {
-  const value =
-    item.views ??
-    item.reads ??
-    item.readCount ??
-    item.clicks ??
-    item.visits ??
-    item.popularity ??
-    item.count;
-
+  const value = item.views ?? item.reads ?? item.readCount ?? item.clicks ?? item.visits ?? item.popularity ?? item.count;
   const numeric = Number(value);
   return Number.isNaN(numeric) ? fallback : numeric;
 }
@@ -1977,7 +2609,6 @@ function getPopularityValue(item, fallback) {
 function renderPopularContent() {
   const grid = document.getElementById('popularGrid');
   if (!grid) return;
-
   const section = grid.closest('section');
   const lang = getCurrentLang();
   const sources = [
@@ -1988,24 +2619,15 @@ function renderPopularContent() {
   ];
 
   const items = [];
-
   sources.forEach(src => {
-const arr =
-  src.key === 'articles' ? getSectionItems('articles') :
-  src.key === 'editions' ? getSectionItems('editions') :
-  getStoredItems(src.key);
+    const arr = getItemsForKey(src.key);
     arr.forEach((item, index) => {
       const title = getByLang(item.title, lang) || '';
       const desc = getContentDesc(item, lang);
       if (!title.trim() && !desc.trim()) return;
 
       items.push({
-        item,
-        index,
-        storageKey: src.key,
-        label: src.label,
-        title,
-        desc,
+        index, storageKey: src.key, label: src.label, title, desc,
         image: getContentImage(item),
         download: getDownloadLink(item),
         score: getPopularityValue(item, arr.length - index)
@@ -2013,15 +2635,14 @@ const arr =
     });
   });
 
-  grid.innerHTML = '';
-
   if (!items.length) {
+    grid.innerHTML = '';
     if (section) section.style.display = 'none';
     return;
   }
-
   if (section) section.style.display = '';
 
+  const frag = document.createDocumentFragment();
   items
     .sort((a, b) => b.score - a.score)
     .slice(0, 4)
@@ -2047,52 +2668,22 @@ const arr =
           }
         </div>
       `;
-      grid.appendChild(card);
+      frag.appendChild(card);
     });
+  grid.innerHTML = '';
+  grid.appendChild(frag);
 }
 
-function refreshHomeSections() {
-  renderContent('research', 'researchGrid');
-  renderContent('articles', 'articlesGrid');
-  renderContent('editions', 'editionsGrid');
-  renderContent('activities', 'activitiesGrid');
-  renderContent('training', 'academicGrid');
-  renderLatestIssue();
-  renderPopularContent();
-  renderTicker();
-  renderFeaturedSlider();
-  updateStats();
-}
-
-function getEditionImage(item) {
-  return item.image ||
-    item.photo ||
-    item.cover ||
-    item.thumbnail ||
-    item.previewImage ||
-    item.imageUrl ||
-    '';
-}
-
-function getEditionDownload(item) {
-  return getDownloadLink(item);
-}
-
-function editionSortValue(item, fallback) {
-  return getSortValue(item, fallback);
+function isGenericIssueTitle(title) {
+  return /^العدد\s*\d+$/i.test(String(title).trim());
 }
 
 function getLatestEdition() {
   const editions = getSectionItems('editions');
   if (!editions.length) return null;
-
   return editions
-    .map((item, index) => ({ item, index, sortValue: editionSortValue(item, index) }))
+    .map((item, index) => ({ item, index, sortValue: getSortValue(item, index) }))
     .sort((a, b) => b.sortValue - a.sortValue)[0];
-}
-
-function isGenericIssueTitle(title) {
-  return /^العدد\s*\d+$/i.test(String(title).trim());
 }
 
 function renderLatestIssue() {
@@ -2115,13 +2706,10 @@ function renderLatestIssue() {
 
   const item = latest.item;
   const title = getByLang(item.title, lang) || 'بدون عنوان';
-  const desc =
-    getByLang(item.description, lang) ||
-    getByLang(item.short, lang) ||
-    getByLang(item.details, lang) ||
-    '';
-  const img = getEditionImage(item);
-if (!img || !desc) {
+  const desc = getContentDesc(item, lang);
+  const img = getContentImage(item);
+
+  if (!img || !desc) {
     if (hero) hero.innerHTML = '';
     if (current) current.innerHTML = '';
     if (heroCard) heroCard.style.display = 'none';
@@ -2132,573 +2720,354 @@ if (!img || !desc) {
   if (heroCard) heroCard.style.display = '';
   if (currentSection) currentSection.style.display = '';
 
-
-  const imageHtml = img
-    ? `<img src="${esc(img)}" alt="${esc(title)}" style="width:100%;max-width:260px;border-radius:12px;margin-bottom:12px;object-fit:cover;" onerror="this.style.display='none'">`
-    : '';
-
   const issueHtml = `
-    ${imageHtml}
+    <img src="${esc(img)}" alt="${esc(title)}" style="width:100%;max-width:260px;border-radius:12px;margin-bottom:12px;object-fit:cover;" onerror="this.style.display='none'">
     ${title && !isGenericIssueTitle(title) ? `<h3>${esc(title)}</h3>` : ''}
     ${desc ? `<p>${esc(desc)}</p>` : ''}
-      `;
+  `;
 
   if (hero) hero.innerHTML = issueHtml;
   if (current) current.innerHTML = issueHtml;
 }
 
+function updateStats() {
+  const research = getStoredItems('research');
+  const articles = getSectionItems('articles');
+  const users = getStoredItems('users');
+  const editions = getSectionItems('editions');
 
-  function goToPage(pageType,index){
-    const list=getStoredItems(pageType);
-    const selected=list[index];
-    if(selected){localStorage.setItem('selectedItem',JSON.stringify(selected));}
-    const pageMap={
-      'research':'research.html',
-      'articles':'articles.html',
-      'files':'files.html',
-      'general-articles':'general-articles.html',
-      'editions':'editions.html',
-      'activities':'activities.html',
-      'training':'training.html'
-    };
-    window.location.href=pageMap[pageType] || 'index.html';
+  animateCounter(document.getElementById('stat1_number'), research.length);
+  animateCounter(document.getElementById('stat2_number'), articles.length);
+  animateCounter(document.getElementById('stat3_number'), users.length);
+  animateCounter(document.getElementById('stat4_number'), editions.length);
+
+  const statsWrap = document.querySelector('.stats');
+  if (statsWrap) {
+    const allEmpty = !research.length && !articles.length && !users.length && !editions.length;
+    statsWrap.style.display = allEmpty ? 'none' : 'flex';
   }
+}
 
-  // dynamic stats from localStorage
-  function updateStats(){
-const research = getStoredItems('research');
-const articles = getSectionItems('articles');
-const users = getStoredItems('users');
-const activities = getStoredItems('activities');
-const editions = getSectionItems('editions');
-
-const n1 = research.length;
-const n2 = articles.length;
-const n3 = users.length;
-const n4 = editions.length;
-
-    const el1 = document.getElementById('stat1_number');
-    const el2 = document.getElementById('stat2_number');
-    const el3 = document.getElementById('stat3_number');
-    const el4 = document.getElementById('stat4_number');
-
-    animateCounter(el1,n1);
-animateCounter(el2,n2);
-animateCounter(el3,n3);
-animateCounter(el4,n4);
-
-    const statsWrap = document.querySelector('.stats');
-    if(statsWrap && n1 === 0 && n2 === 0 && n3 === 0 && n4 === 0){
-      statsWrap.style.display = 'none';
-    } else if(statsWrap){
-      statsWrap.style.display = 'flex';
-    }
-  }
-  function animateCounter(el,target){
-  if(!el) return;
-
+function animateCounter(el, target) {
+  if (!el) return;
   let current = 0;
-  const step = Math.max(1, Math.ceil(target/40));
-
-  const timer = setInterval(()=>{
-    current += step;
-
-    if(current >= target){
-      current = target;
-      clearInterval(timer);
-    }
-
+  const step = Math.max(1, Math.ceil(target / 40));
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
     el.textContent = current;
-  },20);
+    if (current >= target) clearInterval(timer);
+  }, 20);
 }
 
-  const translations = {
-    ar:{
-      title:"الرئيسية",
-      nav_home:"الرئيسية",
-      nav_studies:"أبحاث ودراسات ▾",
-      nav_research_peer:"أبحاث محكمة",
-      nav_articles_peer:"مقالات محكمة",
-      nav_files:"ملفات بحثية",
-      nav_foreign:"مقالات أجنبية",
-      nav_articles:"مقالات",
-      nav_editions:"إصداراتنا",
-      nav_activities:"أنشطتنا",
-      nav_academic:"أكاديمي",
-      nav_live:"بث مباشر",
-      nav_rules:"شروط النشر",
-      nav_contact:"اتصل بنا",
-      nav_login:"تسجيل الدخول",
-      nav_join:"انضم إلينا",
-      badge_text:"منصة علمية ذهبية للباحثين والمهتمين",
-      hero_title:"منصة علمية لنشر المعرفة والأبحاث",
-hero_sub:"بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات.",
-      hero_cta_primary:"ابدأ رحلتك البحثية الآن",
-      hero_cta_secondary:"استكشف المحتوى العلمي",
-      stat1_label:"بحث محكّم",
-      stat2_label:"مقال علمي",
-      stat3_label:"مشارك مسجل",
-      stat4_label:"نشاط وورشة",
-      hero_card_title:"منصة متخصصة في العلوم السياسية والقانونية والاجتماعية و الاقتصادية",
-      hero_card_li1:"مساقات وبرامج في العلوم السياسية والعلاقات الدولية والسياسات العمومية.",
-      hero_card_li2:"أبحاث ومقالات محكمة تغطي قضايا الدولة، النظام الدولي، والتحولات الدستورية.",
-      hero_card_li3:"ملفات مرجعية للطلبة والباحثين في القانون الإداري والقانون الدستوري.",
-      hero_card_li4:"مسار أكاديمي واضح من المقال إلى التخصص ثم البرنامج الكامل.",
-      sec_features:"ما الذي يميز هذه المنصة؟",
-      f1_title:"تكامل بين المقالات والبرامج",
-      f1_text:"كل تخصص أكاديمي يمكن ربطه بالمقالات والأبحاث ذات الصلة حتى يتحول المحتوى النظري إلى مسار تعلّم واضح.",
-      f2_title:"مسارات تخصصية مرنة",
-      f2_text:"يمكن للزائر اختيار تخصص محدد ومتابعة مواده وأنشطته المرتبطة به ضمن قسم أكاديمي.",
-      f3_title:"إدارة محتوى من لوحة تحكم",
-      f3_text:"كل مقال أو بحث تضيفه من لوحة الإدارة يظهر في بطاقة بصور كاملة غير مقصوصة بفضل خاصية object-fit في الصور.",
-      f4_title:"تجربة قريبة من المنصات الاحترافية",
-      f4_text:"شريط بحث علوي وأقسام متعددة للمحتوى تجعل التصفح شبيهاً بالمنصات الأكاديمية الكبيرة.",
-      sec_tracks:"مسارات التخصص الأكاديمي",
-      tracks_politics_title:"تخصص العلوم السياسية",
-      tracks_politics_text:"يركز على تحليل النظم السياسية، الأحزاب، والانتخابات، مع ربطها بالتحولات الديمقراطية في العالم العربي.",
-      tracks_ir_title:"تخصص العلاقات الدولية",
-      tracks_ir_text:"يتناول نظريات العلاقات الدولية، الفاعلين الدوليين، والسياسات الخارجية، مع دراسات حالة من المنطقة.",
-      tracks_admin_const_title:"تخصص القانون الإداري والدستوري",
-      tracks_admin_const_text:"يشرح تنظيم الإدارة العمومية، الرقابة على العمل الإداري، وبنية الدساتير والمؤسسات العليا في الدولة.",
-      tracks_public_policy_title:"تخصص السياسات العمومية",
-      tracks_public_policy_text:"يركز على تصميم وتنفيذ وتقييم السياسات العمومية، مع أدوات عملية لتحليل السياسات والبرامج الحكومية.",
-      sec_how:"كيف تبدأ؟",
-      how_step1_title:"١. إنشاء حساب",
-      how_step1_text:"قم بإنشاء حساب جديد من صفحة التسجيل حتى تتمكن من حفظ الدورات والمقالات التي تهمك ومتابعة تقدمك.",
-      how_step2_title:"٢. اختيار التخصص",
-      how_step2_text:"من قائمة أكاديمي اختر التخصص الذي يناسبك ثم استعرض الأبحاث والمقالات والأنشطة المرتبطة به.",
-      how_step3_title:"٣. متابعة المحتوى",
-      how_step3_text:"ابدأ بقراءة الأبحاث والمقالات، ثم انتقل إلى البرامج أو الورش المتاحة ضمن نفس الحقل المعرفي.",
-      how_step4_title:"٤. المساهمة العلمية",
-      how_step4_text:"بعد التسجيل يمكنك إرسال أبحاثك أو مقالاتك إلى لجنة التحرير لنشرها ضمن أقسام المنصة المختلفة.",
-      sec_research:"أحدث الأبحاث",
-      sec_editions:"إصداراتنا",
-      sec_activities:"أنشطتنا وورش العمل",
-      sec_academic:"المحتوى الأكاديمي",
-      sec_live:"البث المباشر",
-      empty_items:"لا توجد عناصر حالياً",
-      live_text:"سيتم عرض البث المباشر هنا عند توفره مع ربطه بالبرامج والتخصصات ذات الصلة.",
-      footer_text:"© جميع الحقوق محفوظة – منصتك العلمية",
-      logout:"تسجيل الخروج",
-      sp_politics:"تخصص علوم سياسية",
-      sp_ir:"تخصص العلاقات الدولية",
-      sp_admin_law:"تخصص القانون الإداري",
-      sp_const_law:"تخصص القانون الدستوري",
-      sp_public_policy:"تخصص السياسات العمومية"
-    },
-    en:{
-      title:"Home",
-      nav_home:"Home",
-      nav_studies:"Research & Studies ▾",
-      nav_research_peer:"Peer-reviewed Papers",
-      nav_articles_peer:"Scholarly Articles",
-      nav_files:"Research Files",
-      nav_foreign:"Foreign Articles",
-      nav_articles:"Articles",
-      nav_editions:"Our Publications",
-      nav_activities:"Activities",
-      nav_academic:"Academic",
-      nav_live:"Live",
-      nav_rules:"Submission Rules",
-      nav_contact:"Contact us",
-      nav_login:"Login",
-      nav_join:"Join us",
-      badge_text:"A golden scientific platform for researchers and enthusiasts",
-      hero_title:"A scientific platform for publishing knowledge and research",
-      hero_sub:"An integrated structure for research, articles, scientific files, and courses.",
-      hero_cta_primary:"Start your research journey now",
-      hero_cta_secondary:"Explore scientific content",
-      stat1_label:"Peer-reviewed paper",
-      stat2_label:"Scientific article",
-      stat3_label:"Registered participant",
-      stat4_label:"Activity & workshop",
-      hero_card_title:"A platform specialized in political, legal, social, and economic sciences",
-      hero_card_li1:"Tracks and programs in political science, international relations, and public policy.",
-      hero_card_li2:"Peer-reviewed research and articles covering the state, international system, and constitutional transformations.",
-      hero_card_li3:"Reference files for students and researchers in administrative and constitutional law.",
-      hero_card_li4:"A clear academic pathway from article to specialization and full program.",
-      sec_features:"What makes this platform unique?",
-      f1_title:"Integration between articles and programs",
-      f1_text:"Each academic specialization can be linked to related articles and research so that theory becomes a clear learning path.",
-      f2_title:"Flexible specialization tracks",
-      f2_text:"Visitors can choose a specific specialization and follow its materials and related activities within the Academic section.",
-      f3_title:"Content management from an admin panel",
-      f3_text:"Every article or research item you add from the admin panel appears as a card with full, uncropped images thanks to object-fit.",
-      f4_title:"Experience close to professional platforms",
-      f4_text:"A top search bar and multiple content sections make browsing feel like major academic platforms.",
-      sec_tracks:"Academic specialization tracks",
-      tracks_politics_title:"Political Science track",
-      tracks_politics_text:"Focuses on analyzing political systems, parties, and elections, linked to democratic transitions in the Arab world.",
-      tracks_ir_title:"International Relations track",
-      tracks_ir_text:"Covers theories of international relations, international actors, and foreign policy, with regional case studies.",
-      tracks_admin_const_title:"Administrative & Constitutional Law track",
-      tracks_admin_const_text:"Explains public administration organization, control over administrative action, and the structure of constitutions and higher state institutions.",
-      tracks_public_policy_title:"Public Policy track",
-      tracks_public_policy_text:"Focuses on designing, implementing, and evaluating public policies with practical tools for policy and program analysis.",
-      sec_how:"How to start?",
-      how_step1_title:"1. Create an account",
-      how_step1_text:"Create a new account from the registration page so you can save courses and articles you like and track your progress.",
-      how_step2_title:"2. Choose a specialization",
-      how_step2_text:"From the Academic menu, choose the specialization that suits you, then browse its related research, articles, and activities.",
-      how_step3_title:"3. Follow the content",
-      how_step3_text:"Start by reading research and articles, then move on to the available programs or workshops in the same field.",
-      how_step4_title:"4. Contribute scientifically",
-      how_step4_text:"After registering, you can submit your research or articles to the editorial board to publish them in different sections of the platform.",
-      sec_research:"Latest research",
-      sec_editions:"Our editions",
-      sec_activities:"Our activities and workshops",
-      sec_academic:"Academic content",
-      sec_live:"Live broadcast",
-      empty_items:"No items yet",
-      live_text:"Live broadcasts will appear here when available, linked to relevant programs and tracks.",
-      footer_text:"© All rights reserved – Your Academic Platform",
-      logout:"Logout",
-      sp_politics:"Political Science",
-      sp_ir:"International Relations",
-      sp_admin_law:"Administrative Law",
-      sp_const_law:"Constitutional Law",
-      sp_public_policy:"Public Policy"
-    },
-    fr:{
-      title:"Accueil",
-      nav_home:"Accueil",
-      nav_studies:"Recherches et études ▾",
-      nav_research_peer:"Recherches évaluées",
-      nav_articles_peer:"Articles scientifiques",
-      nav_files:"Dossiers de recherche",
-      nav_foreign:"Articles étrangers",
-      nav_articles:"Articles",
-      nav_editions:"Nos publications",
-      nav_activities:"Activités",
-      nav_academic:"Académique",
-      nav_live:"Direct",
-      nav_rules:"Conditions de publication",
-      nav_contact:"Contactez-nous",
-      nav_login:"Connexion",
-      nav_join:"Rejoignez-nous",
-      badge_text:"Une plateforme scientifique dorée pour les chercheurs et les passionnés",
-      hero_title:"Plateforme spécialisée en sciences politiques, juridiques, sociales et économiques",
-      hero_sub:"Une structure intégrée pour les recherches, articles, dossiers scientifiques et cours.",
-      hero_cta_primary:"Commencez votre parcours de recherche maintenant",
-      hero_cta_secondary:"Explorer le contenu scientifique",
-      stat1_label:"Recherche évaluée",
-      stat2_label:"Article scientifique",
-      stat3_label:"Participant inscrit",
-      stat4_label:"Activité & atelier",
-      hero_card_title:"Plateforme spécialisée en sciences politiques et juridiques",
-      hero_card_li1:"Parcours et programmes en sciences politiques, relations internationales et politiques publiques.",
-      hero_card_li2:"Recherches et articles évalués couvrant l'État, le système international et les transformations constitutionnelles.",
-      hero_card_li3:"Dossiers de référence pour les étudiants et chercheurs en droit administratif et constitutionnel.",
-      hero_card_li4:"Un parcours académique clair, de l'article à la spécialisation puis au programme complet.",
-      sec_features:"Qu'est-ce qui distingue cette plateforme ?",
-      f1_title:"Intégration entre articles et programmes",
-      f1_text:"Chaque spécialisation académique peut être reliée aux articles et recherches associés afin de transformer la théorie en parcours d'apprentissage clair.",
-      f2_title:"Parcours de spécialisation flexibles",
-      f2_text:"Le visiteur peut choisir une spécialisation précise et suivre ses contenus et activités associées dans la section Académique.",
-      f3_title:"Gestion de contenu via un tableau de bord",
-      f3_text:"Chaque article ou recherche ajouté depuis le panneau d'administration apparaît sous forme de carte avec des images complètes grâce à object-fit.",
-      f4_title:"Expérience proche des grandes plateformes",
-      f4_text:"Une barre de recherche supérieure et plusieurs sections de contenu rendent la navigation proche des grandes plateformes académiques.",
-      sec_tracks:"Parcours de spécialisation académique",
-      tracks_politics_title:"Parcours science politique",
-      tracks_politics_text:"Se concentre sur l'analyse des systèmes politiques, des partis et des élections, en lien avec les transitions démocratiques dans le monde arabe.",
-      tracks_ir_title:"Parcours relations internationales",
-      tracks_ir_text:"Traite des théories des relations internationales, des acteurs internationaux et des politiques étrangères, avec des études de cas régionales.",
-      tracks_admin_const_title:"Parcours droit administratif et constitutionnel",
-      tracks_admin_const_text:"Explique l'organisation de l'administration publique, le contrôle de l'action administrative et la structure des constitutions et des institutions supérieures de l'État.",
-      tracks_public_policy_title:"Parcours politiques publiques",
-      tracks_public_policy_text:"Se concentre sur la conception, la mise en œuvre et l'évaluation des politiques publiques, avec des outils pratiques pour analyser politiques et programmes.",
-      sec_how:"Par où commencer ?",
-      how_step1_title:"1. Créer un compte",
-      how_step1_text:"Créez un nouveau compte depuis la page d'inscription pour pouvoir enregistrer les cours et articles qui vous intéressent et suivre vos progrès.",
-      how_step2_title:"2. Choisir la spécialisation",
-      how_step2_text:"Depuis le menu Académique, choisissez la spécialisation qui vous convient puis parcourez ses recherches, articles et activités associées.",
-      how_step3_title:"3. Suivre le contenu",
-      how_step3_text:"Commencez par lire les recherches et articles, puis passez aux programmes ou ateliers disponibles dans le même domaine.",
-      how_step4_title:"4. Contribuer scientifiquement",
-      how_step4_text:"Après inscription, vous pouvez envoyer vos recherches ou articles au comité éditorial pour les publier dans les différentes rubriques de la plateforme.",
-      sec_research:"Dernières recherches",
-      sec_editions:"Nos éditions",
-      sec_activities:"Nos activités et ateliers",
-      sec_academic:"Contenu académique",
-      sec_live:"Diffusion en direct",
-      empty_items:"Aucun élément pour le moment",
-      live_text:"La diffusion en direct apparaîtra ici lorsqu'elle sera disponible, reliée aux programmes et parcours concernés.",
-      footer_text:"© Tous droits réservés – Votre plateforme scientifique",
-      logout:"Déconnexion",
-      sp_politics:"Science politique",
-      sp_ir:"Relations internationales",
-      sp_admin_law:"Droit administratif",
-      sp_const_law:"Droit constitutionnel",
-      sp_public_policy:"Politiques publiques"
-
-
-    }
-  };
-
-  function setLang(lang){
-    currentLang = lang;
-    localStorage.setItem('lang', lang);
-
-    const dict = translations[lang] || translations.ar;
-
-    document.documentElement.lang = lang;
-    document.documentElement.dir  = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
-
-    const titleEl = document.getElementById('t-title');
-    if(titleEl && dict.title) titleEl.textContent = dict.title;
-
-    const langCurrent = document.getElementById('langCurrent');
-    if(langCurrent) langCurrent.textContent = lang.toUpperCase();
-
-    document.querySelectorAll("[data-t]").forEach(el=>{
-      const key=el.getAttribute("data-t");
-      if(dict[key]) el.textContent=dict[key];
-    });
-
-    const menu=document.getElementById("langMenu");
-    if(menu) menu.style.display="none";
-
-    refreshHomeSections();
-  }
-
-  function initMobileDropdowns(){
-    document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const parent = btn.closest('.mobile-dropdown');
-        if(parent){
-          parent.classList.toggle('open');
-        }
-      });
-    });
-  }
-
-
-
-
-
-  // ===== Moving ticker (auto) =====
-let tickerIndex = 0;
-let tickerTimer = null;
-
-function esc(str){
-  return String(str).replace(/[&<>"']/g, s => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[s]));
+function refreshHomeSections() {
+  renderContent('research', 'researchGrid');
+  renderContent('articles', 'articlesGrid');
+  renderContent('editions', 'editionsGrid');
+  renderContent('activities', 'activitiesGrid');
+  renderContent('training', 'academicGrid');
+  renderLatestIssue();
+  renderPopularContent();
+  renderJournalStrip();
+  updateStats();
+  initReveal();
 }
 
-function collectLatest() {
-  const sources = [
-    { key: 'research', label: 'بحث' },
-    { key: 'articles', label: 'مقال' },
-    { key: 'files', label: 'ملف' },
-    { key: 'activities', label: 'نشاط' },
-    { key: 'editions', label: 'إصدار' }
-  ];
+/* ============================================================
+   Language / i18n
+   ============================================================ */
+const translations = {
+  ar:{
+    title:"الرئيسية", nav_home:"الرئيسية", nav_studies:"أبحاث ودراسات ▾",
+    nav_research_peer:"أبحاث محكمة", nav_articles_peer:"مقالات محكمة", nav_files:"ملفات بحثية",
+    nav_foreign:"مقالات أجنبية", nav_articles:"مقالات", nav_editions:"إصداراتنا", nav_activities:"أنشطتنا",
+    nav_academic:"أكاديمي", nav_live:"بث مباشر", nav_rules:"شروط النشر", nav_contact:"اتصل بنا",
+    nav_login:"تسجيل الدخول", nav_join:"انضم إلينا",
+    badge_text:"منصة علمية ذهبية للباحثين والمهتمين",
+    hero_title:"منصة علمية لنشر المعرفة والأبحاث",
+    hero_sub:"بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات.",
+    hero_cta_primary:"ابدأ رحلتك البحثية الآن", hero_cta_secondary:"استكشف المحتوى العلمي",
+    stat1_label:"بحث محكّم", stat2_label:"مقال علمي", stat3_label:"مشارك مسجل", stat4_label:"نشاط وورشة",
+    sec_how:"كيف تبدأ؟",
+    how_step1_title:"١. إنشاء حساب",
+    how_step1_text:"قم بإنشاء حساب جديد من صفحة التسجيل حتى تتمكن من حفظ الدورات والمقالات التي تهمك ومتابعة تقدمك.",
+    how_step2_title:"٢. اختيار التخصص",
+    how_step2_text:"من قائمة أكاديمي اختر التخصص الذي يناسبك ثم استعرض الأبحاث والمقالات والأنشطة المرتبطة به.",
+    how_step3_title:"٣. متابعة المحتوى",
+    how_step3_text:"ابدأ بقراءة الأبحاث والمقالات، ثم انتقل إلى البرامج أو الورش المتاحة ضمن نفس الحقل المعرفي.",
+    how_step4_title:"٤. المساهمة العلمية",
+    how_step4_text:"بعد التسجيل يمكنك إرسال أبحاثك أو مقالاتك إلى لجنة التحرير لنشرها ضمن أقسام المنصة المختلفة.",
+    sec_research:"أحدث الأبحاث", sec_editions:"إصداراتنا", sec_activities:"أنشطتنا وورش العمل",
+    sec_academic:"المحتوى الأكاديمي", sec_live:"البث المباشر", empty_items:"لا توجد عناصر حالياً",
+    live_text:"سيتم عرض البث المباشر هنا عند توفره مع ربطه بالبرامج والتخصصات ذات الصلة.",
+    footer_text:"© جميع الحقوق محفوظة – منصتك العلمية", logout:"تسجيل الخروج",
+    sp_politics:"تخصص علوم سياسية", sp_ir:"تخصص العلاقات الدولية", sp_admin_law:"تخصص القانون الإداري",
+    sp_const_law:"تخصص القانون الدستوري", sp_public_policy:"تخصص السياسات العمومية",
+    sec_glance:"المجلة في سطور", glance_freq:"دورية الإصدار", glance_freq_v:"فصلية",
+    glance_review:"متوسط مدة التحكيم", glance_review_v:"4-6 أسابيع",
+    glance_lang:"لغات النشر", glance_lang_v:"عربي · إنجليزي · فرنسي",
+    glance_access:"سياسة النشر", glance_access_v:"وصول مفتوح", glance_issn:"رقم التسجيل الدولي",
+    sec_dates:"مواعيد مهمة",
+    date1_label:"آخر أجل لاستقبال الأبحاث", date1_value:"مفتوح على مدار السنة",
+    date2_label:"إشعار القبول الأولي", date2_value:"خلال أسبوعين من الإرسال",
+    date3_label:"صدور العدد القادم", date3_value:"يُعلن عبر صفحة إصداراتنا",
+    sec_index:"الفهرسة والأرشفة",
+    index_text:"نعمل على إدراج المجلة ضمن قواعد الفهرسة والأرشفة العلمية المعتمدة لتوسيع أثر الأبحاث المنشورة.",
+    idx_crossref:"Crossref (قيد الإجراء)", idx_doaj:"DOAJ (قيد الإجراء)", idx_scholar:"Google Scholar", idx_issn:"ISSN مسجّل",
+    f4_t:"تخصصات متنوعة", f4_d:"علوم سياسية وقانون وعلاقات دولية وسياسات عمومية.",
+    sec_tracks:"المسارات الأكاديمية",
+    tr1_t:"تخصص العلوم السياسية", tr1_d:"تحليل الأنظمة السياسية والأحزاب والانتخابات.",
+    tr2_t:"تخصص العلاقات الدولية", tr2_d:"نظريات العلاقات الدولية والفاعلون الدوليون.",
+    tr3_t:"تخصص القانون الإداري", tr3_d:"تنظيم الإدارة العمومية والرقابة على أعمالها.",
+    tr4_t:"تخصص القانون الدستوري", tr4_d:"بنية الدساتير والمؤسسات العليا في الدولة.",
+    tr5_t:"تخصص السياسات العمومية", tr5_d:"تصميم وتقييم السياسات والبرامج الحكومية.",
+    tr_link:"استعرض المسار ←",
+    board_title:"تعرّف على هيئة التحرير",
+    board_text:"فريق أكاديمي يشرف على تحكيم الأبحاث ومراجعتها وضمان جودتها العلمية قبل النشر.",
+    board_cta:"هيئة التحرير",
+    sec_faq:"أسئلة شائعة",
+    faq2_q:"كم تستغرق عملية التحكيم؟",
+    faq2_a:"يستغرق التحكيم العلمي عادة ما بين 4 و6 أسابيع من تاريخ استلام البحث.",
+    faq3_q:"بأي لغات يمكن إرسال الأبحاث؟",
+    faq3_a:"تقبل المجلة الأبحاث والمقالات باللغات العربية والإنجليزية والفرنسية.",
+    faq4_q:"كيف أرسل بحثي للنشر؟",
+    faq4_a:"يمكنك الاطلاع على شروط النشر ثم إرسال عملك عبر صفحة اتصل بنا.",
+    faq5_q:"هل تُفحص الأبحاث للتأكد من خلوها من الانتحال العلمي؟",
+    faq5_a:"نعم، تخضع جميع الأعمال المرسلة لفحص أولي للكشف عن الانتحال العلمي قبل إحالتها للتحكيم.",
+    faq6_q:"كيف أتابع حالة البحث بعد إرساله؟",
+    faq6_a:"يمكنك التواصل مع هيئة التحرير عبر صفحة اتصل بنا للاستفسار عن حالة بحثك في أي وقت.",
+    faq7_q:"هل هناك نموذج تنسيق مُلزم للأبحاث؟",
+    faq7_a:"نعم، يرجى الاطلاع على صفحة شروط النشر لمعرفة التنسيق والمعايير المطلوبة قبل الإرسال.",
+    news_title:"اشترك في نشرتنا العلمية",
+    news_text:"تصلك إشعارات عند صدور عدد جديد أو نشر أبحاث ضمن تخصصك.",
+    news_placeholder:"بريدك الإلكتروني", news_cta:"اشترك"
+  },
+  en:{
+    title:"Home", nav_home:"Home", nav_studies:"Research & Studies ▾",
+    nav_research_peer:"Peer-reviewed Papers", nav_articles_peer:"Scholarly Articles", nav_files:"Research Files",
+    nav_foreign:"Foreign Articles", nav_articles:"Articles", nav_editions:"Our Publications", nav_activities:"Activities",
+    nav_academic:"Academic", nav_live:"Live", nav_rules:"Submission Rules", nav_contact:"Contact us",
+    nav_login:"Login", nav_join:"Join us",
+    badge_text:"A golden scientific platform for researchers and enthusiasts",
+    hero_title:"A scientific platform for publishing knowledge and research",
+    hero_sub:"An integrated structure for research, articles, scientific files, and courses.",
+    hero_cta_primary:"Start your research journey now", hero_cta_secondary:"Explore scientific content",
+    stat1_label:"Peer-reviewed paper", stat2_label:"Scientific article", stat3_label:"Registered participant", stat4_label:"Activity & workshop",
+    sec_how:"How to start?",
+    how_step1_title:"1. Create an account",
+    how_step1_text:"Create a new account from the registration page so you can save courses and articles you like and track your progress.",
+    how_step2_title:"2. Choose a specialization",
+    how_step2_text:"From the Academic menu, choose the specialization that suits you, then browse its related research, articles, and activities.",
+    how_step3_title:"3. Follow the content",
+    how_step3_text:"Start by reading research and articles, then move on to the available programs or workshops in the same field.",
+    how_step4_title:"4. Contribute scientifically",
+    how_step4_text:"After registering, you can submit your research or articles to the editorial board to publish them in different sections of the platform.",
+    sec_research:"Latest research", sec_editions:"Our editions", sec_activities:"Our activities and workshops",
+    sec_academic:"Academic content", sec_live:"Live broadcast", empty_items:"No items yet",
+    live_text:"Live broadcasts will appear here when available, linked to relevant programs and tracks.",
+    footer_text:"© All rights reserved – Your Academic Platform", logout:"Logout",
+    sp_politics:"Political Science", sp_ir:"International Relations", sp_admin_law:"Administrative Law",
+    sp_const_law:"Constitutional Law", sp_public_policy:"Public Policy",
+    sec_glance:"Journal at a glance", glance_freq:"Publication frequency", glance_freq_v:"Quarterly",
+    glance_review:"Average review time", glance_review_v:"4-6 weeks",
+    glance_lang:"Publication languages", glance_lang_v:"Arabic · English · French",
+    glance_access:"Access policy", glance_access_v:"Open access", glance_issn:"International registration number",
+    sec_dates:"Key dates",
+    date1_label:"Manuscript submission deadline", date1_value:"Open year-round",
+    date2_label:"Initial acceptance notice", date2_value:"Within two weeks of submission",
+    date3_label:"Next issue release", date3_value:"Announced on the Editions page",
+    sec_index:"Indexing & abstracting",
+    index_text:"We are working to have the journal indexed in recognized scholarly databases to broaden the reach of published research.",
+    idx_crossref:"Crossref (in progress)", idx_doaj:"DOAJ (in progress)", idx_scholar:"Google Scholar", idx_issn:"Registered ISSN",
+    f4_t:"Diverse specializations", f4_d:"Political science, law, international relations, and public policy.",
+    sec_tracks:"Academic tracks",
+    tr1_t:"Political Science track", tr1_d:"Analysis of political systems, parties, and elections.",
+    tr2_t:"International Relations track", tr2_d:"Theories of international relations and global actors.",
+    tr3_t:"Administrative Law track", tr3_d:"Public administration organization and oversight.",
+    tr4_t:"Constitutional Law track", tr4_d:"Structure of constitutions and higher state institutions.",
+    tr5_t:"Public Policy track", tr5_d:"Designing and evaluating public policies and programs.",
+    tr_link:"Explore track ←",
+    board_title:"Meet the editorial board",
+    board_text:"An academic team overseeing peer review and ensuring the scientific quality of published work.",
+    board_cta:"Editorial Board",
+    sec_faq:"Frequently asked questions",
+    faq2_q:"How long does peer review take?",
+    faq2_a:"Peer review typically takes between 4 and 6 weeks from the date the manuscript is received.",
+    faq3_q:"In which languages can I submit?",
+    faq3_a:"The journal accepts research and articles in Arabic, English, and French.",
+    faq4_q:"How do I submit my research?",
+    faq4_a:"Review the submission guidelines, then send your work via the Contact page.",
+    faq5_q:"Are submissions checked for plagiarism?",
+    faq5_a:"Yes, all submitted work undergoes an initial plagiarism screening before being sent for peer review.",
+    faq6_q:"How can I track my submission status?",
+    faq6_a:"You can contact the editorial board via the Contact page to ask about your submission status at any time.",
+    faq7_q:"Is there a required manuscript format?",
+    faq7_a:"Yes, please check the submission guidelines page for the required formatting and standards before submitting.",
+    news_title:"Subscribe to our newsletter",
+    news_text:"Get notified when a new issue is released or research in your field is published.",
+    news_placeholder:"Your email address", news_cta:"Subscribe"
+  },
+  fr:{
+    title:"Accueil", nav_home:"Accueil", nav_studies:"Recherches et études ▾",
+    nav_research_peer:"Recherches évaluées", nav_articles_peer:"Articles scientifiques", nav_files:"Dossiers de recherche",
+    nav_foreign:"Articles étrangers", nav_articles:"Articles", nav_editions:"Nos publications", nav_activities:"Activités",
+    nav_academic:"Académique", nav_live:"Direct", nav_rules:"Conditions de publication", nav_contact:"Contactez-nous",
+    nav_login:"Connexion", nav_join:"Rejoignez-nous",
+    badge_text:"Une plateforme scientifique dorée pour les chercheurs et les passionnés",
+    hero_title:"Plateforme spécialisée en sciences politiques, juridiques, sociales et économiques",
+    hero_sub:"Une structure intégrée pour les recherches, articles, dossiers scientifiques et cours.",
+    hero_cta_primary:"Commencez votre parcours de recherche maintenant", hero_cta_secondary:"Explorer le contenu scientifique",
+    stat1_label:"Recherche évaluée", stat2_label:"Article scientifique", stat3_label:"Participant inscrit", stat4_label:"Activité & atelier",
+    sec_how:"Par où commencer ?",
+    how_step1_title:"1. Créer un compte",
+    how_step1_text:"Créez un nouveau compte depuis la page d'inscription pour pouvoir enregistrer les cours et articles qui vous intéressent et suivre vos progrès.",
+    how_step2_title:"2. Choisir la spécialisation",
+    how_step2_text:"Depuis le menu Académique, choisissez la spécialisation qui vous convient puis parcourez ses recherches, articles et activités associées.",
+    how_step3_title:"3. Suivre le contenu",
+    how_step3_text:"Commencez par lire les recherches et articles, puis passez aux programmes ou ateliers disponibles dans le même domaine.",
+    how_step4_title:"4. Contribuer scientifiquement",
+    how_step4_text:"Après inscription, vous pouvez envoyer vos recherches ou articles au comité éditorial pour les publier dans les différentes rubriques de la plateforme.",
+    sec_research:"Dernières recherches", sec_editions:"Nos éditions", sec_activities:"Nos activités et ateliers",
+    sec_academic:"Contenu académique", sec_live:"Diffusion en direct", empty_items:"Aucun élément pour le moment",
+    live_text:"La diffusion en direct apparaîtra ici lorsqu'elle sera disponible, reliée aux programmes et parcours concernés.",
+    footer_text:"© Tous droits réservés – Votre plateforme scientifique", logout:"Déconnexion",
+    sp_politics:"Science politique", sp_ir:"Relations internationales", sp_admin_law:"Droit administratif",
+    sp_const_law:"Droit constitutionnel", sp_public_policy:"Politiques publiques",
+    sec_glance:"La revue en un coup d'œil", glance_freq:"Fréquence de publication", glance_freq_v:"Trimestrielle",
+    glance_review:"Délai moyen d'évaluation", glance_review_v:"4-6 semaines",
+    glance_lang:"Langues de publication", glance_lang_v:"Arabe · Anglais · Français",
+    glance_access:"Politique d'accès", glance_access_v:"Accès libre", glance_issn:"Numéro d'enregistrement international",
+    sec_dates:"Dates clés",
+    date1_label:"Date limite de soumission", date1_value:"Ouvert toute l'année",
+    date2_label:"Notification d'acceptation initiale", date2_value:"Sous deux semaines après soumission",
+    date3_label:"Parution du prochain numéro", date3_value:"Annoncée sur la page Nos publications",
+    sec_index:"Indexation et référencement",
+    index_text:"Nous œuvrons pour l'indexation de la revue dans des bases de données scientifiques reconnues afin d'élargir l'impact des recherches publiées.",
+    idx_crossref:"Crossref (en cours)", idx_doaj:"DOAJ (en cours)", idx_scholar:"Google Scholar", idx_issn:"ISSN enregistré",
+    f4_t:"Spécialisations diversifiées", f4_d:"Sciences politiques, droit, relations internationales et politiques publiques.",
+    sec_tracks:"Parcours académiques",
+    tr1_t:"Parcours science politique", tr1_d:"Analyse des systèmes politiques, des partis et des élections.",
+    tr2_t:"Parcours relations internationales", tr2_d:"Théories des relations internationales et acteurs mondiaux.",
+    tr3_t:"Parcours droit administratif", tr3_d:"Organisation de l'administration publique et son contrôle.",
+    tr4_t:"Parcours droit constitutionnel", tr4_d:"Structure des constitutions et des institutions supérieures.",
+    tr5_t:"Parcours politiques publiques", tr5_d:"Conception et évaluation des politiques et programmes publics.",
+    tr_link:"Découvrir le parcours ←",
+    board_title:"Découvrez le comité éditorial",
+    board_text:"Une équipe académique qui supervise l'évaluation par les pairs et garantit la qualité scientifique des travaux publiés.",
+    board_cta:"Comité éditorial",
+    sec_faq:"Questions fréquentes",
+    faq2_q:"Combien de temps dure l'évaluation par les pairs ?",
+    faq2_a:"L'évaluation dure généralement entre 4 et 6 semaines à compter de la réception du manuscrit.",
+    faq3_q:"Dans quelles langues puis-je soumettre ?",
+    faq3_a:"La revue accepte les recherches et articles en arabe, en anglais et en français.",
+    faq4_q:"Comment soumettre ma recherche ?",
+    faq4_a:"Consultez les conditions de publication puis envoyez votre travail via la page Contact.",
+    faq5_q:"Les soumissions sont-elles vérifiées contre le plagiat ?",
+    faq5_a:"Oui, tous les travaux soumis font l'objet d'une vérification initiale du plagiat avant d'être envoyés à l'évaluation.",
+    faq6_q:"Comment suivre l'état de ma soumission ?",
+    faq6_a:"Vous pouvez contacter le comité éditorial via la page Contact pour vous informer de l'état de votre soumission à tout moment.",
+    faq7_q:"Existe-t-il un format obligatoire pour les manuscrits ?",
+    faq7_a:"Oui, veuillez consulter la page des conditions de publication pour connaître le format et les normes requis avant l'envoi.",
+    news_title:"Abonnez-vous à notre newsletter",
+    news_text:"Recevez une notification à la parution d'un nouveau numéro ou à la publication de recherches dans votre domaine.",
+    news_placeholder:"Votre adresse e-mail", news_cta:"S'abonner"
+  }
+};
 
-  const all = [];
-  const lang = getCurrentLang();
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
 
-  sources.forEach(src => {
-const arr =
-  src.key === 'articles' ? getSectionItems('articles') :
-  src.key === 'editions' ? getSectionItems('editions') :
-  getStoredItems(src.key);
+  const dict = translations[lang] || translations.ar;
 
-    arr.forEach((item, idx) => {
-      all.push({
-        type: src.label,
-        storageKey: src.key,
-        index: idx,
-        title: getByLang(item.title, lang) || '',
-        desc:
-          getByLang(item.description, lang) ||
-          getByLang(item.short, lang) ||
-          getByLang(item.details, lang) ||
-          ''
-      });
-    });
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
+
+  const titleEl = document.getElementById('t-title');
+  if (titleEl && dict.title) titleEl.textContent = dict.title;
+
+  document.querySelectorAll('#langCurrent').forEach(el => { el.textContent = lang.toUpperCase(); });
+
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    if (dict[key] !== undefined) el.textContent = dict[key];
   });
 
-  return all.slice(0, 10);
+  const menu = document.getElementById('langMenu');
+  if (menu) menu.style.display = 'none';
+
+  refreshHomeSections();
 }
 
-function renderTicker(){
-  const track = document.getElementById("tickerTrack");
-  const dotsWrap = document.getElementById("tickerDots");
-  if(!track || !dotsWrap) return;
+function initMobileDropdowns() {
+  document.querySelectorAll('.mobile-dropdown-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.mobile-dropdown')?.classList.toggle('open');
+    });
+  });
+}
 
-  const items = collectLatest();
+/* ============================================================
+   FAQ accordion
+   ============================================================ */
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  if (!item) return;
+  const answer = item.querySelector('.faq-a');
+  const wasOpen = item.classList.contains('open');
 
-  if(!items.length){
-    track.innerHTML = `
-      <div class="ticker-item" style="min-width:100%;max-width:100%">
-        <div class="k">لا توجد عناصر</div>
-        <p class="t">أضف أبحاث/مقالات من لوحة الإدارة</p>
-        <p class="d">سيظهر آخر ما تضيفه هنا تلقائياً.</p>
-      </div>
-    `;
-    dotsWrap.innerHTML = "";
-    return;
+  item.parentElement.querySelectorAll('.faq-item.open').forEach(other => {
+    if (other !== item) {
+      other.classList.remove('open');
+      other.querySelector('.faq-a').style.maxHeight = null;
+    }
+  });
+
+  item.classList.toggle('open', !wasOpen);
+  answer.style.maxHeight = !wasOpen ? answer.scrollHeight + 'px' : null;
+}
+
+/* ============================================================
+   Newsletter signup (stored locally; wire to a real backend
+   endpoint when one is available)
+   ============================================================ */
+function handleNewsletter(e) {
+  e.preventDefault();
+  const input = document.getElementById('newsletterEmail');
+  const msg = document.getElementById('newsletterMsg');
+  const email = (input?.value || '').trim();
+  if (!email) return;
+
+  try {
+    const list = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
+    if (!list.includes(email)) list.push(email);
+    localStorage.setItem('newsletterSubscribers', JSON.stringify(list));
+  } catch (error) {
+    console.warn('Could not store newsletter subscription:', error);
   }
 
-  track.innerHTML = items.map(x => `
-    <div class="ticker-item">
-      <div class="k">${esc(x.type)} • ${esc(x.storageKey)}</div>
-      <p class="t">${esc(x.title)}</p>
-      <p class="d">${esc(x.desc).slice(0, 110)}${x.desc.length > 110 ? "..." : ""}</p>
-    </div>
-  `).join("");
-
-  dotsWrap.innerHTML = items.map((_, i) =>
-    `<span class="ticker-dot ${i===0?'active':''}" onclick="goTicker(${i})"></span>`
-  ).join("");
-
-  tickerIndex = 0;
-  applyTicker();
-  startTicker(items.length);
+  if (msg) {
+    const lang = getCurrentLang();
+    msg.textContent = lang === 'en' ? 'Thanks — you are subscribed!' :
+      lang === 'fr' ? 'Merci — vous êtes inscrit(e) !' : 'شكراً، تم تسجيل اشتراكك بنجاح.';
+  }
+  if (input) input.value = '';
 }
 
-function applyTicker(){
-  const track = document.getElementById("tickerTrack");
-  if(!track) return;
-  const item = track.querySelector(".ticker-item");
-  if(!item) return;
-  const w = item.offsetWidth + 10;
-  track.style.transform = `translateX(${-w * tickerIndex}px)`;
-
-  const dots = document.querySelectorAll(".ticker-dot");
-  dots.forEach((d, i) => d.classList.toggle("active", i === tickerIndex));
-}
-
-function goTicker(i){
-  tickerIndex = i;
-  applyTicker();
-}
-
-function startTicker(count){
-  if(tickerTimer) clearInterval(tickerTimer);
-  tickerTimer = setInterval(() => {
-    tickerIndex = (tickerIndex + 1) % count;
-    applyTicker();
-  }, 3000);
-}
+/* ============================================================
+   Featured slider drag support (kept for when the markup/data
+   for #featuredTrack is present on a page)
+   ============================================================ */
 let featuredIndex = 0;
-let featuredTimer = null;
 let featuredItemsCache = [];
-
 let isDraggingFeatured = false;
 let featuredStartX = 0;
-let featuredCurrentX = 0;
 let featuredDeltaX = 0;
 let featuredDragBound = false;
 
-function getFeaturedItems() {
-  const lang = getCurrentLang();
-  const sources = [
-    { key: 'research', label: currentLang === 'ar' ? 'بحث' : currentLang === 'fr' ? 'Recherche' : 'Research' },
-    { key: 'articles', label: currentLang === 'ar' ? 'مقال' : currentLang === 'fr' ? 'Article' : 'Article' },
-    { key: 'editions', label: currentLang === 'ar' ? 'إصدار' : currentLang === 'fr' ? 'Publication' : 'Edition' }
-  ];
-
-  const all = [];
-
-  sources.forEach(src => {
-const arr =
-  src.key === 'articles' ? getSectionItems('articles') :
-  src.key === 'editions' ? getSectionItems('editions') :
-  getStoredItems(src.key);
-
-    arr.forEach((item, index) => {
-      const image =
-  item.image ||
-  item.photo ||
-  item.cover ||
-  item.thumbnail ||
-  item.previewImage ||
-  item.imageUrl ||
-  '';
-
-if (!image || String(image).trim() === '') return;
-
-      const title = getByLang(item.title, lang) || '';
-      const desc =
-        getByLang(item.description, lang) ||
-        getByLang(item.short, lang) ||
-        getByLang(item.details, lang) ||
-        '';
-
-      if (!title.trim() && !desc.trim()) return;
-
-      all.push({
-        storageKey: src.key,
-        index,
-        label: src.label,
-        title,
-        desc,
-        image
-      });
-    });
-  });
-
-  return all.slice(0, 8);
-}
-
-function renderFeaturedSlider() {
-  const track = document.getElementById('featuredTrack');
-  const dots = document.getElementById('featuredDots');
-  const section = document.getElementById('latest-publications');
-  if (section) section.style.display = 'none';
-  if (track) track.innerHTML = '';
-  if (dots) dots.innerHTML = '';
-  featuredItemsCache = [];
-  featuredIndex = 0;
-  if (featuredTimer) clearInterval(featuredTimer);
-  return;
-  if (!track || !dots) return;
-
-  const items = getFeaturedItems();
-
-  if (!items.length) {
-    if (section) section.style.display = 'none';
-    track.innerHTML = '';
-    dots.innerHTML = '';
-    featuredItemsCache = items;
-    featuredIndex = 0;
-    applyFeatured();
-    startFeatured(items.length);
-    bindFeaturedDrag();
-    
-    return;
-
-  
-  }
-
-  if (section) section.style.display = '';
-
-  track.innerHTML = items.map(item => `
-    <div class="featured-slide" onclick="goToPage('${item.storageKey}', ${item.index})">
-      <img src="${esc(item.image)}" alt="${esc(item.title)}" onerror="this.src='logo1222.jpeg'">
-      <div class="featured-overlay">
-        <div class="featured-content">
-          <div class="featured-badge">${esc(item.label)}</div>
-          <div class="featured-title">${esc(item.title)}</div>
-          <div class="featured-desc">${esc(item.desc).slice(0, 180)}${item.desc.length > 180 ? '...' : ''}</div>
-          <div class="featured-link">عرض المحتوى</div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-
-  dots.innerHTML = items.map((_, i) =>
-    `<span class="featured-dot ${i === 0 ? 'active' : ''}" onclick="goFeatured(${i})"></span>`
-  ).join('');
-
-  featuredItemsCache = items;
-  featuredIndex = 0;
-  bindFeaturedDrag();
-  applyFeatured();
-  startFeatured(items.length);
+function getClientX(e) {
+  if (e.touches && e.touches.length) return e.touches[0].clientX;
+  if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
+  return e.clientX;
 }
 
 function applyFeatured() {
@@ -2708,10 +3077,7 @@ function applyFeatured() {
   if (!track || !dotsWrap || !shell) return;
 
   track.style.transform = `translateX(${-featuredIndex * shell.offsetWidth}px)`;
-
-  [...dotsWrap.children].forEach((dot, i) => {
-    dot.classList.toggle('active', i === featuredIndex);
-  });
+  [...dotsWrap.children].forEach((dot, i) => dot.classList.toggle('active', i === featuredIndex));
 }
 
 function goFeatured(i) {
@@ -2719,58 +3085,31 @@ function goFeatured(i) {
   applyFeatured();
 }
 
-function startFeatured(count) {
-  if (featuredTimer) clearInterval(featuredTimer);
-  if (count <= 1) return;
-
-  featuredTimer = setInterval(() => {
-    featuredIndex = (featuredIndex + 1) % count;
-    applyFeatured();
-  }, 4000);
-}
-function getClientX(e) {
-  if (e.touches && e.touches.length) return e.touches[0].clientX;
-  if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
-  return e.clientX;
-}
-
 function bindFeaturedDrag() {
   const shell = document.querySelector('.featured-shell');
   const track = document.getElementById('featuredTrack');
-  if (!shell || !track) return;
-  if (featuredDragBound) return;
+  if (!shell || !track || featuredDragBound) return;
   featuredDragBound = true;
 
   const startDrag = (e) => {
     if ((e.type === 'mousedown' && e.button !== 0) || featuredItemsCache.length <= 1) return;
-
     isDraggingFeatured = true;
     featuredStartX = getClientX(e);
-    featuredCurrentX = featuredStartX;
     featuredDeltaX = 0;
-
     shell.classList.add('dragging');
     track.style.transition = 'none';
-
-    if (featuredTimer) clearInterval(featuredTimer);
   };
 
   const moveDrag = (e) => {
     if (!isDraggingFeatured) return;
-
-    featuredCurrentX = getClientX(e);
-    featuredDeltaX = featuredCurrentX - featuredStartX;
-
+    featuredDeltaX = getClientX(e) - featuredStartX;
     const base = -featuredIndex * shell.offsetWidth;
     track.style.transform = `translateX(${base + featuredDeltaX}px)`;
   };
 
   const endDrag = () => {
     if (!isDraggingFeatured) return;
-
-    const shellWidth = shell.offsetWidth;
-    const threshold = Math.max(60, shellWidth * 0.12);
-
+    const threshold = Math.max(60, shell.offsetWidth * 0.12);
     isDraggingFeatured = false;
     shell.classList.remove('dragging');
     track.style.transition = 'transform .6s ease';
@@ -2780,38 +3119,17 @@ function bindFeaturedDrag() {
     } else if (featuredDeltaX > threshold) {
       featuredIndex = (featuredIndex - 1 + featuredItemsCache.length) % featuredItemsCache.length;
     }
-
     applyFeatured();
-    startFeatured(featuredItemsCache.length);
   };
 
   shell.addEventListener('mousedown', startDrag);
   shell.addEventListener('touchstart', startDrag, { passive: true });
-
-  window.addEventListener('mousemove', moveDrag);
+  window.addEventListener('mousemove', moveDrag, { passive: true });
   window.addEventListener('touchmove', moveDrag, { passive: true });
-
   window.addEventListener('mouseup', endDrag);
   window.addEventListener('touchend', endDrag);
   window.addEventListener('touchcancel', endDrag);
 }
-window.addEventListener("DOMContentLoaded", () => {
-  const backTop = document.getElementById("backTop");
-  if (!backTop) return;
-
-  window.addEventListener("scroll", () => {
-    backTop.style.display = window.scrollY > 500 ? "block" : "none";
-  });
-
-  backTop.addEventListener("click", () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  });
-});
 </script>
-
-<button id="backTop">↑</button>
 </body>
 </html>
