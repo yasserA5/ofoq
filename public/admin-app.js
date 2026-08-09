@@ -34,7 +34,8 @@ const state = {
   bySection: Object.fromEntries(SECTIONS.map((s) => [s.key, []])),
   currentSectionKey: "editions",
   editing: { key: null, id: null },
-  authResolved: false
+  authResolved: false,
+  liveUnsubscribe: null
 };
 
 const authReadyPromise = new Promise((resolve) => {
@@ -72,6 +73,25 @@ function setStatus(msg) {
 function setLoginStatus(msg) {
   const node = el("loginStatus");
   if (node) node.textContent = msg || "";
+}
+
+function showNotification(message, type = "success") {
+  const notification = document.createElement("div");
+  notification.className = `admin-notification ${type}`;
+  notification.innerHTML = `
+    <span class="notification-icon">${type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️"}</span>
+    <span class="notification-text">${message}</span>
+  `;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.classList.add("show");
+  }, 10);
+  
+  setTimeout(() => {
+    notification.classList.remove("show");
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
 }
 
 function uid() {
@@ -196,38 +216,81 @@ async function loginAdmin() {
 }
 
 // ============================================================
-// Platform Detection
+// Platform Detection & Meta
 // ============================================================
 const PLATFORM_META = {
-  youtube: { label: "YouTube", icon: "▶️", color: "#ff6b6b" },
-  facebook: { label: "Facebook", icon: "📘", color: "#8ab4ff" },
-  twitch: { label: "Twitch", icon: "🟣", color: "#c4a3ff" },
-  kick: { label: "Kick", icon: "🟢", color: "#8dffb0" },
-  twitter: { label: "X (Twitter)", icon: "✖️", color: "#e5e7eb" },
-  instagram: { label: "Instagram", icon: "📸", color: "#f9a8d4" },
-  tiktok: { label: "TikTok", icon: "🎵", color: "#e5e7eb" },
-  vimeo: { label: "Vimeo", icon: "🎬", color: "#7fd8f7" },
-  dailymotion: { label: "Dailymotion", icon: "🎞️", color: "#7fc4f7" },
-  video: { label: "فيديو", icon: "🎥", color: "#f9a8d4" },
-  unknown: { label: "رابط خارجي", icon: "🔗", color: "#e5e7eb" }
+  youtube: { label: "YouTube", icon: "▶️", color: "#ff6b6b", regex: /(?:youtube\.com|youtu\.be)/ },
+  facebook: { label: "Facebook", icon: "📘", color: "#8ab4ff", regex: /facebook\.com|fb\.watch/ },
+  twitch: { label: "Twitch", icon: "🟣", color: "#c4a3ff", regex: /twitch\.tv/ },
+  kick: { label: "Kick", icon: "🟢", color: "#8dffb0", regex: /kick\.com/ },
+  twitter: { label: "X (Twitter)", icon: "✖️", color: "#e5e7eb", regex: /(?:twitter\.com|x\.com)/ },
+  instagram: { label: "Instagram", icon: "📸", color: "#f9a8d4", regex: /instagram\.com/ },
+  tiktok: { label: "TikTok", icon: "🎵", color: "#e5e7eb", regex: /tiktok\.com|vm\.tiktok\.com/ },
+  vimeo: { label: "Vimeo", icon: "🎬", color: "#7fd8f7", regex: /vimeo\.com/ },
+  dailymotion: { label: "Dailymotion", icon: "🎞️", color: "#7fc4f7", regex: /dailymotion\.com/ },
+  video: { label: "فيديو", icon: "🎥", color: "#f9a8d4", regex: /\.(mp4|webm|ogg)/ },
+  unknown: { label: "رابط خارجي", icon: "🔗", color: "#e5e7eb", regex: /.*/ }
 };
 
 function detectPlatform(rawUrl) {
   const url = String(rawUrl || "").trim();
   if (!url) return "unknown";
 
-  if (/youtube\.com|youtu\.be/i.test(url)) return "youtube";
-  if (/facebook\.com|fb\.watch/i.test(url)) return "facebook";
-  if (/twitch\.tv/i.test(url)) return "twitch";
-  if (/kick\.com/i.test(url)) return "kick";
-  if (/(?:twitter\.com|x\.com)/i.test(url)) return "twitter";
-  if (/instagram\.com/i.test(url)) return "instagram";
-  if (/tiktok\.com|vm\.tiktok\.com/i.test(url)) return "tiktok";
-  if (/vimeo\.com/i.test(url)) return "vimeo";
-  if (/dailymotion\.com/i.test(url)) return "dailymotion";
-  if (/\.(mp4|webm|ogg)/i.test(url)) return "video";
-
+  for (const [platform, meta] of Object.entries(PLATFORM_META)) {
+    if (platform !== "unknown" && meta.regex.test(url)) {
+      return platform;
+    }
+  }
   return "unknown";
+}
+
+// ============================================================
+// Real-time Firestore Listener for Live Section
+// ============================================================
+function setupLiveListener() {
+  if (!window.fs || !window.fs.db) return;
+
+  try {
+    if (state.liveUnsubscribe) {
+      state.liveUnsubscribe();
+    }
+
+    const contentCollection = window.fs.collection(window.fs.db, "content");
+    const liveQuery = window.fs.query(
+      contentCollection,
+      window.fs.where("section", "==", "live")
+    );
+
+    state.liveUnsubscribe = window.fs.onSnapshot(
+      liveQuery,
+      (snapshot) => {
+        const liveItems = [];
+        snapshot.forEach((doc) => {
+          liveItems.push({
+            id: doc.id,
+            docId: doc.id,
+            ...doc.data()
+          });
+        });
+
+        state.bySection.live = liveItems.sort(
+          (a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0)
+        );
+
+        // Only re-render if we're viewing live section
+        if (state.currentSectionKey === "live") {
+          renderList("live");
+        }
+
+        console.log("✅ Live items updated:", liveItems.length);
+      },
+      (error) => {
+        console.error("❌ Live listener error:", error);
+      }
+    );
+  } catch (error) {
+    console.error("❌ Failed to setup live listener:", error);
+  }
 }
 
 // ============================================================
@@ -280,17 +343,17 @@ function rebuildDbFromCache() {
 // Broadcast to live.html
 // ============================================================
 function broadcastLiveUpdate() {
-  // Sync with live.html via localStorage
   const liveItems = state.bySection.live || [];
   localStorage.setItem("live", JSON.stringify(liveItems));
 
-  // Notify via BroadcastChannel
   try {
     const channel = new BroadcastChannel("ofouq-live-sync");
-    channel.postMessage({ type: "live-updated" });
+    channel.postMessage({ type: "live-updated", count: liveItems.length });
   } catch (e) {
-    // BroadcastChannel not supported
+    console.warn("BroadcastChannel not available");
   }
+
+  showNotification(`تم تحديث البث المباشر (${liveItems.length} بث)`, "success");
 }
 
 // ============================================================
@@ -305,6 +368,7 @@ function buildMenu() {
     const b = document.createElement("button");
     b.type = "button";
     b.dataset.key = sec.key;
+    b.title = sec.title;
     b.innerHTML = `<span>${esc(sec.title)}</span><i class="ri-arrow-left-s-line"></i>`;
     b.addEventListener("click", () => showSection(sec.key));
     menu.appendChild(b);
@@ -318,22 +382,17 @@ function setActiveMenu(key) {
 }
 
 // ============================================================
-// Form Building
+// Form Building - Enhanced Live Form
 // ============================================================
 function buildLiveForm(key) {
-  const statuses = [
-    { value: "live", label: "🔴 بث مباشر الآن" },
-    { value: "upcoming", label: "📅 قادم قريباً" },
-    { value: "ended", label: "🎬 انتهى (إعادة)" }
-  ];
-
   return `
     <div class="card">
-      <h3>إضافة بث مباشر جديد</h3>
+      <h3>🔴 إضافة بث مباشر جديد</h3>
+      <p style="color:#6b7280;font-size:13px;margin-bottom:15px;">أضف البث على أي منصة وسيظهر فوراً على صفحة البث المباشر</p>
       
       <div class="row">
-        <label>العنوان (العربية) *</label>
-        <input type="text" id="${key}-title-ar" placeholder="مثال: ندوة علمية حول البحث الأكاديمي" />
+        <label>العنوان (العربية) <span style="color:red;">*</span></label>
+        <input type="text" id="${key}-title-ar" placeholder="مثال: ندوة علمية حول البحث الأكاديمي" required />
       </div>
 
       <div class="row">
@@ -348,31 +407,40 @@ function buildLiveForm(key) {
 
       <div class="row">
         <label>الوصف المختصر (العربية)</label>
-        <textarea id="${key}-short-ar" placeholder="وصف قصير عن البث..."></textarea>
+        <textarea id="${key}-short-ar" placeholder="وصف قصير عن البث..." rows="2"></textarea>
       </div>
 
       <div class="row">
         <label>الوصف المختصر (الإنجليزية)</label>
-        <textarea id="${key}-short-en" placeholder="Brief description of the stream..."></textarea>
+        <textarea id="${key}-short-en" placeholder="Brief description of the stream..." rows="2"></textarea>
       </div>
 
       <div class="row">
         <label>الوصف المختصر (الفرنسية)</label>
-        <textarea id="${key}-short-fr" placeholder="Brève description du flux..."></textarea>
+        <textarea id="${key}-short-fr" placeholder="Brève description du flux..." rows="2"></textarea>
       </div>
 
       <div class="row">
-        <label>رابط البث المباشر / الفيديو *</label>
-        <input type="url" id="${key}-live-link" placeholder="https://www.youtube.com/watch?v=... أو facebook.com/... أو twitch.tv/..." />
-        <small style="color:#6b7280;display:block;margin-top:6px;">
-          ✓ يدعم: YouTube, Facebook, Twitch, Kick, X, Instagram, TikTok, Vimeo, Dailymotion, وملفات MP4/WebM/OGG
+        <label>رابط البث / الفيديو <span style="color:red;">*</span></label>
+        <input type="url" id="${key}-live-link" placeholder="الصق رابط البث هنا..." required />
+        <small style="color:#6b7280;display:block;margin-top:6px;line-height:1.5;">
+          <strong>✓ الأنصات المدعومة:</strong> YouTube • Facebook • Twitch • Kick • X/Twitter • Instagram • TikTok • Vimeo • Dailymotion • ملفات MP4/WebM/OGG
         </small>
       </div>
 
       <div class="row">
-        <label>الحالة *</label>
-        <select id="${key}-status">
-          ${statuses.map(s => `<option value="${s.value}">${s.label}</option>`).join('')}
+        <label>معاينة المنصة</label>
+        <div id="${key}-platform-preview" style="padding:10px;background:#f3f4f6;border-radius:8px;font-size:13px;color:#6b7280;">
+          اكتب الرابط للمعاينة
+        </div>
+      </div>
+
+      <div class="row">
+        <label>الحالة <span style="color:red;">*</span></label>
+        <select id="${key}-status" required>
+          <option value="upcoming">📅 قادم قريباً</option>
+          <option value="live">🔴 بث مباشر الآن</option>
+          <option value="ended">🎬 انتهى (إعادة)</option>
         </select>
       </div>
 
@@ -392,11 +460,9 @@ function buildLiveForm(key) {
       </div>
 
       <div class="actions">
-        <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">💾 حفظ البث</button>
-        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">🔄 مسح الحقول</button>
+        <button class="btn btn-green" type="button" onclick="publishItem('${key}')">💾 حفظ البث المباشر</button>
+        <button class="btn btn-ghost" type="button" onclick="resetForm('${key}')">🔄 مسح الحقول</button>
       </div>
-
-      <div class="preview" id="${key}-preview"></div>
     </div>
   `;
 }
@@ -404,7 +470,7 @@ function buildLiveForm(key) {
 function buildEditionForm(key) {
   return `
     <div class="card">
-      <h3>إضافة عدد جديد</h3>
+      <h3>📑 إضافة عدد جديد</h3>
       <div class="grid-2">
         <div>
           <div class="row"><label>رقم العدد</label><input type="text" id="${key}-number-ar" /></div>
@@ -420,13 +486,13 @@ function buildEditionForm(key) {
         <h3>مقالات العدد</h3>
         <div id="${key}-articles-wrap"></div>
         <div class="actions">
-          <button class="btn btn-ghost btn-small" type="button" onclick="addEditionArticleRow('${key}')">إضافة مقال</button>
+          <button class="btn btn-ghost btn-small" type="button" onclick="addEditionArticleRow('${key}')">+ إضافة مقال</button>
         </div>
       </div>
 
       <div class="actions">
-        <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">حفظ العدد</button>
-        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">مسح</button>
+        <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">💾 حفظ العدد</button>
+        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">🔄 مسح</button>
       </div>
     </div>
   `;
@@ -435,7 +501,7 @@ function buildEditionForm(key) {
 function buildContentForm(key, title) {
   return `
     <div class="card">
-      <h3>إضافة إلى ${esc(title)}</h3>
+      <h3>📝 إضافة إلى ${esc(title)}</h3>
       <div class="grid-2">
         <div>
           <div class="row"><label>العنوان</label><input type="text" id="${key}-title-ar" /></div>
@@ -453,8 +519,8 @@ function buildContentForm(key, title) {
         </div>
       </div>
       <div class="actions">
-        <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">حفظ</button>
-        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">مسح</button>
+        <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">💾 حفظ</button>
+        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">🔄 مسح</button>
       </div>
     </div>
   `;
@@ -472,7 +538,7 @@ function buildListHTML(key) {
   return `
     <div class="card">
       <div class="actions" style="justify-content:space-between;margin-bottom:10px">
-        <div>العناصر <span id="${key}-count">0</span></div>
+        <div>📊 العناصر: <strong id="${key}-count">0</strong></div>
         <input type="search" id="${key}-search" placeholder="ابحث..." style="max-width:240px" />
       </div>
       <div class="list" id="${key}-list"></div>
@@ -483,10 +549,10 @@ function buildListHTML(key) {
 function buildPreviewHTML(imageUrl = "", pdfUrl = "") {
   let out = "";
   if (pdfUrl) {
-    out += `<div style="margin-bottom:6px">PDF: <a href="${pdfUrl}" target="_blank" rel="noopener noreferrer" style="color:#7dd3fc">فتح الملف</a></div>`;
+    out += `<div style="margin-bottom:6px;padding:8px;background:#dbeafe;border-radius:6px;border-left:3px solid #0ea5e9;">📄 PDF: <a href="${pdfUrl}" target="_blank" rel="noopener noreferrer" style="color:#0369a1;font-weight:600;">فتح الملف</a></div>`;
   }
   if (imageUrl) {
-    out += `<div><img src="${imageUrl}" alt="preview"></div>`;
+    out += `<div style="border-radius:8px;overflow:hidden;margin-top:6px;"><img src="${imageUrl}" alt="preview" style="max-width:100%;height:auto;"></div>`;
   }
   return out;
 }
@@ -496,20 +562,40 @@ function bindPreviewInputs(key) {
   const pdfInput = el(`${key}-pdf-file`);
   const fullPdfInput = el(`${key}-full-pdf-file`);
   const preview = el(`${key}-preview`);
+  const liveLink = el(`${key}-live-link`);
+  const platformPreview = el(`${key}-platform-preview`);
+
   if (!preview) return;
+
+  // Live link platform detection
+  if (liveLink && platformPreview) {
+    liveLink.addEventListener("input", () => {
+      const url = liveLink.value.trim();
+      if (!url) {
+        platformPreview.innerHTML = "اكتب الرابط للمعاينة";
+        platformPreview.style.color = "#6b7280";
+        return;
+      }
+
+      const platform = detectPlatform(url);
+      const meta = PLATFORM_META[platform];
+      platformPreview.innerHTML = `<strong style="color:${meta.color};">${meta.icon} ${meta.label}</strong>`;
+      platformPreview.style.color = meta.color;
+    });
+  }
 
   if (imgInput) {
     imgInput.addEventListener("change", () => {
       const file = imgInput.files?.[0];
       if (!file) return;
-      preview.innerHTML = `<div><img src="${URL.createObjectURL(file)}" alt="preview"></div>`;
+      preview.innerHTML = `<div style="border-radius:8px;overflow:hidden;"><img src="${URL.createObjectURL(file)}" alt="preview" style="max-width:100%;height:auto;"></div>`;
     });
   }
 
   if (pdfInput) {
     pdfInput.addEventListener("change", () => {
       const file = pdfInput.files?.[0];
-      preview.innerHTML = file ? `<div>PDF: ${esc(file.name)}</div>` : "";
+      preview.innerHTML = file ? `<div style="padding:8px;background:#dbeafe;border-radius:6px;border-left:3px solid #0ea5e9;">📄 ${esc(file.name)}</div>` : "";
     });
   }
 
@@ -517,7 +603,7 @@ function bindPreviewInputs(key) {
     fullPdfInput.addEventListener("change", () => {
       const file = fullPdfInput.files?.[0];
       if (!file) return;
-      preview.innerHTML += `<div style="margin-top:6px">PDF العدد الكامل: ${esc(file.name)}</div>`;
+      preview.innerHTML += `<div style="padding:8px;background:#dcfce7;border-radius:6px;border-left:3px solid #16a34a;margin-top:6px;">📑 العدد الكامل: ${esc(file.name)}</div>`;
     });
   }
 }
@@ -553,9 +639,9 @@ function showSection(key) {
     }
 
     if (key === "live") {
-      // Set default status to "upcoming"
       const statusSelect = el(`${key}-status`);
       if (statusSelect) statusSelect.value = "upcoming";
+      setupLiveListener();
     }
 
     renderList(key);
@@ -571,7 +657,7 @@ function showSection(key) {
 async function uploadPdfToStorage(file, sectionKey, itemId) {
   await ensureFreshAuth();
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
-  const filePath = `pdfs/${sectionKey}/${itemId}-${safeName}`;
+  const filePath = `pdfs/${sectionKey}/${itemId}-${Date.now()}-${safeName}`;
   const storageRef = ref(storage, filePath);
   await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
@@ -581,7 +667,7 @@ async function uploadPdfToStorage(file, sectionKey, itemId) {
 async function uploadImageToStorage(file, sectionKey, itemId) {
   await ensureFreshAuth();
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
-  const filePath = `images/${sectionKey}/${itemId}-${safeName}`;
+  const filePath = `images/${sectionKey}/${itemId}-${Date.now()}-${safeName}`;
   const storageRef = ref(storage, filePath);
   await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
@@ -598,6 +684,7 @@ function addEditionArticleRow(key, article = {}) {
   const row = document.createElement("div");
   row.className = "card edition-article-row";
   row.style.marginTop = "10px";
+  row.style.background = "#f9fafb";
   row.dataset.rowId = uid();
   row.dataset.file = article.file || "";
   row.dataset.filePath = article.filePath || "";
@@ -605,24 +692,22 @@ function addEditionArticleRow(key, article = {}) {
   const count = wrap.children.length + 1;
 
   row.innerHTML = `
-    <h4 style="margin-bottom:8px">المقال رقم ${count}</h4>
+    <h4 style="margin-bottom:8px;color:#374151;">📄 المقال رقم ${count}</h4>
     <div class="row">
       <label>عنوان المقال</label>
       <input type="text" class="edition-article-title" placeholder="عنوان المقال..." value="${esc(article.title || "")}" />
     </div>
     <div class="row">
       <label>وصف المقال</label>
-      <textarea class="edition-article-description" placeholder="وصف مختصر للمقال...">${esc(article.description || "")}</textarea>
+      <textarea class="edition-article-description" placeholder="وصف مختصر للمقال..." rows="2">${esc(article.description || "")}</textarea>
     </div>
     <div class="row">
       <label>PDF المقال</label>
       <input type="file" class="edition-article-file" accept="application/pdf" />
-      ${article.file ? `<div class="hint" style="margin-top:6px"><a href="${article.file}" target="_blank" rel="noopener noreferrer">فتح الملف الحالي</a></div>` : ""}
+      ${article.file ? `<div style="margin-top:6px;padding:8px;background:#dbeafe;border-radius:6px;border-left:3px solid #0ea5e9;"><a href="${article.file}" target="_blank" rel="noopener noreferrer" style="color:#0369a1;font-weight:600;">📄 فتح الملف الحالي</a></div>` : ""}
     </div>
-    <div class="actions">
-      <button class="btn btn-red btn-small" type="button" onclick="this.closest('.edition-article-row').remove()">
-        <i class="ri-delete-bin-line"></i>حذف هذا المقال
-      </button>
+    <div class="actions" style="gap:6px;">
+      <button class="btn btn-red btn-small" type="button" onclick="this.closest('.edition-article-row').remove()">🗑️ حذف</button>
     </div>
   `;
 
@@ -686,12 +771,20 @@ async function upsertFirestore(sectionKey, obj) {
     status: obj.status || (sectionKey === "live" ? "upcoming" : "published")
   };
 
+  console.log("📤 Saving to Firestore:", {
+    collection: "content",
+    docId: docIdValue,
+    section: sectionKey,
+    status: payload.status
+  });
+
   await window.fs.setDoc(
     window.fs.doc(window.fs.db, "content", docIdValue),
     payload,
     { merge: true }
   );
 
+  console.log("✅ Saved successfully");
   return payload;
 }
 
@@ -773,6 +866,13 @@ async function saveItem(key) {
       if (!obj.title.ar || !obj.file) {
         throw new Error("العنوان والرابط مطلوبان");
       }
+
+      console.log("🔴 Live item data:", {
+        title: obj.title.ar,
+        status: obj.status,
+        platform: detectPlatform(obj.file),
+        file: obj.file.substring(0, 50) + "..."
+      });
     } else {
       obj.type = "content";
       obj.title.ar = el(`${key}-title-ar`)?.value.trim() || "";
@@ -810,16 +910,17 @@ async function saveItem(key) {
 
     resetForm(key);
     renderList(key);
+    showNotification(`✅ تم حفظ: ${obj.title.ar || "عنصر جديد"}`, "success");
     setStatus(`تم حفظ: ${obj.title.ar || "عنصر جديد"}`);
   } catch (err) {
-    console.error(err);
+    console.error("❌ Save error:", err);
     if (isPermissionError(err)) {
       setStatus("فشل الحفظ: ليست لديك صلاحية للوصول إلى Firestore/Storage");
-      alert("فشل الحفظ: تحقق من Firebase Authentication وFirestore Rules وStorage Rules");
+      showNotification("❌ تحقق من Firestore Rules و Storage Rules", "error");
       return;
     }
     setStatus(err.message || "حدث خطأ أثناء الحفظ");
-    alert(err.message || "حدث خطأ أثناء الحفظ");
+    showNotification(err.message || "حدث خطأ أثناء الحفظ", "error");
   }
 }
 
@@ -840,7 +941,6 @@ function loadForEdit(key, id) {
   if (el(`${key}-details-ar`)) el(`${key}-details-ar`).value = getByLang(item.details, "ar");
   if (el(`${key}-full-ar-editor`)) el(`${key}-full-ar-editor`).innerHTML = getByLang(item.full, "ar");
 
-  // Live-specific fields
   if (key === "live") {
     if (el(`${key}-title-en`)) el(`${key}-title-en`).value = getByLang(item.title, "en");
     if (el(`${key}-title-fr`)) el(`${key}-title-fr`).value = getByLang(item.title, "fr");
@@ -850,6 +950,14 @@ function loadForEdit(key, id) {
     if (el(`${key}-date-fr`)) el(`${key}-date-fr`).value = getByLang(item.date, "fr");
     if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
     if (el(`${key}-status`)) el(`${key}-status`).value = item.status || "upcoming";
+
+    const platformPreview = el(`${key}-platform-preview`);
+    if (platformPreview && item.file) {
+      const platform = detectPlatform(item.file);
+      const meta = PLATFORM_META[platform];
+      platformPreview.innerHTML = `<strong style="color:${meta.color};">${meta.icon} ${meta.label}</strong>`;
+      platformPreview.style.color = meta.color;
+    }
   } else {
     if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
   }
@@ -859,7 +967,7 @@ function loadForEdit(key, id) {
     let previewHtml = buildPreviewHTML(item.image, item.file);
     if (key === "editions" && item.fullIssueFile) {
       previewHtml =
-        `<div style="margin-bottom:6px">PDF العدد الكامل: <a href="${item.fullIssueFile}" target="_blank" rel="noopener noreferrer" style="color:#7dd3fc">فتح الملف</a></div>` +
+        `<div style="margin-bottom:6px;padding:8px;background:#dcfce7;border-radius:6px;border-left:3px solid #16a34a;">📑 PDF العدد الكامل: <a href="${item.fullIssueFile}" target="_blank" rel="noopener noreferrer" style="color:#15803d;font-weight:600;">فتح الملف</a></div>` +
         previewHtml;
     }
     p.innerHTML = previewHtml;
@@ -873,6 +981,8 @@ function loadForEdit(key, id) {
     if (wrap) wrap.innerHTML = "";
     (item.articles || []).forEach((article) => addEditionArticleRow(key, article));
   }
+
+  document.querySelector(".live-container")?.scrollIntoView({ behavior: "smooth" });
 }
 
 // ============================================================
@@ -882,6 +992,7 @@ async function deleteItemById(sectionKey, id) {
   if (!confirm("هل تريد الحذف النهائي؟")) return;
 
   const target = state.bySection[sectionKey].find((x) => String(x.docId || x.id) === String(id));
+  const itemTitle = getByLang(target?.title || "عنصر");
 
   const all = getContentCache().map((item) => normalizeItem(item.section, item));
   const filtered = all.filter((x) => String(x.docId || x.id) !== String(id));
@@ -920,21 +1031,21 @@ async function deleteItemById(sectionKey, id) {
       }
     }
 
-    // Broadcast if live
     if (sectionKey === "live") {
       broadcastLiveUpdate();
     }
 
+    showNotification(`✅ تم حذف: ${itemTitle}`, "success");
     setStatus("تم الحذف");
   } catch (err) {
     console.error(err);
     if (isPermissionError(err)) {
       setStatus("فشل الحذف: ليست لديك صلاحية");
-      alert("فشل الحذف: تحقق من Firebase Rules");
+      showNotification("❌ تحقق من Firebase Rules", "error");
       return;
     }
     setStatus(err.message || "فشل الحذف");
-    alert(err.message || "فشل الحذف");
+    showNotification(err.message || "فشل الحذف", "error");
   }
 }
 
@@ -967,6 +1078,11 @@ function resetForm(key) {
   if (key === "live") {
     const statusSelect = el(`${key}-status`);
     if (statusSelect) statusSelect.value = "upcoming";
+    const platformPreview = el(`${key}-platform-preview`);
+    if (platformPreview) {
+      platformPreview.innerHTML = "اكتب الرابط للمعاينة";
+      platformPreview.style.color = "#6b7280";
+    }
   }
 
   if (key === "editions") {
@@ -988,7 +1104,7 @@ function resetForm(key) {
 }
 
 // ============================================================
-// Render List
+// Render List - Enhanced for Live
 // ============================================================
 function renderList(key) {
   const list = el(`${key}-list`);
@@ -1010,7 +1126,7 @@ function renderList(key) {
   count.textContent = data.length;
 
   if (!data.length) {
-    list.innerHTML = `<div class="empty">لا توجد بيانات في هذا القسم حالياً.<br>أضف محتوى جديداً أو اضغط "تحميل Firestore".</div>`;
+    list.innerHTML = `<div class="empty">📭 لا توجد بيانات في هذا القسم حالياً.<br><small>أضف محتوى جديداً من الأعلى.</small></div>`;
     return;
   }
 
@@ -1019,14 +1135,18 @@ function renderList(key) {
   data.forEach((item) => {
     const title = getByLang(item.title, "ar") || "بدون عنوان";
     const descBase = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
-    const desc = descBase.length > 120 ? `${descBase.slice(0, 120)}...` : descBase;
+    const desc = descBase.length > 100 ? `${descBase.slice(0, 100)}...` : descBase;
     const author = getByLang(item.author, "ar") || "";
     
     let dateLabel = "";
+    let statusBadge = "";
     if (key === "editions") {
       dateLabel = `العدد ${item.editionNumber || item.issueNumber || ""}`;
     } else if (key === "live") {
-      dateLabel = getByLang(item.date, "ar") || `الحالة: ${item.status === "live" ? "🔴 بث مباشر" : item.status === "upcoming" ? "📅 قادم قريباً" : "🎬 انتهى"}`;
+      const statusEmoji = item.status === "live" ? "🔴" : item.status === "upcoming" ? "📅" : "🎬";
+      const statusText = item.status === "live" ? "بث مباشر" : item.status === "upcoming" ? "قادم قريباً" : "انتهى";
+      statusBadge = `<span style="display:inline-block;padding:4px 8px;background:${item.status === "live" ? "#fee2e2" : item.status === "upcoming" ? "#fef3c7" : "#dcfce7"};border-radius:4px;font-size:11px;color:${item.status === "live" ? "#dc2626" : item.status === "upcoming" ? "#92400e" : "#15803d"};font-weight:700;margin-right:8px;">${statusEmoji} ${statusText}</span>`;
+      dateLabel = getByLang(item.date, "ar") || "";
     } else {
       dateLabel = getByLang(item.date, "ar") || "";
     }
@@ -1035,7 +1155,7 @@ function renderList(key) {
     if (key === "live") {
       const platform = detectPlatform(item.file);
       const meta = PLATFORM_META[platform];
-      imgHtml = `<div style="display:flex;align-items:center;justify-content:center;width:80px;height:80px;background:rgba(0,0,0,0.05);border-radius:8px;font-size:32px;">${meta?.icon || "🔗"}</div>`;
+      imgHtml = `<div style="display:flex;align-items:center;justify-content:center;width:70px;height:70px;background:${meta.color}22;border-radius:8px;font-size:28px;flex-shrink:0;">${meta.icon}</div>`;
     } else {
       imgHtml = item.image
         ? `<img src="${item.image}" alt="img" />`
@@ -1044,7 +1164,7 @@ function renderList(key) {
 
     const articlesHtml =
       key === "editions" && Array.isArray(item.articles) && item.articles.length
-        ? `<div style="margin-top:8px">${item.articles.map((a) => `<span style="display:inline-block;margin:4px;padding:5px 9px;border-radius:999px;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.25)">${esc(a.title || "مقال")}</span>`).join("")}</div>`
+        ? `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">${item.articles.map((a) => `<span style="display:inline-block;padding:4px 8px;border-radius:4px;background:#f3f4f6;border-left:3px solid #ec4899;font-size:11px;color:#374151;"><strong>${esc(a.title || "مقال")}</strong></span>`).join("")}</div>`
         : "";
 
     const wrap = document.createElement("div");
@@ -1058,7 +1178,11 @@ function renderList(key) {
       <div class="item-body">
         <div class="item-title">${esc(title)}</div>
         <div class="item-desc">${esc(desc)}</div>
-        <div class="item-meta"><span>${esc(author)}</span><span>${esc(dateLabel)}</span></div>
+        <div class="item-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          ${statusBadge}
+          <span>${esc(author)}</span>
+          <span>${esc(dateLabel)}</span>
+        </div>
         ${articlesHtml}
       </div>
     `;
@@ -1086,14 +1210,17 @@ async function reloadFromFirestore() {
     setContentCache(all);
     rebuildDbFromCache();
     renderList(state.currentSectionKey);
+    showNotification(`✅ تم تحميل ${all.length} عنصر من Firestore`, "success");
     setStatus(`تم تحميل ${all.length} عنصر من Firestore`);
   } catch (e) {
     console.error(e);
     if (isPermissionError(e)) {
       setStatus("فشل تحميل Firestore: لا توجد صلاحيات كافية");
+      showNotification("❌ تحقق من Firestore Rules", "error");
       return;
     }
     setStatus(`فشل تحميل Firestore: ${e.message || "Permission denied"}`);
+    showNotification(`❌ فشل: ${e.message || "Permission denied"}`, "error");
   }
 }
 
@@ -1141,6 +1268,7 @@ async function recoverAllData() {
 
     if (firestoreItems.length) {
       setStatus(`تمت المزامنة: ${merged.length} عنصر`);
+      showNotification(`✅ تمت المزامنة: ${merged.length} عنصر`, "success");
     } else if (merged.length) {
       setStatus(`تم تحميل البيانات المحلية: ${merged.length} عنصر`);
     } else {
@@ -1149,6 +1277,7 @@ async function recoverAllData() {
   } catch (e) {
     console.error(e);
     setStatus(`Firestore sync failed: ${e.message || "Permission denied"}`);
+    showNotification(`❌ Firestore sync failed`, "error");
   }
 }
 
@@ -1165,11 +1294,12 @@ function exportJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `site-data-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `ofouq-data-${new Date().toISOString().slice(0, 10)}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+  showNotification("✅ تم تصدير البيانات", "success");
 }
 
 function clearLocalStorageOnly() {
@@ -1196,13 +1326,71 @@ function clearLocalStorageOnly() {
   });
 
   showSection(state.currentSectionKey);
+  showNotification("✅ تم مسح localStorage", "success");
   setStatus("تم مسح localStorage");
+}
+
+// ============================================================
+// Add Notification Styles
+// ============================================================
+function addNotificationStyles() {
+  const style = document.createElement("style");
+  style.textContent = `
+    .admin-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 16px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 5000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 90%;
+    }
+
+    .admin-notification.show {
+      transform: translateX(0);
+    }
+
+    .admin-notification.success {
+      border-left: 4px solid #22c55e;
+      color: #166534;
+    }
+
+    .admin-notification.error {
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+    }
+
+    .admin-notification.info {
+      border-left: 4px solid #3b82f6;
+      color: #1e40af;
+    }
+
+    .notification-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .notification-text {
+      flex: 1;
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 // ============================================================
 // Initialization
 // ============================================================
 async function init() {
+  addNotificationStyles();
   buildMenu();
   rebuildDbFromCache();
 
@@ -1242,6 +1430,9 @@ async function init() {
       await recoverAllData();
     }
   });
+
+  // Setup live listener on load
+  setupLiveListener();
 }
 
 // ============================================================

@@ -1,13 +1,12 @@
 /* ============================================================
-   LIVE STREAMING APP - Firestore-Powered Version
-   Works across ALL devices and browsers in real-time
+   LIVE STREAMING APP - Firestore-Powered with Debugging
    ============================================================ */
 
 import { app, auth } from "./firebase-init.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 // ============================================================
-// TRANSLATIONS
+// TRANSLATIONS (keep same as before)
 // ============================================================
 const translations = {
   ar: {
@@ -160,7 +159,7 @@ let currentLang = localStorage.getItem("lang") || "ar";
 let user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null");
 let activeLiveId = null;
 let __liveItemsCache = [];
-let liveUnsubscribe = null; // Firestore real-time listener
+let liveUnsubscribe = null;
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -331,68 +330,133 @@ function detectPlatform(rawUrl) {
 }
 
 // ============================================================
-// FIRESTORE REAL-TIME LISTENER
+// FIRESTORE LISTENER WITH DEBUGGING
 // ============================================================
 function startLiveListener() {
-  // Wait for Firestore to be ready
+  console.log("🔄 Starting Firestore listener...");
+
   const waitForFirestore = () => {
     return new Promise((resolve) => {
-      if (window.fs && window.fs.db) return resolve();
-      window.addEventListener("firestoreReady", () => resolve(), { once: true });
-      setTimeout(() => resolve(), 5000); // Timeout after 5 seconds
+      if (window.fs && window.fs.db) {
+        console.log("✅ Firestore ready immediately");
+        return resolve();
+      }
+      console.log("⏳ Waiting for Firestore to be ready...");
+      window.addEventListener("firestoreReady", () => {
+        console.log("✅ Firestore ready via event");
+        resolve();
+      }, { once: true });
+      setTimeout(() => {
+        console.log("⏰ Firestore timeout - using fallback");
+        resolve();
+      }, 5000);
     });
   };
 
   waitForFirestore().then(() => {
     if (!window.fs || !window.fs.db) {
-      console.warn("Firestore not available, using fallback");
+      console.warn("❌ Firestore not available, using localStorage only");
+      const cached = JSON.parse(localStorage.getItem("live") || "[]");
+      console.log("📦 Loaded from localStorage:", cached.length, "items");
+      __liveItemsCache = cached;
       renderLive();
       return;
     }
 
     try {
-      // Clean up previous listener
+      console.log("🔗 Connecting to Firestore...");
+
       if (liveUnsubscribe) {
+        console.log("🧹 Cleaning up old listener");
         liveUnsubscribe();
       }
 
-      // Query for live streams only
       const contentCollection = window.fs.collection(window.fs.db, "content");
-      const liveQuery = window.fs.query(
-        contentCollection,
-        window.fs.where("section", "==", "live")
-      );
+      console.log("📂 Content collection reference created");
 
-      // Real-time listener
-      liveUnsubscribe = window.fs.onSnapshot(liveQuery, (snapshot) => {
-        const liveItems = [];
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          liveItems.push({
-            id: doc.id,
-            docId: doc.id,
-            ...data
+      // Try with where clause first
+      try {
+        const liveQuery = window.fs.query(
+          contentCollection,
+          window.fs.where("section", "==", "live")
+        );
+        console.log("🔍 Query created: section == 'live'");
+
+        liveUnsubscribe = window.fs.onSnapshot(liveQuery, (snapshot) => {
+          console.log("📡 Received Firestore update:", snapshot.size, "items");
+          const liveItems = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log("  - Item:", doc.id, data.title?.ar || "No title");
+            liveItems.push({
+              id: doc.id,
+              docId: doc.id,
+              ...data
+            });
+          });
+
+          __liveItemsCache = liveItems;
+          localStorage.setItem("live", JSON.stringify(liveItems));
+          console.log("💾 Cached", liveItems.length, "items to localStorage");
+          renderLive();
+        }, (error) => {
+          console.error("❌ Firestore listener error:", error);
+          console.log("🔄 Trying to query all content...");
+          
+          // Fallback: query all and filter manually
+          const allQuery = window.fs.query(contentCollection);
+          window.fs.getDocs(allQuery).then((snapshot) => {
+            const liveItems = [];
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              if (data.section === "live") {
+                liveItems.push({
+                  id: doc.id,
+                  docId: doc.id,
+                  ...data
+                });
+              }
+            });
+            console.log("✅ Fallback query found", liveItems.length, "live items");
+            __liveItemsCache = liveItems;
+            localStorage.setItem("live", JSON.stringify(liveItems));
+            renderLive();
+          }).catch(fallbackError => {
+            console.error("❌ Fallback also failed:", fallbackError);
+            const cached = JSON.parse(localStorage.getItem("live") || "[]");
+            __liveItemsCache = cached;
+            renderLive();
           });
         });
-
-        // Update cache
-        __liveItemsCache = liveItems;
-
-        // Cache to localStorage for offline support
-        localStorage.setItem("live", JSON.stringify(liveItems));
-
-        // Render
-        renderLive();
-      }, (error) => {
-        console.error("Firestore listener error:", error);
-        // Fallback to localStorage
-        const cached = JSON.parse(localStorage.getItem("live") || "[]");
-        __liveItemsCache = cached;
-        renderLive();
-      });
+      } catch (queryError) {
+        console.error("❌ Query creation failed:", queryError);
+        
+        // Double fallback: get all docs
+        window.fs.getDocs(contentCollection).then((snapshot) => {
+          const liveItems = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.section === "live") {
+              liveItems.push({
+                id: doc.id,
+                docId: doc.id,
+                ...data
+              });
+            }
+          });
+          console.log("✅ Double fallback found", liveItems.length, "live items");
+          __liveItemsCache = liveItems;
+          localStorage.setItem("live", JSON.stringify(liveItems));
+          renderLive();
+        }).catch(allDocsError => {
+          console.error("❌ All docs query failed:", allDocsError);
+          const cached = JSON.parse(localStorage.getItem("live") || "[]");
+          __liveItemsCache = cached;
+          renderLive();
+        });
+      }
     } catch (error) {
-      console.error("Failed to start Firestore listener:", error);
-      // Fallback
+      console.error("❌ Critical error in Firestore setup:", error);
       const cached = JSON.parse(localStorage.getItem("live") || "[]");
       __liveItemsCache = cached;
       renderLive();
@@ -401,7 +465,7 @@ function startLiveListener() {
 }
 
 // ============================================================
-// RENDERING FUNCTIONS
+// RENDERING FUNCTIONS (same as before)
 // ============================================================
 function renderPrimary(item) {
   const liveVideo = document.getElementById("liveVideo");
@@ -557,6 +621,8 @@ window.remindStream = function(id) {
 };
 
 function renderLive() {
+  console.log("🎨 Rendering live streams, total items:", __liveItemsCache.length);
+
   const liveVideo = document.getElementById("liveVideo");
   const upcomingStreams = document.getElementById("upcomingStreams");
   const endedStreams = document.getElementById("endedStreams");
@@ -567,13 +633,17 @@ function renderLive() {
   const liveIndicator = document.getElementById("liveIndicator");
   const liveIndicatorText = document.getElementById("liveIndicatorText");
 
-  if (!liveVideo || !upcomingStreams || !endedStreams) return;
+  if (!liveVideo || !upcomingStreams || !endedStreams) {
+    console.error("❌ Missing DOM elements");
+    return;
+  }
 
   const items = __liveItemsCache;
-
   const liveNow = items.filter(i => i.status === "live");
   const upcoming = items.filter(i => i.status === "upcoming");
   const ended = items.filter(i => i.status === "ended");
+
+  console.log("📊 Counts - Live:", liveNow.length, "Upcoming:", upcoming.length, "Ended:", ended.length);
 
   // Update hero badge
   if (liveStatusBadge && liveStatusText) {
@@ -630,7 +700,7 @@ function renderLive() {
 window.renderLive = renderLive;
 
 // ============================================================
-// NAVIGATION & HEADER
+// NAVIGATION & HEADER (same as before)
 // ============================================================
 window.goToHome = function() {
   window.location.href = "index.html";
@@ -770,21 +840,23 @@ window.setLang = function(lang) {
 // INITIALIZATION
 // ============================================================
 window.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 Page loaded, initializing...");
   updateHeader();
   setLang(currentLang);
   
-  // Start Firestore real-time listener
+  // Start Firestore listener
   startLiveListener();
   
-  // Initial render with cached data
+  // Load cached data
   const cached = JSON.parse(localStorage.getItem("live") || "[]");
+  console.log("📦 Initial cache:", cached.length, "items");
   __liveItemsCache = cached;
   renderLive();
 });
 
-// Cleanup on page unload
 window.addEventListener("beforeunload", () => {
   if (liveUnsubscribe) {
+    console.log("🧹 Cleaning up listener");
     liveUnsubscribe();
   }
 });
