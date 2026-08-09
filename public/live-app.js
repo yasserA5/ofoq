@@ -1,7 +1,10 @@
 /* ============================================================
-   LIVE STREAMING APP - Core Logic
-   Handles all rendering, platform detection, admin sync
+   LIVE STREAMING APP - Firestore-Powered Version
+   Works across ALL devices and browsers in real-time
    ============================================================ */
+
+import { app, auth } from "./firebase-init.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 // ============================================================
 // TRANSLATIONS
@@ -77,12 +80,12 @@ const translations = {
     hero_live_badge: "🔴 Live now",
     hero_idle_badge: "⚪ Nothing live right now",
     hero_title_live: "Live Stream",
-    hero_sub_live: "Follow our live events, seminars and talks on YouTube, Facebook, Twitch, Kick, X, Instagram and TikTok.",
+    hero_sub_live: "Follow our live events, seminars and talks",
     sec_live_multi: "Also live right now",
     sec_live_next: "Upcoming Live",
     sec_live_ended: "Previous Replays",
     no_live: "No live streams currently",
-    no_live_sub: "Upcoming streams will appear here once added from the dashboard.",
+    no_live_sub: "Upcoming streams will appear here once added.",
     no_ended: "No replays yet",
     remind_saved: "Stream reminder saved",
     btn_remind: "Remind me later",
@@ -129,7 +132,7 @@ const translations = {
     sec_live_next: "Prochains directs",
     sec_live_ended: "Rediffusions précédentes",
     no_live: "Aucune diffusion pour le moment",
-    no_live_sub: "Les prochains directs apparaîtront ici une fois ajoutés depuis le tableau de bord.",
+    no_live_sub: "Les prochains directs apparaîtront ici.",
     no_ended: "Aucune rediffusion pour le moment",
     remind_saved: "Rappel enregistré",
     btn_remind: "Me rappeler plus tard",
@@ -151,12 +154,13 @@ const translations = {
 };
 
 // ============================================================
-// STATE & INITIALIZATION
+// STATE
 // ============================================================
 let currentLang = localStorage.getItem("lang") || "ar";
 let user = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null");
 let activeLiveId = null;
 let __liveItemsCache = [];
+let liveUnsubscribe = null; // Firestore real-time listener
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -223,7 +227,7 @@ async function copyToClipboard(text) {
 window.copyToClipboard = copyToClipboard;
 
 // ============================================================
-// PLATFORM DETECTION & EMBED BUILDING
+// PLATFORM DETECTION
 // ============================================================
 const PLATFORM_META = {
   youtube: { label: "YouTube", icon: "▶️", bg: "rgba(255,0,0,.18)", color: "#ff6b6b" },
@@ -259,7 +263,7 @@ function detectPlatform(rawUrl) {
     return { platform: "facebook", aspect: "aspect-9-16" };
   }
 
-  // Twitch VOD
+  // Twitch
   m = url.match(/twitch\.tv\/(?:[a-zA-Z0-9_]+\/)?videos?\/(\d+)/i);
   if (m) {
     return {
@@ -268,16 +272,6 @@ function detectPlatform(rawUrl) {
     };
   }
 
-  // Twitch clip
-  m = url.match(/(?:clips\.twitch\.tv\/|twitch\.tv\/[a-zA-Z0-9_]+\/clip\/)([a-zA-Z0-9_-]+)/i);
-  if (m) {
-    return {
-      platform: "twitch", aspect: "aspect-16-9",
-      embedUrl: `https://clips.twitch.tv/embed?clip=${m[1]}&parent=${location.hostname}&autoplay=true`
-    };
-  }
-
-  // Twitch live
   m = url.match(/twitch\.tv\/([a-zA-Z0-9_]+)\/?(?:\?.*)?$/i);
   if (m) {
     return {
@@ -286,16 +280,7 @@ function detectPlatform(rawUrl) {
     };
   }
 
-  // Kick VOD
-  m = url.match(/kick\.com\/([a-zA-Z0-9_]+)\/videos\/([a-zA-Z0-9-]+)/i);
-  if (m) {
-    return {
-      platform: "kick", aspect: "aspect-16-9",
-      embedUrl: `https://player.kick.com/${m[1]}?video=${m[2]}`
-    };
-  }
-
-  // Kick live
+  // Kick
   m = url.match(/kick\.com\/([a-zA-Z0-9_]+)\/?(?:\?.*)?$/i);
   if (m) {
     return {
@@ -322,7 +307,7 @@ function detectPlatform(rawUrl) {
     };
   }
 
-  // X / Twitter
+  // Twitter/X
   if (/(?:twitter\.com|x\.com)\/[^\/]+\/status\/\d+/i.test(url)) {
     return { platform: "twitter", aspect: "aspect-auto" };
   }
@@ -333,7 +318,7 @@ function detectPlatform(rawUrl) {
   }
 
   // TikTok
-  if (/tiktok\.com\/(?:@[^\/]+\/(?:video|live)\/\d+|t\/[a-zA-Z0-9]+)/i.test(url) || /vm\.tiktok\.com\//i.test(url)) {
+  if (/tiktok\.com/i.test(url)) {
     return { platform: "tiktok", aspect: "aspect-9-16" };
   }
 
@@ -344,160 +329,75 @@ function detectPlatform(rawUrl) {
 
   return { platform: "unknown", aspect: "aspect-auto", embedUrl: "" };
 }
-window.detectPlatform = detectPlatform;
-
-// Lazy-load third-party SDK scripts
-const _loadedScripts = {};
-function loadScriptOnce(src, globalCheck) {
-  return new Promise((resolve) => {
-    if (globalCheck && globalCheck()) return resolve();
-    if (_loadedScripts[src]) return _loadedScripts[src].then(resolve);
-    const p = new Promise((res) => {
-      const s = document.createElement("script");
-      s.src = src;
-      s.async = true;
-      s.crossOrigin = "anonymous";
-      s.onload = () => res();
-      s.onerror = () => res();
-      document.body.appendChild(s);
-    });
-    _loadedScripts[src] = p;
-    p.then(resolve);
-  });
-}
-
-function loadFacebookSdk() {
-  return loadScriptOnce(
-    "https://connect.facebook.net/ar_AR/sdk.js#xfbml=1&version=v19.0",
-    () => !!window.FB
-  );
-}
-
-function loadTwitterWidgets() {
-  return loadScriptOnce("https://platform.twitter.com/widgets.js", () => !!window.twttr);
-}
-
-function loadInstagramEmbed() {
-  return loadScriptOnce("https://www.instagram.com/embed.js", () => !!window.instgrm);
-}
-
-function loadTikTokEmbed() {
-  return loadScriptOnce("https://www.tiktok.com/embed.js", () => false);
-}
-
-function buildMediaHTML(item, safeUrl, det, container) {
-  const title = escapeHtml(getText(item.title) || t("hero_title_live"));
-
-  switch (det.platform) {
-    case "youtube":
-    case "vimeo":
-    case "dailymotion":
-      return `<iframe src="${det.embedUrl}" title="${title}" loading="lazy"
-        allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"
-        allowfullscreen></iframe>`;
-
-    case "twitch":
-    case "kick":
-      return `<iframe src="${det.embedUrl}" title="${title}" loading="lazy"
-        allow="autoplay;fullscreen" allowfullscreen></iframe>`;
-
-    case "video":
-      return `<video controls autoplay playsinline src="${det.embedUrl}"></video>`;
-
-    case "facebook":
-      loadFacebookSdk().then(() => {
-        if (window.FB && typeof window.FB.XFBML.parse === "function") {
-          window.FB.XFBML.parse(container);
-        }
-      });
-      return `
-        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px;">
-          <div class="fb-video" data-href="${safeUrl}" data-width="700" data-show-text="false" data-allowfullscreen="true">
-            <div class="fb-xfbml-parse-ignore">
-              <blockquote cite="${safeUrl}"><a href="${safeUrl}" target="_blank" rel="noopener">${title}</a></blockquote>
-            </div>
-          </div>
-        </div>`;
-
-    case "twitter":
-      loadTwitterWidgets().then(() => {
-        if (window.twttr && window.twttr.widgets) window.twttr.widgets.load(container);
-      });
-      return `<blockquote class="twitter-tweet" data-dnt="true">
-        <a href="${safeUrl}"></a></blockquote>`;
-
-    case "instagram":
-      loadInstagramEmbed().then(() => {
-        if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
-      });
-      return `<blockquote class="instagram-media" data-instgrm-permalink="${safeUrl}"
-        data-instgrm-version="14" style="width:100%;"></blockquote>`;
-
-    case "tiktok":
-      loadTikTokEmbed();
-      return `<blockquote class="tiktok-embed" cite="${safeUrl}" style="max-width:100%;min-width:100%;">
-        <section><a target="_blank" rel="noopener" href="${safeUrl}">${title}</a></section></blockquote>`;
-
-    default:
-      return `
-        <div class="live-overlay" style="position:static;background:transparent;">
-          <h3 style="animation:none;">${title}</h3>
-          <p style="font-size:15px;margin-bottom:18px;">${escapeHtml(getText(item.short) || "")}</p>
-          <a class="card-btn" href="${safeUrl}" target="_blank" rel="noopener">${t("watch_original")}</a>
-        </div>`;
-  }
-}
-
-function platformBadgeHTML(platform) {
-  const meta = PLATFORM_META[platform] || PLATFORM_META.unknown;
-  return `<span class="platform-badge" style="background:${meta.bg};color:${meta.color};">${meta.icon} ${meta.label}</span>`;
-}
-
-function needsFallbackLink(platform) {
-  return ["youtube", "twitch", "kick", "vimeo", "dailymotion"].includes(platform);
-}
 
 // ============================================================
-// DATA MANAGEMENT
+// FIRESTORE REAL-TIME LISTENER
 // ============================================================
-function readStoredArray(key) {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    console.warn("Invalid localStorage data for " + key, error);
-    return [];
-  }
-}
-
-function getStoredLiveItems() {
-  const merged = new Map();
-  ["live", "liveStreams"].forEach(key => {
-    readStoredArray(key).forEach((item, index) => {
-      const id = String(item.id || item.docId || item.uid || item.url || item.file || (key + "-" + index));
-      merged.set(id, { ...(merged.get(id) || {}), id, ...item });
+function startLiveListener() {
+  // Wait for Firestore to be ready
+  const waitForFirestore = () => {
+    return new Promise((resolve) => {
+      if (window.fs && window.fs.db) return resolve();
+      window.addEventListener("firestoreReady", () => resolve(), { once: true });
+      setTimeout(() => resolve(), 5000); // Timeout after 5 seconds
     });
-  });
-
-  if (merged.size === 0) {
-    return [{
-      id: "demo-live-1",
-      status: "live",
-      file: "https://www.facebook.com/f.polydisciplinaire/videos/4439033856334139",
-      title: { ar: "البث المباشر", en: "Live Stream", fr: "Diffusion en direct" },
-      short: { ar: "تابعوا البث الآن مباشرة على Facebook.", en: "Watch the live stream now on Facebook.", fr: "Suivez le direct maintenant sur Facebook." }
-    }];
-  }
-
-  return [...merged.values()];
-}
-
-function normalizeItem(item) {
-  return {
-    ...item,
-    file: item.file || item.url || item.link || "",
-    status: String(item.status || "upcoming").toLowerCase()
   };
+
+  waitForFirestore().then(() => {
+    if (!window.fs || !window.fs.db) {
+      console.warn("Firestore not available, using fallback");
+      renderLive();
+      return;
+    }
+
+    try {
+      // Clean up previous listener
+      if (liveUnsubscribe) {
+        liveUnsubscribe();
+      }
+
+      // Query for live streams only
+      const contentCollection = window.fs.collection(window.fs.db, "content");
+      const liveQuery = window.fs.query(
+        contentCollection,
+        window.fs.where("section", "==", "live")
+      );
+
+      // Real-time listener
+      liveUnsubscribe = window.fs.onSnapshot(liveQuery, (snapshot) => {
+        const liveItems = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          liveItems.push({
+            id: doc.id,
+            docId: doc.id,
+            ...data
+          });
+        });
+
+        // Update cache
+        __liveItemsCache = liveItems;
+
+        // Cache to localStorage for offline support
+        localStorage.setItem("live", JSON.stringify(liveItems));
+
+        // Render
+        renderLive();
+      }, (error) => {
+        console.error("Firestore listener error:", error);
+        // Fallback to localStorage
+        const cached = JSON.parse(localStorage.getItem("live") || "[]");
+        __liveItemsCache = cached;
+        renderLive();
+      });
+    } catch (error) {
+      console.error("Failed to start Firestore listener:", error);
+      // Fallback
+      const cached = JSON.parse(localStorage.getItem("live") || "[]");
+      __liveItemsCache = cached;
+      renderLive();
+    }
+  });
 }
 
 // ============================================================
@@ -547,6 +447,66 @@ function renderPrimary(item) {
   }
 }
 
+function buildMediaHTML(item, safeUrl, det, container) {
+  const title = escapeHtml(getText(item.title) || t("hero_title_live"));
+
+  switch (det.platform) {
+    case "youtube":
+    case "vimeo":
+    case "dailymotion":
+      return `<iframe src="${det.embedUrl}" title="${title}" loading="lazy"
+        allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"
+        allowfullscreen></iframe>`;
+
+    case "twitch":
+    case "kick":
+      return `<iframe src="${det.embedUrl}" title="${title}" loading="lazy"
+        allow="autoplay;fullscreen" allowfullscreen></iframe>`;
+
+    case "video":
+      return `<video controls autoplay playsinline src="${det.embedUrl}"></video>`;
+
+    case "facebook":
+      return `
+        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px;">
+          <div class="fb-video" data-href="${safeUrl}" data-width="700" data-show-text="false" data-allowfullscreen="true">
+            <div class="fb-xfbml-parse-ignore">
+              <blockquote cite="${safeUrl}"><a href="${safeUrl}" target="_blank" rel="noopener">${title}</a></blockquote>
+            </div>
+          </div>
+        </div>`;
+
+    case "twitter":
+      return `<blockquote class="twitter-tweet" data-dnt="true">
+        <a href="${safeUrl}"></a></blockquote>`;
+
+    case "instagram":
+      return `<blockquote class="instagram-media" data-instgrm-permalink="${safeUrl}"
+        data-instgrm-version="14" style="width:100%;"></blockquote>`;
+
+    case "tiktok":
+      return `<blockquote class="tiktok-embed" cite="${safeUrl}" style="max-width:100%;min-width:100%;">
+        <section><a target="_blank" rel="noopener" href="${safeUrl}">${title}</a></section></blockquote>`;
+
+    default:
+      return `
+        <div class="live-overlay" style="position:static;background:transparent;">
+          <h3 style="animation:none;">${title}</h3>
+          <p style="font-size:15px;margin-bottom:18px;">${escapeHtml(getText(item.short) || "")}</p>
+          <a class="card-btn" href="${safeUrl}" target="_blank" rel="noopener">${t("watch_original")}</a>
+        </div>`;
+  }
+}
+
+function platformBadgeHTML(platform) {
+  const meta = PLATFORM_META[platform] || PLATFORM_META.unknown;
+  return `<span class="platform-badge" style="background:${meta.bg};color:${meta.color};">${meta.icon} ${meta.label}</span>`;
+}
+
+function needsFallbackLink(platform) {
+  return ["youtube", "twitch", "kick", "vimeo", "dailymotion"].includes(platform);
+}
+
 window.playItem = function(id) {
   const item = __liveItemsCache.find(i => String(i.id) === String(id));
   if (item) {
@@ -593,7 +553,6 @@ window.remindStream = function(id) {
   const stream = __liveItemsCache.find(item => String(item.id) === String(id));
   if (stream) {
     showToast(`🔔 ${t("remind_saved")} "${getText(stream.title) || ""}"`, "success");
-    // You could implement actual reminders here with notifications API
   }
 };
 
@@ -610,8 +569,7 @@ function renderLive() {
 
   if (!liveVideo || !upcomingStreams || !endedStreams) return;
 
-  const items = getStoredLiveItems().map(normalizeItem);
-  __liveItemsCache = items;
+  const items = __liveItemsCache;
 
   const liveNow = items.filter(i => i.status === "live");
   const upcoming = items.filter(i => i.status === "upcoming");
@@ -809,33 +767,24 @@ window.setLang = function(lang) {
 };
 
 // ============================================================
-// SYNC WITH ADMIN PANEL
-// ============================================================
-window.addEventListener("storage", (event) => {
-  if (event.key === "live" || event.key === "liveStreams") {
-    renderLive();
-  }
-});
-
-try {
-  const liveSyncChannel = new BroadcastChannel("ofouq-live-sync");
-  liveSyncChannel.onmessage = (event) => {
-    if (event?.data?.type === "live-updated") renderLive();
-  };
-} catch (e) {
-  // BroadcastChannel unsupported
-}
-
-window.addEventListener("focus", () => renderLive());
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") renderLive();
-});
-
-// ============================================================
 // INITIALIZATION
 // ============================================================
 window.addEventListener("DOMContentLoaded", () => {
   updateHeader();
   setLang(currentLang);
+  
+  // Start Firestore real-time listener
+  startLiveListener();
+  
+  // Initial render with cached data
+  const cached = JSON.parse(localStorage.getItem("live") || "[]");
+  __liveItemsCache = cached;
   renderLive();
+});
+
+// Cleanup on page unload
+window.addEventListener("beforeunload", () => {
+  if (liveUnsubscribe) {
+    liveUnsubscribe();
+  }
 });
