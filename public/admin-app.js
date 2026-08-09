@@ -27,7 +27,7 @@ const SECTIONS = [
   { key: "special-admin-law", title: "تخصص القانون الإداري", kind: "content" },
   { key: "special-const-law", title: "تخصص القانون الدستوري", kind: "content" },
   { key: "special-public-policy", title: "تخصص السياسات العمومية", kind: "content" },
-  { key: "live", title: "بث مباشر", kind: "live" }
+  { key: "live", title: "🔴 بث مباشر", kind: "live" }
 ];
 
 const state = {
@@ -57,6 +57,9 @@ const firestoreReadyPromise = new Promise((resolve) => {
 await authReadyPromise;
 await firestoreReadyPromise;
 
+// ============================================================
+// Utility Functions
+// ============================================================
 function el(id) {
   return document.getElementById(id);
 }
@@ -192,13 +195,53 @@ async function loginAdmin() {
   }
 }
 
+// ============================================================
+// Platform Detection
+// ============================================================
+const PLATFORM_META = {
+  youtube: { label: "YouTube", icon: "▶️", color: "#ff6b6b" },
+  facebook: { label: "Facebook", icon: "📘", color: "#8ab4ff" },
+  twitch: { label: "Twitch", icon: "🟣", color: "#c4a3ff" },
+  kick: { label: "Kick", icon: "🟢", color: "#8dffb0" },
+  twitter: { label: "X (Twitter)", icon: "✖️", color: "#e5e7eb" },
+  instagram: { label: "Instagram", icon: "📸", color: "#f9a8d4" },
+  tiktok: { label: "TikTok", icon: "🎵", color: "#e5e7eb" },
+  vimeo: { label: "Vimeo", icon: "🎬", color: "#7fd8f7" },
+  dailymotion: { label: "Dailymotion", icon: "🎞️", color: "#7fc4f7" },
+  video: { label: "فيديو", icon: "🎥", color: "#f9a8d4" },
+  unknown: { label: "رابط خارجي", icon: "🔗", color: "#e5e7eb" }
+};
+
+function detectPlatform(rawUrl) {
+  const url = String(rawUrl || "").trim();
+  if (!url) return "unknown";
+
+  if (/youtube\.com|youtu\.be/i.test(url)) return "youtube";
+  if (/facebook\.com|fb\.watch/i.test(url)) return "facebook";
+  if (/twitch\.tv/i.test(url)) return "twitch";
+  if (/kick\.com/i.test(url)) return "kick";
+  if (/(?:twitter\.com|x\.com)/i.test(url)) return "twitter";
+  if (/instagram\.com/i.test(url)) return "instagram";
+  if (/tiktok\.com|vm\.tiktok\.com/i.test(url)) return "tiktok";
+  if (/vimeo\.com/i.test(url)) return "vimeo";
+  if (/dailymotion\.com/i.test(url)) return "dailymotion";
+  if (/\.(mp4|webm|ogg)/i.test(url)) return "video";
+
+  return "unknown";
+}
+
+// ============================================================
+// Normalize Items
+// ============================================================
 function normalizeItem(sectionKey, raw) {
   const id = String(raw.docId || raw.id || uid());
+  const isLive = sectionKey === "live";
+
   return {
     id,
     docId: id,
     section: sectionKey || raw.section || "research",
-    type: raw.type || "item",
+    type: isLive ? "live" : raw.type || "item",
     title: typeof raw.title === "object" ? raw.title : { ar: raw.title || "", fr: "", en: "" },
     short: typeof raw.short === "object" ? raw.short : { ar: raw.short || "", fr: "", en: "" },
     full: typeof raw.full === "object" ? raw.full : { ar: raw.full || "", fr: "", en: "" },
@@ -215,9 +258,9 @@ function normalizeItem(sectionKey, raw) {
     issueNumber: Number(raw.issueNumber || raw.editionNumber || 0),
     editionNumber: Number(raw.editionNumber || raw.issueNumber || 0),
     articles: Array.isArray(raw.articles) ? raw.articles : [],
+    status: isLive ? (raw.status || "upcoming") : (raw.status || "published"),
     createdAt: Number(raw.createdAt || Date.now()),
-    updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now()),
-    status: raw.status || "published"
+    updatedAt: Number(raw.updatedAt || raw.createdAt || Date.now())
   };
 }
 
@@ -233,6 +276,26 @@ function rebuildDbFromCache() {
   });
 }
 
+// ============================================================
+// Broadcast to live.html
+// ============================================================
+function broadcastLiveUpdate() {
+  // Sync with live.html via localStorage
+  const liveItems = state.bySection.live || [];
+  localStorage.setItem("live", JSON.stringify(liveItems));
+
+  // Notify via BroadcastChannel
+  try {
+    const channel = new BroadcastChannel("ofouq-live-sync");
+    channel.postMessage({ type: "live-updated" });
+  } catch (e) {
+    // BroadcastChannel not supported
+  }
+}
+
+// ============================================================
+// Menu Building
+// ============================================================
 function buildMenu() {
   const menu = el("menu");
   if (!menu) return;
@@ -252,6 +315,90 @@ function setActiveMenu(key) {
   document.querySelectorAll("#menu button").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.key === key);
   });
+}
+
+// ============================================================
+// Form Building
+// ============================================================
+function buildLiveForm(key) {
+  const statuses = [
+    { value: "live", label: "🔴 بث مباشر الآن" },
+    { value: "upcoming", label: "📅 قادم قريباً" },
+    { value: "ended", label: "🎬 انتهى (إعادة)" }
+  ];
+
+  return `
+    <div class="card">
+      <h3>إضافة بث مباشر جديد</h3>
+      
+      <div class="row">
+        <label>العنوان (العربية) *</label>
+        <input type="text" id="${key}-title-ar" placeholder="مثال: ندوة علمية حول البحث الأكاديمي" />
+      </div>
+
+      <div class="row">
+        <label>العنوان (الإنجليزية)</label>
+        <input type="text" id="${key}-title-en" placeholder="Example: Scientific Seminar on Academic Research" />
+      </div>
+
+      <div class="row">
+        <label>العنوان (الفرنسية)</label>
+        <input type="text" id="${key}-title-fr" placeholder="Exemple: Séminaire scientifique sur la recherche académique" />
+      </div>
+
+      <div class="row">
+        <label>الوصف المختصر (العربية)</label>
+        <textarea id="${key}-short-ar" placeholder="وصف قصير عن البث..."></textarea>
+      </div>
+
+      <div class="row">
+        <label>الوصف المختصر (الإنجليزية)</label>
+        <textarea id="${key}-short-en" placeholder="Brief description of the stream..."></textarea>
+      </div>
+
+      <div class="row">
+        <label>الوصف المختصر (الفرنسية)</label>
+        <textarea id="${key}-short-fr" placeholder="Brève description du flux..."></textarea>
+      </div>
+
+      <div class="row">
+        <label>رابط البث المباشر / الفيديو *</label>
+        <input type="url" id="${key}-live-link" placeholder="https://www.youtube.com/watch?v=... أو facebook.com/... أو twitch.tv/..." />
+        <small style="color:#6b7280;display:block;margin-top:6px;">
+          ✓ يدعم: YouTube, Facebook, Twitch, Kick, X, Instagram, TikTok, Vimeo, Dailymotion, وملفات MP4/WebM/OGG
+        </small>
+      </div>
+
+      <div class="row">
+        <label>الحالة *</label>
+        <select id="${key}-status">
+          ${statuses.map(s => `<option value="${s.value}">${s.label}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="row">
+        <label>التاريخ / المعلومات (العربية)</label>
+        <input type="text" id="${key}-date-ar" placeholder="مثال: الاثنين 15 يناير 2024 - الساعة 3:00 مساءً" />
+      </div>
+
+      <div class="row">
+        <label>التاريخ / المعلومات (الإنجليزية)</label>
+        <input type="text" id="${key}-date-en" placeholder="Example: Monday, January 15, 2024 - 3:00 PM" />
+      </div>
+
+      <div class="row">
+        <label>التاريخ / المعلومات (الفرنسية)</label>
+        <input type="text" id="${key}-date-fr" placeholder="Exemple: Lundi 15 janvier 2024 - 15h00" />
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">💾 حفظ البث</button>
+        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">🔄 مسح الحقول</button>
+      </div>
+
+      <div class="preview" id="${key}-preview"></div>
+    </div>
+  `;
 }
 
 function buildEditionForm(key) {
@@ -281,22 +428,6 @@ function buildEditionForm(key) {
         <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">حفظ العدد</button>
         <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">مسح</button>
       </div>
-    </div>
-  `;
-}
-
-function buildLiveForm(key) {
-  return `
-    <div class="card">
-      <h3>إضافة بث مباشر</h3>
-      <div class="row"><label>العنوان</label><input type="text" id="${key}-title-ar" /></div>
-      <div class="row"><label>الوصف</label><textarea id="${key}-short-ar"></textarea></div>
-      <div class="row"><label>الرابط</label><input type="url" id="${key}-live-link" /></div>
-      <div class="actions">
-        <button class="btn btn-green btn-small" type="button" onclick="publishItem('${key}')">حفظ</button>
-        <button class="btn btn-ghost btn-small" type="button" onclick="resetForm('${key}')">مسح</button>
-      </div>
-      <div class="preview" id="${key}-preview"></div>
     </div>
   `;
 }
@@ -391,6 +522,9 @@ function bindPreviewInputs(key) {
   }
 }
 
+// ============================================================
+// Section Display
+// ============================================================
 function showSection(key) {
   try {
     state.currentSectionKey = key;
@@ -418,6 +552,12 @@ function showSection(key) {
       addEditionArticleRow(key);
     }
 
+    if (key === "live") {
+      // Set default status to "upcoming"
+      const statusSelect = el(`${key}-status`);
+      if (statusSelect) statusSelect.value = "upcoming";
+    }
+
     renderList(key);
   } catch (err) {
     console.error(err);
@@ -425,6 +565,9 @@ function showSection(key) {
   }
 }
 
+// ============================================================
+// File Upload
+// ============================================================
 async function uploadPdfToStorage(file, sectionKey, itemId) {
   await ensureFreshAuth();
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
@@ -445,6 +588,9 @@ async function uploadImageToStorage(file, sectionKey, itemId) {
   return { url, path: filePath };
 }
 
+// ============================================================
+// Edition Article Management
+// ============================================================
 function addEditionArticleRow(key, article = {}) {
   const wrap = el(`${key}-articles-wrap`);
   if (!wrap) return;
@@ -513,6 +659,9 @@ async function collectEditionArticles(key, issueId) {
   return articles;
 }
 
+// ============================================================
+// Save/Update Items
+// ============================================================
 function upsertLocal(sectionKey, obj) {
   const all = getContentCache().map((item) => normalizeItem(item.section, item));
   const normalized = normalizeItem(sectionKey, { ...obj, section: sectionKey });
@@ -534,7 +683,7 @@ async function upsertFirestore(sectionKey, obj) {
     section: sectionKey,
     updatedAt: now,
     createdAt: obj.createdAt || now,
-    status: obj.status || "published"
+    status: obj.status || (sectionKey === "live" ? "upcoming" : "published")
   };
 
   await window.fs.setDoc(
@@ -577,9 +726,9 @@ async function saveItem(key) {
       editionNumber: existing?.editionNumber || 0,
       issueNumber: existing?.issueNumber || 0,
       articles: existing?.articles || [],
+      status: existing?.status || (key === "live" ? "upcoming" : "published"),
       createdAt: existing?.createdAt || Date.now(),
-      updatedAt: Date.now(),
-      status: existing?.status || "published"
+      updatedAt: Date.now()
     };
 
     if (cfg.kind === "edition") {
@@ -610,8 +759,20 @@ async function saveItem(key) {
     } else if (cfg.kind === "live") {
       obj.type = "live";
       obj.title.ar = el(`${key}-title-ar`)?.value.trim() || "";
+      obj.title.en = el(`${key}-title-en`)?.value.trim() || obj.title.ar;
+      obj.title.fr = el(`${key}-title-fr`)?.value.trim() || obj.title.ar;
       obj.short.ar = el(`${key}-short-ar`)?.value.trim() || "";
+      obj.short.en = el(`${key}-short-en`)?.value.trim() || obj.short.ar;
+      obj.short.fr = el(`${key}-short-fr`)?.value.trim() || obj.short.ar;
+      obj.date.ar = el(`${key}-date-ar`)?.value.trim() || "";
+      obj.date.en = el(`${key}-date-en`)?.value.trim() || obj.date.ar;
+      obj.date.fr = el(`${key}-date-fr`)?.value.trim() || obj.date.ar;
       obj.file = el(`${key}-live-link`)?.value.trim() || "";
+      obj.status = el(`${key}-status`)?.value || "upcoming";
+
+      if (!obj.title.ar || !obj.file) {
+        throw new Error("العنوان والرابط مطلوبان");
+      }
     } else {
       obj.type = "content";
       obj.title.ar = el(`${key}-title-ar`)?.value.trim() || "";
@@ -642,6 +803,11 @@ async function saveItem(key) {
     upsertLocal(key, obj);
     await upsertFirestore(key, obj);
 
+    // Broadcast live updates
+    if (key === "live") {
+      broadcastLiveUpdate();
+    }
+
     resetForm(key);
     renderList(key);
     setStatus(`تم حفظ: ${obj.title.ar || "عنصر جديد"}`);
@@ -657,6 +823,9 @@ async function saveItem(key) {
   }
 }
 
+// ============================================================
+// Load for Edit
+// ============================================================
 function loadForEdit(key, id) {
   const item = state.bySection[key].find((x) => String(x.id) === String(id));
   if (!item) return;
@@ -670,7 +839,20 @@ function loadForEdit(key, id) {
   if (el(`${key}-short-ar`)) el(`${key}-short-ar`).value = getByLang(item.short, "ar");
   if (el(`${key}-details-ar`)) el(`${key}-details-ar`).value = getByLang(item.details, "ar");
   if (el(`${key}-full-ar-editor`)) el(`${key}-full-ar-editor`).innerHTML = getByLang(item.full, "ar");
-  if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
+
+  // Live-specific fields
+  if (key === "live") {
+    if (el(`${key}-title-en`)) el(`${key}-title-en`).value = getByLang(item.title, "en");
+    if (el(`${key}-title-fr`)) el(`${key}-title-fr`).value = getByLang(item.title, "fr");
+    if (el(`${key}-short-en`)) el(`${key}-short-en`).value = getByLang(item.short, "en");
+    if (el(`${key}-short-fr`)) el(`${key}-short-fr`).value = getByLang(item.short, "fr");
+    if (el(`${key}-date-en`)) el(`${key}-date-en`).value = getByLang(item.date, "en");
+    if (el(`${key}-date-fr`)) el(`${key}-date-fr`).value = getByLang(item.date, "fr");
+    if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
+    if (el(`${key}-status`)) el(`${key}-status`).value = item.status || "upcoming";
+  } else {
+    if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
+  }
 
   const p = el(`${key}-preview`);
   if (p) {
@@ -693,6 +875,9 @@ function loadForEdit(key, id) {
   }
 }
 
+// ============================================================
+// Delete Item
+// ============================================================
 async function deleteItemById(sectionKey, id) {
   if (!confirm("هل تريد الحذف النهائي؟")) return;
 
@@ -735,6 +920,11 @@ async function deleteItemById(sectionKey, id) {
       }
     }
 
+    // Broadcast if live
+    if (sectionKey === "live") {
+      broadcastLiveUpdate();
+    }
+
     setStatus("تم الحذف");
   } catch (err) {
     console.error(err);
@@ -748,10 +938,13 @@ async function deleteItemById(sectionKey, id) {
   }
 }
 
+// ============================================================
+// Reset Form
+// ============================================================
 function resetForm(key) {
   state.editing = { key: null, id: null };
 
-  ["title-ar", "author-ar", "aff-ar", "date-ar", "short-ar", "details-ar", "live-link"].forEach((name) => {
+  ["title-ar", "title-en", "title-fr", "author-ar", "aff-ar", "date-ar", "date-en", "date-fr", "short-ar", "short-en", "short-fr", "details-ar", "live-link"].forEach((name) => {
     const node = el(`${key}-${name}`);
     if (node) node.value = "";
   });
@@ -771,6 +964,11 @@ function resetForm(key) {
   const preview = el(`${key}-preview`);
   if (preview) preview.innerHTML = "";
 
+  if (key === "live") {
+    const statusSelect = el(`${key}-status`);
+    if (statusSelect) statusSelect.value = "upcoming";
+  }
+
   if (key === "editions") {
     const next = getNextEditionNumber();
     const numInput = el(`${key}-number-ar`);
@@ -789,6 +987,9 @@ function resetForm(key) {
   }
 }
 
+// ============================================================
+// Render List
+// ============================================================
 function renderList(key) {
   const list = el(`${key}-list`);
   const count = el(`${key}-count`);
@@ -820,13 +1021,26 @@ function renderList(key) {
     const descBase = getByLang(item.short, "ar") || getByLang(item.details, "ar") || "";
     const desc = descBase.length > 120 ? `${descBase.slice(0, 120)}...` : descBase;
     const author = getByLang(item.author, "ar") || "";
-    const dateLabel = key === "editions"
-      ? `العدد ${item.editionNumber || item.issueNumber || ""}`
-      : getByLang(item.date, "ar") || "";
+    
+    let dateLabel = "";
+    if (key === "editions") {
+      dateLabel = `العدد ${item.editionNumber || item.issueNumber || ""}`;
+    } else if (key === "live") {
+      dateLabel = getByLang(item.date, "ar") || `الحالة: ${item.status === "live" ? "🔴 بث مباشر" : item.status === "upcoming" ? "📅 قادم قريباً" : "🎬 انتهى"}`;
+    } else {
+      dateLabel = getByLang(item.date, "ar") || "";
+    }
 
-    const imgHtml = item.image
-      ? `<img src="${item.image}" alt="img" />`
-      : `<img src="logo1222.jpeg" alt="logo" />`;
+    let imgHtml = "";
+    if (key === "live") {
+      const platform = detectPlatform(item.file);
+      const meta = PLATFORM_META[platform];
+      imgHtml = `<div style="display:flex;align-items:center;justify-content:center;width:80px;height:80px;background:rgba(0,0,0,0.05);border-radius:8px;font-size:32px;">${meta?.icon || "🔗"}</div>`;
+    } else {
+      imgHtml = item.image
+        ? `<img src="${item.image}" alt="img" />`
+        : `<img src="logo1222.jpeg" alt="logo" />`;
+    }
 
     const articlesHtml =
       key === "editions" && Array.isArray(item.articles) && item.articles.length
@@ -852,6 +1066,9 @@ function renderList(key) {
   });
 }
 
+// ============================================================
+// Firestore Operations
+// ============================================================
 async function reloadFromFirestore() {
   try {
     await ensureFreshAuth();
@@ -935,6 +1152,9 @@ async function recoverAllData() {
   }
 }
 
+// ============================================================
+// Export/Import/Clear
+// ============================================================
 function exportJSON() {
   const out = {};
   SECTIONS.forEach((s) => {
@@ -957,6 +1177,7 @@ function clearLocalStorageOnly() {
 
   localStorage.removeItem("contentcache");
   localStorage.removeItem("editions");
+  localStorage.removeItem("live");
 
   [
     "issues",
@@ -978,6 +1199,9 @@ function clearLocalStorageOnly() {
   setStatus("تم مسح localStorage");
 }
 
+// ============================================================
+// Initialization
+// ============================================================
 async function init() {
   buildMenu();
   rebuildDbFromCache();
@@ -1020,6 +1244,9 @@ async function init() {
   });
 }
 
+// ============================================================
+// Export Global Functions
+// ============================================================
 window.addEditionArticleRow = addEditionArticleRow;
 window.publishItem = saveItem;
 window.resetForm = resetForm;
