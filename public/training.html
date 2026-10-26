@@ -2,9 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="t-title">تكوينات</title>
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -686,6 +688,7 @@
       .grid { grid-template-columns: 1fr; gap: 20px; }
     }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 
 <body>
@@ -700,7 +703,7 @@
   <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Menu">☰</button>
 
   <div class="logo" onclick="goToHome()">
-    <img src="logo1.png"" alt="Logo">
+    <img src="logo1.png" alt="Ofouq Academie">
   </div>
 <nav>
   <ul>
@@ -730,7 +733,7 @@
     <li><a href="live.html" id="navLive">بث مباشر</a></li>
     <li><a href="rules.html" id="navRules">شروط النشر</a></li>
     <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+    <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
   </ul>
 
   <form class="nav-search" onsubmit="doSearch(event)">
@@ -767,7 +770,7 @@
   <div class="grid" id="trainingGrid"></div>
 </section>
 
-<footer data-t="footer_text" style="
+<footer style="
   margin-top: clamp(30px,8vw,40px);
   padding: clamp(28px,8vw,42px) clamp(18px,5vw,30px);
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
@@ -1213,5 +1216,6 @@
   });
 </script>
 
+<script src="site.js"></script>
 </body>
 </html>

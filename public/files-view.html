@@ -4,7 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ofouq Academy | ملف بحثي</title>
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
 
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
@@ -329,6 +331,7 @@
       text-align:center;
     }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 <body>
 
@@ -336,7 +339,7 @@
   <div class="site-header-inner">
     <div class="brand">
       <div class="brand-logo">
-    <img src="logo1.png"" alt="Logo">
+    <img src="logo1.png" alt="Ofouq Academie">
       </div>
       <div>
         <div class="brand-text-title" id="brandTitle">Ofouq Academy</div>
@@ -440,7 +443,7 @@
   </div>
 </div>
 
-<footer data-t="footer_text" style="
+<footer style="
   margin-top: clamp(30px,8vw,40px);
   padding: clamp(28px,8vw,42px) clamp(18px,5vw,30px);
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
@@ -697,8 +700,8 @@ function renderContentForLang(lang){
   document.getElementById('articleFull').textContent    = fullText;
   document.getElementById('articleDetails').textContent = detailsText;
 
-  const author      = it.author      || tUI.unknownAuthor;
-  const affiliation = it.affiliation || tUI.unknownAff;
+  const author      = getTextByLang(it.author, lang)      || tUI.unknownAuthor;
+  const affiliation = getTextByLang(it.affiliation, lang) || tUI.unknownAff;
   const dateValue   = it.date        || tUI.unknownDate;
 
   document.getElementById('articleAuthor').textContent      = tUI.labelAuthor      + ': ' + author;
@@ -734,15 +737,22 @@ function getQueryParam(name){
 
 // هذا الملف خاص بالملفات البحثية
 const type = 'files';
-const id   = Number(getQueryParam('id'));
+const id   = String(getQueryParam('id') || '');
 
 const allData = JSON.parse(localStorage.getItem(type) || '[]');
-const item    = allData.find(i => i.id === id);
+// Firestore ids are strings; also look in the shared content cache (site.js)
+const sameId = i => i && (String(i.id) === id || String(i.docId) === id);
+const findInCache = () => JSON.parse(localStorage.getItem('contentcache') || '[]').find(sameId);
+const item    = allData.find(sameId) || findInCache();
+// direct visits: the item may arrive with the shared content sync
+if(!item){
+  document.addEventListener('ofouq:content', () => { if(findInCache()) location.reload(); }, { once: true });
+}
 window.displayItem = item;
 
 if(!item){
   document.body.innerHTML =
-    '<p style="text-align:center;margin-top:40px;font-family:Tajawal;color:#111827;">العنصر غير موجود أو تم حذفه.</p>';
+    '<div style="text-align:center;margin:60px auto;max-width:480px;font-family:Tajawal,sans-serif;color:#111827;padding:0 16px;"><p style="font-size:18px;font-weight:700;margin-bottom:8px;">العنصر غير موجود أو تم حذفه.</p><p style="color:#6b7280;margin-bottom:18px;">This item could not be found.</p><a href="index.html" style="display:inline-block;padding:10px 18px;border-radius:999px;background:#009bc4;color:#fff;text-decoration:none;font-weight:700;">العودة إلى الرئيسية</a></div>';
 }else{
   const mediaContainer = document.getElementById('articleMedia');
   const extraInfo      = document.getElementById('extraInfo');
@@ -754,7 +764,7 @@ if(!item){
 
     if(lower.endsWith('.mp4') || lower.includes('.mp4?')){
       const videoUrl = f.startsWith('/videos')
-        ? 'http://localhost:3000' + f
+        ? f
         : f;
 
       mediaHtml = `
@@ -798,6 +808,7 @@ if(!item){
 }
 
 window.addEventListener('load', async ()=>{
+  if(!window.displayItem) return; // not-found message replaced the page
   if(window.displayItem){
     const it = window.displayItem;
     it.title   = await autoFillTranslations(it.title   || {});
@@ -813,5 +824,6 @@ window.addEventListener('load', async ()=>{
 });
 </script>
 
+<script src="site.js"></script>
 </body>
 </html>

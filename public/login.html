@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>تسجيل الدخول</title>
 
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
@@ -152,6 +154,7 @@
       color:#0a4f5f;
     }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 
 <body>
@@ -173,7 +176,7 @@
 
     <div class="row">
       <label><input id="remember" type="checkbox"> تذكرني</label>
-      <a href="#" id="forgotLink">نسيت كلمة المرور؟</a>
+      <a href="forgot.html" id="forgotLink">نسيت كلمة المرور؟</a>
     </div>
 
     <button class="login-btn" id="loginBtn" type="button">
@@ -347,14 +350,11 @@ async function doGoogleLogin(){
     btn.addEventListener("click", doLogin);
     googleBtn.addEventListener("click", doGoogleLogin);
 
+    // Enter submits only from the form fields (not while a button has focus)
     document.addEventListener("keydown", (e) => {
-      if(e.key === "Enter") doLogin();
-    });
-
-    document.getElementById("forgotLink").addEventListener("click", (e) => {
-      e.preventDefault();
-      showMsg("يمكنك إضافة صفحة استرجاع كلمة المرور لاحقًا عبر Firebase.", "success");
+      if(e.key === "Enter" && e.target.matches("input")) doLogin();
     });
   </script>
+<script src="site.js"></script>
 </body>
 </html>

@@ -1,21 +1,28 @@
 import { db, auth } from "./firebase-init.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
   collection,
   getDocs,
   getDoc,
   setDoc,
+  addDoc,
+  updateDoc,
   deleteDoc,
   query,
   where,
+  orderBy,
+  limit,
   doc,
-  onSnapshot
+  onSnapshot,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 onAuthStateChanged(auth, (user) => {
   console.log("SAVE PAGE auth user:", user ? user.uid : null);
 });
 
+// Pages poll for these (e.g. research.html waits for orderBy), so every
+// helper a page uses must be exported here.
 window.fs = {
   db,
   auth,
@@ -23,11 +30,17 @@ window.fs = {
   getDocs,
   getDoc,
   setDoc,
+  addDoc,
+  updateDoc,
   deleteDoc,
   query,
   where,
+  orderBy,
+  limit,
   doc,
-  onSnapshot
+  onSnapshot,
+  serverTimestamp,
+  signOut
 };
 
 window.dispatchEvent(new CustomEvent("firestoreReady"));

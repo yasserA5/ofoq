@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        content="width=device-width, initial-scale=1.0" />
   <title id="t-title">مقالات</title>
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
   <link rel="icon" type="image/png" href="/public/logo1222.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
@@ -880,6 +882,7 @@
       .card{max-width:100%;}
     }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 
 
@@ -891,7 +894,7 @@
 
   <div class="nav-sheet-top">
     <div class="nav-sheet-brand">
-      <img src="logo1.png" alt="Logo">
+      <img src="logo1.png" alt="Ofouq Academie">
       <div>
         <strong data-t="brand_name">أفق</strong>
         <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
@@ -967,7 +970,7 @@
 
 
   <div class="logo" onclick="goToHome()">
-    <img src="logo1.png"" alt="Logo">
+    <img src="logo1.png" alt="Ofouq Academie">
   </div>
 
 <nav>
@@ -998,7 +1001,7 @@
     <li><a href="live.html" id="navLive">بث مباشر</a></li>
     <li><a href="rules.html" id="navRules">شروط النشر</a></li>
     <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+    <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
   </ul>
 
   <form class="nav-search" onsubmit="doSearch(event)">
@@ -1040,7 +1043,7 @@
   <div class="grid" id="generalArticlesGrid"></div>
 </section>
 
-<footer data-t="footer_text" style="
+<footer style="
   margin-top: clamp(30px,8vw,40px);
   padding: clamp(28px,8vw,42px) clamp(18px,5vw,30px);
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
@@ -1165,7 +1168,7 @@
           window.fs.collection &&
           window.fs.getDocs &&
           window.fs.query &&
-          window.fs.orderBy
+          window.fs.where
         ) {
           return resolve();
         }
@@ -1181,10 +1184,13 @@
   async function syncGeneralArticles() {
     try {
       await waitForFS();
-      const col = window.fs.collection(window.fs.db, 'general-articles');
-      const q = window.fs.query(col, window.fs.orderBy('id', 'desc'));
+      // the admin panel stores every section in "content" with a section field
+      const col = window.fs.collection(window.fs.db, 'content');
+      const q = window.fs.query(col, window.fs.where('section', '==', 'general-articles'));
       const snap = await window.fs.getDocs(q);
-      const data = snap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+      const data = snap.docs
+        .map(doc => ({ id: doc.id, ...doc.data(), docId: doc.id }))
+        .sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
       localStorage.setItem('general-articles', JSON.stringify(data));
       renderGeneralArticles();
     } catch (err) {
@@ -1455,18 +1461,18 @@ function updateHeader(){
             <button onclick="setLang('fr')">Français</button>
           </div>
         </div>
-        <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="navlogin">تسجيل الدخول</button>
-        <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="navjoin">انضم إلينا</button>
+        <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+        <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
       `;
     }
 
     if (mobileLogin) {
-      mobileLogin.innerHTML = `<a href="login.html" data-t="navlogin">تسجيل الدخول</a>`;
+      mobileLogin.innerHTML = `<a href="login.html" data-t="nav_login">تسجيل الدخول</a>`;
     }
 
     if (mobileRegister) {
       mobileRegister.style.display = "";
-      mobileRegister.innerHTML = `<a href="register.html" data-t="navjoin">انضم إلينا</a>`;
+      mobileRegister.innerHTML = `<a href="register.html" data-t="nav_join">انضم إلينا</a>`;
     }
   }
 }
@@ -1616,5 +1622,6 @@ function updateHeader(){
 </script>
 
 
+<script src="site.js"></script>
 </body>
 </html>

@@ -2,10 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title id="t-title">البث المباشر</title>
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -956,6 +958,7 @@
       .nav-sheet,.nav-sheet-overlay{display:none}
     }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 
 <body>
@@ -967,7 +970,7 @@
 
     <div class="nav-sheet-top">
       <div class="nav-sheet-brand">
-        <img src="logo1.png" alt="Logo">
+        <img src="logo1.png" alt="Ofouq Academie">
         <div>
           <strong data-t="brand_name">أفق</strong>
           <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
@@ -1036,7 +1039,7 @@
     <button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
 
     <div class="logo" onclick="goToHome()">
-      <img src="logo1.png" alt="Logo">
+      <img src="logo1.png" alt="Ofouq Academie">
     </div>
 
     <nav>
@@ -1064,7 +1067,7 @@
             <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
           </div>
         </li>
-        <li><a href="live.html" class="active" id="navLive">بث مباشر</a></li>
+        <li><a href="live.html" id="navLive">بث مباشر</a></li>
         <li><a href="rules.html" id="navRules">شروط النشر</a></li>
         <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
         <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
@@ -1128,5 +1131,6 @@
   </footer>
 
 <script type="module" src="live-app.js"></script>
+<script src="site.js"></script>
 </body>
 </html>

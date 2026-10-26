@@ -2,14 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>إنشاء حساب</title>
 
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
@@ -125,6 +125,7 @@
       .input-box input{padding:12px 86px 12px 45px;font-size:14px}
     }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 
 <body>
@@ -173,7 +174,7 @@
       </div>
     </div>
 
-    <button class="primary" id="registerBtn" onclick="registerLocal(event)">
+    <button class="primary" id="registerBtn" type="button">
       <span id="regText">إنشاء حساب</span>
       <span id="regSpinner" style="display:none;">⏳ جاري...</span>
     </button>
@@ -181,14 +182,93 @@
     <div class="divider">أو</div>
 
     <div class="google-wrap">
-      <div id="googleBtn"></div>
+      <button class="ghost" id="googleBtn" type="button">
+        <i class="ri-google-fill"></i> إنشاء حساب باستخدام Google
+      </button>
     </div>
 
     <button class="ghost" type="button" onclick="location.href='login.html'">
       <i class="ri-login-circle-line"></i> لدي حساب بالفعل
     </button>
   </div>
-<script type="module" src="/firestore-bridge.js"></script>
+<script type="module">
+  import { auth } from "./firebase-init.js";
+  import {
+    createUserWithEmailAndPassword,
+    updateProfile,
+    signInWithPopup,
+    GoogleAuthProvider
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+  // Same user record login.html writes, so every page's updateHeader() works
+  function saveUserData(user, provider, name){
+    localStorage.setItem('user', JSON.stringify({
+      provider,
+      loggedIn: true,
+      uid: user.uid,
+      email: user.email || '',
+      name: name || user.displayName || (user.email ? user.email.split('@')[0] : 'User'),
+      photoURL: user.photoURL || '',
+      lastLogin: Date.now()
+    }));
+    sessionStorage.removeItem('user');
+  }
+
+  function redirectBack(){
+    const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
+    setTimeout(() => { window.location.href = fromPage; }, 700);
+  }
+
+  const ERRORS = {
+    'auth/email-already-in-use': 'البريد الإلكتروني مستخدم بالفعل. جرّب تسجيل الدخول.',
+    'auth/invalid-email': 'بريد إلكتروني غير صحيح',
+    'auth/weak-password': 'كلمة المرور ضعيفة جداً (6 أحرف على الأقل)',
+    'auth/operation-not-allowed': 'إنشاء الحسابات غير مفعّل في Firebase.',
+    'auth/network-request-failed': 'تعذر الاتصال بالشبكة، حاول مجدداً.',
+    'auth/popup-closed-by-user': 'أُغلقت نافذة Google قبل الإكمال.',
+    'auth/popup-blocked': 'المتصفح حظر نافذة Google. اسمح بالنوافذ المنبثقة.',
+    'auth/unauthorized-domain': 'هذا النطاق غير مضاف في Firebase Authorized Domains.'
+  };
+
+  async function register(ev){
+    if(ev) ev.preventDefault();
+    const v = window.validateRegisterForm();
+    if(!v) return;
+
+    window.setLoading(true);
+    try{
+      const cred = await createUserWithEmailAndPassword(auth, v.email, v.password);
+      await updateProfile(cred.user, { displayName: v.fullName });
+      saveUserData(cred.user, 'password', v.fullName);
+      window.showMsg('✅ تم إنشاء الحساب بنجاح', 'success');
+      redirectBack();
+    }catch(error){
+      window.showMsg(ERRORS[error.code] || 'تعذر إنشاء الحساب، حاول مرة أخرى.', 'error');
+    }finally{
+      window.setLoading(false);
+    }
+  }
+
+  async function registerWithGoogle(){
+    window.setLoading(true);
+    try{
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      saveUserData(result.user, 'google');
+      window.showMsg('✅ تم إنشاء الحساب عبر Google', 'success');
+      redirectBack();
+    }catch(error){
+      window.showMsg(ERRORS[error.code] || 'تعذر إنشاء الحساب عبر Google.', 'error');
+    }finally{
+      window.setLoading(false);
+    }
+  }
+
+  document.getElementById('registerBtn').addEventListener('click', register);
+  document.getElementById('googleBtn').addEventListener('click', registerWithGoogle);
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && e.target.matches('input')) register(e);
+  });
+</script>
 
 <script>
   // Ripple
@@ -216,6 +296,7 @@
 
   function setLoading(v){
     document.getElementById('registerBtn').disabled = v;
+    document.getElementById('googleBtn').disabled = v;
     document.getElementById('regText').style.display = v ? 'none' : 'inline';
     document.getElementById('regSpinner').style.display = v ? 'inline' : 'none';
   }
@@ -277,129 +358,22 @@
     confirmEl.focus();
   });
 
-  // Local register
-  function registerLocal(ev){
-    if(ev) ev.preventDefault();
-
+  // Validates the form; returns the values or null. The Firebase module
+  // script above does the actual sign-up.
+  function validateRegisterForm(){
     const fullName = fullNameEl.value.trim();
     const email = emailEl.value.trim();
     const password = passEl.value;
     const confirm = confirmEl.value;
 
-    if(!fullName){ markError('fullName'); return showMsg('أدخل الاسم الكامل', 'error'); }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ markError('email'); return showMsg('بريد إلكتروني غير صحيح', 'error'); }
-    if(password.length < 6){ markError('password'); return showMsg('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error'); }
-    if(confirm !== password){ markError('confirm'); return showMsg('تأكيد كلمة المرور غير مطابق', 'error'); }
+    if(!fullName){ markError('fullName'); showMsg('أدخل الاسم الكامل', 'error'); return null; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ markError('email'); showMsg('بريد إلكتروني غير صحيح', 'error'); return null; }
+    if(password.length < 6){ markError('password'); showMsg('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error'); return null; }
+    if(confirm !== password){ markError('confirm'); showMsg('تأكيد كلمة المرور غير مطابق', 'error'); return null; }
 
-    setLoading(true);
-
-    let users = [];
-    try{ users = JSON.parse(localStorage.getItem('users') || '[]'); }catch(e){ users = []; }
-
-    if(users.some(u => (u.email || '').toLowerCase() === email.toLowerCase())){
-      setLoading(false);
-      return showMsg('البريد الإلكتروني مستخدم بالفعل', 'error');
-    }
-
-    const newUser = {
-      id: Date.now(),
-      fullName,
-      email,
-      password,
-      provider: 'local'
-    };
-
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-
-    // auto login after register
-    localStorage.setItem('user', JSON.stringify({
-      provider:'local',
-      loggedIn:true,
-      id: newUser.id,
-      name: newUser.fullName,
-      email: newUser.email,
-      lastLogin: Date.now()
-    }));
-
-    setLoading(false);
-    showMsg('✅ تم إنشاء الحساب بنجاح', 'success');
-
-    setTimeout(() => {
-      const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
-      window.location.href = fromPage;
-    }, 700);
+    return { fullName, email, password };
   }
-
-  // Google Sign-Up: response.credential is a JWT ID token. [page:4]
-  function decodeJwtPayload(token){
-    const part = token.split('.')[1];
-    const base64 = part.replace(/-/g,'+').replace(/_/g,'/');
-    const json = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    return JSON.parse(json);
-  }
-
-  function onGoogleCredential(response){
-    try{
-      const idToken = response && response.credential; // JWT [page:4]
-      if(!idToken) return showMsg('تعذر استلام بيانات Google', 'error');
-
-      const p = decodeJwtPayload(idToken);
-
-      // Store in users[] (optional)
-      let users = [];
-      try{ users = JSON.parse(localStorage.getItem('users') || '[]'); }catch(e){ users = []; }
-      const email = (p.email || '').toLowerCase();
-
-      if(email && !users.some(u => (u.email || '').toLowerCase() === email)){
-        users.push({
-          id: Date.now(),
-          fullName: p.name || '',
-          email: p.email || '',
-          provider: 'google'
-        });
-        localStorage.setItem('users', JSON.stringify(users));
-      }
-
-      // logged-in user
-      localStorage.setItem('user', JSON.stringify({
-        provider:'google',
-        loggedIn:true,
-        id: p.sub || Date.now(),
-        name: p.name || '',
-        email: p.email || '',
-        picture: p.picture || '',
-        idToken,
-        lastLogin: Date.now()
-      }));
-
-      const fromPage = sessionStorage.getItem('loginFrom') || 'index.html';
-      window.location.assign(new URL(fromPage, window.location.origin).toString());
-    } catch(e){
-      showMsg('حدث خطأ أثناء إنشاء الحساب عبر Google', 'error');
-    }
-  }
-
-  window.addEventListener('load', () => {
-    if(!window.google || !google.accounts || !google.accounts.id){
-      return showMsg('Google library لم تُحمّل. تأكد من الإنترنت', 'error');
-    }
-
-    google.accounts.id.initialize({
-      client_id: "169941841275-n5h6h3bqa3ck0lll8dgd194uqb68b5jv.apps.googleusercontent.com",
-      callback: onGoogleCredential,
-      ux_mode: "popup"
-    }); // initialize + callback [page:4]
-
-    google.accounts.id.renderButton(
-      document.getElementById("googleBtn"),
-      { theme: "outline", size: "large", shape: "pill", text: "signup_with" }
-    ); // renderButton [page:4]
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') registerLocal();
-  });
 </script>
+<script src="site.js"></script>
 </body>
 </html>

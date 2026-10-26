@@ -1471,6 +1471,7 @@ input:focus-visible{
   .journal-strip-track{animation:none !important;flex-wrap:wrap;white-space:normal;padding:0 16px;}
 }
 </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 <body>
 <a href="#main" class="skip-link" data-t="skip_link">تخطَّ إلى المحتوى</a>
@@ -1483,7 +1484,7 @@ input:focus-visible{
 
   <div class="nav-sheet-top">
     <div class="nav-sheet-brand">
-      <img src="logo1.png" alt="Logo">
+      <img src="logo1.png" alt="Ofouq Academie">
       <div>
         <strong data-t="brand_name">أفق</strong>
         <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
@@ -2272,32 +2273,29 @@ async function syncFirestoreToLocal() {
     await waitForFS();
 
     const { db, collection, onSnapshot, getDocs } = window.fs;
-    const sections = ['research', 'articles', 'files', 'editions', 'issues', 'publications', 'activities', 'training'];
 
-    const applySnapshot = (key, snap) => {
+    // The admin panel writes every section into "content" (with a section
+    // field); the old per-section collections are not readable.
+    const applySnapshot = (snap) => {
       const data = snap.docs.map((doc, index) => ({
-        docId: doc.id,
+        id: doc.id,
         _sortIndex: index,
-        ...doc.data()
+        ...doc.data(),
+        docId: doc.id
       })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
 
-      const merged = mergeItemLists(getStoredItems(key), data)
-        .sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
-
-      localStorage.setItem(key, JSON.stringify(merged));
+      localStorage.setItem('contentcache', JSON.stringify(data));
       queueRefresh();
     };
 
-    sections.forEach((key) => {
-      const q = collection(db, key);
-      const onError = (error) => console.error('Live sync error for ' + key, error);
-      // Live updates when the bridge exposes onSnapshot, one-shot fetch otherwise
-      if (typeof onSnapshot === 'function') {
-        onSnapshot(q, snap => applySnapshot(key, snap), onError);
-      } else {
-        getDocs(q).then(snap => applySnapshot(key, snap)).catch(onError);
-      }
-    });
+    const q = collection(db, 'content');
+    const onError = (error) => console.error('Live sync error for content', error);
+    // Live updates when the bridge exposes onSnapshot, one-shot fetch otherwise
+    if (typeof onSnapshot === 'function') {
+      onSnapshot(q, applySnapshot, onError);
+    } else {
+      getDocs(q).then(applySnapshot).catch(onError);
+    }
 
     refreshHomeSections();
   } catch (error) {
@@ -2449,7 +2447,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('storage', (event) => {
-  const watchedKeys = ['research', 'files', 'activities', 'training', ...getStorageKeys('articles'), ...getStorageKeys('editions')];
+  const watchedKeys = ['contentcache', 'research', 'files', 'activities', 'training', ...getStorageKeys('articles'), ...getStorageKeys('editions')];
   if (watchedKeys.includes(event.key)) {
     queueRefresh();
   }
@@ -2562,14 +2560,11 @@ function getContentDesc(item, lang = getCurrentLang()) {
   return getByLang(item.description, lang) || getByLang(item.short, lang) || getByLang(item.details, lang) || '';
 }
 
-// Articles/editions prefer the admin contentcache, but fall back to the
-// Firestore-synced lists so the sections never stay empty when only one exists.
+// Prefer the admin "content" cache, falling back to the older per-key lists
+// so a section never stays empty when only one source has data.
 function getItemsForKey(storageKey) {
-  if (storageKey === 'articles' || storageKey === 'editions') {
-    const cached = getSectionItems(storageKey);
-    if (cached.length) return cached;
-  }
-  return getStoredItems(storageKey);
+  const cached = getSectionItems(storageKey);
+  return cached.length ? cached : getStoredItems(storageKey);
 }
 
 const HOME_GRID_LIMIT = 6;
@@ -3290,5 +3285,6 @@ function bindFeaturedDrag() {
   window.addEventListener('touchcancel', endDrag);
 }
 </script>
+<script src="site.js"></script>
 </body>
 </html>

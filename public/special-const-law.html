@@ -3,9 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        content="width=device-width, initial-scale=1.0" />
   <title id="t-title">تخصص القانون الدستوري</title>
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -645,6 +647,7 @@
       transform:translateY(0);
     }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 <body>
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
@@ -654,7 +657,7 @@
 
   <div class="nav-sheet-top">
     <div class="nav-sheet-brand">
-      <img src="logo1.png" alt="Logo">
+      <img src="logo1.png" alt="Ofouq Academie">
       <div>
         <strong data-t="brand_name">أفق</strong>
         <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
@@ -717,7 +720,7 @@
   <button id="menu-btn" onclick="toggleMenu()">☰</button>
 
   <div class="logo" onclick="goToHome()">
-    <img src="logo1.png"" alt="Logo">
+    <img src="logo1.png" alt="Ofouq Academie">
   </div>
 <nav>
   <ul>
@@ -747,7 +750,7 @@
     <li><a href="live.html" id="navLive">بث مباشر</a></li>
     <li><a href="rules.html" id="navRules">شروط النشر</a></li>
     <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+    <li><a href="editorial-board.html" id="navBoard">هيئة التحرير</a></li>
   </ul>
 
   <form class="nav-search" onsubmit="doSearch(event)">
@@ -806,7 +809,7 @@
   </div>
 </div>
 
-<footer data-t="footer_text" style="
+<footer style="
   margin-top: clamp(30px,8vw,40px);
   padding: clamp(28px,8vw,42px) clamp(18px,5vw,30px);
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
@@ -1018,18 +1021,18 @@ function updateHeader(){
             <button onclick="setLang('fr')">Français</button>
           </div>
         </div>
-        <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="navlogin">تسجيل الدخول</button>
-        <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="navjoin">انضم إلينا</button>
+        <button class="btn" id="loginBtnHeader" onclick="location.href='login.html'" data-t="nav_login">تسجيل الدخول</button>
+        <button class="btn primary" id="registerBtnHeader" onclick="location.href='register.html'" data-t="nav_join">انضم إلينا</button>
       `;
     }
 
     if (mobileLogin) {
-      mobileLogin.innerHTML = `<a href="login.html" data-t="navlogin">تسجيل الدخول</a>`;
+      mobileLogin.innerHTML = `<a href="login.html" data-t="nav_login">تسجيل الدخول</a>`;
     }
 
     if (mobileRegister) {
       mobileRegister.style.display = "";
-      mobileRegister.innerHTML = `<a href="register.html" data-t="navjoin">انضم إلينا</a>`;
+      mobileRegister.innerHTML = `<a href="register.html" data-t="nav_join">انضم إلينا</a>`;
     }
   }
 }
@@ -1184,5 +1187,6 @@ function logout(){
     setLang(saved);
   });
 </script>
+<script src="site.js"></script>
 </body>
 </html>

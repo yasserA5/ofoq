@@ -2,9 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>استرجاع كلمة المرور</title>
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="Ofouq Academie - peer-reviewed journal of political science, public law, international relations and public policy. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
 
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -13,7 +15,6 @@
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
 
 <!-- EmailJS -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <style>
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -189,6 +190,7 @@
         .input-box input { padding:14px 16px 14px 50px; font-size:15px; }
     }
 </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 
 <body>
@@ -212,107 +214,60 @@
     </button>
 </div>
 
-<script>
-    // 🔥 EmailJS Configuration
-    emailjs.init("urmsYG_uydTuRjsXf"); // Public Key
-    
+<script type="module">
+    import { auth } from "./firebase-init.js";
+    import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+    const btn = document.getElementById('sendBtn');
+    const emailEl = document.getElementById('recoveryEmail');
+
+    function setLoading(v) {
+        btn.disabled = v;
+        document.getElementById('btnText').style.display = v ? 'none' : 'inline';
+        document.getElementById('spinner').style.display = v ? 'inline-block' : 'none';
+    }
+
     function showMessage(text, type = 'success') {
         const msg = document.getElementById('message');
-        const btn = document.getElementById('sendBtn');
-        
         msg.className = `message ${type}`;
         msg.textContent = text;
         msg.style.display = 'block';
-        
-        // Reset button
-        btn.disabled = false;
-        document.getElementById('btnText').style.display = 'inline';
-        document.getElementById('spinner').style.display = 'none';
-        
-        if(type === 'success') {
-            setTimeout(() => { msg.style.display = 'none'; }, 5000);
-        }
     }
-    
-    function sendResetLink() {
-        const email = document.getElementById('recoveryEmail').value.trim();
-        const btn = document.getElementById('sendBtn');
-        
-        // Basic validation
-        if(!email) {
-            return showMessage('يرجى إدخال بريدك الإلكتروني', 'error');
-        }
-        
-        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            return showMessage('البريد الإلكتروني غير صحيح', 'error');
-        }
-        
-        // Loading state
-        btn.disabled = true;
-        document.getElementById('btnText').style.display = 'none';
-        document.getElementById('spinner').style.display = 'inline';
-        showMessage('جاري إرسال الإيميل...', 'loading');
-        
-        // Check if user exists in our system
-        let users = [];
-        try {
-            const stored = localStorage.getItem('users');
-            if(stored) users = JSON.parse(stored);
-        } catch(e) {
-            console.error('Users load error:', e);
-        }
-        
-        const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-        
-        if(!user) {
-            setTimeout(() => {
-                showMessage('لا يوجد حساب مرتبط بهذا البريد الإلكتروني', 'error');
-            }, 1000);
-            return;
-        }
-        
-        // Generate reset token (simple version)
-        const resetToken = 'reset_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        const resetLink = `https://ofoq-xi.vercel.app/reset-password.html?token=${resetToken}&email=${encodeURIComponent(email)}`;
-        const expiresIn = '1 ساعة';
-        
-        // EmailJS template parameters
-        const templateParams = {
-            user_name: user.username,
-            email: email,
-            reset_link: resetLink,
-            expires_in: expiresIn,
-            company_name: 'نظامك',
-            support_email: 'majalatofoq@gmail.com'
-        };
-        
-        // Send email via EmailJS
-        emailjs.send('service_mpy2rwy', 'template_wgogk8m', templateParams)
-            .then(function(response) {
-                console.log('Email sent successfully!', response.status, response.text);
-                showMessage('✅ تم إرسال رابط الاستعادة إلى بريدك الإلكتروني!', 'success');
-                
-                // Save token locally for demo (in real app, save to database)
-                user.resetToken = resetToken;
-                user.resetExpires = Date.now() + 60 * 60 * 1000; // 1 hour
-                localStorage.setItem('users', JSON.stringify(users));
-                
-            }, function(error) {
-                console.error('EmailJS error:', error);
-                showMessage('❌ خطأ في إرسال الإيميل، حاول مرة أخرى', 'error');
-            });
-    }
-    
-    // Enter key support
-    document.addEventListener('keypress', function(e) {
-        if(e.key === 'Enter') {
-            sendResetLink();
-        }
-    });
-    
-    // EmailJS ready check
-    console.log('EmailJS Forgot Password Ready!');
-</script>
 
+    // Firebase emails a one-time link; its action page lets the user pick a
+    // new password (or reset-password.html, if set as the action URL).
+    async function sendResetLink() {
+        const email = emailEl.value.trim();
+        if (!email) return showMessage('يرجى إدخال بريدك الإلكتروني', 'error');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showMessage('البريد الإلكتروني غير صحيح', 'error');
+
+        setLoading(true);
+        try {
+            await sendPasswordResetEmail(auth, email);
+        } catch (error) {
+            if (error.code === 'auth/invalid-email') {
+                setLoading(false);
+                return showMessage('البريد الإلكتروني غير صحيح', 'error');
+            }
+            if (error.code === 'auth/network-request-failed') {
+                setLoading(false);
+                return showMessage('تعذر الاتصال بالشبكة، حاول مجدداً', 'error');
+            }
+            if (error.code === 'auth/too-many-requests') {
+                setLoading(false);
+                return showMessage('محاولات كثيرة، حاول لاحقاً', 'error');
+            }
+            // other errors (e.g. unknown account) fall through: same message,
+            // so the form never reveals which emails are registered
+        }
+        setLoading(false);
+        showMessage('✅ إذا كان هذا البريد مسجلاً لدينا، فستصلك رسالة تحتوي على رابط لإعادة تعيين كلمة المرور. تحقق من صندوق الوارد والبريد غير المرغوب فيه.', 'success');
+    }
+
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', sendResetLink);
+    emailEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendResetLink(); });
+</script>
+<script src="site.js"></script>
 </body>
 </html>
