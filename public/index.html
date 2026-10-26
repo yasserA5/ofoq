@@ -2,11 +2,18 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="t-title">الرئيسية</title>
-  <link rel="icon" type="image/png" href="logo1222.jpeg">
+  <meta name="description" content="أفق – مجلة ومنصة علمية محكّمة في العلوم السياسية والقانون العام والعلاقات الدولية والسياسات العمومية. ISSN 3119-6691">
+  <meta name="theme-color" content="#009bc4">
+  <meta property="og:title" content="Ofouq Academie – أفق">
+  <meta property="og:description" content="منصة علمية لنشر المعرفة والأبحاث المحكّمة.">
+  <meta property="og:image" content="logo1.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/jpeg" href="logo1222.jpeg">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -84,8 +91,8 @@
     nav a.active{
       color:var(--primary);
     }
-    nav a.active::after,
-    nav a:hover::after{
+    nav > ul > li > a.active::after,
+    nav > ul > li > a:hover::after{
       content:"";
       position:absolute;
       bottom:-2px;
@@ -120,7 +127,8 @@
       background:#f1fbff;
       color:var(--primary);
     }
-    .dropdown:hover .dropdown-content{display:block;}
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content{display:block;}
 
     /* small search bar */
     .nav-search{
@@ -184,7 +192,7 @@
       border:none;
       background:transparent;
       padding:7px 10px;
-      text-align:right;
+      text-align:start;
       font-size:11px;
       cursor:pointer;
     }
@@ -565,7 +573,7 @@
     }
     .hero-main{
       flex:1 1 260px;
-      text-align:right;
+      text-align:start;
     }
     .hero-badge{
       display:inline-flex;
@@ -573,8 +581,10 @@
       gap:6px;
       padding:6px 12px;
       border-radius:999px;
-      background:#e0f2fe;
-      color:var(--gold);
+      background:#fff8df;
+      border:1px solid rgba(212,175,55,.35);
+      color:#7a5d00;
+      font-weight:700;
       font-size:12px;
       margin-bottom:10px;
     }
@@ -1039,7 +1049,7 @@ section h2 {
 #backTop{
   position:fixed;
   bottom:20px;
-  left:20px;
+  right:20px;
   width:48px;
   height:48px;
   border:none;
@@ -1286,7 +1296,7 @@ section h2{
 }
 .faq-q{
   width:100%;
-  text-align:right;
+  text-align:start;
   background:transparent;
   border:none;
   padding:15px 18px;
@@ -1422,10 +1432,49 @@ section h2{
 .contact-item .c-icon{font-size:22px;margin-bottom:6px;}
 .contact-item strong{display:block;font-size:13.5px;margin-bottom:2px;}
 .contact-item span{font-size:11.5px;color:#6b7280;}
+
+/* ===== Section "view all" link ===== */
+.section-more{
+  display:flex;
+  justify-content:center;
+  margin-top:18px;
+}
+
+/* ===== Accessibility ===== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible{
+  outline:2px solid var(--primary);
+  outline-offset:2px;
+}
+.logo{text-decoration:none;}
+.skip-link{
+  position:absolute;
+  top:-60px;
+  inset-inline-start:12px;
+  background:var(--primary-dark);
+  color:#fff;
+  padding:8px 14px;
+  border-radius:10px;
+  z-index:3000;
+  text-decoration:none;
+  font-weight:700;
+}
+.skip-link:focus{top:10px;}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .journal-strip-track{animation:none !important;flex-wrap:wrap;white-space:normal;padding:0 16px;}
+}
 </style>
 </head>
 <body>
-<div id="scrollProgress"></div>
+<a href="#main" class="skip-link" data-t="skip_link">تخطَّ إلى المحتوى</a>
+<div id="scrollProgress" aria-hidden="true"></div>
 <!-- MOBILE MENU -->
 <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="toggleMenu()"></div>
 
@@ -1440,7 +1489,7 @@ section h2{
         <span data-t="brand_tagline">منصة أكاديمية حديثة</span>
       </div>
     </div>
-    <button class="nav-sheet-close" type="button" onclick="toggleMenu()">✕</button>
+    <button class="nav-sheet-close" type="button" onclick="toggleMenu()" aria-label="إغلاق">✕</button>
   </div>
 
   <form class="nav-sheet-search" onsubmit="doSearchMobile(event)">
@@ -1496,55 +1545,57 @@ section h2{
 
 
 <header>
-<button id="menu-btn" onclick="toggleMenu()">☰</button>
+<button id="menu-btn" type="button" onclick="toggleMenu()" aria-label="القائمة" aria-controls="mobileMenu" aria-expanded="false">☰</button>
 
-  <div class="logo" onclick="goToHome()">
-    <img src="logo1.png" alt="Logo">
-  </div>
-<nav>
+  <a class="logo" href="index.html" aria-label="أفق – الرئيسية">
+    <img src="logo1.png" alt="Ofouq Academie">
+  </a>
+<nav aria-label="Main">
   <ul>
-    <li><a href="index.html" id="navHome">الرئيسية</a></li>
+    <li><a href="index.html" class="active" aria-current="page" id="navHome" data-t="nav_home">الرئيسية</a></li>
     <li class="dropdown">
-      <a href="#" id="navResearchStudies">أبحاث ودراسات ▾</a>
+      <a href="#research" id="navResearchStudies" data-t="nav_studies" aria-haspopup="true">أبحاث ودراسات ▾</a>
       <div class="dropdown-content">
-        <a href="research.html" id="navResearch">أبحاث محكمة</a>
-        <a href="articles.html" id="navArticles">مقالات محكمة</a>
-        <a href="files.html" id="navFiles">ملفات بحثية</a>
-        <a href="articles-foreign.html" id="navForeign">مقالات أجنبية</a>
+        <a href="research.html" id="navResearch" data-t="nav_research_peer">أبحاث محكمة</a>
+        <a href="articles.html" id="navArticles" data-t="nav_articles_peer">مقالات محكمة</a>
+        <a href="files.html" id="navFiles" data-t="nav_files">ملفات بحثية</a>
+        <a href="articles-foreign.html" id="navForeign" data-t="nav_foreign">مقالات أجنبية</a>
       </div>
     </li>
-    <li><a href="general-articles.html" id="navGeneral">مقالات</a></li>
-    <li><a href="editions.html" id="navEditions">إصداراتنا</a></li>
-    <li><a href="activities.html" id="navActivities">أنشطتنا</a></li>
+    <li><a href="general-articles.html" id="navGeneral" data-t="nav_articles">مقالات</a></li>
+    <li><a href="editions.html" id="navEditions" data-t="nav_editions">إصداراتنا</a></li>
+    <li><a href="activities.html" id="navActivities" data-t="nav_activities">أنشطتنا</a></li>
     <li class="dropdown">
-      <a href="#academic" class="pill-circle" id="navAcademic">أكاديمي</a>
+      <a href="#academic-tracks" class="pill-circle" id="navAcademic" data-t="nav_academic" aria-haspopup="true">أكاديمي</a>
       <div class="dropdown-content">
-        <a href="special-politics.html" id="navPol">تخصص علوم سياسية</a>
-        <a href="special-ir.html" id="navIr">تخصص العلاقات الدولية</a>
-        <a href="special-admin-law.html" id="navAdmin">تخصص القانون الإداري</a>
-        <a href="special-const-law.html" id="navConst">تخصص القانون الدستوري</a>
-        <a href="special-public-policy.html" id="navPolicy">تخصص السياسات العمومية</a>
+        <a href="special-politics.html" id="navPol" data-t="sp_politics">تخصص علوم سياسية</a>
+        <a href="special-ir.html" id="navIr" data-t="sp_ir">تخصص العلاقات الدولية</a>
+        <a href="special-admin-law.html" id="navAdmin" data-t="sp_admin_law">تخصص القانون الإداري</a>
+        <a href="special-const-law.html" id="navConst" data-t="sp_const_law">تخصص القانون الدستوري</a>
+        <a href="special-public-policy.html" id="navPolicy" data-t="sp_public_policy">تخصص السياسات العمومية</a>
       </div>
     </li>
-    <li><a href="live.html" id="navLive">بث مباشر</a></li>
-    <li><a href="rules.html" id="navRules">شروط النشر</a></li>
-    <li><a href="contact.html" id="navContact">اتصل بنا</a></li>
-    <li><a href="editorial-board.html" class="active" id="navBoard">هيئة التحرير</a></li>
+    <li><a href="live.html" id="navLive" data-t="nav_live">بث مباشر</a></li>
+    <li><a href="rules.html" id="navRules" data-t="nav_rules">شروط النشر</a></li>
+    <li><a href="contact.html" id="navContact" data-t="nav_contact">اتصل بنا</a></li>
+    <li><a href="editorial-board.html" id="navBoard" data-t="nav_board">هيئة التحرير</a></li>
   </ul>
 
-  <form class="nav-search" onsubmit="doSearch(event)">
+  <form class="nav-search" role="search" onsubmit="doSearch(event)">
     <input
       type="search"
       id="navSearchInput"
       placeholder="ابحث..."
+      data-ph="search_placeholder"
+      aria-label="بحث"
       autocomplete="off"
     />
-    <span>🔍</span>
+    <span aria-hidden="true">🔍</span>
   </form>
 
   <div class="actions" id="headerActions">
     <div class="lang-wrapper">
-      <button class="lang-toggle" onclick="toggleLangMenu()">
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-label="Language">
         <span id="langCurrent">AR</span> ▾
       </button>
       <div class="lang-menu" id="langMenu">
@@ -1559,34 +1610,32 @@ section h2{
 </nav>
 </header>
 
+<main id="main">
 <section class="hero">
   <div class="hero-main">
     <div class="hero-badge" data-t="badge_text">منصة علمية ذهبية للباحثين والمهتمين</div>
     <h1 data-t="hero_title">منصة علمية لنشر المعرفة والأبحاث</h1>
-    <p data-t="hero_sub">
-      
-      بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات.
-    </p>
+    <p data-t="hero_sub">بنية متكاملة للأبحاث والمقالات والملفات العلمية والدورات.</p>
 <div class="issn-badge">3119-6691</div>
 <div class="stats">
   <div class="stat-item">
     <strong id="stat1_number">0</strong>
-<span>📚 بحث محكّم</span>
+    <span>📚 <span data-t="stat1_label">بحث محكّم</span></span>
   </div>
 
   <div class="stat-item">
     <strong id="stat2_number">0</strong>
-<span>📝 مقال علمي</span>
+    <span>📝 <span data-t="stat2_label">مقال علمي</span></span>
   </div>
 
   <div class="stat-item">
     <strong id="stat3_number">0</strong>
-<span>👥 أعضاء</span>
+    <span>👥 <span data-t="stat3_label">مشارك مسجل</span></span>
   </div>
 
   <div class="stat-item">
     <strong id="stat4_number">0</strong>
-<span>🎓 أنشطة</span>
+    <span>🎓 <span data-t="stat4_label">نشاط وورشة</span></span>
   </div>
 </div>
     <div class="hero-actions">
@@ -1677,7 +1726,7 @@ section h2{
 </section>
 
 <section id="current-issue" class="reveal">
-  <h2>العدد الحالي</h2>
+  <h2 data-t="sec_current">العدد الحالي</h2>
 
   <div class="feature-box current-issue-card" id="currentIssueContent"></div>
 </section>
@@ -1685,10 +1734,12 @@ section h2{
 <section id="research" class="reveal">
   <h2 data-t="sec_research">أحدث الأبحاث</h2>
   <div class="grid reveal-stagger" id="researchGrid"></div>
+  <div class="section-more"><a href="research.html" class="btn" data-t="view_all">عرض الكل ←</a></div>
 </section>
 <section id="articles" class="reveal">
-  <h2 data-t="secarticles">أحدث المقالات</h2>
+  <h2 data-t="sec_articles">أحدث المقالات</h2>
   <div class="grid reveal-stagger" id="articlesGrid"></div>
+  <div class="section-more"><a href="articles.html" class="btn" data-t="view_all">عرض الكل ←</a></div>
 </section>
 
 <section id="editions" class="reveal">
@@ -1703,12 +1754,13 @@ section h2{
   </div>
 </section>
 <section id="popular-research" class="reveal">
-  <h2>الأكثر قراءة</h2>
+  <h2 data-t="sec_popular">الأكثر قراءة</h2>
   <div class="grid reveal-stagger" id="popularGrid"></div>
 </section>
 <section id="activities" class="reveal">
   <h2 data-t="sec_activities">أنشطتنا وورش العمل</h2>
   <div class="grid reveal-stagger" id="activitiesGrid"></div>
+  <div class="section-more"><a href="activities.html" class="btn" data-t="view_all">عرض الكل ←</a></div>
 </section>
 
 <section id="academic" class="reveal">
@@ -1723,29 +1775,23 @@ section h2{
   </p>
 </section>
 <section id="why-us" class="reveal">
-  <h2>لماذا منصة أفق؟</h2>
+  <h2 data-t="sec_why">لماذا منصة أفق؟</h2>
 
   <div class="features-grid reveal-stagger">
 
     <div class="feature-box">
-      <h3>محتوى محكّم</h3>
-      <p>
-        أبحاث ومقالات علمية تخضع للمراجعة الأكاديمية.
-      </p>
+      <h3 data-t="why1_t">محتوى محكّم</h3>
+      <p data-t="why1_d">أبحاث ومقالات علمية تخضع للمراجعة الأكاديمية.</p>
     </div>
 
     <div class="feature-box">
-      <h3>متعدد اللغات</h3>
-      <p>
-        دعم العربية والفرنسية والإنجليزية.
-      </p>
+      <h3 data-t="why2_t">متعدد اللغات</h3>
+      <p data-t="why2_d">دعم العربية والفرنسية والإنجليزية.</p>
     </div>
 
     <div class="feature-box">
-      <h3>وصول مفتوح</h3>
-      <p>
-        إتاحة المعرفة للباحثين والطلبة مجاناً.
-      </p>
+      <h3 data-t="why3_t">وصول مفتوح</h3>
+      <p data-t="why3_d">إتاحة المعرفة للباحثين والطلبة مجاناً.</p>
     </div>
 
     <div class="feature-box">
@@ -1816,85 +1862,51 @@ section h2{
 </section>
 <section id="call-for-papers" class="reveal">
 
-  <h2>انشر معنا</h2>
+  <h2 data-t="sec_cfp">انشر معنا</h2>
 
   <div class="feature-box">
-
-    <h3>
-      هل لديك بحث أو مقال علمي؟
-    </h3>
-
-    <p>
-      يمكنك إرسال أعمالك العلمية إلى هيئة التحرير
-      لمراجعتها وتحكيمها ونشرها.
-    </p>
-
-    <div style="margin-top:15px;">
-
-      <a href="rules.html" class="btn">
-        شروط النشر
-      </a>
-
-      <a href="contact.html" class="btn primary">
-        إرسال بحث
-      </a>
-
+    <h3 data-t="cfp_q">هل لديك بحث أو مقال علمي؟</h3>
+    <p data-t="cfp_text">يمكنك إرسال أعمالك العلمية إلى هيئة التحرير لمراجعتها وتحكيمها ونشرها.</p>
+    <div style="margin-top:15px;display:flex;flex-wrap:wrap;gap:8px;">
+      <a href="rules.html" class="btn" data-t="nav_rules">شروط النشر</a>
+      <a href="contact.html" class="btn primary" data-t="cfp_submit">إرسال بحث</a>
     </div>
-
   </div>
 
 </section>
 <section id="publication-process" class="reveal">
 
-  <h2>كيف يتم النشر؟</h2>
+  <h2 data-t="sec_process">كيف يتم النشر؟</h2>
 
   <div class="features-grid reveal-stagger">
-
     <div class="feature-box">
       <h3>1</h3>
-      <p>إرسال البحث</p>
+      <p data-t="proc1">إرسال البحث</p>
     </div>
-
     <div class="feature-box">
       <h3>2</h3>
-      <p>الفحص الأولي</p>
+      <p data-t="proc2">الفحص الأولي</p>
     </div>
-
     <div class="feature-box">
       <h3>3</h3>
-      <p>التحكيم العلمي</p>
+      <p data-t="proc3">التحكيم العلمي</p>
     </div>
-
     <div class="feature-box">
       <h3>4</h3>
-      <p>النشر الإلكتروني</p>
+      <p data-t="proc4">النشر الإلكتروني</p>
     </div>
-
   </div>
 
 </section>
 <section id="publication-fields" class="reveal">
 
-  <h2>مجالات النشر</h2>
+  <h2 data-t="sec_fields">مجالات النشر</h2>
 
   <div class="features-grid reveal-stagger">
-
-    <div class="feature-box">
-      <h3>العلوم السياسية</h3>
-    </div>
-
-    <div class="feature-box">
-      <h3>القانون العام</h3>
-    </div>
-
-    <div class="feature-box">
-      <h3>العلاقات الدولية</h3>
-    </div>
-
-    <div class="feature-box">
-      <h3>السياسات العمومية</h3>
-    </div>
-
+    <div class="feature-box"><h3 data-t="field1">العلوم السياسية</h3></div>
+    <div class="feature-box"><h3 data-t="field2">القانون العام</h3></div>
+    <div class="feature-box"><h3 data-t="field3">العلاقات الدولية</h3></div>
+    <div class="feature-box"><h3 data-t="field4">السياسات العمومية</h3></div>
   </div>
 
 </section>
@@ -2014,13 +2026,14 @@ section h2{
     <h3 data-t="news_title">اشترك في نشرتنا العلمية</h3>
     <p data-t="news_text">تصلك إشعارات عند صدور عدد جديد أو نشر أبحاث ضمن تخصصك.</p>
     <form class="newsletter-form" onsubmit="handleNewsletter(event)">
-      <input type="email" id="newsletterEmail" placeholder="بريدك الإلكتروني" data-ph="news_placeholder" required>
+      <input type="email" id="newsletterEmail" placeholder="بريدك الإلكتروني" data-ph="news_placeholder" aria-label="Email" autocomplete="email" required>
       <button type="submit" class="btn primary" data-t="news_cta">اشترك</button>
     </form>
-    <div class="newsletter-msg" id="newsletterMsg"></div>
+    <div class="newsletter-msg" id="newsletterMsg" role="status" aria-live="polite"></div>
   </div>
 </section>
-<footer data-t="footer_text" style="
+</main>
+<footer style="
   background: linear-gradient(135deg, #0d6b8c 0%, #00667f 100%);
   padding: clamp(24px, 6vw, 40px) clamp(20px, 5vw, 40px);
   text-align: center;
@@ -2096,15 +2109,15 @@ section h2{
     height: 4px; background: linear-gradient(90deg, transparent, var(--gold, #d4af37), transparent);
   "></div>
 </footer>
-<button id="quickMenu">⚡</button>
+<button id="quickMenu" type="button" aria-label="روابط سريعة" aria-controls="quickPanel" aria-expanded="false">⚡</button>
 
 <div id="quickPanel">
-  <a href="#research">📚 الأبحاث</a>
-  <a href="#academic">🎓 أكاديمي</a>
-  <a href="#contact">📩 تواصل</a>
+  <a href="#research">📚 <span data-t="quick_research">الأبحاث</span></a>
+  <a href="#academic-tracks">🎓 <span data-t="nav_academic">أكاديمي</span></a>
+  <a href="#contact-strip">📩 <span data-t="quick_contact">تواصل</span></a>
 </div>
 
-<button id="backTop">↑</button>
+<button id="backTop" type="button" aria-label="العودة للأعلى">↑</button>
 
 <script type="module" src="/firestore-bridge.js"></script>
 <script>
@@ -2115,6 +2128,12 @@ let currentLang = localStorage.getItem('uiLang') || localStorage.getItem('lang')
 
 function getCurrentLang() {
   return localStorage.getItem('uiLang') || localStorage.getItem('lang') || 'ar';
+}
+
+// UI string lookup with Arabic fallback (translations is defined further down)
+function t(key, lang = getCurrentLang()) {
+  const dict = translations[lang] || translations.ar;
+  return dict[key] ?? translations.ar[key] ?? key;
 }
 
 function getByLang(field, lang = getCurrentLang()) {
@@ -2252,26 +2271,32 @@ async function syncFirestoreToLocal() {
 
     await waitForFS();
 
-    const { db, collection, onSnapshot } = window.fs;
+    const { db, collection, onSnapshot, getDocs } = window.fs;
     const sections = ['research', 'articles', 'files', 'editions', 'issues', 'publications', 'activities', 'training'];
+
+    const applySnapshot = (key, snap) => {
+      const data = snap.docs.map((doc, index) => ({
+        docId: doc.id,
+        _sortIndex: index,
+        ...doc.data()
+      })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
+
+      const merged = mergeItemLists(getStoredItems(key), data)
+        .sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
+
+      localStorage.setItem(key, JSON.stringify(merged));
+      queueRefresh();
+    };
 
     sections.forEach((key) => {
       const q = collection(db, key);
-      onSnapshot(q, (snap) => {
-        const data = snap.docs.map((doc, index) => ({
-          docId: doc.id,
-          _sortIndex: index,
-          ...doc.data()
-        })).sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
-
-        const merged = mergeItemLists(getStoredItems(key), data)
-          .sort((a, b) => getSortValue(b, b._sortIndex || 0) - getSortValue(a, a._sortIndex || 0));
-
-        localStorage.setItem(key, JSON.stringify(merged));
-        queueRefresh();
-      }, (error) => {
-        console.error('Live sync error for ' + key, error);
-      });
+      const onError = (error) => console.error('Live sync error for ' + key, error);
+      // Live updates when the bridge exposes onSnapshot, one-shot fetch otherwise
+      if (typeof onSnapshot === 'function') {
+        onSnapshot(q, snap => applySnapshot(key, snap), onError);
+      } else {
+        getDocs(q).then(snap => applySnapshot(key, snap)).catch(onError);
+      }
     });
 
     refreshHomeSections();
@@ -2291,9 +2316,12 @@ document.addEventListener('click', e => {
   const langWrapper = e.target.closest('.lang-wrapper');
 
   if (btn && panel && e.target === btn) {
-    panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
-  } else if (panel && panel.style.display === 'flex' && !panel.contains(e.target) && e.target !== btn) {
+    const open = panel.style.display !== 'flex';
+    panel.style.display = open ? 'flex' : 'none';
+    btn.setAttribute('aria-expanded', String(open));
+  } else if (panel && panel.style.display === 'flex' && (!panel.contains(e.target) || e.target.closest('a'))) {
     panel.style.display = 'none';
+    btn?.setAttribute('aria-expanded', 'false');
   }
 
   // close the language menu when clicking anywhere outside it
@@ -2337,7 +2365,7 @@ async function copyPageLink() {
   try {
     await navigator.clipboard.writeText(window.location.href);
     const lang = getCurrentLang();
-    alert(lang === 'en' ? 'Link copied!' : lang === 'fr' ? 'Lien copié !' : 'تم نسخ الرابط!');
+    alert(t('link_copied'));
   } catch (error) {
     console.warn('Clipboard write failed:', error);
   }
@@ -2400,10 +2428,20 @@ document.getElementById('backTop')?.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
+// Escape closes any open overlay (mobile sheet, language menu, quick panel)
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('mobileMenu')?.classList.contains('show')) toggleMenu();
+  const langMenu = document.getElementById('langMenu');
+  if (langMenu) langMenu.style.display = 'none';
+  const panel = document.getElementById('quickPanel');
+  if (panel) panel.style.display = 'none';
+  document.getElementById('quickMenu')?.setAttribute('aria-expanded', 'false');
+});
+
 window.addEventListener('DOMContentLoaded', () => {
-  refreshHomeSections();
   updateHeader();
-  setLang(currentLang);
+  setLang(currentLang); // also renders all content sections
   initMobileDropdowns();
   syncFirestoreToLocal();
   bindFeaturedDrag();
@@ -2432,7 +2470,10 @@ function toggleMenu() {
   menu.classList.toggle('show', !isOpen);
   overlay.classList.toggle('show', !isOpen);
   document.body.style.overflow = isOpen ? '' : 'hidden';
-  if (btn) btn.textContent = isOpen ? '☰' : '✕';
+  if (btn) {
+    btn.textContent = isOpen ? '☰' : '✕';
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  }
 }
 
 function toggleLangMenu() {
@@ -2457,7 +2498,12 @@ function doSearchMobile(e) {
   runSearch(document.getElementById('navSearchInputMobile')?.value);
 }
 
-let user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || 'null');
+let user = null;
+try {
+  user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || 'null');
+} catch (error) {
+  console.warn('Invalid stored user:', error);
+}
 
 function updateHeader() {
   const headerActions = document.getElementById('headerActions');
@@ -2469,8 +2515,8 @@ function updateHeader() {
 
   headerActions.innerHTML = `
     <div class="lang-wrapper">
-      <button class="lang-toggle" onclick="toggleLangMenu()">
-        <span id="langCurrent">AR</span>
+      <button class="lang-toggle" type="button" onclick="toggleLangMenu()" aria-label="Language">
+        <span id="langCurrent">AR</span> ▾
       </button>
       <div class="lang-menu" id="langMenu">
         <button onclick="setLang('ar')">العربية</button>
@@ -2482,7 +2528,12 @@ function updateHeader() {
     <button class="btn" onclick="logout()" data-t="logout">تسجيل الخروج</button>
   `;
 
-  if (mobileLogin) mobileLogin.innerHTML = `<a href="#" onclick="logout()" data-t="logout">تسجيل الخروج</a>`;
+  if (mobileLogin) {
+    mobileLogin.href = '#';
+    mobileLogin.setAttribute('data-t', 'logout');
+    mobileLogin.textContent = t('logout');
+    mobileLogin.onclick = (e) => { e.preventDefault(); logout(); };
+  }
   if (mobileRegister) mobileRegister.style.display = 'none';
 }
 
@@ -2511,10 +2562,20 @@ function getContentDesc(item, lang = getCurrentLang()) {
   return getByLang(item.description, lang) || getByLang(item.short, lang) || getByLang(item.details, lang) || '';
 }
 
+// Articles/editions prefer the admin contentcache, but fall back to the
+// Firestore-synced lists so the sections never stay empty when only one exists.
 function getItemsForKey(storageKey) {
-  return (storageKey === 'articles' || storageKey === 'editions')
-    ? getSectionItems(storageKey)
-    : getStoredItems(storageKey);
+  if (storageKey === 'articles' || storageKey === 'editions') {
+    const cached = getSectionItems(storageKey);
+    if (cached.length) return cached;
+  }
+  return getStoredItems(storageKey);
+}
+
+const HOME_GRID_LIMIT = 6;
+
+function getTypeLabel(storageKey) {
+  return t('label_' + storageKey);
 }
 
 function openDownload(url) {
@@ -2524,15 +2585,16 @@ function openDownload(url) {
   return true;
 }
 
+// index refers to the same list renderContent used (getItemsForKey)
 function downloadItem(storageKey, index) {
-  const item = getStoredItems(storageKey)[index];
+  const item = getItemsForKey(storageKey)[index];
   if (!item) return;
   const download = getDownloadLink(item);
   download ? openDownload(download) : goToPage(storageKey, index);
 }
 
 function goToPage(pageType, index) {
-  const selected = getStoredItems(pageType)[index];
+  const selected = getItemsForKey(pageType)[index];
   if (selected) localStorage.setItem('selectedItem', JSON.stringify(selected));
 
   const pageMap = {
@@ -2560,36 +2622,39 @@ function renderContent(storageKey, gridId) {
     return;
   }
   if (section) section.style.display = '';
+  const more = section?.querySelector('.section-more');
+  if (more) more.style.display = items.length > HOME_GRID_LIMIT ? '' : 'none';
 
   const frag = document.createDocumentFragment();
+  const noImage = esc(t('no_image', lang));
 
-  items.forEach((item, index) => {
-    const title = getByLang(item.title, lang) || 'بدون عنوان';
+  items.slice(0, HOME_GRID_LIMIT).forEach((item, index) => {
+    const title = getByLang(item.title, lang) || t('untitled', lang);
     const author = getByLang(item.author, lang) || '';
     const desc = getContentDesc(item, lang);
     const img = getContentImage(item);
     const download = getDownloadLink(item);
     const actionButton = download
-      ? `<button class="card-btn" onclick="downloadItem('${storageKey}', ${index})">تحميل</button>`
-      : `<button class="card-btn" onclick="goToPage('${storageKey}', ${index})">عرض</button>`;
+      ? `<button class="card-btn" type="button" onclick="downloadItem('${storageKey}', ${index})">${esc(t('btn_download', lang))}</button>`
+      : `<button class="card-btn" type="button" onclick="goToPage('${storageKey}', ${index})">${esc(t('btn_view', lang))}</button>`;
 
-    const card = document.createElement('div');
+    const card = document.createElement('article');
     card.className = 'card';
     card.innerHTML = `
       ${img
         ? `<div class="card-img-wrapper">
              <img src="${esc(img)}" alt="${esc(title)}" class="card-img" loading="lazy" decoding="async"
-               onerror="this.closest('.card-img-wrapper').innerHTML='<div class=&quot;card-img-fallback&quot;>لا توجد صورة</div>'">
+               onerror="this.closest('.card-img-wrapper').innerHTML='<div class=&quot;card-img-fallback&quot;>${noImage}</div>'">
            </div>`
-        : `<div class="card-img-wrapper"><div class="card-img-fallback">لا توجد صورة</div></div>`
+        : `<div class="card-img-wrapper"><div class="card-img-fallback">${noImage}</div></div>`
       }
       <div class="card-body">
         <h3>${esc(title)}</h3>
-        <span class="card-author">${author ? 'بقلم: ' + esc(author) : ''}</span>
+        ${author ? `<span class="card-author">${esc(t('by_author', lang))} ${esc(author)}</span>` : ''}
         <p>${esc(desc)}</p>
       </div>
       <div class="card-footer">
-        <span>${esc(storageKey)}</span>
+        <span>${esc(getTypeLabel(storageKey))}</span>
         ${actionButton}
       </div>
     `;
@@ -2611,12 +2676,8 @@ function renderPopularContent() {
   if (!grid) return;
   const section = grid.closest('section');
   const lang = getCurrentLang();
-  const sources = [
-    { key: 'research', label: lang === 'en' ? 'Research' : lang === 'fr' ? 'Recherche' : 'بحث' },
-    { key: 'articles', label: lang === 'en' ? 'Article' : lang === 'fr' ? 'Article' : 'مقال' },
-    { key: 'files', label: lang === 'en' ? 'File' : lang === 'fr' ? 'Dossier' : 'ملف' },
-    { key: 'editions', label: lang === 'en' ? 'Edition' : lang === 'fr' ? 'Publication' : 'إصدار' }
-  ];
+  const sources = ['research', 'articles', 'files', 'editions']
+    .map(key => ({ key, label: getTypeLabel(key) }));
 
   const items = [];
   sources.forEach(src => {
@@ -2647,7 +2708,7 @@ function renderPopularContent() {
     .sort((a, b) => b.score - a.score)
     .slice(0, 4)
     .forEach(entry => {
-      const card = document.createElement('div');
+      const card = document.createElement('article');
       card.className = 'card';
       card.innerHTML = `
         ${entry.image
@@ -2663,8 +2724,8 @@ function renderPopularContent() {
         <div class="card-footer">
           <span>${esc(entry.label)}</span>
           ${entry.download
-            ? `<button class="card-btn" onclick="downloadItem('${entry.storageKey}', ${entry.index})">تحميل</button>`
-            : `<button class="card-btn" onclick="goToPage('${entry.storageKey}', ${entry.index})">عرض</button>`
+            ? `<button class="card-btn" type="button" onclick="downloadItem('${entry.storageKey}', ${entry.index})">${esc(t('btn_download', lang))}</button>`
+            : `<button class="card-btn" type="button" onclick="goToPage('${entry.storageKey}', ${entry.index})">${esc(t('btn_view', lang))}</button>`
           }
         </div>
       `;
@@ -2679,7 +2740,7 @@ function isGenericIssueTitle(title) {
 }
 
 function getLatestEdition() {
-  const editions = getSectionItems('editions');
+  const editions = getItemsForKey('editions');
   if (!editions.length) return null;
   return editions
     .map((item, index) => ({ item, index, sortValue: getSortValue(item, index) }))
@@ -2705,7 +2766,7 @@ function renderLatestIssue() {
   }
 
   const item = latest.item;
-  const title = getByLang(item.title, lang) || 'بدون عنوان';
+  const title = getByLang(item.title, lang) || t('untitled', lang);
   const desc = getContentDesc(item, lang);
   const img = getContentImage(item);
 
@@ -2731,31 +2792,36 @@ function renderLatestIssue() {
 }
 
 function updateStats() {
-  const research = getStoredItems('research');
-  const articles = getSectionItems('articles');
+  const research = getItemsForKey('research');
+  const articles = getItemsForKey('articles');
   const users = getStoredItems('users');
-  const editions = getSectionItems('editions');
+  const activities = getItemsForKey('activities');
 
   animateCounter(document.getElementById('stat1_number'), research.length);
   animateCounter(document.getElementById('stat2_number'), articles.length);
   animateCounter(document.getElementById('stat3_number'), users.length);
-  animateCounter(document.getElementById('stat4_number'), editions.length);
+  animateCounter(document.getElementById('stat4_number'), activities.length);
 
   const statsWrap = document.querySelector('.stats');
   if (statsWrap) {
-    const allEmpty = !research.length && !articles.length && !users.length && !editions.length;
+    const allEmpty = !research.length && !articles.length && !users.length && !activities.length;
     statsWrap.style.display = allEmpty ? 'none' : 'flex';
   }
 }
 
+// Counts up from the currently shown value; re-renders with an unchanged
+// target are no-ops, so live Firestore updates don't restart the animation.
 function animateCounter(el, target) {
-  if (!el) return;
-  let current = 0;
-  const step = Math.max(1, Math.ceil(target / 40));
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
+  if (!el || Number(el.dataset.target) === target) return;
+  el.dataset.target = target;
+  clearInterval(el._counterTimer);
+
+  let current = Number(el.textContent) || 0;
+  const step = Math.max(1, Math.ceil(Math.abs(target - current) / 40));
+  el._counterTimer = setInterval(() => {
+    current = current < target ? Math.min(current + step, target) : Math.max(current - step, target);
     el.textContent = current;
-    if (current >= target) clearInterval(timer);
+    if (current === target) clearInterval(el._counterTimer);
   }, 20);
 }
 
@@ -2839,7 +2905,35 @@ const translations = {
     faq7_a:"نعم، يرجى الاطلاع على صفحة شروط النشر لمعرفة التنسيق والمعايير المطلوبة قبل الإرسال.",
     news_title:"اشترك في نشرتنا العلمية",
     news_text:"تصلك إشعارات عند صدور عدد جديد أو نشر أبحاث ضمن تخصصك.",
-    news_placeholder:"بريدك الإلكتروني", news_cta:"اشترك"
+    news_placeholder:"بريدك الإلكتروني", news_cta:"اشترك",
+    news_thanks:"شكراً، تم تسجيل اشتراكك بنجاح.", link_copied:"تم نسخ الرابط!",
+    nav_board:"هيئة التحرير", brand_name:"أفق", brand_tagline:"منصة أكاديمية حديثة", mobile_discover:"اكتشف",
+    search_placeholder:"ابحث...", search_placeholder_long:"ابحث في المنصة...", skip_link:"تخطَّ إلى المحتوى",
+    sec_articles:"أحدث المقالات", sec_current:"العدد الحالي", sec_popular:"الأكثر قراءة", view_all:"عرض الكل ←",
+    sec_why:"لماذا منصة أفق؟",
+    why1_t:"محتوى محكّم", why1_d:"أبحاث ومقالات علمية تخضع للمراجعة الأكاديمية.",
+    why2_t:"متعدد اللغات", why2_d:"دعم العربية والفرنسية والإنجليزية.",
+    why3_t:"وصول مفتوح", why3_d:"إتاحة المعرفة للباحثين والطلبة مجاناً.",
+    sec_cfp:"انشر معنا", cfp_q:"هل لديك بحث أو مقال علمي؟",
+    cfp_text:"يمكنك إرسال أعمالك العلمية إلى هيئة التحرير لمراجعتها وتحكيمها ونشرها.", cfp_submit:"إرسال بحث",
+    sec_process:"كيف يتم النشر؟", proc1:"إرسال البحث", proc2:"الفحص الأولي", proc3:"التحكيم العلمي", proc4:"النشر الإلكتروني",
+    sec_fields:"مجالات النشر", field1:"العلوم السياسية", field2:"القانون العام", field3:"العلاقات الدولية", field4:"السياسات العمومية",
+    quick_research:"الأبحاث", quick_contact:"تواصل",
+    btn_download:"تحميل", btn_view:"عرض", by_author:"بقلم:", no_image:"لا توجد صورة", untitled:"بدون عنوان",
+    label_research:"بحث", label_articles:"مقال", label_files:"ملف", label_editions:"إصدار",
+    label_activities:"نشاط", label_training:"تكوين",
+    archive_title:"تصفح الأرشيف الكامل", archive_text:"اطّلع على جميع الأعداد والإصدارات السابقة للمجلة بترتيب زمني.", archive_cta:"تصفح جميع الإصدارات",
+    sec_ethics:"أخلاقيات النشر",
+    eth1_t:"النزاهة العلمية", eth1_d:"يلتزم الباحثون بالأمانة العلمية والإشارة الدقيقة إلى جميع المصادر المستخدمة في أعمالهم.",
+    eth2_t:"تضارب المصالح", eth2_d:"يجب الإفصاح عن أي تضارب محتمل في المصالح قد يؤثر على موضوعية البحث أو تقييمه.",
+    eth3_t:"حقوق التأليف", eth3_d:"تُنسب المشاركة في البحث إلى كل من ساهم فعلياً في التصور أو التنفيذ أو الكتابة.",
+    eth4_t:"سرية التحكيم", eth4_d:"تخضع الأبحاث لتحكيم مزدوج التعمية يحفظ سرية هوية الباحث والمحكّمين.",
+    sec_contact_strip:"تواصل معنا",
+    c1_t:"راسلنا", c1_d:"للاستفسارات ومراسلة هيئة التحرير",
+    c2_t:"شروط النشر", c2_d:"قبل إرسال عملك للنشر",
+    c3_t:"هيئة التحرير", c3_d:"تعرّف على فريق المراجعة",
+    c4_t:"بث مباشر", c4_d:"تابع فعالياتنا أولاً بأول",
+    share_link:"مشاركة الصفحة", copy_link:"نسخ الرابط"
   },
   en:{
     title:"Home", nav_home:"Home", nav_studies:"Research & Studies ▾",
@@ -2904,7 +2998,35 @@ const translations = {
     faq7_a:"Yes, please check the submission guidelines page for the required formatting and standards before submitting.",
     news_title:"Subscribe to our newsletter",
     news_text:"Get notified when a new issue is released or research in your field is published.",
-    news_placeholder:"Your email address", news_cta:"Subscribe"
+    news_placeholder:"Your email address", news_cta:"Subscribe",
+    news_thanks:"Thanks — you are subscribed!", link_copied:"Link copied!",
+    nav_board:"Editorial Board", brand_name:"Ofouq", brand_tagline:"A modern academic platform", mobile_discover:"Discover",
+    search_placeholder:"Search...", search_placeholder_long:"Search the platform...", skip_link:"Skip to content",
+    sec_articles:"Latest articles", sec_current:"Current issue", sec_popular:"Most read", view_all:"View all →",
+    sec_why:"Why Ofouq?",
+    why1_t:"Peer-reviewed content", why1_d:"Research and scholarly articles subject to academic review.",
+    why2_t:"Multilingual", why2_d:"Support for Arabic, French, and English.",
+    why3_t:"Open access", why3_d:"Knowledge freely available to researchers and students.",
+    sec_cfp:"Publish with us", cfp_q:"Do you have a research paper or article?",
+    cfp_text:"Submit your scholarly work to the editorial board for review, peer evaluation, and publication.", cfp_submit:"Submit a paper",
+    sec_process:"How does publication work?", proc1:"Submission", proc2:"Initial screening", proc3:"Peer review", proc4:"Online publication",
+    sec_fields:"Publication fields", field1:"Political Science", field2:"Public Law", field3:"International Relations", field4:"Public Policy",
+    quick_research:"Research", quick_contact:"Contact",
+    btn_download:"Download", btn_view:"View", by_author:"By", no_image:"No image", untitled:"Untitled",
+    label_research:"Research", label_articles:"Article", label_files:"File", label_editions:"Edition",
+    label_activities:"Activity", label_training:"Training",
+    archive_title:"Browse the full archive", archive_text:"View all past issues and publications of the journal in chronological order.", archive_cta:"Browse all editions",
+    sec_ethics:"Publication ethics",
+    eth1_t:"Research integrity", eth1_d:"Authors commit to academic honesty and accurate citation of all sources used in their work.",
+    eth2_t:"Conflicts of interest", eth2_d:"Any potential conflict of interest that may affect the objectivity of the research or its review must be disclosed.",
+    eth3_t:"Authorship", eth3_d:"Authorship is credited to everyone who genuinely contributed to the design, execution, or writing.",
+    eth4_t:"Confidential review", eth4_d:"Submissions undergo double-blind peer review protecting the identities of authors and reviewers.",
+    sec_contact_strip:"Get in touch",
+    c1_t:"Write to us", c1_d:"Questions and correspondence with the editorial board",
+    c2_t:"Submission rules", c2_d:"Before submitting your work",
+    c3_t:"Editorial board", c3_d:"Meet the review team",
+    c4_t:"Live", c4_d:"Follow our events as they happen",
+    share_link:"Share page", copy_link:"Copy link"
   },
   fr:{
     title:"Accueil", nav_home:"Accueil", nav_studies:"Recherches et études ▾",
@@ -2969,15 +3091,46 @@ const translations = {
     faq7_a:"Oui, veuillez consulter la page des conditions de publication pour connaître le format et les normes requis avant l'envoi.",
     news_title:"Abonnez-vous à notre newsletter",
     news_text:"Recevez une notification à la parution d'un nouveau numéro ou à la publication de recherches dans votre domaine.",
-    news_placeholder:"Votre adresse e-mail", news_cta:"S'abonner"
+    news_placeholder:"Votre adresse e-mail", news_cta:"S'abonner",
+    news_thanks:"Merci — vous êtes inscrit(e) !", link_copied:"Lien copié !",
+    nav_board:"Comité éditorial", brand_name:"Ofouq", brand_tagline:"Une plateforme académique moderne", mobile_discover:"Découvrir",
+    search_placeholder:"Rechercher...", search_placeholder_long:"Rechercher sur la plateforme...", skip_link:"Aller au contenu",
+    sec_articles:"Derniers articles", sec_current:"Numéro actuel", sec_popular:"Les plus lus", view_all:"Tout voir →",
+    sec_why:"Pourquoi Ofouq ?",
+    why1_t:"Contenu évalué", why1_d:"Recherches et articles scientifiques soumis à une évaluation académique.",
+    why2_t:"Multilingue", why2_d:"Prise en charge de l'arabe, du français et de l'anglais.",
+    why3_t:"Accès libre", why3_d:"Un savoir accessible gratuitement aux chercheurs et aux étudiants.",
+    sec_cfp:"Publiez avec nous", cfp_q:"Vous avez une recherche ou un article scientifique ?",
+    cfp_text:"Envoyez vos travaux au comité éditorial pour relecture, évaluation et publication.", cfp_submit:"Soumettre un article",
+    sec_process:"Comment se déroule la publication ?", proc1:"Soumission", proc2:"Examen préliminaire", proc3:"Évaluation par les pairs", proc4:"Publication en ligne",
+    sec_fields:"Domaines de publication", field1:"Science politique", field2:"Droit public", field3:"Relations internationales", field4:"Politiques publiques",
+    quick_research:"Recherches", quick_contact:"Contact",
+    btn_download:"Télécharger", btn_view:"Voir", by_author:"Par", no_image:"Pas d'image", untitled:"Sans titre",
+    label_research:"Recherche", label_articles:"Article", label_files:"Dossier", label_editions:"Publication",
+    label_activities:"Activité", label_training:"Formation",
+    archive_title:"Parcourir les archives complètes", archive_text:"Consultez tous les numéros et publications précédents de la revue par ordre chronologique.", archive_cta:"Voir toutes les publications",
+    sec_ethics:"Éthique de publication",
+    eth1_t:"Intégrité scientifique", eth1_d:"Les auteurs s'engagent à l'honnêteté scientifique et à citer précisément toutes les sources utilisées.",
+    eth2_t:"Conflits d'intérêts", eth2_d:"Tout conflit d'intérêts potentiel pouvant affecter l'objectivité de la recherche ou de son évaluation doit être déclaré.",
+    eth3_t:"Paternité", eth3_d:"La qualité d'auteur revient à toute personne ayant réellement contribué à la conception, la réalisation ou la rédaction.",
+    eth4_t:"Confidentialité de l'évaluation", eth4_d:"Les travaux font l'objet d'une évaluation en double aveugle préservant l'anonymat des auteurs et des évaluateurs.",
+    sec_contact_strip:"Contactez-nous",
+    c1_t:"Écrivez-nous", c1_d:"Questions et correspondance avec le comité éditorial",
+    c2_t:"Conditions de publication", c2_d:"Avant de soumettre votre travail",
+    c3_t:"Comité éditorial", c3_d:"Découvrez l'équipe d'évaluation",
+    c4_t:"Direct", c4_d:"Suivez nos événements en temps réel",
+    share_link:"Partager la page", copy_link:"Copier le lien"
   }
 };
 
 function setLang(lang) {
+  if (!translations[lang]) lang = 'ar';
   currentLang = lang;
+  // getCurrentLang() reads uiLang first, so keep both keys in sync
   localStorage.setItem('lang', lang);
+  localStorage.setItem('uiLang', lang);
 
-  const dict = translations[lang] || translations.ar;
+  const dict = translations[lang];
 
   document.documentElement.lang = lang;
   document.documentElement.dir = (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl';
@@ -2990,6 +3143,16 @@ function setLang(lang) {
   document.querySelectorAll('[data-t]').forEach(el => {
     const key = el.getAttribute('data-t');
     if (dict[key] !== undefined) el.textContent = dict[key];
+  });
+
+  document.querySelectorAll('[data-ph]').forEach(el => {
+    const key = el.getAttribute('data-ph');
+    if (dict[key] !== undefined) el.placeholder = dict[key];
+  });
+
+  // FAQ answers that are open need their height recomputed for the new text
+  document.querySelectorAll('.faq-item.open .faq-a').forEach(a => {
+    a.style.maxHeight = a.scrollHeight + 'px';
   });
 
   const menu = document.getElementById('langMenu');
@@ -3045,11 +3208,7 @@ function handleNewsletter(e) {
     console.warn('Could not store newsletter subscription:', error);
   }
 
-  if (msg) {
-    const lang = getCurrentLang();
-    msg.textContent = lang === 'en' ? 'Thanks — you are subscribed!' :
-      lang === 'fr' ? 'Merci — vous êtes inscrit(e) !' : 'شكراً، تم تسجيل اشتراكك بنجاح.';
-  }
+  if (msg) msg.textContent = t('news_thanks');
   if (input) input.value = '';
 }
 
