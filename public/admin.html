@@ -1,411 +1,117 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ofouq Academie - Admin</title>
-  <link rel="icon" type="image/png" href="logo1222.jpeg" />
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-  <style>
-    :root{
-      --accent:#0ea5e9;
-      --accent2:#22c55e;
-      --bg1:#020617;
-      --bg2:#0b1120;
-      --card:rgba(15,23,42,.86);
-      --card2:rgba(15,23,42,.92);
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --border:rgba(148,163,184,.26);
-      --danger:#ef4444;
-      --shadow:0 18px 45px rgba(15,23,42,.65);
-      --r:18px;
-    }
-
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      font-family:'Tajawal',sans-serif;
-      background:radial-gradient(circle at top left,var(--bg2) 0,var(--bg1) 55%,#000 100%);
-      color:var(--text);
-    }
-
-    .app{
-      display:grid;
-      min-height:100vh;
-      gap:14px;
-      padding:14px;
-      grid-template-columns:280px 1fr;
-    }
-
-    .sidebar,.card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:20px;
-      box-shadow:var(--shadow);
-    }
-
-    .sidebar{
-      padding:16px 14px;
-      display:flex;
-      flex-direction:column;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding-bottom:12px;
-      border-bottom:1px dashed rgba(148,163,184,.28);
-      margin-bottom:10px;
-    }
-
-    .logo{
-      width:42px;
-      height:42px;
-      border-radius:14px;
-      background:radial-gradient(circle at top,#38bdf8,#0ea5e9);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#06101f;
-      font-weight:900;
-    }
-
-    .menu{flex:1;overflow:auto}
-
-    .menu button{
-      width:100%;
-      border:0;
-      background:transparent;
-      color:var(--text);
-      text-align:right;
-      padding:10px;
-      border-radius:999px;
-      display:flex;
-      justify-content:space-between;
-      cursor:pointer;
-      margin-bottom:6px;
-    }
-
-    .menu button.active,
-    .menu button:hover{
-      background:rgba(15,23,42,1);
-    }
-
-    main{overflow:auto}
-
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      padding:8px 6px 14px;
-    }
-
-    .controls,.actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .btn{
-      border:0;
-      border-radius:999px;
-      padding:10px 14px;
-      cursor:pointer;
-      font-weight:800;
-    }
-
-    .btn-ghost{
-      background:rgba(15,23,42,.9);
-      border:1px solid rgba(148,163,184,.38);
-      color:var(--text);
-    }
-
-    .btn-green{
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:#04101f;
-    }
-
-    .btn-red{
-      background:linear-gradient(135deg,#ef4444,#dc2626);
-      color:#fff;
-    }
-
-    .btn-small{
-      padding:7px 12px;
-      font-size:12px;
-    }
-
-    .card{
-      padding:14px;
-      margin-bottom:12px;
-    }
-
-    .grid-2{
-      display:grid;
-      gap:12px;
-      grid-template-columns:1.6fr 1fr;
-    }
-
-    .row{margin-bottom:10px}
-
-    label{
-      display:block;
-      margin-bottom:4px;
-      color:#9ca3af;
-      font-weight:800;
-      font-size:12px;
-    }
-
-    input[type="text"],
-    input[type="url"],
-    input[type="search"],
-    input[type="email"],
-    input[type="password"],
-    textarea{
-      width:100%;
-      padding:9px 10px;
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,.45);
-      background:rgba(15,23,42,.95);
-      color:var(--text);
-      outline:none;
-    }
-
-    input[type="file"]{
-      width:100%;
-      padding:7px 10px;
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,.45);
-      background:rgba(15,23,42,.95);
-      color:var(--muted);
-    }
-
-    textarea{
-      min-height:80px;
-      resize:vertical;
-    }
-
-    .editor{
-      min-height:130px;
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,.45);
-      padding:10px;
-      background:rgba(15,23,42,.95);
-    }
-
-    .preview img{
-      width:100%;
-      height:160px;
-      object-fit:cover;
-      border-radius:12px;
-      margin-top:8px;
-    }
-
-    .list{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-      gap:10px;
-    }
-
-    .item{
-      background:var(--card2);
-      border:1px solid rgba(148,163,184,.35);
-      border-radius:16px;
-      overflow:hidden;
-      position:relative;
-    }
-
-    .item img{
-      width:100%;
-      height:120px;
-      object-fit:cover;
-    }
-
-    .item-body{padding:10px}
-
-    .item-title{
-      font-size:14px;
-      font-weight:900;
-    }
-
-    .item-desc{
-      font-size:12px;
-      color:#9ca3af;
-      min-height:48px;
-    }
-
-    .item-meta{
-      font-size:10px;
-      color:#94a3b8;
-      display:flex;
-      justify-content:space-between;
-    }
-
-    .item-actions{
-      position:absolute;
-      top:10px;
-      left:10px;
-      display:flex;
-      gap:8px;
-    }
-
-    .mini{
-      width:36px;
-      height:36px;
-      border:1px solid rgba(255,255,255,.22);
-      border-radius:999px;
-      background:rgba(2,6,23,.92);
-      color:#fff;
-      cursor:pointer;
-    }
-
-    .empty,.status{
-      padding:14px;
-    }
-
-    .empty{
-      text-align:center;
-      color:#6b7280;
-      border:1px dashed rgba(148,163,184,.28);
-      border-radius:16px;
-      background:rgba(15,23,42,.55);
-    }
-
-    .auth-screen{
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding:20px;
-    }
-
-    .auth-card{
-      width:min(100%,420px);
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      padding:22px;
-    }
-
-    .auth-title{
-      margin:0 0 8px;
-      font-size:26px;
-      font-weight:800;
-    }
-
-    .auth-sub{
-      margin:0 0 18px;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    .login-status{
-      margin-top:10px;
-      min-height:24px;
-      color:#fca5a5;
-      font-size:13px;
-    }
-
-    .user-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
-      background:rgba(15,23,42,.9);
-      border:1px solid rgba(148,163,184,.38);
-      color:#cbd5e1;
-      font-size:13px;
-      font-weight:700;
-    }
-
-    @media (max-width:980px){
-      .app{grid-template-columns:1fr}
-      .grid-2{grid-template-columns:1fr}
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0b1118">
+  <title>لوحة التحرير — أفق المعرفة</title>
+  <link rel="icon" type="image/png" href="logo1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/admin.css">
 </head>
 <body>
 
-  <section id="authGate" class="auth-screen">
-    <div class="auth-card">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <div class="logo">AD</div>
+  <!-- Login gate: admin-app.js toggles #authGate / #adminApp with display -->
+  <section id="authGate">
+    <div class="gate">
+      <div class="gate__art">
+        <span class="orbit" aria-hidden="true"></span>
+        <a class="brand" href="index.html">
+          <img src="logo1.png" alt="" width="52" height="52">
+          <span class="brand__name"><strong>أفق المعرفة</strong><span>ISSN 3119-6691</span></span>
+        </a>
         <div>
-          <h1 class="auth-title">تسجيل الدخول</h1>
-          <p class="auth-sub">لوحة تحكم Ofouq Academie</p>
+          <span class="kicker kicker--light">غرفة التحرير</span>
+          <h2>لوحة إدارة المجلة</h2>
+          <p>انشر الأبحاث والمقالات والأعداد، وأدر البث المباشر من مكان واحد.</p>
         </div>
+        <ul class="gate__facts">
+          <li><i class="ri-database-2-line"></i> متصل مباشرة بقاعدة بيانات Firestore</li>
+          <li><i class="ri-upload-cloud-2-line"></i> رفع ملفات PDF والصور إلى Firebase Storage</li>
+          <li><i class="ri-shield-check-line"></i> دخول المحررين المعتمدين فقط</li>
+        </ul>
       </div>
 
-      <div class="row">
-        <label for="loginEmail">البريد الإلكتروني</label>
-        <input id="loginEmail" type="email" placeholder="admin@example.com" />
-      </div>
+      <form class="gate__form" onsubmit="event.preventDefault();document.getElementById('loginBtn').click();">
+        <div class="gate__box">
+          <h1>تسجيل الدخول</h1>
+          <p class="muted">أدخل بيانات حساب المحرر للمتابعة.</p>
 
-      <div class="row">
-        <label for="loginPassword">كلمة المرور</label>
-        <input id="loginPassword" type="password" placeholder="********" />
-      </div>
+          <div class="field">
+            <label for="loginEmail">البريد الإلكتروني</label>
+            <div class="input-ic"><i class="ri-mail-line"></i><input id="loginEmail" type="email" autocomplete="username" placeholder="editor@example.com" required></div>
+          </div>
+          <div class="field">
+            <label for="loginPassword">كلمة المرور</label>
+            <div class="input-ic"><i class="ri-lock-password-line"></i><input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required>
+              <button class="pw-toggle" type="button" aria-label="إظهار كلمة المرور" data-pw="loginPassword"><i class="ri-eye-line"></i></button></div>
+          </div>
 
-      <div class="actions">
-        <button class="btn btn-green" id="loginBtn" type="button">تسجيل الدخول</button>
-      </div>
-
-      <div id="loginStatus" class="login-status"></div>
+          <button class="btn btn-green btn-block" id="loginBtn" type="button"><i class="ri-login-circle-line"></i> دخول إلى اللوحة</button>
+          <div id="loginStatus" class="login-status" role="status" aria-live="polite"></div>
+          <a class="back-link" href="index.html"><i class="ri-arrow-right-line"></i> العودة إلى الموقع</a>
+        </div>
+      </form>
     </div>
   </section>
 
-  <div id="adminApp" class="app" style="display:none">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">AD</div>
-        <div>
-          <div style="font-weight:800">ADMIN PANEL</div>
-          <div style="font-size:12px;color:#94a3b8">Ofouq Academie</div>
+  <div id="adminApp" style="display:none">
+    <div class="shell">
+      <aside class="side" id="side" aria-label="أقسام اللوحة">
+        <div class="side__head">
+          <a class="brand" href="index.html" target="_blank" rel="noopener" title="فتح الموقع">
+            <img src="logo1.png" alt="" width="44" height="44">
+            <span class="brand__name"><strong>أفق المعرفة</strong><span>غرفة التحرير</span></span>
+          </a>
+          <button class="icon-btn side__close" type="button" data-side-close aria-label="إغلاق القائمة"><i class="ri-close-line"></i></button>
         </div>
-      </div>
 
-      <div style="margin-bottom:12px">
         <div class="user-chip">
-          <i class="ri-user-line"></i>
-          <span id="userEmail">admin</span>
-        </div>
-      </div>
-
-      <nav class="menu" id="menu"></nav>
-
-      <div style="padding-top:10px;border-top:1px dashed rgba(148,163,184,.28)">
-        <button class="btn btn-ghost" id="logoutBtn" type="button">تسجيل الخروج</button>
-      </div>
-    </aside>
-
-    <main>
-      <div class="topbar">
-        <div>
-          <h2 style="margin:0" id="sectionTitle">لوحة التحكم</h2>
-          <div style="font-size:12px;color:#64748b">إضافة، تعديل، حذف، رفع ملفات</div>
+          <span class="avatar"><i class="ri-user-3-line"></i></span>
+          <span class="user-chip__txt"><small>متصل باسم</small><span id="userEmail">admin</span></span>
         </div>
 
-        <div class="controls">
-          <button class="btn btn-ghost btn-small" id="reloadBtn" type="button">تحميل Firestore</button>
-          <button class="btn btn-ghost btn-small" id="recoverBtn" type="button">مزامنة</button>
-          <button class="btn btn-ghost btn-small" id="exportBtn" type="button">تصدير JSON</button>
-          <button class="btn btn-ghost btn-small" id="clearBtn" type="button">مسح Local</button>
-        </div>
-      </div>
+        <div class="side__label">الأقسام</div>
+        <nav class="menu" id="menu"></nav>
 
-      <div id="status" class="status"></div>
-      <div id="content"></div>
-    </main>
+        <div class="side__foot">
+          <a class="btn btn-ghost btn-small" href="index.html" target="_blank" rel="noopener"><i class="ri-external-link-line"></i> عرض الموقع</a>
+          <button class="btn btn-ghost btn-small" id="logoutBtn" type="button"><i class="ri-logout-box-r-line"></i> تسجيل الخروج</button>
+        </div>
+      </aside>
+      <div class="side-veil" data-side-close></div>
+
+      <main class="workspace">
+        <header class="bar">
+          <button class="icon-btn bar__menu" type="button" data-side-open aria-label="القائمة"><i class="ri-menu-3-line"></i></button>
+          <div class="bar__title">
+            <span class="kicker">لوحة التحكم</span>
+            <h2 id="sectionTitle">لوحة التحكم</h2>
+          </div>
+          <div class="controls">
+            <button class="btn btn-ghost btn-small" id="reloadBtn" type="button" title="إعادة تحميل البيانات من Firestore"><i class="ri-refresh-line"></i><span>تحميل</span></button>
+            <button class="btn btn-ghost btn-small" id="recoverBtn" type="button" title="مزامنة النسخة المحلية مع Firestore"><i class="ri-loop-left-line"></i><span>مزامنة</span></button>
+            <button class="btn btn-ghost btn-small" id="exportBtn" type="button" title="تنزيل نسخة احتياطية JSON"><i class="ri-download-2-line"></i><span>تصدير</span></button>
+            <button class="btn btn-ghost btn-small btn-danger-ghost" id="clearBtn" type="button" title="مسح النسخة المحلية فقط (لا يحذف من Firestore)"><i class="ri-eraser-line"></i><span>مسح المحلي</span></button>
+          </div>
+        </header>
+
+        <section class="overview" id="overview" aria-label="نظرة عامة"></section>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+        <div id="content"></div>
+
+        <p class="hint"><kbd>Ctrl</kbd> + <kbd>S</kbd> لحفظ النموذج المفتوح</p>
+      </main>
+    </div>
   </div>
 
   <script type="module" src="./firebase-init.js"></script>
   <script type="module" src="./firestore-bridge.js"></script>
   <script type="module" src="./admin-app.js"></script>
+  <script src="assets/admin-ui.js" defer></script>
 </body>
 </html>
