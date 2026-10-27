@@ -4,7 +4,41 @@
    cross-site accessibility and polish rules.
    ============================================================ */
 
+/* Scholarly serif for Arabic headings (Noto Naskh Arabic) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@600;700&display=swap');
+
+/* Design tokens. Brand teal stays for fills; text uses the darker
+   shade so it meets 4.5:1 contrast on white and on the nav tint. */
+:root{
+  --ofq-brand:#009bc4;
+  --ofq-brand-text:#00667f;
+  --ofq-brand-strong:#004f63;
+  --ofq-muted-text:#5b6b7f;
+  --ofq-ring:0 0 0 3px rgba(0,155,196,.28);
+  --ofq-shadow-sm:0 2px 8px rgba(15,23,42,.06);
+  --ofq-shadow-md:0 12px 28px rgba(15,23,42,.12);
+  --ofq-ease:cubic-bezier(.2,.7,.2,1);
+  --ofq-fast:160ms;
+  --ofq-base:240ms;
+  --ofq-heading-ar:"Noto Naskh Arabic","Tajawal",serif;
+}
+
 img{max-width:100%;}
+
+/* Anchors land below the sticky header instead of under it */
+html{scroll-padding-top:110px;}
+
+::selection{background:rgba(0,155,196,.22);color:inherit;}
+
+/* Headings: serif in Arabic, balanced line breaks everywhere */
+html:lang(ar) :is(h1,h2):not(header *, .nav-sheet *, footer *),
+html:lang(ar) .article-title-main,
+html:lang(ar) .page-title{
+  font-family:var(--ofq-heading-ar);
+  letter-spacing:0;
+}
+h1,h2,h3,.article-title-main,.page-title{text-wrap:balance;}
+p{text-wrap:pretty;}
 
 /* Keyboard focus ring (mouse clicks stay clean) */
 a:focus-visible,
@@ -13,7 +47,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible{
-  outline:2px solid #009bc4;
+  outline:2px solid var(--ofq-brand);
   outline-offset:2px;
 }
 
@@ -23,7 +57,7 @@ textarea:focus-visible,
   top:-60px;
   inset-inline-start:12px;
   z-index:5000;
-  background:#00667f;
+  background:var(--ofq-brand-text);
   color:#fff;
   padding:8px 14px;
   border-radius:10px;
@@ -33,8 +67,15 @@ textarea:focus-visible,
 }
 .ofq-skip:focus{top:10px;}
 
-/* Current page in the navigation */
-nav a[aria-current="page"]{color:#009bc4 !important;}
+/* ---------- Header navigation ---------- */
+/* Two-word labels ("شروط النشر") stay on one line */
+header:has(#menu-btn) nav > ul > li > a{white-space:nowrap;}
+header:has(#menu-btn) nav > ul{gap:12px;}
+
+/* Hover/current colours use the accessible text shade */
+nav a:hover,
+nav a.active,
+nav a[aria-current="page"]{color:var(--ofq-brand-text) !important;}
 nav > ul > li > a[aria-current="page"]::after{
   content:"";
   position:absolute;
@@ -42,43 +83,149 @@ nav > ul > li > a[aria-current="page"]::after{
   inset-inline-start:0;
   width:100%;
   height:2px;
-  background:#009bc4;
+  background:var(--ofq-brand);
   border-radius:999px;
 }
 .nav-sheet a[aria-current="page"]{
-  border-color:#009bc4 !important;
-  color:#00667f !important;
+  border-color:var(--ofq-brand) !important;
+  color:var(--ofq-brand-text) !important;
   box-shadow:0 0 0 2px rgba(0,155,196,.18);
+}
+
+/* Header controls were 11px; bring them to a readable size */
+header .btn,
+header .lang-toggle,
+header .lang-menu button,
+header .nav-search input{font-size:12.5px;}
+header .btn,
+header .lang-toggle{min-height:32px;}
+.nav-search span{color:#64748b;}
+
+/* Not enough room for the inline search next to the full nav */
+@media (max-width:1320px){
+  header:has(#menu-btn) .nav-search{display:none;}
+}
+/* Switch to the menu sheet before the nav runs out of room
+   (pages switch at 980px; the nav needs ~1180px unwrapped) */
+@media (min-width:981px) and (max-width:1180px){
+  header:has(#menu-btn) nav,
+  header:has(#menu-btn) .actions{display:none;}
+  header:has(#menu-btn) #menu-btn{display:flex;order:-1;}
+  header:has(#menu-btn){justify-content:center;}
+  header:has(#menu-btn) .logo{margin-inline:auto;}
 }
 
 /* Desktop dropdowns open for keyboard users too */
 .dropdown:focus-within .dropdown-content{display:block;}
+.dropdown-content a{transition:background var(--ofq-fast) ease, color var(--ofq-fast) ease;}
+.dropdown-content a:hover{color:var(--ofq-brand-text) !important;}
 
-/* Clickable cards look clickable */
+/* ---------- Cards ---------- */
+/* Clickable cards look and behave clickable */
 .card[data-id]{cursor:pointer;}
+.card{
+  transition:transform var(--ofq-base) var(--ofq-ease),
+             box-shadow var(--ofq-base) var(--ofq-ease),
+             border-color var(--ofq-base) ease;
+}
+.card img{transition:transform .5s var(--ofq-ease);}
+@media (hover:hover){
+  .card[data-id]:hover img{transform:scale(1.04);}
+}
+.card[data-id]:focus-visible{
+  outline:none;
+  box-shadow:var(--ofq-ring), var(--ofq-shadow-md);
+  transform:translateY(-3px);
+}
+
+/* Secondary text that was light gray (≈2.5:1) now passes 4.5:1 */
+.card-author,
+.card-footer,
+.card-meta,
+.card-date,
+.help-text,
+.ticker-hint{color:var(--ofq-muted-text) !important;}
+
+/* ---------- Buttons ---------- */
+.btn, .card-btn, .share-btn{
+  transition:background-color var(--ofq-fast) ease, box-shadow var(--ofq-fast) ease,
+             transform var(--ofq-fast) ease, color var(--ofq-fast) ease;
+}
+.btn:active, .card-btn:active, .share-btn:active{transform:scale(.97);}
+
+/* Touch targets on phones and tablets: at least 44px */
+@media (max-width:980px), (pointer:coarse){
+  .btn, .card-btn, .share-btn, .sheet-tool,
+  .nav-sheet-close, .nav-sheet a{min-height:44px;}
+  .nav-sheet-close{min-width:44px;}
+  .btn, .card-btn, .share-btn, .sheet-tool{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+}
+
+/* ---------- Forms ---------- */
+input::placeholder, textarea::placeholder{color:#7b8794;opacity:1;}
+input:not([type="checkbox"]):not([type="radio"]):focus-visible,
+textarea:focus-visible,
+select:focus-visible{
+  outline:none;
+  border-color:var(--ofq-brand) !important;
+  box-shadow:var(--ofq-ring) !important;
+}
+
+/* ---------- Scroll reveal (added by site.js to cards rendered on the page) ---------- */
+.ofq-reveal{
+  opacity:0;
+  transform:translateY(12px);
+  transition:opacity .4s var(--ofq-ease), transform .4s var(--ofq-ease);
+}
+.ofq-reveal.ofq-in{opacity:1;transform:none;}
+
+/* ---------- Reading progress (article pages, added by site.js) ---------- */
+.ofq-progress{
+  position:fixed;
+  top:0;
+  inset-inline:0;
+  height:3px;
+  z-index:2000;
+  pointer-events:none;
+  background:linear-gradient(90deg,var(--ofq-brand),var(--ofq-brand-text));
+  transform-origin:right;
+  transform:scaleX(0);
+}
+html[dir="ltr"] .ofq-progress{transform-origin:left;}
+
+/* Comfortable reading measure for long article text */
+.section-block p,
+.content-html p{max-width:75ch;}
 
 /* Back-to-top button (added by site.js only when a page has none) */
 .ofq-top{
   position:fixed;
   bottom:20px;
   right:20px;
-  width:46px;
-  height:46px;
+  width:48px;
+  height:48px;
   border:none;
   border-radius:50%;
-  background:#009bc4;
+  background:var(--ofq-brand-text);
   color:#fff;
-  font-size:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   cursor:pointer;
   box-shadow:0 8px 20px rgba(0,0,0,.15);
   opacity:0;
   pointer-events:none;
   transform:translateY(10px);
-  transition:opacity .2s ease, transform .2s ease;
+  transition:opacity .2s ease, transform .2s ease, background-color .2s ease;
   z-index:990;
 }
+.ofq-top svg{width:22px;height:22px;}
 .ofq-top.show{opacity:1;pointer-events:auto;transform:none;}
-.ofq-top:hover{background:#00667f;}
+.ofq-top:hover{background:var(--ofq-brand-strong);}
 
 /* Visitors who ask for less motion get none */
 @media (prefers-reduced-motion: reduce){
@@ -88,8 +235,10 @@ nav > ul > li > a[aria-current="page"]::after{
     transition-duration:.01ms !important;
     scroll-behavior:auto !important;
   }
+  .ofq-reveal{opacity:1;transform:none;}
 }
 
 @media print{
-  header, footer, .nav-sheet, .nav-sheet-overlay, .ofq-top, #quickMenu, #quickPanel, #backTop{display:none !important;}
+  header, footer, .nav-sheet, .nav-sheet-overlay, .ofq-top, .ofq-progress, #quickMenu, #quickPanel, #backTop{display:none !important;}
+  .ofq-reveal{opacity:1 !important;transform:none !important;}
 }

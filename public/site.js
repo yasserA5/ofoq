@@ -10,6 +10,7 @@
        panel writes) into the localStorage keys each page reads
      - accessibility: skip link, Escape to close menus, labels
      - back-to-top button, lazy images, safe external links
+     - keyboard-openable cards, card scroll reveal, reading progress
    ============================================================ */
 (function () {
   'use strict';
@@ -266,7 +267,8 @@
   /* ---------- Accessibility + small UX helpers ---------- */
   function addSkipLink() {
     var header = document.querySelector('header');
-    if (!header || document.querySelector('.ofq-skip')) return;
+    // index.html ships its own .skip-link
+    if (!header || document.querySelector('.ofq-skip, .skip-link')) return;
     var target = document.querySelector('main') ||
       (function () {
         var el = header.nextElementSibling;
@@ -338,7 +340,7 @@
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'ofq-top';
-    btn.textContent = '↑';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
     btn.setAttribute('aria-label', s('back_top'));
     btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
     document.body.appendChild(btn);
@@ -354,6 +356,61 @@
     }, { passive: true });
   }
 
+  /* ---------- Reading progress bar on article pages ---------- */
+  function addReadingProgress() {
+    if (!/(^|-)view$/.test(page) || document.getElementById('scrollProgress')) return;
+    var bar = document.createElement('div');
+    bar.className = 'ofq-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+
+    var ticking = false;
+    function update() {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ')';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  }
+
+  /* ---------- Cards: keyboard access + subtle scroll reveal ---------- */
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealer = (!reduceMotion && 'IntersectionObserver' in window) ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('ofq-in');
+      revealer.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px' }) : null;
+
+  function enhanceCard(card) {
+    if (card.__ofq) return;
+    card.__ofq = true;
+
+    // cards open on click; make them reachable and openable by keyboard
+    if (card.hasAttribute('data-id') && card.tagName !== 'A' && !card.hasAttribute('tabindex')) {
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'link');
+      var title = card.querySelector('h3, h4, .card-title');
+      if (title && !card.hasAttribute('aria-label')) card.setAttribute('aria-label', title.textContent.trim());
+      card.addEventListener('keydown', function (e) {
+        if (e.target !== card || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault();
+        card.click();
+      });
+    }
+
+    // only cards still below the fold fade in; never hide what is already visible.
+    // index.html runs its own section reveal, so its cards are left alone.
+    if (revealer && !card.closest('.reveal') && card.getBoundingClientRect().top > window.innerHeight) {
+      card.classList.add('ofq-reveal');
+      revealer.observe(card);
+    }
+  }
+
   function polishNode(root) {
     if (!root.querySelectorAll) return;
     root.querySelectorAll('img:not([loading])').forEach(function (img) {
@@ -362,6 +419,8 @@
     root.querySelectorAll('a[target="_blank"]:not([rel])').forEach(function (a) {
       a.setAttribute('rel', 'noopener');
     });
+    if (root.classList && root.classList.contains('card')) enhanceCard(root);
+    root.querySelectorAll('.card').forEach(enhanceCard);
   }
 
   function watchDynamicContent() {
@@ -384,6 +443,7 @@
   addSkipLink();
   makeLogoKeyboardFriendly();
   addBackToTop();
+  addReadingProgress();
   document.addEventListener('keydown', onEscape);
 
   document.addEventListener('DOMContentLoaded', function () {
