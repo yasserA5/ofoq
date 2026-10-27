@@ -947,6 +947,38 @@ html[dir="rtl"] .toast-stack{translate:50% 0;}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none !important;}
 }
 
+/* ==========================================================================
+   PROTECTED VIEW PAGES (assets/protect.js adds html.protected)
+   ========================================================================== */
+html.protected main{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+html.protected main :is(input,textarea){-webkit-user-select:text;user-select:text;}
+html.protected main img{-webkit-user-drag:none;pointer-events:none;}
+html.protected main a img{pointer-events:auto;}
+.wm{
+  position:fixed;inset:-50%;z-index:180;pointer-events:none;background-repeat:repeat;
+  animation:wm-drift 90s linear infinite;
+}
+@keyframes wm-drift{to{transform:translate(420px,220px);}}
+.shield{
+  position:fixed;inset:0;z-index:600;display:grid;place-items:center;text-align:center;
+  background:rgba(250,249,246,.72);backdrop-filter:blur(28px) saturate(.6);-webkit-backdrop-filter:blur(28px) saturate(.6);
+  opacity:0;visibility:hidden;transition:opacity .12s ease,visibility 0s linear .12s;cursor:pointer;
+}
+.shield > div{display:grid;justify-items:center;gap:10px;padding:28px;}
+.shield strong{font-family:var(--f-display);font-size:22px;color:var(--ink);}
+.shield span{color:var(--muted);font-size:14px;}
+/* no transition on the way in: the blur must land before a capture tool grabs the frame */
+body.is-shielded .shield{opacity:1;visibility:visible;transition:none;}
+body.is-shielded main{filter:blur(18px);}
+@media print{
+  html.protected body > *{display:none !important;}
+  html.protected body::after{
+    content:"© أفق المعرفة — Ofouq Al-Maarifa · ISSN 3119-6691 — Printing is disabled for this content.";
+    display:block;padding:60px 24px;text-align:center;font:600 16px/1.8 sans-serif;
+  }
+}
+@media (prefers-reduced-motion:reduce){.wm{animation:none;}}
+
 @media print{
   .topbar,.site-head,.site-foot,.to-top,.toast-stack,.reading-bar,.art-aside,.drawer,.drawer-veil{display:none !important;}
   body{background:#fff;}

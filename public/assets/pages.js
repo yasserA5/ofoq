@@ -438,7 +438,6 @@ function renderArticle() {
             <div class="share-row">
               <button class="icon-btn" type="button" data-share aria-label="${esc(t('share'))}">${icon('share')}</button>
               <button class="icon-btn" type="button" data-copy aria-label="${esc(t('copy_link'))}">${icon('link')}</button>
-              <button class="icon-btn" type="button" onclick="print()" aria-label="${esc(t('print'))}">${icon('print')}</button>
             </div>
           </div>
         </div></aside>
@@ -1011,7 +1010,13 @@ function googleLogo() {
 const ROUTES = {
   home: () => { homeShell(); live(renderHome); },
   list: renderList,
-  article: renderArticle,
+  // every *-view.html page (and view.html) is protected against copying/capture;
+  // the issues (الأعداد) keep the protection but never blank out with the hide screen
+  article: () => {
+    const hide = document.body.dataset.section !== 'editions';
+    import('./protect.js').then((p) => p.protect({ hide }));
+    renderArticle();
+  },
   board: () => { renderBoard(); onLangChange(renderBoard); },
   rules: () => { renderRules(); onLangChange(renderRules); },
   contact: () => { renderContact(); onLangChange(renderContact); },
