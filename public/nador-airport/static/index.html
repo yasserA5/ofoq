@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مطار الناظور العروي الدولي · NDR</title>
+<meta name="description" content="مطار الناظور العروي الدولي: الرحلات المباشرة، أوقات الزحمة، الخدمات، الوصول وآراء المسافرين.">
+<meta name="theme-color" content="#0B1B4D">
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Readex+Pro:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- SVG icon sprite (Lucide-style strokes) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+    <symbol id="i-land" viewBox="0 0 24 24"><path d="M2 22h20"/><path d="M3.77 10.77 2 9l2-4.5 1.1.55c.55.28.9.84.9 1.45s.35 1.17.9 1.45L8 8.5l3-6 1.05.53a2 2 0 0 1 1.09 1.52l.72 5.4a2 2 0 0 0 1.09 1.52l4.4 2.2c.42.22.78.55 1.01.96l.6 1.03c.49.88-.06 1.98-1.06 2.1l-1.18.15c-.47.06-.95-.02-1.37-.24L4.29 11.15a2 2 0 0 1-.52-.38Z"/></symbol>
+    <symbol id="i-depart" viewBox="0 0 24 24"><path d="M2 22h20"/><path d="M6.36 17.4 4 17l-2-4 1.1-.55a2 2 0 0 1 1.8 0l.17.1a2 2 0 0 0 1.8 0L8 12 5 6l.9-.45a2 2 0 0 1 2.09.2l4.02 3a2 2 0 0 0 2.1.2l4.19-2.06a2.41 2.41 0 0 1 1.73-.17L21 7a1.4 1.4 0 0 1 .87 1.99l-.38.76c-.23.46-.6.84-1.07 1.08L7.58 17.2a2 2 0 0 1-1.22.18Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M10 2v2M14 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1M6 2v2"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+    <symbol id="i-parking" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></symbol>
+    <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M10 2h4M8 6l-2 6h12l-2-6z"/><path d="M4 12h16v5H4z"/><circle cx="7" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></symbol>
+    <symbol id="i-money" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+    <symbol id="i-moonstar" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M19 3v4M21 5h-4"/></symbol>
+    <symbol id="i-access" viewBox="0 0 24 24"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1M5 8l3-3 5.5 3-2.36 3.5M4.24 14.5a5 5 0 0 0 6.88 6M13.76 17.5a5 5 0 0 0-6.88-6"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M12 20h.01M2 8.82a15 15 0 0 1 20 0M5 12.86a10 10 0 0 1 14 0M8.5 16.43a5 5 0 0 1 7 0"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2"/><path d="M8 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14M10 20h4"/><circle cx="16" cy="20" r="2"/><circle cx="8" cy="20" r="2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><path d="m3 11 19-9-9 19-2-8-8-2z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+    <symbol id="i-passport" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17h8"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.51-1.94l4-1A2 2 0 0 1 13 4.56Z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">تخطي إلى المحتوى</a>
+
+<!-- Preloader: runway lights + take-off -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__runway">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <svg class="loader__plane"><use href="#i-plane"/></svg>
+  <div class="loader__code">NDR</div>
+</div>
+
+<div class="progress" id="scrollProgress" aria-hidden="true"></div>
+
+<header class="header" id="header">
+  <div class="container header__inner">
+    <a href="#top" class="brand" aria-label="NDR">
+      <img src="img/logo.svg" alt="" width="40" height="40">
+      <span class="brand__text">
+        <strong data-i18n="brand.name">مطار الناظور العروي</strong>
+        <small data-i18n="brand.sub">مطار دولي</small>
+      </span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#flights" data-i18n="nav.flights">الرحلات</a>
+      <a href="#guide" data-i18n="nav.guide">دليل المسافر</a>
+      <a href="#services" data-i18n="nav.services">الخدمات</a>
+      <a href="#access" data-i18n="nav.access">الوصول</a>
+      <a href="#reviews" data-i18n="nav.reviews">الآراء</a>
+      <a href="#contact" data-i18n="nav.contact">اتصل بنا</a>
+    </nav>
+    <div class="header__tools">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="ar" aria-pressed="true">ع</button>
+        <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="icon-btn" id="themeBtn" type="button" data-i18n-aria="theme" aria-label="تبديل الوضع">
+        <svg class="ic ic-sun"><use href="#i-sun"/></svg><svg class="ic ic-moon"><use href="#i-moon"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" data-i18n-aria="menu" aria-label="القائمة">
+        <svg class="ic"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <svg class="hero__sky" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" class="sky-a"/><stop offset=".55" class="sky-b"/><stop offset="1" class="sky-c"/>
+      </linearGradient>
+      <radialGradient id="sunGlow"><stop offset="0" stop-color="#FFD7A8" stop-opacity=".95"/><stop offset="1" stop-color="#FF8A3D" stop-opacity="0"/></radialGradient>
+      <linearGradient id="runwayG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2550"/><stop offset="1" stop-color="#0a1030"/></linearGradient>
+    </defs>
+    <rect width="1440" height="900" fill="url(#sky)"/>
+    <g class="stars" fill="#fff">
+      <circle cx="120" cy="90" r="1.4"/><circle cx="340" cy="60" r="1"/><circle cx="560" cy="130" r="1.2"/><circle cx="900" cy="70" r="1.5"/>
+      <circle cx="1100" cy="140" r="1"/><circle cx="1300" cy="80" r="1.3"/><circle cx="760" cy="40" r="1"/><circle cx="220" cy="200" r="1"/>
+    </g>
+    <circle class="sun" cx="1080" cy="520" r="260" fill="url(#sunGlow)"/>
+    <circle class="sun-core" cx="1080" cy="520" r="70" fill="#FFC58A"/>
+    <g class="cloud-layer c1" fill="#fff" opacity=".55">
+      <ellipse cx="200" cy="260" rx="120" ry="28"/><ellipse cx="260" cy="245" rx="70" ry="30"/>
+      <ellipse cx="900" cy="220" rx="150" ry="26"/><ellipse cx="960" cy="205" rx="80" ry="28"/>
+    </g>
+    <g class="cloud-layer c2" fill="#fff" opacity=".35">
+      <ellipse cx="560" cy="330" rx="180" ry="24"/><ellipse cx="1300" cy="300" rx="160" ry="22"/><ellipse cx="60" cy="380" rx="140" ry="20"/>
+    </g>
+    <path id="flightPath" d="M-120 760 C 300 700, 520 560, 760 420 S 1240 160, 1600 60" fill="none" stroke="none"/>
+    <path class="contrail" d="M-120 760 C 300 700, 520 560, 760 420 S 1240 160, 1600 60" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 10"/>
+    <g class="mountains m-back" fill="#33407a" opacity=".55">
+      <path d="M0 700 L120 610 L210 650 L330 560 L460 640 L560 590 L700 660 L820 600 L960 650 L1100 580 L1240 640 L1360 600 L1440 630 V900 H0Z"/>
+    </g>
+    <g class="mountains m-front" fill="#1f2a5c">
+      <path d="M0 760 L140 690 L260 730 L400 670 L520 720 L680 680 L820 740 L980 690 L1120 735 L1280 700 L1440 740 V900 H0Z"/>
+    </g>
+    <path d="M520 900 L700 760 H740 L920 900Z" fill="url(#runwayG)"/>
+    <g class="runway-lights" fill="#FFB067">
+      <circle cx="712" cy="775" r="2"/><circle cx="728" cy="775" r="2"/>
+      <circle cx="700" cy="800" r="2.4"/><circle cx="740" cy="800" r="2.4"/>
+      <circle cx="684" cy="830" r="2.8"/><circle cx="756" cy="830" r="2.8"/>
+      <circle cx="664" cy="865" r="3.2"/><circle cx="776" cy="865" r="3.2"/>
+    </g>
+    <g id="heroPlane">
+      <g transform="translate(-34 -34) scale(2.8)" fill="#fff" stroke="#0B1B4D" stroke-width=".6" stroke-linejoin="round">
+        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="container hero__content">
+    <p class="kicker hero__kicker"><span class="dot"></span><span data-i18n="hero.kicker">بوابة الريف الشرقي نحو العالم</span></p>
+    <h1 class="hero__title" data-i18n="hero.title" data-split>رحلتك تبدأ من العروي</h1>
+    <p class="hero__lead" data-i18n="hero.lead">مواعيد الرحلات المباشرة، أوقات الزحمة، الخدمات وكل ما تحتاجه قبل الإقلاع أو بعد الهبوط.</p>
+
+    <form class="quick" id="quickSearch" role="search">
+      <div class="quick__tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-kind="departures"><svg class="ic"><use href="#i-depart"/></svg><span data-i18n="hero.dep">المغادرة</span></button>
+        <button type="button" role="tab" aria-selected="false" data-kind="arrivals"><svg class="ic"><use href="#i-land"/></svg><span data-i18n="hero.arr">الوصول</span></button>
+      </div>
+      <label class="quick__field">
+        <svg class="ic"><use href="#i-search"/></svg>
+        <span class="sr-only" data-i18n="hero.search">ابحث</span>
+        <input type="search" name="q" autocomplete="off" data-i18n-ph="hero.search" placeholder="ابحث برقم الرحلة أو المدينة">
+      </label>
+      <button class="btn btn--accent magnetic" type="submit"><span data-i18n="hero.go">بحث</span></button>
+    </form>
+
+    <div class="hero__meta">
+      <div class="clock" aria-live="off">
+        <svg class="ic"><use href="#i-clock"/></svg>
+        <span data-i18n="hero.local">التوقيت المحلي</span>
+        <strong id="clock">--:--</strong>
+      </div>
+      <div class="hero__ctas">
+        <a href="#flights" class="btn btn--light magnetic" data-i18n="hero.cta">عرض الرحلات</a>
+        <a href="#guide" class="btn btn--ghost magnetic" data-i18n="hero.cta2">خطط لرحلتك</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container stats">
+    <div class="stat"><strong><span data-count="3.5" data-decimals="1">0</span><svg class="ic star"><use href="#i-star"/></svg></strong><span data-i18n="stat.rating">تقييم عام</span></div>
+    <div class="stat"><strong data-count="1670">0</strong><span data-i18n="stat.reviews">مراجعة</span></div>
+    <div class="stat"><strong data-count="16">0</strong><span data-i18n="stat.desks">مكتب جوازات</span></div>
+    <div class="stat"><strong data-count="18">0</strong><span data-i18n="stat.routes">وجهة</span></div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true"><span></span></div>
+</section>
+
+<!-- Destinations marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track" id="marquee"></div>
+</div>
+
+<!-- ============ FLIGHTS ============ -->
+<section class="section" id="flights">
+  <div class="container">
+    <div class="section__head reveal">
+      <p class="kicker" data-i18n="board.sub">تحدث تلقائيًا كل دقيقة</p>
+      <h2 data-i18n="board.title">لوحة الرحلات</h2>
+    </div>
+    <div class="board reveal">
+      <div class="board__bar">
+        <div class="seg" role="tablist" id="boardTabs">
+          <span class="seg__pill" aria-hidden="true"></span>
+          <button type="button" role="tab" aria-selected="true" data-kind="departures"><svg class="ic"><use href="#i-depart"/></svg><span data-i18n="hero.dep">المغادرة</span></button>
+          <button type="button" role="tab" aria-selected="false" data-kind="arrivals"><svg class="ic"><use href="#i-land"/></svg><span data-i18n="hero.arr">الوصول</span></button>
+        </div>
+        <label class="board__search">
+          <svg class="ic"><use href="#i-search"/></svg>
+          <span class="sr-only" data-i18n="board.filter">تصفية</span>
+          <input type="search" id="boardFilter" data-i18n-ph="board.filter" placeholder="تصفية…">
+        </label>
+        <span class="src-badge" id="boardSource" hidden></span>
+        <p class="board__updated"><span class="live-dot"></span><span data-i18n="board.updated">آخر تحديث</span> <b id="boardUpdated">--:--</b></p>
+      </div>
+      <div class="board__table" role="table" aria-live="polite">
+        <div class="row row--head" role="row">
+          <span role="columnheader" data-i18n="board.time">الوقت</span>
+          <span role="columnheader" data-i18n="board.flight">الرحلة</span>
+          <span role="columnheader" id="colCity" data-i18n="board.dest">الوجهة</span>
+          <span role="columnheader" class="hide-sm" data-i18n="board.airline">الشركة</span>
+          <span role="columnheader" id="colGate" data-i18n="board.gate">البوابة</span>
+          <span role="columnheader" data-i18n="board.status">الحالة</span>
+        </div>
+        <div id="boardRows"></div>
+      </div>
+      <p class="board__notice" id="boardNotice">بيانات الرحلات تجريبية للعرض.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GUIDE (pinned horizontal) ============ -->
+<section class="guide" id="guide">
+  <div class="guide__pin">
+    <div class="container guide__head">
+      <p class="kicker" data-i18n="guide.kicker">خطوة بخطوة</p>
+      <h2 data-i18n="guide.title">رحلتك داخل المطار</h2>
+      <div class="guide__bar"><span id="guideBar"></span></div>
+    </div>
+    <div class="guide__track" id="guideTrack">
+      <article class="step"><span class="step__n">01</span><svg class="ic step__ic"><use href="#i-car"/></svg><h3 data-i18n="g1.t"></h3><p data-i18n="g1.d"></p></article>
+      <article class="step"><span class="step__n">02</span><svg class="ic step__ic"><use href="#i-bag"/></svg><h3 data-i18n="g2.t"></h3><p data-i18n="g2.d"></p></article>
+      <article class="step"><span class="step__n">03</span><svg class="ic step__ic"><use href="#i-shield"/></svg><h3 data-i18n="g3.t"></h3><p data-i18n="g3.d"></p></article>
+      <article class="step step--warn"><span class="step__n">04</span><svg class="ic step__ic"><use href="#i-passport"/></svg><h3 data-i18n="g4.t"></h3><p data-i18n="g4.d"></p></article>
+      <article class="step"><span class="step__n">05</span><svg class="ic step__ic"><use href="#i-door"/></svg><h3 data-i18n="g5.t"></h3><p data-i18n="g5.d"></p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CROWD ============ -->
+<section class="section section--alt" id="crowd">
+  <div class="container crowd">
+    <div class="crowd__text reveal">
+      <p class="kicker" data-i18n="crowd.kicker">أوقات الزحمة</p>
+      <h2 data-i18n="crowd.title">متى يكون المطار هادئًا؟</h2>
+      <div class="crowd__live" id="crowdLive"><span class="live-dot"></span><b data-i18n="crowd.live">مباشر</b> · <span id="crowdLiveText"></span></div>
+      <label class="select">
+        <span class="sr-only">Day</span>
+        <select id="crowdDay"></select>
+        <svg class="ic"><use href="#i-chev"/></svg>
+      </label>
+    </div>
+    <div class="chart reveal" id="crowdChart" role="img" aria-label="Busy hours"></div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section__head reveal">
+      <p class="kicker" data-i18n="svc.kicker">في المطار</p>
+      <h2 data-i18n="svc.title">خدمات ومرافق</h2>
+    </div>
+    <div class="bento">
+      <article class="card card--xl tilt"><svg class="ic card__ic"><use href="#i-coffee"/></svg><h3 data-i18n="s.cafe"></h3><p data-i18n="s.cafe.d"></p><span class="card__rating"><svg class="ic star"><use href="#i-star"/></svg> 4.0</span></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-cloud"/></svg><h3 data-i18n="s.meteo"></h3><p data-i18n="s.meteo.d"></p></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-parking"/></svg><h3 data-i18n="s.parking"></h3><p data-i18n="s.parking.d"></p></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-taxi"/></svg><h3 data-i18n="s.taxi"></h3><p data-i18n="s.taxi.d"></p></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-car"/></svg><h3 data-i18n="s.car"></h3><p data-i18n="s.car.d"></p></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-money"/></svg><h3 data-i18n="s.money"></h3><p data-i18n="s.money.d"></p></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-moonstar"/></svg><h3 data-i18n="s.prayer"></h3><p data-i18n="s.prayer.d"></p></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-access"/></svg><h3 data-i18n="s.prm"></h3><p data-i18n="s.prm.d"></p></article>
+      <article class="card card--warn tilt"><svg class="ic card__ic"><use href="#i-wifi"/></svg><h3 data-i18n="s.wifi"></h3><p data-i18n="s.wifi.d"></p></article>
+      <article class="card tilt"><svg class="ic card__ic"><use href="#i-bag"/></svg><h3 data-i18n="s.lost"></h3><p data-i18n="s.lost.d"></p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACCESS ============ -->
+<section class="section section--dark" id="access">
+  <div class="container access">
+    <div class="access__info reveal">
+      <p class="kicker" data-i18n="access.kicker">كيف تصل</p>
+      <h2 data-i18n="access.title">الوصول إلى المطار</h2>
+      <dl class="facts">
+        <div><dt data-i18n="access.addr">العنوان</dt><dd>Aéroport، العروي 62550</dd></div>
+        <div><dt data-i18n="access.plus">رمز الموقع</dt><dd><code id="plusCode">XXVC+5C</code>
+          <button class="chip-btn" type="button" id="copyPlus"><svg class="ic"><use href="#i-copy"/></svg><span data-i18n="access.copy">نسخ</span></button></dd></div>
+        <div><dt>IATA / ICAO</dt><dd><code>NDR</code> · <code>GMMW</code></dd></div>
+      </dl>
+      <ul class="distances">
+        <li><span data-i18n="a.nador">الناظور</span><b>~25 km</b><i style="--w:18%"></i></li>
+        <li><span data-i18n="a.melilla">مليلية</span><b>~35 km</b><i style="--w:26%"></i></li>
+        <li><span data-i18n="a.hoceima">الحسيمة</span><b>~130 km</b><i style="--w:80%"></i></li>
+        <li><span data-i18n="a.oujda">وجدة</span><b>~150 km</b><i style="--w:95%"></i></li>
+      </ul>
+      <a class="btn btn--accent magnetic" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=34.9888,-3.0282"><svg class="ic"><use href="#i-nav"/></svg><span data-i18n="access.dir">الاتجاهات</span></a>
+    </div>
+    <div class="map reveal">
+      <iframe title="Map" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=-3.10%2C34.95%2C-2.96%2C35.03&amp;layer=mapnik&amp;marker=34.9888%2C-3.0282"></iframe>
+      <div class="map__pulse" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section class="section" id="reviews">
+  <div class="container">
+    <div class="section__head reveal">
+      <p class="kicker" data-i18n="rev.kicker">ماذا يقول المسافرون</p>
+      <h2 data-i18n="rev.title">آراء المسافرين</h2>
+    </div>
+    <div class="reviews">
+      <aside class="summary reveal">
+        <div class="summary__score"><strong id="avgScore">3.5</strong><div class="stars" id="avgStars"></div>
+          <p><span data-i18n="rev.based">بناءً على</span> <b id="totalReviews">1,670</b> <span data-i18n="rev.reviews">مراجعة</span></p></div>
+        <ul class="dist" id="dist"></ul>
+        <button class="btn btn--accent btn--block magnetic" type="button" id="writeReviewBtn"><svg class="ic"><use href="#i-star"/></svg><span data-i18n="rev.write">اكتب مراجعة</span></button>
+      </aside>
+      <div class="reviews__main">
+        <div class="chips" id="topicChips" role="group"></div>
+        <div class="review-list" id="reviewList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section section--alt" id="faq">
+  <div class="container faq">
+    <div class="section__head reveal">
+      <p class="kicker" data-i18n="faq.kicker">أسئلة شائعة</p>
+      <h2 data-i18n="faq.title">قبل أن تسافر</h2>
+    </div>
+    <div class="accordion" id="faqList">
+      <details class="reveal"><summary><span data-i18n="q1"></span><svg class="ic"><use href="#i-chev"/></svg></summary><div class="acc__body"><p data-i18n="a1"></p></div></details>
+      <details class="reveal"><summary><span data-i18n="q2"></span><svg class="ic"><use href="#i-chev"/></svg></summary><div class="acc__body"><p data-i18n="a2"></p></div></details>
+      <details class="reveal"><summary><span data-i18n="q3"></span><svg class="ic"><use href="#i-chev"/></svg></summary><div class="acc__body"><p data-i18n="a3"></p></div></details>
+      <details class="reveal"><summary><span data-i18n="q4"></span><svg class="ic"><use href="#i-chev"/></svg></summary><div class="acc__body"><p data-i18n="a4"></p></div></details>
+      <details class="reveal"><summary><span data-i18n="q5"></span><svg class="ic"><use href="#i-chev"/></svg></summary><div class="acc__body"><p data-i18n="a5"></p></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="section" id="contact">
+  <div class="container contact">
+    <div class="contact__text reveal">
+      <p class="kicker" data-i18n="contact.kicker">تواصل</p>
+      <h2 data-i18n="contact.title">نحن هنا لمساعدتك</h2>
+      <p class="lead" data-i18n="contact.lead"></p>
+      <div class="contact__plane" aria-hidden="true"><svg class="ic"><use href="#i-send"/></svg></div>
+    </div>
+    <form class="form reveal" id="contactForm" novalidate>
+      <div class="field"><label for="cName" data-i18n="form.name">الاسم</label><input id="cName" name="name" autocomplete="name" required><p class="field__err" id="cName-err"></p></div>
+      <div class="field"><label for="cEmail" data-i18n="form.email">البريد</label><input id="cEmail" name="email" type="email" autocomplete="email" inputmode="email" required dir="ltr"><p class="field__err" id="cEmail-err"></p></div>
+      <div class="field field--full"><label for="cSubject" data-i18n="form.subject">الموضوع</label><input id="cSubject" name="subject"></div>
+      <div class="field field--full"><label for="cMessage" data-i18n="form.message">الرسالة</label><textarea id="cMessage" name="message" rows="5" required></textarea><p class="field__err" id="cMessage-err"></p></div>
+      <div class="field--full form__foot">
+        <p class="form__status" id="contactStatus" role="status"></p>
+        <button class="btn btn--accent magnetic" type="submit"><svg class="ic"><use href="#i-send"/></svg><span data-i18n="form.send">إرسال</span></button>
+      </div>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div>
+      <a href="#top" class="brand brand--foot"><img src="img/logo.svg" alt="" width="40" height="40"><span class="brand__text"><strong data-i18n="brand.name"></strong><small>NDR · GMMW</small></span></a>
+      <p data-i18n="foot.about"></p>
+    </div>
+    <div>
+      <h4 data-i18n="foot.links">روابط</h4>
+      <ul class="footer__links">
+        <li><a href="#flights" data-i18n="nav.flights"></a></li><li><a href="#guide" data-i18n="nav.guide"></a></li>
+        <li><a href="#services" data-i18n="nav.services"></a></li><li><a href="#access" data-i18n="nav.access"></a></li>
+        <li><a href="#reviews" data-i18n="nav.reviews"></a></li><li><a href="#contact" data-i18n="nav.contact"></a></li>
+      </ul>
+    </div>
+    <div class="footer__big" aria-hidden="true">NDR</div>
+  </div>
+  <div class="container footer__bottom">
+    <p>© <span id="year"></span> · <span data-i18n="foot.rights"></span> · <span data-i18n="foot.demo"></span></p>
+    <a href="#top" class="icon-btn" data-i18n-aria="foot.top" aria-label="top"><svg class="ic"><use href="#i-up"/></svg></a>
+  </div>
+</footer>
+
+<!-- Flight detail drawer -->
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+  <div class="drawer__scrim" data-close></div>
+  <div class="drawer__panel">
+    <button class="icon-btn drawer__close" type="button" data-close data-i18n-aria="fl.close" aria-label="إغلاق"><svg class="ic"><use href="#i-x"/></svg></button>
+    <p class="kicker" data-i18n="fl.pass">بطاقة الصعود</p>
+    <h3 id="drawerTitle" class="sr-only"></h3>
+    <div class="pass-wrap"><div class="pass" id="pass"></div></div>
+    <p class="hint" data-i18n="fl.tip"></p>
+  </div>
+</div>
+
+<!-- Review modal -->
+<div class="drawer drawer--center" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle" hidden>
+  <div class="drawer__scrim" data-close></div>
+  <form class="drawer__panel form" id="reviewForm" novalidate>
+    <button class="icon-btn drawer__close" type="button" data-close data-i18n-aria="fl.close" aria-label="إغلاق"><svg class="ic"><use href="#i-x"/></svg></button>
+    <h3 id="rmTitle" class="field--full" data-i18n="rev.write">اكتب مراجعة</h3>
+    <fieldset class="field field--full rating-input">
+      <legend data-i18n="form.rating">التقييم</legend>
+      <div class="rating-input__stars" id="ratingStars"></div>
+      <p class="field__err" id="rRating-err"></p>
+    </fieldset>
+    <div class="field field--full"><label for="rName" data-i18n="form.name">الاسم</label><input id="rName" name="name" autocomplete="name"><p class="field__err" id="rName-err"></p></div>
+    <div class="field field--full"><label for="rText" data-i18n="form.review">مراجعتك</label><textarea id="rText" name="text" rows="4"></textarea><p class="field__err" id="rText-err"></p></div>
+    <fieldset class="field field--full"><legend data-i18n="form.tags">مواضيع</legend><div class="chips chips--sm" id="reviewTags"></div></fieldset>
+    <div class="field--full form__foot">
+      <p class="form__status" id="reviewStatus" role="status"></p>
+      <button class="btn btn--ghost-dark" type="button" data-close data-i18n="form.cancel">إلغاء</button>
+      <button class="btn btn--accent" type="submit" data-i18n="form.send">إرسال</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
