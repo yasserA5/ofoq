@@ -19,7 +19,7 @@ export const DICT = {
   "nav_rules": "شروط النشر",
   "nav_contact": "اتصل بنا",
   "nav_board": "هيئة التحرير",
-  "nav_academic": "التخصصات",
+  "nav_academic": "أكاديمي",
   "nav_studies": "أبحاث ودراسات",
   "nav_journal": "المجلة",
   "sp_politics": "العلوم السياسية",
