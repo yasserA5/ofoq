@@ -332,6 +332,11 @@ body.drawer-open .drawer nav > *:nth-child(n+5){animation-delay:.12s;}
     var(--ink-2);
 }
 .story__media .ph img{width:34%;max-width:110px;height:auto;object-fit:contain;opacity:.9;}
+.story__play{
+  position:absolute;inset-block-end:12px;inset-inline-start:12px;width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;background:rgba(255,255,255,.94);color:var(--ink);box-shadow:var(--shadow-2);
+}
+.story--lead .story__play{inset-block-end:auto;inset-block-start:16px;z-index:2;}
 .story__body{display:flex;flex-direction:column;gap:8px;}
 .story__title{
   font-size:clamp(18px,1.7vw,21px);line-height:1.35;

@@ -355,7 +355,7 @@ function richText(html, dropcap) {
   return root.innerHTML;
 }
 
-function embedFor(url) {
+function embedFor(url, poster = '') {
   if (!url) return '';
   const u = String(url);
   let m;
@@ -363,9 +363,14 @@ function embedFor(url) {
   if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return `<iframe src="https://player.vimeo.com/video/${m[1]}" title="video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
   if (/facebook\.com|fb\.watch/.test(u)) return `<iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(u)}&show_text=false" title="video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
   if ((m = u.match(/twitch\.tv\/([\w]+)/))) return `<iframe src="https://player.twitch.tv/?channel=${m[1]}&parent=${location.hostname}" title="video" allowfullscreen loading="lazy"></iframe>`;
-  if (/\.(mp4|webm|ogg)(\?|$)/i.test(u)) return `<video controls preload="metadata" src="${esc(u)}"></video>`;
+  if (/\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(u) || /firebasestorage\.googleapis\.com.*videos%2F/.test(u)) {
+    return `<video controls playsinline controlslist="nodownload" preload="metadata" src="${esc(u)}"${poster ? ` poster="${esc(poster)}"` : ''}></video>`;
+  }
   return '';
 }
+// links we can't embed (TikTok, Instagram…) open on their own site
+const watchLink = (item) => (item.video && !embedFor(item.video) && /^https:\/\//i.test(item.video)
+  ? `<a class="btn" href="${esc(item.video)}" target="_blank" rel="noopener">${icon('play')}${esc(t('watch'))}</a>` : '');
 const isPdf = (u) => /\.pdf(\?|$)/i.test(String(u || '')) || /%2Fpdfs%2F|\/pdfs\//.test(String(u || ''));
 
 function renderArticle() {
@@ -393,7 +398,8 @@ function renderArticle() {
     const words = [abstract, full, details].join(' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.round(words / 200));
     const file = item.file || '';
-    const video = embedFor(file);
+    const fileVideo = embedFor(file);
+    const video = embedFor(item.video, item.videoCover || item.image) || fileVideo;
     const related = items.filter((i) => i.section === section && i !== item).slice(0, 3);
     document.title = `${title} — ${t('brand')}`;
 
@@ -434,7 +440,8 @@ function renderArticle() {
             </dl>
           </div>
           <div class="panel actions">
-            ${file && !video ? `<a class="btn btn--primary" href="${esc(file)}" target="_blank" rel="noopener">${icon('download')}${esc(isPdf(file) ? t('download') : t('open_file'))}</a>` : ''}
+            ${file && !fileVideo ? `<a class="btn btn--primary" href="${esc(file)}" target="_blank" rel="noopener">${icon('download')}${esc(isPdf(file) ? t('download') : t('open_file'))}</a>` : ''}
+            ${watchLink(item)}
             <button class="btn" type="button" data-cite>${icon('quote')}${esc(t('cite'))}</button>
             <div class="share-row">
               <button class="icon-btn" type="button" data-share aria-label="${esc(t('share'))}">${icon('share')}</button>
@@ -470,11 +477,13 @@ function renderArticle() {
             <p>${esc(pick(ed.short))}</p>
             <div class="feature__actions">
               ${ed.fullIssueFile ? `<a class="btn btn--accent" href="${esc(ed.fullIssueFile)}" target="_blank" rel="noopener">${icon('download')}${esc(t('download_issue'))}</a>` : ''}
+              ${watchLink(ed).replace('class="btn"', 'class="btn btn--light"')}
               <button class="btn btn--light" type="button" data-share>${icon('share')}${esc(t('share'))}</button>
             </div>
           </div>
         </div>
       </section>
+      ${embedFor(ed.video) ? `<div class="art-media" style="margin-top:clamp(28px,4vw,48px)">${embedFor(ed.video, ed.videoCover || ed.image)}</div>` : ''}
       <section class="section"><div class="wrap">
         ${secHead(`${t('issue')} ${issueNo(ed)}`, t('issue_contents'))}
         ${arts.length ? `<ol class="toc-list" data-stagger>${arts.map((a, n) => `

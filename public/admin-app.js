@@ -1,13 +1,16 @@
-import { app, auth } from "./firebase-init.js";
+import { app, auth } from "./admin-firebase.js";
 import {
   signOut,
   onAuthStateChanged,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
   getStorage,
   ref,
   uploadBytes,
+  uploadBytesResumable,
   getDownloadURL,
   deleteObject
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
@@ -221,7 +224,21 @@ async function loginAdmin() {
     setLoginStatus("");
   } catch (err) {
     console.error(err);
-    setLoginStatus(`فشل تسجيل الدخول: ${err.message || "بيانات غير صحيحة"}`);
+    setLoginStatus(
+      err.code === "auth/invalid-credential"
+        ? "البريد أو كلمة المرور غير صحيحة. إذا كان حسابك يدخل عبر Google فاستخدم زر Google."
+        : `فشل تسجيل الدخول: ${err.message || "بيانات غير صحيحة"}`
+    );
+  }
+}
+
+async function loginAdminGoogle() {
+  try {
+    setLoginStatus("جاري تسجيل الدخول...");
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (err) {
+    console.error(err);
+    setLoginStatus(`تعذر الدخول عبر Google: ${err.message || ""}`);
   }
 }
 
@@ -328,6 +345,10 @@ function normalizeItem(sectionKey, raw) {
     filePath: raw.filePath || "",
     fullIssueFile: raw.fullIssueFile || "",
     fullIssueFilePath: raw.fullIssueFilePath || "",
+    video: raw.video || "",
+    videoPath: raw.videoPath || "",
+    videoCover: raw.videoCover || "",
+    videoCoverPath: raw.videoCoverPath || "",
     issueNumber: Number(raw.issueNumber || raw.editionNumber || 0),
     editionNumber: Number(raw.editionNumber || raw.issueNumber || 0),
     articles: Array.isArray(raw.articles) ? raw.articles : [],
@@ -477,6 +498,38 @@ function buildLiveForm(key) {
   `;
 }
 
+function buildVideoFields(key) {
+  return `
+    <div class="row"><label>فيديو من الحاسوب (أي حجم)</label><input type="file" id="${key}-video-file" accept="video/*" /></div>
+    <div class="row">
+      <label>أو رابط فيديو</label>
+      <input type="url" id="${key}-video-link" placeholder="https://www.youtube.com/watch?v=..." />
+      <small>YouTube • Vimeo • Facebook • Twitch • رابط مباشر لملف فيديو. امسح الرابط لحذف الفيديو.</small>
+    </div>
+    <div class="row video-cover" id="${key}-video-cover-row" hidden>
+      <label>غلاف الفيديو (صورة من جهازك)</label>
+      <input type="file" id="${key}-video-cover" accept="image/*" />
+      <img id="${key}-video-cover-preview" alt="غلاف الفيديو" hidden />
+    </div>
+    <div class="video-progress" id="${key}-video-progress" hidden><i></i><span></span></div>
+  `;
+}
+
+// The cover picker only appears once there is a video to put it on
+function syncVideoCoverField(key) {
+  const row = el(`${key}-video-cover-row`);
+  if (!row) return;
+  row.hidden = !(el(`${key}-video-file`)?.files?.length || el(`${key}-video-link`)?.value.trim());
+}
+
+function showVideoCoverPreview(key, url) {
+  const img = el(`${key}-video-cover-preview`);
+  if (!img) return;
+  img.hidden = !url;
+  if (url) img.src = url;
+  else img.removeAttribute("src");
+}
+
 function buildEditionForm(key) {
   return `
     <div class="card">
@@ -488,6 +541,7 @@ function buildEditionForm(key) {
           <div class="row"><label>وصف العدد</label><textarea id="${key}-short-ar"></textarea></div>
           <div class="row"><label>صورة الغلاف</label><input type="file" id="${key}-image" accept="image/*" /></div>
           <div class="row"><label>PDF العدد كامل</label><input type="file" id="${key}-full-pdf-file" accept="application/pdf" /></div>
+          ${buildVideoFields(key)}
         </div>
         <div><div class="preview" id="${key}-preview"></div></div>
       </div>
@@ -525,6 +579,7 @@ function buildContentForm(key, title) {
         <div>
           <div class="row"><label>PDF</label><input type="file" id="${key}-pdf-file" accept="application/pdf" /></div>
           <div class="row"><label>صورة</label><input type="file" id="${key}-image" accept="image/*" /></div>
+          ${buildVideoFields(key)}
           <div class="preview" id="${key}-preview"></div>
         </div>
       </div>
@@ -599,6 +654,26 @@ function bindPreviewInputs(key) {
       const file = imgInput.files?.[0];
       if (!file) return;
       preview.innerHTML = `<div style="border-radius:8px;overflow:hidden;"><img src="${URL.createObjectURL(file)}" alt="preview" style="max-width:100%;height:auto;"></div>`;
+    });
+  }
+
+  const videoInput = el(`${key}-video-file`);
+  if (videoInput) {
+    videoInput.addEventListener("change", () => {
+      const file = videoInput.files?.[0];
+      if (!file) return;
+      const v = document.createElement("video");
+      v.src = URL.createObjectURL(file);
+      v.controls = true;
+      v.muted = true;
+      v.style.cssText = "width:100%;border-radius:8px";
+      preview.appendChild(v);
+    });
+    videoInput.addEventListener("change", () => syncVideoCoverField(key));
+    el(`${key}-video-link`)?.addEventListener("input", () => syncVideoCoverField(key));
+    el(`${key}-video-cover`)?.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (file) showVideoCoverPreview(key, URL.createObjectURL(file));
     });
   }
 
@@ -682,6 +757,70 @@ async function uploadImageToStorage(file, sectionKey, itemId) {
   await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
   return { url, path: filePath };
+}
+
+// Resumable, so large files survive network hiccups and can report progress
+async function uploadVideoToStorage(file, sectionKey, itemId) {
+  await ensureFreshAuth();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "");
+  const filePath = `videos/${sectionKey}/${itemId}-${Date.now()}-${safeName}`;
+  const storageRef = ref(storage, filePath);
+  const bar = el(`${sectionKey}-video-progress`);
+  const warnOnLeave = (e) => e.preventDefault();
+
+  window.addEventListener("beforeunload", warnOnLeave);
+  if (bar) bar.hidden = false;
+  try {
+    const task = uploadBytesResumable(storageRef, file, { contentType: file.type || "video/mp4" });
+    task.on("state_changed", (snap) => {
+      const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+      const mb = (n) => (n / 1048576).toFixed(1);
+      setStatus(`جاري رفع الفيديو... ${pct}%`);
+      if (bar) {
+        bar.querySelector("i").style.inlineSize = `${pct}%`;
+        bar.querySelector("span").textContent = `${pct}% — ${mb(snap.bytesTransferred)} / ${mb(snap.totalBytes)} MB`;
+      }
+    });
+    await task;
+    return { url: await getDownloadURL(storageRef), path: filePath };
+  } finally {
+    window.removeEventListener("beforeunload", warnOnLeave);
+    if (bar) bar.hidden = true;
+  }
+}
+
+// Fills obj.video and its cover from the form; returns replaced Storage files to delete once the save succeeds
+async function applyVideoFields(key, obj, existing) {
+  const file = el(`${key}-video-file`)?.files?.[0];
+  const link = el(`${key}-video-link`)?.value.trim() || "";
+  const oldPath = existing?.videoPath || "";
+
+  if (file) {
+    const uploaded = await uploadVideoToStorage(file, key, obj.id);
+    obj.video = uploaded.url;
+    obj.videoPath = uploaded.path;
+  } else {
+    if (link && !/^https:\/\//i.test(link)) throw new Error("رابط الفيديو يجب أن يبدأ بـ https://");
+    obj.video = link;
+    obj.videoPath = link && link === existing?.video ? oldPath : "";
+  }
+
+  const coverFile = el(`${key}-video-cover`)?.files?.[0];
+  const oldCoverPath = existing?.videoCoverPath || "";
+  if (obj.video && coverFile) {
+    setStatus("جاري رفع غلاف الفيديو...");
+    const uploaded = await uploadImageToStorage(coverFile, `${key}-video-covers`, obj.id);
+    obj.videoCover = uploaded.url;
+    obj.videoCoverPath = uploaded.path;
+  } else if (!obj.video) {
+    obj.videoCover = "";
+    obj.videoCoverPath = "";
+  }
+
+  return [
+    oldPath !== obj.videoPath ? oldPath : "",
+    oldCoverPath !== obj.videoCoverPath ? oldCoverPath : ""
+  ].filter(Boolean);
 }
 
 // ============================================================
@@ -802,6 +941,11 @@ async function saveItem(key) {
   const cfg = getSectionConfig(key);
   if (!cfg) return;
 
+  // a long video upload must not be started twice by a second click
+  const saveBtn = document.querySelector("#content .btn-green");
+  if (saveBtn) saveBtn.disabled = true;
+  let staleVideoPaths = [];
+
   try {
     await ensureFreshAuth();
 
@@ -826,6 +970,10 @@ async function saveItem(key) {
       filePath: existing?.filePath || "",
       fullIssueFile: existing?.fullIssueFile || "",
       fullIssueFilePath: existing?.fullIssueFilePath || "",
+      video: existing?.video || "",
+      videoPath: existing?.videoPath || "",
+      videoCover: existing?.videoCover || "",
+      videoCoverPath: existing?.videoCoverPath || "",
       editionNumber: existing?.editionNumber || 0,
       issueNumber: existing?.issueNumber || 0,
       articles: existing?.articles || [],
@@ -856,6 +1004,8 @@ async function saveItem(key) {
         obj.fullIssueFile = uploadedFullPdf.url;
         obj.fullIssueFilePath = uploadedFullPdf.path;
       }
+
+      staleVideoPaths = await applyVideoFields(key, obj, existing);
 
       setStatus("جاري رفع مقالات العدد...");
       obj.articles = await collectEditionArticles(key, currentId);
@@ -908,10 +1058,16 @@ async function saveItem(key) {
         obj.image = uploadedImage.url;
         obj.imagePath = uploadedImage.path;
       }
+
+      staleVideoPaths = await applyVideoFields(key, obj, existing);
     }
 
     upsertLocal(key, obj);
     await upsertFirestore(key, obj);
+
+    for (const path of staleVideoPaths) {
+      await deleteObject(ref(storage, path)).catch((e) => console.error(e));
+    }
 
     // Broadcast live updates
     if (key === "live") {
@@ -931,6 +1087,8 @@ async function saveItem(key) {
     }
     setStatus(err.message || "حدث خطأ أثناء الحفظ");
     showNotification(err.message || "حدث خطأ أثناء الحفظ", "error");
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
   }
 }
 
@@ -971,6 +1129,10 @@ function loadForEdit(key, id) {
   } else {
     if (el(`${key}-live-link`)) el(`${key}-live-link`).value = item.file || "";
   }
+
+  if (el(`${key}-video-link`)) el(`${key}-video-link`).value = item.video || "";
+  showVideoCoverPreview(key, item.videoCover);
+  syncVideoCoverField(key);
 
   const p = el(`${key}-preview`);
   if (p) {
@@ -1030,6 +1192,16 @@ async function deleteItemById(sectionKey, id) {
     } catch (e) {
       console.error(e);
     }
+    try {
+      if (target?.videoPath) await deleteObject(ref(storage, target.videoPath));
+    } catch (e) {
+      console.error(e);
+    }
+    try {
+      if (target?.videoCoverPath) await deleteObject(ref(storage, target.videoCoverPath));
+    } catch (e) {
+      console.error(e);
+    }
 
     if (Array.isArray(target?.articles)) {
       for (const article of target.articles) {
@@ -1065,10 +1237,12 @@ async function deleteItemById(sectionKey, id) {
 function resetForm(key) {
   state.editing = { key: null, id: null };
 
-  ["title-ar", "title-en", "title-fr", "author-ar", "aff-ar", "date-ar", "date-en", "date-fr", "short-ar", "short-en", "short-fr", "details-ar", "live-link"].forEach((name) => {
+  ["title-ar", "title-en", "title-fr", "author-ar", "aff-ar", "date-ar", "date-en", "date-fr", "short-ar", "short-en", "short-fr", "details-ar", "live-link", "video-link", "video-file", "video-cover"].forEach((name) => {
     const node = el(`${key}-${name}`);
     if (node) node.value = "";
   });
+  showVideoCoverPreview(key, "");
+  syncVideoCoverField(key);
 
   const editor = el(`${key}-full-ar-editor`);
   if (editor) editor.innerHTML = "";
@@ -1410,6 +1584,7 @@ async function init() {
   }
 
   el("loginBtn")?.addEventListener("click", loginAdmin);
+  el("loginGoogleBtn")?.addEventListener("click", loginAdminGoogle);
 
   const loginPassword = el("loginPassword");
   if (loginPassword) {

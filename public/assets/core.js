@@ -306,10 +306,10 @@ function initials(name) {
 export { initials };
 
 export function media(item, cls = '') {
-  const img = item.image || item.cover || '';
+  const img = item.videoCover || item.image || item.cover || '';
   return `<div class="story__media ${cls}">${img
     ? `<img src="${esc(img)}" alt="" loading="lazy" decoding="async" onerror="this.parentNode.innerHTML='<div class=&quot;ph&quot;><img src=&quot;logo1.png&quot; alt=&quot;&quot;></div>'">`
-    : '<div class="ph"><img src="logo1.png" alt=""></div>'}</div>`;
+    : '<div class="ph"><img src="logo1.png" alt=""></div>'}${item.video ? `<span class="story__play">${icon('play')}</span>` : ''}</div>`;
 }
 
 export function excerpt(item) {

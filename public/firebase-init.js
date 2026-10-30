@@ -3,7 +3,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyAl4BXeVtym6e4MYHQcfnThyted_mNIZPY",
   authDomain: "ofouq-academie.firebaseapp.com",
   projectId: "ofouq-academie",

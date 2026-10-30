@@ -3,7 +3,7 @@
 // renders into #content. Reads users, visitors and stats_daily, which only
 // admins can read (firestore.rules). admin-app.js is not involved.
 // ==========================================================================
-import { db } from '../firebase-init.js';
+import { db } from '../admin-firebase.js';
 import {
   collection, documentId, getCountFromServer, getDocs, limit, orderBy, query, where
 } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
