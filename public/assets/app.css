@@ -289,6 +289,7 @@ body.drawer-open .drawer nav > *:nth-child(3){animation-delay:.06s;}
 body.drawer-open .drawer nav > *:nth-child(4){animation-delay:.09s;}
 body.drawer-open .drawer nav > *:nth-child(n+5){animation-delay:.12s;}
 .drawer__foot{margin-top:auto;padding:18px;display:grid;gap:10px;border-top:1px solid var(--line);}
+.drawer__auth{display:grid;gap:10px;}
 .drawer__foot .lang-switch{background:var(--paper-2);justify-self:start;}
 .drawer__foot .lang-switch button{color:var(--muted);}
 .drawer__foot .lang-switch button[aria-pressed="true"]{background:var(--ink);color:var(--on-ink);}

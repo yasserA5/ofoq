@@ -6,7 +6,8 @@
 // ==========================================================================
 import {
   t, pick, esc, icon, getLang, onLangChange, formatDate, SECTIONS, DISCIPLINES, viewHref,
-  onContent, bySection, storyCard, media, excerpt, skeletons, emptyState, reveal, tilt, toast, initials, ISSN, page
+  onContent, bySection, storyCard, media, excerpt, skeletons, emptyState, reveal, tilt, toast, initials, ISSN, page,
+  saveUser, recordLogin, renderAuthSlots, currentUser
 } from './core.js';
 
 const main = document.getElementById('main');
@@ -780,7 +781,7 @@ const A = {
   email: { ar: 'البريد الإلكتروني', en: 'Email', fr: 'E-mail' },
   password: { ar: 'كلمة المرور', en: 'Password', fr: 'Mot de passe' },
   confirm: { ar: 'تأكيد كلمة المرور', en: 'Confirm password', fr: 'Confirmer le mot de passe' },
-  name: { ar: 'الاسم الكامل', en: 'Full name', fr: 'Nom complet' },
+  name: { ar: 'الاسم الذي سيظهر للآخرين', en: 'Display name', fr: 'Nom affiché' },
   remember: { ar: 'تذكرني', en: 'Remember me', fr: 'Se souvenir de moi' },
   forgot: { ar: 'نسيت كلمة المرور؟', en: 'Forgot password?', fr: 'Mot de passe oublié ?' },
   google: { ar: 'المتابعة باستخدام Google', en: 'Continue with Google', fr: 'Continuer avec Google' },
@@ -854,15 +855,10 @@ function bindPasswordToggles() {
 
 function setBusy(form, busy) { form.querySelectorAll('button').forEach((b) => { b.disabled = busy; }); }
 
-// same user record every page reads for the header
-function saveUser(user, provider, remember = true, name) {
-  const data = JSON.stringify({
-    provider, loggedIn: true, uid: user.uid, email: user.email || '',
-    name: name || user.displayName || (user.email ? user.email.split('@')[0] : 'User'),
-    photoURL: user.photoURL || '', lastLogin: Date.now()
-  });
-  if (remember) { localStorage.setItem('user', data); sessionStorage.removeItem('user'); }
-  else { sessionStorage.setItem('user', data); localStorage.removeItem('user'); }
+// a failed profile write must never block a sign-in that already succeeded
+async function finishLogin(user, provider, remember, name) {
+  const shown = await recordLogin(user, provider, name).catch((e) => { console.warn('Profile not saved:', e.message); return name; });
+  saveUser(user, provider, remember, shown);
 }
 function goBack() { setTimeout(() => { location.href = sessionStorage.getItem('loginFrom') || 'index.html'; }, 700); }
 
@@ -890,7 +886,7 @@ function renderLogin() {
       const remember = f.remember.checked;
       await fa.setPersistence(auth, remember ? fa.browserLocalPersistence : fa.browserSessionPersistence);
       const cred = await fa.signInWithEmailAndPassword(auth, f.email.value.trim(), f.password.value);
-      saveUser(cred.user, 'password', remember);
+      await finishLogin(cred.user, 'password', remember);
       showAlert(L(A.welcome), true);
       goBack();
     } catch (err) { authError(err); } finally { setBusy(f, false); }
@@ -903,7 +899,7 @@ async function googleSignIn(form) {
   try {
     const [{ auth }, fa] = await firebaseAuth();
     const res = await fa.signInWithPopup(auth, new fa.GoogleAuthProvider());
-    saveUser(res.user, 'google', true);
+    await finishLogin(res.user, 'google', true);
     showAlert(L(A.welcome), true);
     goBack();
   } catch (err) { authError(err); } finally { setBusy(form, false); }
@@ -936,7 +932,7 @@ function renderRegister() {
       const [{ auth }, fa] = await firebaseAuth();
       const cred = await fa.createUserWithEmailAndPassword(auth, email, f.password.value);
       await fa.updateProfile(cred.user, { displayName: name });
-      saveUser(cred.user, 'password', true, name);
+      await finishLogin(cred.user, 'password', true, name);
       showAlert(L(A.welcome), true);
       goBack();
     } catch (err) { authError(err); } finally { setBusy(f, false); }
@@ -1000,6 +996,155 @@ function renderReset() {
   });
 }
 
+/* ==========================================================================
+   PROFILE
+   ========================================================================== */
+const PR = {
+  title: { ar: 'حسابي', en: 'My account', fr: 'Mon compte' },
+  sub: { ar: 'عدّل معلوماتك والاسم الذي يظهر للآخرين.', en: 'Edit your details and the name others see.', fr: 'Modifiez vos informations et le nom affiché.' },
+  info: { ar: 'المعلومات الشخصية', en: 'Personal details', fr: 'Informations personnelles' },
+  affiliation: { ar: 'المؤسسة', en: 'Affiliation', fr: 'Institution' },
+  specialty: { ar: 'التخصص', en: 'Field', fr: 'Spécialité' },
+  phone: { ar: 'الهاتف', en: 'Phone', fr: 'Téléphone' },
+  bio: { ar: 'نبذة عنك', en: 'About you', fr: 'À propos de vous' },
+  save: { ar: 'حفظ التغييرات', en: 'Save changes', fr: 'Enregistrer' },
+  saved: { ar: 'تم حفظ التغييرات.', en: 'Changes saved.', fr: 'Modifications enregistrées.' },
+  nameLen: { ar: 'الاسم يجب أن يكون بين 2 و60 حرفاً.', en: 'The name must be 2 to 60 characters.', fr: 'Le nom doit compter de 2 à 60 caractères.' },
+  emailT: { ar: 'تغيير البريد الإلكتروني', en: 'Change email', fr: 'Changer l\'e-mail' },
+  newEmail: { ar: 'البريد الجديد', en: 'New email', fr: 'Nouvel e-mail' },
+  emailSent: { ar: 'أرسلنا رابط تأكيد إلى البريد الجديد. افتحه لإتمام التغيير.', en: 'We sent a confirmation link to the new email. Open it to finish.', fr: 'Un lien de confirmation a été envoyé au nouvel e-mail.' },
+  pwT: { ar: 'تغيير كلمة المرور', en: 'Change password', fr: 'Changer le mot de passe' },
+  current: { ar: 'كلمة المرور الحالية', en: 'Current password', fr: 'Mot de passe actuel' },
+  newPw: { ar: 'كلمة المرور الجديدة', en: 'New password', fr: 'Nouveau mot de passe' },
+  pwDone: { ar: 'تم تغيير كلمة المرور.', en: 'Password changed.', fr: 'Mot de passe modifié.' },
+  google: { ar: 'تسجل الدخول عبر Google، لذلك يُدار بريدك وكلمة مرورك من حساب Google.', en: 'You sign in with Google, so your email and password are managed by your Google account.', fr: 'Vous vous connectez avec Google : e-mail et mot de passe sont gérés par Google.' },
+  joined: { ar: 'تاريخ الانضمام', en: 'Joined', fr: 'Inscription' },
+  logins: { ar: 'مرات الدخول', en: 'Logins', fr: 'Connexions' }
+};
+
+async function renderProfile() {
+  const [{ auth, db }, fa, fs] = await Promise.all([
+    import('../firebase-init.js'),
+    import('https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js'),
+    import('https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js')
+  ]);
+  await auth.authStateReady();
+  const u = auth.currentUser;
+  if (!u) {
+    sessionStorage.setItem('loginFrom', 'profile.html');
+    location.replace('login.html');
+    return;
+  }
+  const ref = fs.doc(db, 'users', u.uid);
+  const data = await fs.getDoc(ref).then((s) => s.data() || {}).catch(() => ({}));
+  const isPassword = u.providerData.some((p) => p.providerId === 'password');
+
+  const notice = (id, msg, ok) => {
+    const el = document.getElementById(id);
+    el.className = `alert full ${ok ? 'alert--ok' : 'alert--error'} is-shown`;
+    el.textContent = msg;
+  };
+  const fieldOf = (id, type, label, value, auto = 'off') => `<div class="field-group"><label for="${id}">${esc(L(label))}</label>
+    <input id="${id}" name="${id}" type="${type}" value="${esc(value || '')}" autocomplete="${auto}"></div>`;
+  // Firebase requires a fresh password before changing email or password
+  const reauth = (pw) => fa.reauthenticateWithCredential(u, fa.EmailAuthProvider.credential(u.email, pw));
+
+  const paint = () => {
+    const name = data.displayName || u.displayName || '';
+    main.innerHTML = `
+      ${pageHero({ title: L(PR.title), text: L(PR.sub), meta: `<span class="chip">${esc(u.email || '')}</span>
+        ${data.createdAt ? `<span class="chip">${esc(L(PR.joined))}: ${esc(formatDate(data.createdAt))}</span>` : ''}
+        ${data.loginCount ? `<span class="chip">${esc(L(PR.logins))}: ${Number(data.loginCount)}</span>` : ''}` })}
+      <section class="section"><div class="wrap" style="max-width:860px;display:grid;gap:clamp(28px,4vw,44px)">
+        <div data-reveal>
+          <h2 style="font-size:26px;margin-bottom:16px">${esc(L(PR.info))}</h2>
+          <form class="form" id="infoForm" novalidate>
+            ${fieldOf('displayName', 'text', A.name, name, 'nickname')}
+            ${fieldOf('phone', 'tel', PR.phone, data.phone, 'tel')}
+            ${fieldOf('affiliation', 'text', PR.affiliation, data.affiliation, 'organization')}
+            ${fieldOf('specialty', 'text', PR.specialty, data.specialty)}
+            <div class="field-group full"><label for="bio">${esc(L(PR.bio))}</label><textarea id="bio" name="bio" maxlength="1000">${esc(data.bio || '')}</textarea></div>
+            <div class="full"><button class="btn btn--primary" type="submit">${esc(L(PR.save))}</button></div>
+            <div class="alert full" id="infoMsg" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+        ${isPassword ? `
+        <div data-reveal>
+          <h2 style="font-size:26px;margin-bottom:16px">${esc(L(PR.emailT))}</h2>
+          <form class="form" id="emailForm" novalidate>
+            ${fieldOf('newEmail', 'email', PR.newEmail, '', 'email')}
+            ${fieldOf('emailPw', 'password', PR.current, '', 'current-password')}
+            <div class="full"><button class="btn" type="submit">${esc(L(PR.emailT))}</button></div>
+            <div class="alert full" id="emailMsg" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+        <div data-reveal>
+          <h2 style="font-size:26px;margin-bottom:16px">${esc(L(PR.pwT))}</h2>
+          <form class="form" id="pwForm" novalidate>
+            ${fieldOf('curPw', 'password', PR.current, '', 'current-password')}
+            ${fieldOf('newPw', 'password', PR.newPw, '', 'new-password')}
+            <div class="full"><button class="btn" type="submit">${esc(L(PR.pwT))}</button></div>
+            <div class="alert full" id="pwMsg" role="status" aria-live="polite"></div>
+          </form>
+        </div>` : `<p class="alert alert--ok is-shown">${esc(L(PR.google))}</p>`}
+      </div></section>`;
+
+    document.getElementById('infoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const next = {
+        displayName: f.displayName.value.trim(), phone: f.phone.value.trim().slice(0, 30),
+        affiliation: f.affiliation.value.trim().slice(0, 150), specialty: f.specialty.value.trim().slice(0, 100),
+        bio: f.bio.value.trim().slice(0, 1000)
+      };
+      if (next.displayName.length < 2 || next.displayName.length > 60) return notice('infoMsg', L(PR.nameLen));
+      setBusy(f, true);
+      try {
+        await fs.setDoc(ref, { ...next, updatedAt: Date.now() }, { merge: true });
+        await fa.updateProfile(u, { displayName: next.displayName });
+        Object.assign(data, next);
+        const provider = currentUser()?.provider || 'password';
+        saveUser(u, provider, !sessionStorage.getItem('user'), next.displayName);
+        renderAuthSlots();
+        notice('infoMsg', L(PR.saved), true);
+      } catch (err) { console.warn(err); notice('infoMsg', L(AUTH_ERR[err.code] || GENERIC_ERR)); }
+      finally { setBusy(f, false); }
+    });
+
+    document.getElementById('emailForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const email = f.newEmail.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return notice('emailMsg', L(AUTH_ERR['auth/invalid-email']));
+      setBusy(f, true);
+      try {
+        await reauth(f.emailPw.value);
+        await fa.verifyBeforeUpdateEmail(u, email);
+        f.reset();
+        notice('emailMsg', L(PR.emailSent), true);
+      } catch (err) { notice('emailMsg', L(AUTH_ERR[err.code] || GENERIC_ERR)); }
+      finally { setBusy(f, false); }
+    });
+
+    document.getElementById('pwForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      if (f.newPw.value.length < 6) return notice('pwMsg', L(A.short));
+      setBusy(f, true);
+      try {
+        await reauth(f.curPw.value);
+        await fa.updatePassword(u, f.newPw.value);
+        f.reset();
+        notice('pwMsg', L(PR.pwDone), true);
+      } catch (err) { notice('pwMsg', L(AUTH_ERR[err.code] || GENERIC_ERR)); }
+      finally { setBusy(f, false); }
+    });
+    reveal();
+  };
+  paint();
+  onLangChange(paint);
+}
+
 function googleLogo() {
   return '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.9 1.5l2.7-2.6C17 3.4 14.7 2.4 12 2.4 6.9 2.4 2.8 6.5 2.8 11.6S6.9 20.8 12 20.8c6.9 0 8.6-4.8 8.6-7.3 0-.5 0-.9-.1-1.3H12z"/><path fill="#34A853" d="M3.8 7.7l3.2 2.3C7.9 8 9.8 6.6 12 6.6c1.9 0 3.1.8 3.9 1.5l2.7-2.6C17 3.4 14.7 2.4 12 2.4 8.4 2.4 5.3 4.5 3.8 7.7z"/><path fill="#FBBC05" d="M12 20.8c2.6 0 4.8-.9 6.4-2.5l-3-2.4c-.8.6-1.9 1.1-3.4 1.1-3.9 0-5.2-2.6-5.5-3.8l-3.2 2.5c1.5 3.2 4.7 5.1 8.7 5.1z"/><path fill="#4285F4" d="M20.6 12.2H12v3.9h5.5c-.3 1.4-1.4 2.5-2.9 3.3l3 2.4c1.8-1.7 2.9-4.1 2.9-7 0-.5 0-.9-.1-1.3z"/></svg>';
 }
@@ -1025,7 +1170,8 @@ const ROUTES = {
   login: () => { renderLogin(); onLangChange(renderLogin); },
   register: () => { renderRegister(); onLangChange(renderRegister); },
   forgot: () => { renderForgot(); onLangChange(renderForgot); },
-  reset: () => { renderReset(); onLangChange(renderReset); }
+  reset: () => { renderReset(); onLangChange(renderReset); },
+  profile: renderProfile
 };
 
 if (document.referrer && !/login|register|forgot|reset/.test(location.pathname) && document.body.dataset.page !== 'login') {

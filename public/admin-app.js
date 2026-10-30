@@ -30,6 +30,12 @@ const SECTIONS = [
   { key: "live", title: "🔴 بث مباشر", kind: "live" }
 ];
 
+// Keep identical to firestore.rules: the rules are the real protection, this only hides the panel
+const ADMIN_EMAILS = ["animxanimx@gmail.com", "ofouqacademie@gmail.com"];
+function isAdminUser(user) {
+  return Boolean(user?.email) && ADMIN_EMAILS.includes(user.email.toLowerCase());
+}
+
 const state = {
   bySection: Object.fromEntries(SECTIONS.map((s) => [s.key, []])),
   currentSectionKey: "editions",
@@ -184,14 +190,18 @@ function updateAuthUI(user) {
   const adminApp = el("adminApp");
   const userLabel = el("userEmail");
 
-  if (authGate) authGate.style.display = user ? "none" : "block";
-  if (adminApp) adminApp.style.display = user ? "block" : "none";
-  if (userLabel) userLabel.textContent = user?.email || "";
+  const allowed = isAdminUser(user);
 
-  if (user) {
+  if (authGate) authGate.style.display = allowed ? "none" : "block";
+  if (adminApp) adminApp.style.display = allowed ? "block" : "none";
+  if (userLabel) userLabel.textContent = allowed ? user.email : "";
+
+  if (allowed) {
     setLoginStatus("");
     setStatus(`تم تسجيل الدخول: ${user.email || "Admin"}`);
   } else {
+    // the session is shared with the public site, so a reader can arrive here already signed in
+    setLoginStatus(user ? `الحساب ${user.email || ""} ليس حساب مدير. سجّل الدخول بحساب المدير.` : "");
     setStatus("يرجى تسجيل الدخول");
   }
 }
@@ -1394,7 +1404,7 @@ async function init() {
   buildMenu();
   rebuildDbFromCache();
 
-  if (auth.currentUser) {
+  if (isAdminUser(auth.currentUser)) {
     showSection(state.currentSectionKey);
     await recoverAllData();
   }
@@ -1424,7 +1434,7 @@ async function init() {
 
   onAuthStateChanged(auth, async (user) => {
     updateAuthUI(user);
-    if (user) {
+    if (isAdminUser(user)) {
       rebuildDbFromCache();
       showSection(state.currentSectionKey);
       await recoverAllData();

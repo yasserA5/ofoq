@@ -186,6 +186,106 @@ export function currentUser() {
   try { return JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || 'null'); } catch { return null; }
 }
 
+// Same record every page reads for the header; stays in whichever storage "remember me" chose
+export function saveUser(user, provider, remember = true, name) {
+  const data = JSON.stringify({
+    provider, loggedIn: true, uid: user.uid, email: user.email || '',
+    name: name || user.displayName || (user.email ? user.email.split('@')[0] : 'User'),
+    photoURL: user.photoURL || '', lastLogin: Date.now()
+  });
+  if (remember) { localStorage.setItem('user', data); sessionStorage.removeItem('user'); }
+  else { sessionStorage.setItem('user', data); localStorage.removeItem('user'); }
+}
+
+const firestore = () => Promise.all([import('../firebase-init.js'), import('https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js')]);
+const utcDay = () => new Date().toISOString().slice(0, 10);
+
+// Creates/updates users/{uid} on sign-in and returns the name to display
+export async function recordLogin(user, provider, name) {
+  const [{ db }, fs] = await firestore();
+  const ref = fs.doc(db, 'users', user.uid);
+  const snap = await fs.getDoc(ref);
+  const now = Date.now();
+  const isNew = !snap.exists();
+  const displayName = snap.data()?.displayName || name || user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+  await fs.setDoc(ref, {
+    email: user.email || '', provider, lastLogin: now, loginCount: fs.increment(1),
+    ...(isNew ? { uid: user.uid, displayName, photoURL: user.photoURL || '', createdAt: now } : {})
+  }, { merge: true });
+  await fs.setDoc(fs.doc(db, 'stats_daily', utcDay()), {
+    logins: fs.increment(1), ...(isNew ? { signups: fs.increment(1) } : {})
+  }, { merge: true }).catch(() => {});
+  return displayName;
+}
+
+// Firebase is the source of truth for the session; the stored copy only makes the header instant
+async function watchAuth() {
+  const [{ auth, db }, fa, fs] = await Promise.all([
+    import('../firebase-init.js'),
+    import('https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js'),
+    import('https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js')
+  ]);
+  fa.onAuthStateChanged(auth, async (u) => {
+    const stored = currentUser();
+    if (!u) {
+      if (stored) { localStorage.removeItem('user'); sessionStorage.removeItem('user'); renderAuthSlots(); }
+      return;
+    }
+    const provider = u.providerData[0]?.providerId === 'google.com' ? 'google' : 'password';
+    const remember = !sessionStorage.getItem('user');
+    let name = stored?.name;
+    try {
+      const snap = await fs.getDoc(fs.doc(db, 'users', u.uid));
+      name = snap.exists() ? snap.data().displayName : await recordLogin(u, provider);
+    } catch (e) { console.warn('User profile unavailable:', e.message); }
+    saveUser(u, provider, remember, name);
+    renderAuthSlots();
+  });
+}
+
+// Anonymous counters for the admin dashboard: a random browser id, no IP or personal data
+// unless the visitor is signed in. Local previews are skipped so they never reach real stats.
+async function track() {
+  if (['localhost', '127.0.0.1'].includes(location.hostname)) return;
+  try {
+    const [{ db }, fs] = await firestore();
+    const inc = fs.increment(1);
+    const day = utcDay();
+    const now = Date.now();
+    let vid = localStorage.getItem('ofq_vid');
+    const isNew = !vid;
+    if (isNew) { vid = crypto.randomUUID(); localStorage.setItem('ofq_vid', vid); }
+    const firstToday = localStorage.getItem('ofq_day') !== day;
+    localStorage.setItem('ofq_day', day);
+    const firstInSession = !sessionStorage.getItem('ofq_session');
+    sessionStorage.setItem('ofq_session', '1');
+    const device = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+    const lang = getLang();
+    const pageKey = /^[\w-]{1,60}$/.test(currentFile) ? currentFile : 'other';
+    const itemId = new URLSearchParams(location.search).get('id') || '';
+    let source = 'direct';
+    try { const h = new URL(document.referrer).hostname; if (h && h !== location.hostname) source = h.slice(0, 60); } catch { /* no referrer */ }
+
+    await fs.setDoc(fs.doc(db, 'stats_daily', day), {
+      views: inc,
+      pages: { [pageKey]: inc },
+      ...(page === 'article' && /^[\w-]{1,64}$/.test(itemId) ? { items: { [itemId]: inc } } : {}),
+      ...(firstInSession ? { sessions: inc, sources: { [source]: inc } } : {}),
+      ...(firstToday ? { visitors: inc, devices: { [device]: inc }, langs: { [lang]: inc } } : {}),
+      ...(isNew ? { newVisitors: inc } : {})
+    }, { merge: true });
+
+    if (firstInSession) {
+      const u = currentUser();
+      await fs.setDoc(fs.doc(db, 'visitors', vid), {
+        lastSeen: now, visits: inc, device, lang,
+        ...(isNew ? { firstSeen: now } : {}),
+        ...(u?.loggedIn ? { uid: u.uid || '', name: String(u.name || '').slice(0, 60) } : {})
+      }, { merge: true });
+    }
+  } catch (e) { console.warn('Stats skipped:', e.message); }
+}
+
 export async function logout() {
   try {
     const [{ auth }, { signOut }] = await Promise.all([
@@ -303,10 +403,25 @@ function authHTML() {
   const u = currentUser();
   if (u && u.loggedIn) {
     const name = u.name || (u.email ? u.email.split('@')[0] : '');
-    return `<span>${icon('user')} ${esc(name)}</span><button type="button" data-logout data-i="logout">${esc(t('logout'))}</button>`;
+    return `<a href="profile.html">${icon('user')} ${esc(name)}</a><button type="button" data-logout>${esc(t('logout'))}</button>`;
   }
-  return `<a href="login.html" data-i="login">${esc(t('login'))}</a><a href="register.html" data-i="join">${esc(t('join'))}</a>`;
+  return `<a href="login.html">${esc(t('login'))}</a><a href="register.html">${esc(t('join'))}</a>`;
 }
+
+const MY_ACCOUNT = { ar: 'حسابي', en: 'My account', fr: 'Mon compte' };
+function drawerAuthHTML() {
+  return currentUser()?.loggedIn
+    ? `<a class="btn btn--primary" href="profile.html">${esc(MY_ACCOUNT[getLang()])}</a><button class="btn" type="button" data-logout>${esc(t('logout'))}</button>`
+    : `<a class="btn" href="login.html">${esc(t('login'))}</a><a class="btn btn--primary" href="register.html">${esc(t('join'))}</a>`;
+}
+
+function renderAuthSlots() {
+  const top = document.querySelector('.topbar__auth');
+  const drawer = document.querySelector('.drawer__auth');
+  if (top) top.innerHTML = authHTML();
+  if (drawer) drawer.innerHTML = drawerAuthHTML();
+}
+export { renderAuthSlots };
 
 function headerHTML() {
   const discCurrent = DISCIPLINES.some((d) => isCurrent(SECTIONS[d].list));
@@ -357,9 +472,7 @@ function headerHTML() {
     </nav>
     <div class="drawer__foot">
       ${langSwitchHTML()}
-      ${currentUser()?.loggedIn
-        ? `<button class="btn" type="button" data-logout data-i="logout">${esc(t('logout'))}</button>`
-        : `<a class="btn" href="login.html" data-i="login">${esc(t('login'))}</a><a class="btn btn--primary" href="register.html" data-i="join">${esc(t('join'))}</a>`}
+      <div class="drawer__auth">${drawerAuthHTML()}</div>
     </div>
   </aside>`;
 }
@@ -539,7 +652,11 @@ scrollEffects();
 sharedImageMorph();
 onLangChange(() => {
   document.querySelectorAll('.mega a > span:last-child').forEach((s) => { s.textContent = DISC_DESC[getLang()]; });
+  renderAuthSlots();
   reveal();
 });
+// auth pages manage the session themselves, and shouldn't count as a second login
+if (document.body.dataset.chrome !== 'none') watchAuth().catch((e) => console.warn('Auth watch failed:', e.message));
+track();
 
 export { page };
